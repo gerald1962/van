@@ -1,0 +1,209 @@
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
+9. Git
+
+git --version
+
+git config --global user.name "Gerald Schueller"
+git config --global user.email "gerald.schueller@web.de"
+
+git config --list
+
+emacs ~/.gitconfig
+
+Creating your workspace
+
+git init
+Leeres Git-Repository in /home/gerald/van/.git/ initialisiert
+
+git add .
+
+git commit -m "Initial Commit" -a
+
+
+
+8. RFC Editor
+
+https://www.rfc-editor.org/
+
+apt-file search datetime2.sty
+
+sudo apt install groff
+
+groff -t -mandoc -Tascii rfc_template.nroff > rfc_template.txt
+
+
+7. GDB configuration
+
+If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
+
++--------------------------------+--------------------------------+
+|   GUD interaction buffer       |   Locals/Registers buffer      |
+|--------------------------------+--------------------------------+
+|   Primary Source buffer        |   I/O buffer for debugged pgm  |
+|--------------------------------+--------------------------------+
+|   Stack buffer                 |   Breakpoints/Threads buffer   |
++--------------------------------+--------------------------------+
+
+You also have an option to display the struct in an indentation and new line.
+For that you need to set the pretty print:
+
+set print pretty on
+
+
+6. Tag file for emacs
+
+find /home/gerald/van -name "*.[ch]" -print | etags -
+
+M-x visit-tags-tables TAGS
+
+Some of the useful "Tags" functions are:
+
+M-.              Find first definition of a tag.
+M-x tags-search  Search for a specified regular expression through the files in the selected tag table.
+M-,              Find next definition of previous tag, next occurrence of specified regular expression.
+q
+
+5. Core Dump
+
+If you type
+
+ulimit -c unlimited
+
+then that will tell bash that its programs can dump cores of any size.
+
+You can use the core file in the following way:
+
+gdb <executable> <core-file>
+
+For example:
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./out/zinc 
+Z> zinc copper battery
+^Ctrap_signal_handler: received SIGINT, generate a core dump.
+Abgebrochen (Speicherabzug geschrieben)
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ gdb out/zinc core
+
+bt  Backtrace: display the program stack.
+
+
+4. Common Makefile
+
+The common makefile is located in ...
+
+
+3. Emacs-Konfiguration in .emacs
+
+(defun linux-c-mode ()
+ "C mode with adjusted defaults for use with the Linux kernel."
+ (interactive)
+ (c-mode)
+ (setq c-indent-level 8)
+ (setq c-brace-imaginary-offset 0)
+ (setq c-brace-offset -8)
+ (setq c-argdecl-indent 8)
+ (setq c-label-offset -8)
+ (setq c-continued-statement-offset 8)
+ (setq indent-tabs-mode nil)
+ (setq tab-width 8))
+
+; This will define the M-x linux-c-mode command. When hacking on a module, if
+; you put the string -*- linux-c -*- somewhere on the first two lines, this mode
+; will be automatically invoked. Also, you may want to add
+(setq auto-mode-alist (cons '("/usr/src/linux.*/.*\\.[ch]$" . linux-c-mode)  auto-mode-alist)) 
+
+(setq-default c-default-style "linux")
+
+
+2. Linux Kernel Sources
+
+https://elixir.bootlin.com/linux/latest/source
+
+
+1.build-essential
+
+Ich: Wieso funktionieren solche elementare Präprozessor-Aktionen nicht ?
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ make
+gcc zinc.c -o zinc
+zinc.c:2:10: fatal error: stdio.h: Datei oder Verzeichnis nicht gefunden
+ #include <stdio.h>  /* Standard C library. */
+          ^~~~~~~~~
+compilation terminated.
+makefile:2: recipe for target 'zinc' failed
+make: *** [zinc] Error 1
+
+Du: Rege dich nicht auf: gooogle und  es gibt eine einfache Lösung:
+Hast du vielleicht build-essential nicht installiert?
+
+Ich: Toll, jetzt geht es nach der Installierung mit
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ sudo apt install build-essential
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./zinc
+zinc copper batter
