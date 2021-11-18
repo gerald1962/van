@@ -102,7 +102,6 @@ git checkout master
 git checkout develop
 
 git add faq.txt
-git commit -m "faq.txt file" faq.txt
 
 
 8. RFC Editor
