@@ -78,14 +78,30 @@ git config --list
 emacs ~/.gitconfig
 
 Creating your workspace
-
 git init
 Leeres Git-Repository in /home/gerald/van/.git/ initialisiert
 
 git add .
 
+Creating a commit message
 git commit -m "Initial Commit" -a
+or
+git commit -m "Initial Commit" file
 
+Pushing changes to a remote server
+git push origin master
+
+Viewing branches
+git branch -a
+
+
+Creating branches
+git checkout -b develop
+
+git checkout master
+git checkout develop
+
+git add faq.txt
 
 
 8. RFC Editor
