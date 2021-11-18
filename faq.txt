@@ -68,7 +68,10 @@ ww
 
 9. Git
 
+9.1 Git installieren
 git --version
+
+9.2 Git konfigurieren
 
 git config --global user.name "Gerald Schueller"
 git config --global user.email "gerald.schueller@web.de"
@@ -77,7 +80,7 @@ git config --list
 
 emacs ~/.gitconfig
 
-Creating your workspace
+9.3 Ein neues Repository erstellen
 git init
 Leeres Git-Repository in /home/gerald/van/.git/ initialisiert
 
@@ -107,6 +110,14 @@ git commit -m "faq.txt file" faq.txt
 Merging code between branches
 git checkout master
 git merge develop --no-ff
+
+9.4 Status des Repositorys
+git status
+
+9.5 Staging
+git add .
+or
+git add faq.txt
 
 
 8. RFC Editor
