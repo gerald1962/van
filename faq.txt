@@ -118,6 +118,17 @@ git status
 git add .
 or
 git add faq.txt
+git commit -m "Git information" .
+
+9.6 Branches
+git branch develop
+
+9.7 Branches weckseln
+git checkout devlop
+
+9.8 Branches zusammenführen
+git checkout master
+git merge develop
 
 
 8. RFC Editor
