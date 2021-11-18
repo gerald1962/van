@@ -102,6 +102,11 @@ git checkout master
 git checkout develop
 
 git add faq.txt
+git commit -m "faq.txt file" faq.txt
+
+Merging code between branches
+git checkout master
+git merge develop --no-ff
 
 
 8. RFC Editor
