@@ -55,7 +55,7 @@ vpath %.c ${VAN_SRC}
 .PHONY: all van echosvars makedir depend_all depend tags clean
 
 
-all: clean makedir depend ${MODULE_OUTDIR}/${MODULE}
+all: clean makedir depend ${MODULE_OUTDIR}/${MODULE} tags
 
 
 van: ${MODULE_OUTDIR}/${MODULE}
