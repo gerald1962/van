@@ -1,0 +1,55 @@
+.\" 11/10/08 Template updated to align with Copyright Notice as
+.\" defined in RFC 5378 (BCP 78).
+.pl 10.0i
+.po 0
+.ll 7.2i
+.lt 7.2i
+.nr LL 7.2i
+.nr LT 7.2i
+.ds RF FORMFEED[Page %]
+.ds LH VAN Draft
+.\"   --> Header/footers: Set short title, author(s), and dates:
+.ds CH 2-nroff.template                  \" <Short title>
+.ds LF Schueller, Gerald                 \" <Authors>
+.ds RH November 18, 2021                 \" <Submission date>
+.ds CF Expires January 2022              \" <Expiration date>
+.hy 0
+.ad l
+.nf
+.\" 5678901234567 check 72 column width 12345678901234567890123456789012
+VRFB Draft                                                    G. Schueller
+VRFB Working Group                                            Holger Fink
+Category: Experimental                                        USC ISI
+Expires January 2022                                          November 14, 2021
+
+.ce
+Using Wikipedia and Linux for the VAN framework
+.ce
+to simulate Vanadium Redox Flow Batteries
+
+.in 3              \"  Basic indent for text is 3 spaces
+.ti 0              \"  "Temporary indent" for next line: 0 spaces
+Status of this Memo
+
+This memo defines an Experimental Architecture for the Battery
+community. This memo does not specify a Battery standard of any
+kind.  Distribution of this memo is unlimited.
+
+.ti 0
+Abstract
+
+This memo defines how to simulate batteries.
+
+.in 0
+Table of Contents
+
+.nf
+   1. Introduction
+   2. Building with gcc
+   3. Linux kernel sources as pattern
+   4. Emacs configuration
+   5. Integration abstractions over Makefiles
+   ...
+.fi
+.in 3 
+.ti 0
