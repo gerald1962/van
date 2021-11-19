@@ -130,6 +130,25 @@ git checkout devlop
 git checkout master
 git merge develop
 
+Branch entfernen
+git branch -d develop
+
+9.9 Unterschied zwischen Commits prüfen
+git log
+
+Inhalt des Commit
+git show ID
+
+9.10 Frühere Version
+git checkout ID file
+
+9.11 Commit rückgängig machen
+git revert HEAD
+git revert <commit-id>
+
+9.12 Dateien ignorieren
+.gitignore
+
 
 8. RFC Editor
 
@@ -140,6 +159,7 @@ apt-file search datetime2.sty
 sudo apt install groff
 
 groff -t -mandoc -Tascii rfc_template.nroff > rfc_template.txt
+groff -t -mandoc -Tascii van.nroff > van.txt
 
 
 7. GDB configuration
@@ -233,7 +253,7 @@ https://elixir.bootlin.com/linux/latest/source
 
 Ich: Wieso funktionieren solche elementare Präprozessor-Aktionen nicht ?
 
-gerald@gerald:~/van/battery/zinc_copper_battery/test$ make
+bgerald@gerald:~/van/battery/zinc_copper_battery/test$ make
 gcc zinc.c -o zinc
 zinc.c:2:10: fatal error: stdio.h: Datei oder Verzeichnis nicht gefunden
  #include <stdio.h>  /* Standard C library. */

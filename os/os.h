@@ -22,6 +22,9 @@
   TYPE DEFINITIONS
   ============================================================================*/
 
+/* Map the spinlock to mutex. */
+typedef pthread_mutex_t spinlock_t;
+
 /**
  * os_thread_prio_t - supported thread priorities.
  *
@@ -48,24 +51,39 @@ typedef enum {
 	OS_THREAD_INVALID
 } os_thread_state_t;
 
-typedef pthread_mutex_t spinlock_t;
+/**
+ * os_sync_t - wait condition for thread create.
+ *
+ * @done:   status of the wait condition.
+ * @cond:   release signal for wait operation.
+ * @mutex:  protect the critical section.
+ **/
+typedef struct {
+	int             done;
+	pthread_cond_t  cond;
+	pthread_mutex_t mutex;
+} os_sync_t;
 
 /**
  * os_thread_t - data for all thread interfaces. The caller must not modify any
  * data.
  *
- * @id:     number of the thread table entry.
- * @name:   name of the thread.
- * @attr:   thread attribute like SCHED_RR.
- * @prio:   thread priority.
- * @state:  current state of the pthread.
+ * @id:         number of the thread table entry.
+ * @name:       name of the thread.
+ * @attr:       thread attribute like SCHED_RR.
+ * @prio:       thread priority.
+ * @suspend_c:  suspend the caller in os_thread_create().
+ * @suspend_t:  resume the thread in os_thread_state().
+ * @state:      current state of the pthread.
  **/
 typedef struct {
 	int                id;
 	char               name[OS_MAX_STRING_LEN];
-	pthread_attr_t     attr;
-	os_thread_prio_t   prio;
 	os_thread_state_t  state;
+	os_thread_prio_t   prio;
+	pthread_attr_t     attr;
+	os_sync_t          suspend_c; /* 0 */
+	os_sync_t          suspend_t; /* 1 */
 } os_thread_t;
 
 /*============================================================================
@@ -75,15 +93,25 @@ typedef struct {
   EXPORTED FUNCTIONS
   ============================================================================*/
 
-void os_sem_create(sem_t *sem, unsigned int init_value);
+void os_cs_init(pthread_mutex_t *mutex);
+void os_cs_enter(pthread_mutex_t *mutex);
+void os_cs_leave(pthread_mutex_t *mutex);
+void os_cs_destroy(pthread_mutex_t *mutex);
+
+void os_sem_init(sem_t *sem, unsigned int init_value);
 void os_sem_wait(sem_t *sem);
+void os_sem_release(sem_t *sem);
 void os_sem_delete(sem_t *sem);
 
-void os_spinlock_init(spinlock_t *spinlock);
-void os_spinlock_obtain(spinlock_t *spinlock);
-void os_spinlock_release(spinlock_t *spinlock);
-void os_spinlock_delete(spinlock_t *spinlock);
+void os_spin_init(spinlock_t *spinlock);
+void os_spin_lock(spinlock_t *spinlock);
+void os_spin_unlock(spinlock_t *spinlock);
+void os_spin_destroy(spinlock_t *spinlock);
 
-void os_thread_start(os_thread_t *thread, const char *name, os_thread_prio_t prio);
+void os_thread_create(os_thread_t *thread, const char *name, os_thread_prio_t prio);
+void os_thread_start(os_thread_t *thread);
+
+void os_init(void);
+void os_thread_init(void);
 
 #endif /* __os_h__ */
