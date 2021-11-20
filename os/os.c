@@ -9,14 +9,12 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <stdio.h>   /* Standard C library: NULL. */
-#include <pthread.h> /* POSIX thread. */
-#include "trap.h"    /* Exception handling: TRAP */
+#include <pthread.h>  /* POSIX thread. */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"      /* Operating system: os_sem_init() */
+#include "os.h"       /* Operating system: os_sem_init() */
 
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
@@ -303,6 +301,9 @@ void os_init(void)
          * programm has been terminated with Ctrl-C. */
         trap_signal_catch();
 
+	/* Initialize the os_malloc list. */
+	os_mem_init();
+	
 	/* Initialize the thread table. */
 	os_thread_init();
 }

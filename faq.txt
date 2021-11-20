@@ -149,6 +149,9 @@ git revert <commit-id>
 9.12 Dateien ignorieren
 .gitignore
 
+9.13 Dateien wiederherstellen
+git checkout -- *
+
 
 8. RFC Editor
 

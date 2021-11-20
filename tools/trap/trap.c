@@ -86,5 +86,4 @@ void trap_signal_catch(void)
         /* Install the signal handler to cath SIGINT. */
         if (signal(SIGINT, trap_signal_handler) == SIG_ERR)
                 TRAP();
-
 }

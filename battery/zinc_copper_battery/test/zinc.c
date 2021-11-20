@@ -9,8 +9,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <stdio.h>   /* Standard C library: printf(). */
-#include "trap.h"    /* Exception handling: TRAP */
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -45,7 +43,7 @@ static struct {
 #if 1
 	spinlock_t   spinlock;
 #endif
-	os_thread_t  thread;
+	void         *thread;
 } zinc_cs;
 
 
@@ -78,7 +76,7 @@ static void zinc_boot(void)
 #endif
 
 	/* Create the test thread. */
-	os_thread_create(&zinc_cs.thread, "zinc", OS_THREAD_PRIO_FOREG);
+	zinc_cs.thread = os_thread_create("zinc", OS_THREAD_PRIO_FOREG, 2);
 	
 	/* Suspend the main process. */
 	os_sem_wait(&zinc_cs.suspend);
