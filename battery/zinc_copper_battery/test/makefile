@@ -16,7 +16,6 @@ FEATURE =
 
 
 # List of the van platform sources
-include ${GLOBALPATH}/tools/trap/makefile
 include ${GLOBALPATH}/os/makefile
 
 

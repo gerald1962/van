@@ -10,6 +10,7 @@
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
 #include <pthread.h>  /* POSIX thread. */
+#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -51,19 +52,19 @@ void os_cs_init(pthread_mutex_t *mutex)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(mutex == NULL);
+	OS_TRAP_IF(mutex == NULL);
 	
 	ret = pthread_mutexattr_init(&attr);
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 	
 	ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 	
 	ret = pthread_mutex_init(mutex, &attr);
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 	
 	ret = pthread_mutexattr_destroy(&attr);
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 
@@ -79,12 +80,12 @@ void os_cs_enter(pthread_mutex_t *mutex)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(mutex == NULL);
+	OS_TRAP_IF(mutex == NULL);
 	
 	ret = pthread_mutex_lock(mutex);
 	
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -99,12 +100,12 @@ void os_cs_leave(pthread_mutex_t *mutex)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(mutex == NULL);
+	OS_TRAP_IF(mutex == NULL);
 	
 	ret = pthread_mutex_unlock(mutex);
 	
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -119,12 +120,12 @@ void os_cs_destroy(pthread_mutex_t *mutex)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(mutex == NULL);
+	OS_TRAP_IF(mutex == NULL);
 	
 	ret = pthread_mutex_destroy(mutex);
 	
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -140,12 +141,12 @@ void os_sem_init(sem_t *sem, unsigned int init_value)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(sem == NULL);
+	OS_TRAP_IF(sem == NULL);
 
 	ret = sem_init(sem, 0, init_value);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -160,12 +161,12 @@ void os_sem_wait(sem_t *sem)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(sem == NULL);
+	OS_TRAP_IF(sem == NULL);
 
 	ret = sem_wait(sem);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -180,12 +181,12 @@ void os_sem_release(sem_t *sem)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(sem == NULL);
+	OS_TRAP_IF(sem == NULL);
 
 	ret = sem_post(sem);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -200,12 +201,12 @@ void os_sem_delete(sem_t *sem)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF (sem == NULL);
+	OS_TRAP_IF (sem == NULL);
 
 	ret = sem_destroy (sem);
 
 	/* Final condition. */
-	TRAP_IF (ret != 0);
+	OS_TRAP_IF (ret != 0);
 }
 
 
@@ -221,12 +222,12 @@ void os_spin_init(spinlock_t *spinlock)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(spinlock == NULL);
+	OS_TRAP_IF(spinlock == NULL);
 
 	ret = pthread_mutex_init(spinlock, NULL);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 
@@ -242,12 +243,12 @@ void os_spin_lock(spinlock_t *spinlock)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(spinlock == NULL);
+	OS_TRAP_IF(spinlock == NULL);
 
 	ret = pthread_mutex_lock(spinlock);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -262,12 +263,12 @@ void os_spin_unlock(spinlock_t *spinlock)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(spinlock == NULL);
+	OS_TRAP_IF(spinlock == NULL);
 
 	ret = pthread_mutex_unlock(spinlock);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -282,12 +283,12 @@ void os_spin_destroy(spinlock_t *spinlock)
 	int ret;
 	
 	/* Entry condition. */
-	TRAP_IF(spinlock == NULL);
+	OS_TRAP_IF(spinlock == NULL);
 
 	ret = pthread_mutex_destroy(spinlock);
 
 	/* Final condition. */
-	TRAP_IF(ret != 0);
+	OS_TRAP_IF(ret != 0);
 }
 
 /**
@@ -299,7 +300,7 @@ void os_init(void)
 {
 	/* Install a signal handler to generate a core dump, if the test
          * programm has been terminated with Ctrl-C. */
-        trap_signal_catch();
+        os_trap_init();
 
 	/* Initialize the os_malloc list. */
 	os_mem_init();

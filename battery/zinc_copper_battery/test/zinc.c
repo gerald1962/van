@@ -34,16 +34,12 @@
 /** 
  * zinc_cs - State of the battery program
  *
- * @suspend:   suspend the start thread as long as the battery exists.
- * @spinlock:  spinlock test.
- * thread:     thread data.
+ * @suspend:  suspend the start thread as long as the battery exists.
+ * @bat:      reference to the bat thread.
  **/
-static struct {
-	sem_t        suspend;
-#if 1
-	spinlock_t   spinlock;
-#endif
-	void         *thread;
+static struct zinc_cs_s {
+	sem_t   suspend;
+	void    *bat;
 } zinc_cs;
 
 
@@ -55,31 +51,93 @@ static struct {
   ============================================================================*/
 
 /**
- * zinc_boot() - iniialize the battery management.
+ * zinc_cleanup() - free the resources of the battery management.
  *
  * Return:	None.
  **/
-static void zinc_boot(void)
+static void zinc_cleanup(void)
 {
-	/* Initialize the operation system. */
+	printf("%s [main,cleanup]\n", P);
+}
+
+
+/**
+ * zinc_wait() - suspend the main thread and wait for the exit message.
+ *
+ * Return:	None.
+ **/
+static void zinc_wait(void)
+{
+	printf("%s [main,suspend]\n", P);
+	
+	/* Suspend the main process. */
+	os_sem_wait(&zinc_cs.suspend);
+	
+	printf("%s [main,resume]\n", P);
+}
+
+/**
+ * zinc_exit_exec() - execute the exit message in the bat context.
+ *
+ * @msg:  reference to the generic input message.
+ *
+ * Return:	None.
+ **/
+static void zinc_exit_exec(os_queue_elem_t *msg)
+{
+	struct zinc_cs_s  *zinc;
+	
+	printf("%s [bat,exit]\n", P);
+
+	/* Decode the reference to the zinc state. */
+	zinc = msg->param;
+
+	/* Resume the main thread. */
+	os_sem_release(&zinc->suspend);
+}
+
+/**
+ * zinc_exit_send() - send the exit message to bat thread.
+ *
+ * Return:	None.
+ **/
+static void zinc_exit_send(void)
+{
+	os_queue_elem_t msg;
+	
+	/* Send a test message. */
+	os_memset(&msg, 0, sizeof(msg));
+	msg.param = &zinc_cs;
+	msg.cb    = zinc_exit_exec;
+	os_queue_send(zinc_cs.bat, &msg, sizeof(msg));
+}
+
+/**
+ * zinc_init() - iniialize the battery management.
+ *
+ * Return:	None.
+ **/
+static void zinc_init(void)
+{
+	printf("%s [main,init]\n", P);
+
+	/* Initialize the operating system. */
 	os_init();
 
 	/* Control the lifetime of the battery. */
 	os_sem_init(&zinc_cs.suspend, 0);
 
-#if 1
-	/* Test the spinlock interfaces. */
-	os_spin_init(&zinc_cs.spinlock);
-	os_spin_lock(&zinc_cs.spinlock);
-	os_spin_unlock(&zinc_cs.spinlock);
-	os_spin_destroy(&zinc_cs.spinlock);
-#endif
+	/* Create the bat thread. */
+	zinc_cs.bat = os_thread_create("bat", OS_THREAD_PRIO_FOREG, 2);
 
-	/* Create the test thread. */
-	zinc_cs.thread = os_thread_create("zinc", OS_THREAD_PRIO_FOREG, 2);
+	/* Start the bat thread. */
+	os_thread_start(zinc_cs.bat);
+
+	/* Send the exit message to the bat thread. */
+	zinc_exit_send();
 	
-	/* Suspend the main process. */
-	os_sem_wait(&zinc_cs.suspend);
+	/* Wait for the exit message. */
+	zinc_wait();	
 }
 
 
@@ -94,10 +152,11 @@ static void zinc_boot(void)
  **/
 int main(void)
 {
-	printf("%s zinc copper battery\n", P);
-
 	/* Iniialize the battery management. */
-	zinc_boot();
+	zinc_init();
 
+	/* Free all resources. */
+	zinc_cleanup();
+	
 	return (0);
 }

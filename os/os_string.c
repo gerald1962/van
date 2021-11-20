@@ -45,8 +45,20 @@
 void *os_memset(void *s, int c, size_t n)
 {
 	/* Entry condition. */
-	TRAP_IF (s == NULL);
+	OS_TRAP_IF(s == NULL);
 	return memset(s, c, n);
+}
+
+/**
+ * os_memcpy() - memset with additional assertions.
+ *
+ * see memcpy
+ **/
+void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(dest == NULL || src == NULL || src_n < 1 || src_n > dest_n);
+	return memcpy(dest, src, src_n);
 }
 
 /**
@@ -57,8 +69,8 @@ void *os_memset(void *s, int c, size_t n)
 size_t os_strnlen(const char *s, size_t maxlen)
 {
 	/* Entry condition. */
-	TRAP_IF (s == NULL || maxlen > OS_MAX_STRING_LEN);
-	return strnlen (s, maxlen);
+	OS_TRAP_IF(s == NULL || maxlen > OS_MAX_STRING_LEN);
+	return strnlen(s, maxlen);
 }
 
 /**
@@ -71,12 +83,12 @@ size_t os_strlen(const char *s)
 	size_t len;
 	
 	/* Entry condition. */
-	TRAP_IF (s == NULL);
+	OS_TRAP_IF(s == NULL);
 
-	len = strlen (s);
+	len = strlen(s);
 
 	/* Final condition. */
-	TRAP_IF (len > OS_MAX_STRING_LEN);
+	OS_TRAP_IF(len > OS_MAX_STRING_LEN);
 
 	return len;
 }
@@ -91,14 +103,14 @@ char *os_strcpy(char *dest, int dest_n, const char *src)
 	size_t src_n;
 
 	/* Entry condition. */
-	TRAP_IF (dest == NULL || dest_n < 1);
+	OS_TRAP_IF(dest == NULL || dest_n < 1);
 
 	/* Initialize the destination string. */
 	*dest = '\0';
 
 	/* Calculate the length of the source string. */
-	src_n = os_strnlen (src, dest_n);
-	TRAP_IF (src_n >= dest_n);
+	src_n = os_strnlen(src, dest_n);
+	OS_TRAP_IF(src_n >= dest_n);
 
 	return strcpy(dest, src);
 }
@@ -112,6 +124,6 @@ char *os_strcpy(char *dest, int dest_n, const char *src)
 int os_strcmp(const char *s1, const char *s2)
 {
 	/* Entry condition. */
-	TRAP_IF (s1 == NULL || s2 == NULL);
+	OS_TRAP_IF(s1 == NULL || s2 == NULL);
 	return strcmp(s1, s2);
 }

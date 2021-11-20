@@ -15,6 +15,8 @@
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
+
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
@@ -45,8 +47,8 @@ void os_trap_handler(int signo)
 {
         /* Catch Ctrl-C. */
         if (signo == SIGINT) {
-                printf ("%s: received SIGINT, generate a core dump.\n", F);
-                raise (SIGABRT);
+                printf("%s: received SIGINT, generate a core dump.\n", F);
+                raise(SIGABRT);
         }
 }
 
@@ -60,7 +62,7 @@ void os_trap_catch(void)
 {
         /* Install the signal handler to cath SIGINT. */
         if (signal(SIGINT, os_trap_handler) == SIG_ERR)
-                TRAP();
+                OS_TRAP();
 }
 
 /*============================================================================
@@ -78,10 +80,10 @@ void os_trap_catch(void)
  **/
 void os_trap(char *file, const char *function, unsigned long line)
 {
-	printf ("*** core dump at \"%s\", \"%s\", %lu\n", file, function, line);
+	printf("*** core dump at \"%s\", \"%s\", %lu\n", file, function, line);
 
 	/* Force a core dump. */
-	raise (SIGABRT);
+	raise(SIGABRT);
 }
 
 
@@ -93,5 +95,5 @@ void os_trap(char *file, const char *function, unsigned long line)
 void os_trap_init(void)
 {
 	/* Install the signal handler for the core dump. */
-	os_trap_catch ();
+	os_trap_catch();
 }

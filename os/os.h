@@ -7,7 +7,6 @@
   ============================================================================*/
 #include <stdio.h>      /* Standard C library:   printf(). */
 #include <semaphore.h>  /* Semaphore operations: sem_t. */
-#include "trap.h"       /* Exception handling:   TRAP */
 
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
@@ -51,6 +50,14 @@
 /* Wrapper for os_mallo(). */
 #define OS_MALLOC(size_)  os_malloc(size_, __FILE__, __LINE__)
 
+/* XXX FEATURE */
+#define OS_DEBUG
+#if defined (OS_DEBUG)
+#define OS_TRACE(info_)  do { printf info_ ; } while (0)
+#else
+#define OS_TRACE(info_)
+#endif
+
 /*============================================================================
   TYPE DEFINITIONS
   ============================================================================*/
@@ -74,14 +81,38 @@ typedef enum {
 	OS_THREAD_PRIO_DEFAULT = 5
 } os_thread_prio_t;
 
+/* Forward declaration of the generic message. */
+typedef struct os_queue_elem_s os_queue_elem_t;
+
+/* Callback for the received message. */
+typedef void os_queue_cb_t(os_queue_elem_t *msg);
+
+/**
+ * OS_QUEUE_MSG_HEAD - generic message header.
+ *
+ * @next:   pointer to the next queue element.
+ * @param:  generic message parameter.
+ * @cb:     callback for the message processing.
+ **/
+#define OS_QUEUE_MSG_HEAD \
+    struct os_queue_elem_s  *next; \
+    void           *param; \
+    os_queue_cb_t  *cb;
+
+struct os_queue_elem_s {
+    OS_QUEUE_MSG_HEAD;
+};
+
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+/* Bootstrapping. */
+void os_init(void);
 
-/* Traps. */
+/* Traps handling. */
 void os_trap(char *file, const char *function, unsigned long line);
 
 /* Dynamic memory. */
@@ -90,6 +121,7 @@ void *os_malloc(size_t size, char *file, unsigned long line);
 
 /* Memory and string. */
 void *os_memset(void *s, int c, size_t n);
+void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n);
 size_t os_strnlen(const char *s, size_t maxlen);
 size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);
@@ -117,10 +149,7 @@ void os_spin_destroy(spinlock_t *spinlock);
 void *os_thread_create(const char *name, os_thread_prio_t prio, int queue_size);
 void os_thread_start(void *thread);
 
-/* Bootstrapping. */
-void os_thread_init(void);
-void os_mem_init(void);
-void os_trap_init(void);
-void os_init(void);
+/* Message queue. */
+void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
 #endif /* __os_h__ */

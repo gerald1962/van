@@ -9,12 +9,14 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <stdlib.h>  /* Memory operations: malloc(). */
-#include "os.h"      /* Operating system: os_sem_create() */
+#include <stdlib.h>   /* Memory operations: malloc(). */
+#include "os.h"       /* Operating system: os_sem_create() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
+
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
@@ -125,7 +127,7 @@ static os_mem_elem_t *os_mem_elem_alloc(os_mem_list_t *p)
                         next = 0;
 
                 /* Test the list state. */
-                TRAP_IF (next == last);
+                OS_TRAP_IF(next == last);
 
                 /* Test the state of the list element. */
                 if (! list[next].allocated) {
@@ -177,18 +179,18 @@ static int os_mem_file_idx(os_mem_list_t *p, char *file)
         }
 
         /* Test the free index. */
-        TRAP_IF (free < 0);
+        OS_TRAP_IF(free < 0);
 
         /* Create a new file name element. */
         len = os_strlen(file) + 1;
         list[free] = malloc (len);
-        TRAP_IF (list[free] == NULL);
+        OS_TRAP_IF (list[free] == NULL);
 
 	/* Increment the malloc counter. */
 	p->malloc_c++;
 
         /* Save the file name. */
-        os_strcpy (list[free], len, file);
+        os_strcpy(list[free], len, file);
 
         return free;
 }
@@ -211,10 +213,10 @@ static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
         p = &os_mem_list;
 
         /* Enter the critical section. */
-        os_cs_enter (&p->protect);
+        os_cs_enter(&p->protect);
 
         /* Map the file name to index. */
-        idx = os_mem_file_idx (p, file);
+        idx = os_mem_file_idx(p, file);
 
         /* Get os_malloc element. */
         elem = os_mem_elem_alloc (p);
@@ -227,7 +229,7 @@ static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
         elem->line     = line;
 
         /* Leave the critical section. */
-        os_cs_leave (&p->protect);
+        os_cs_leave(&p->protect);
 
         return elem;
 }
@@ -247,7 +249,7 @@ static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
 void os_free(void *ptr)
 {
 	/* Entry condition. */
-	TRAP_IF (ptr == NULL);
+	OS_TRAP_IF (ptr == NULL);
 }
 
 /**
@@ -266,11 +268,11 @@ void *os_malloc(size_t size, char *file, unsigned long line)
         os_mem_t  *mem;
 	
 	/* Entry condition. */
-	TRAP_IF (size < 1);
+	OS_TRAP_IF(size < 1);
 
         /* Request memory from the OS. */
         mem = malloc(size + sizeof(os_mem_t));
-        TRAP_IF(mem == NULL);
+        OS_TRAP_IF(mem == NULL);
 
         /* Save the start address. */
         mem->ptr.start = (char *) mem + sizeof(os_mem_t);
