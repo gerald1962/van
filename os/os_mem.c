@@ -9,13 +9,13 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <stdlib.h>   /* Memory operations: malloc(). */
-#include "os.h"       /* Operating system: os_sem_create() */
+#include <stdlib.h>      /* Memory operations: malloc(). */
+#include "os.h"          /* Operating system: os_sem_create() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
+#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS

@@ -9,14 +9,14 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <string.h>   /* String operations. */
-#include <pthread.h>  /* POSIX thread. */
-#include "os.h"       /* Operating system: os_sem_create() */
+#include <string.h>      /* String operations. */
+#include <pthread.h>     /* POSIX thread. */
+#include "os.h"          /* Operating system: os_sem_create() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
+#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
@@ -48,13 +48,14 @@ typedef struct {
     volatile int     is_running;
 } os_queue_t;
 
-/* States of an os_thread. */
+/* XXX */
 /**
  * os_thread_state_t- states of an os_thread.
  *
  * @OS_THREAD_INIT:     initialisation phase of the thread.
  * @OS_THREAD_BOOT:     created but not started.
  * @OS_THREAD_READY:    ready to process messages.
+ * @OS_THREAD_FROZEN:   disabled input queue: effect(os_queue_disable(t)).
  * @OS_THREAD_FNISHED:  inactive thread callback.
  * @OS_THREAD_INVALID:  undefined.
  **/
@@ -87,6 +88,7 @@ typedef struct {
  * @name:       name of the thread.
  * @state:      current state of the pthread.
  * @prio:       thread priority.
+ * @door:       mutex for the critical sections.
  * @attr:       thread attribute like SCHED_RR.
  * @pthread:    pthread object.
  * @suspend_p:  suspend the caller - parent thread - in os_thread_create().
@@ -99,6 +101,10 @@ typedef struct {
 	os_thread_state_t  state;
 	os_thread_prio_t   prio;
 	pthread_attr_t     attr;
+	/* XXX */
+#if 0
+	pthread_mutex_t    door;
+#endif
 	pthread_t          pthread;
 	os_sync_t          suspend_p;
 	os_sync_t          suspend_c;
@@ -406,6 +412,51 @@ static void os_pthread_once_init(void)
 	OS_TRAP_IF(ret != 0);
 }
 
+/* XXX */
+#if 0
+/**
+ * os_thread_state_get() - provide current thread state.
+ *
+ * @thread: pointer to the os_thread.
+ * Return:	the thread state.
+ **/
+static os_thread_state_t os_thread_state_get(os_thread_t *thread)
+{
+	os_thread_state_t state;
+
+	/* Enter the critical section. */
+	os_cs_enter(&thread.door);
+
+	/* Copy the thread state. */
+	state = thread->state;
+
+	/* Leave the critical section. */
+	os_cs_leave(&thread.door);
+
+	return state;
+}
+
+/**
+ * os_thread_state_set() - change the thread state.
+ *
+ * @thread: pointer to the os_thread.
+ * @state:  new thread state.
+ * Return:	None.
+ **/
+static void os_thread_state_set(os_thread_t *thread, os_thread_state_t state)
+{
+	/* Enter the critical section. */
+	os_cs_enter(&thread.door);
+
+	/* Update the thread state. */
+	thread->state = state;
+
+	/* Leave the critical section. */
+	os_cs_leave(&thread.door);
+
+}
+#endif
+
 /**
  * os_thread_start_cb() - callback of the thread.
  *
@@ -446,9 +497,15 @@ static void *os_thread_start_cb(void *arg)
 	/* Start the message queue handler. */
 	os_thread_cb(thread);
 
-	/* Change the os_thread state. */
+	/* XXX */
+#if 0
+	/* Change the thread state. */
+	os_thread_state_set(OS_THREAD_FINISHED);
+#else
+	/* Change the thread state. */
 	thread->state = OS_THREAD_FINISHED;
-
+#endif
+	
 	/* This statement can never be executed. */
 	OS_TRAP();
 	
@@ -548,7 +605,17 @@ void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size)
 
 	/* Decode the reference to the os_thread. */
 	thread = g_thread;
-	
+
+	/* XXX */
+#if 0
+	/* Test the thread state. */
+	os_thread_state_t state;
+	state = os_thread_state_get(thread);
+	OS_TRAP_IF(state != OS_THREAD_READY);
+#else
+	/* Test the thread state. */
+	OS_TRAP_IF(thread->state != OS_THREAD_READY);
+#endif
 	/* Test the thread state. */
 	OS_TRAP_IF(thread->state != OS_THREAD_READY);
 	
@@ -638,8 +705,18 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	os_memset(thread->name, 0, sizeof(thread->name));
 	os_strcpy(thread->name, sizeof(thread->name), name);
 
-	/* Complete the thread state. */
+	/* XXX */
+#if 0
+	/* Create the mutex for the critical sections. */
+	os_cs_init(&thread.door);
+
+	/* Initialize the thread state. */
+	os_thread_state_set(OS_THREAD_INIT);
+#else
 	thread->state = OS_THREAD_INIT;
+#endif
+	
+	/* Save the thread prioriiy. */
 	thread->prio  = prio;
 
 	/* Initialize the synchronization elements. */
@@ -658,11 +735,24 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	/* Suspend the caller and wait for the thread start. */
 	os_sync_wait(&thread->suspend_p);
 
+	/* XXX */
+#if 0
+	/* Update the thread state. */
+	os_thread_state_set(OS_THREAD_BOOT);
+#else
 	/* Update the thread state. */
 	thread->state = OS_THREAD_BOOT;
-
+#endif
 	return thread;
 }
+
+	/* XXX */
+#if 0
+void os_thread_delete(void *g_thread)
+{
+	/* Destroy the door mutex. */
+}
+#endif
 
 /**
  * os_thread_start() - activate the callback for the message processing.
@@ -681,14 +771,26 @@ void os_thread_start(void *g_thread)
 	/* Decode the reference to the os_thread. */
 	thread = g_thread;
 
+	/* XXX */
+#if 0
+	os_thread_state_t state;
+	state = os_thread_state_get(thread);
+#endif
+	
 	/* Analyze the thread state. */
 	switch (thread->state) {
 	case OS_THREAD_BOOT:
 		/* Resume the child thread. */
 		os_sync_complete(&thread->suspend_c);
 		
+	/* XXX */
+#if 0
+		/* Change the os_thread state. */
+		os_thread_state_set(OS_THREAD_READY);
+#else
 		/* Change the os_thread state. */
 		thread->state = OS_THREAD_READY;
+#endif
 		break;
 
 	default:
@@ -697,6 +799,73 @@ void os_thread_start(void *g_thread)
 		break;
     }
 }
+
+	/* XXX */
+#if 0
+/* Test the queue state of all threads. */
+stat = os_thread_is_inactive();
+
+/**
+ * os_thread_is_inactive() - i
+ *
+ * Return:	1, if the thread state is OS_THREAD_FROZEN triggered by ???  and
+ * the input queues are empty.
+ **/
+int os_thread_is_inactive(void)
+{
+	struct os_thread_list_s *list;
+	os_thread_elem_t *elem;
+	os_thread_state_t state;
+	int i, stat;
+
+	/* Initialize the return value. */
+	stat = 0;
+	
+	/* Get the address of the thread list. */
+	list = &os_thread_list;
+	
+	/* Get the address of the first list element. */
+	elem = list->elem;
+
+	/* Enter the critical section. */
+	os_cs_enter(&list->protect);
+	
+	/* Search for a free table entry. */
+	for (i = 0; i < OS_THREAD_LIMIT; i++, elem++) {
+		/* Test the element state. */
+		if (! elem->is_in_use)
+			continue;
+
+		/* Test the thread state. */
+		state = os_thread_state_get(elem->thread);
+		if (state != OS_THREAD_FROZEN)
+			break;
+	}
+
+	/* Leave the critical section. */
+	os_cs_leave(&list->protect);
+
+	return stat;
+
+	/* Test the table state. */
+	OS_TRAP_IF(i >= OS_THREAD_LIMIT);
+
+	/* Allocate a thread list element. */
+	elem->idx       = i;
+	elem->is_in_use = 1;
+	
+	list->count++;
+
+	/* Save the index. */
+	elem->thread.idx = i;
+
+	/* Initialize the input queue of the thread. */
+	os_queue_init(&elem->thread, q_size);
+	
+	/* Leave the critical section. */
+	os_cs_leave(&list->protect);
+}
+#endif
 
 /**
  * os_thread_init() - initialize the thread list.

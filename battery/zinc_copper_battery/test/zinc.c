@@ -35,11 +35,11 @@
  * zinc_cs - State of the battery program
  *
  * @suspend:  suspend the start thread as long as the battery exists.
- * @bat:      reference to the bat thread.
+ * @con:      reference to the controller thread.
  **/
 static struct zinc_cs_s {
 	sem_t   suspend;
-	void    *bat;
+	void    *con;
 } zinc_cs;
 
 
@@ -77,7 +77,7 @@ static void zinc_wait(void)
 }
 
 /**
- * zinc_exit_exec() - execute the exit message in the bat context.
+ * zinc_exit_exec() - execute the exit message in the controller context.
  *
  * @msg:  reference to the generic input message.
  *
@@ -85,19 +85,23 @@ static void zinc_wait(void)
  **/
 static void zinc_exit_exec(os_queue_elem_t *msg)
 {
-	struct zinc_cs_s  *zinc;
-	
-	printf("%s [bat,exit]\n", P);
+	printf("%s [con,exit]\n", P);
 
-	/* Decode the reference to the zinc state. */
-	zinc = msg->param;
+	/* Entry condition. */
+	OS_TRAP_IF(msg == NULL || msg->param != zinc_cs.con);
 
+	/* XXX */
+#if 0
+	/* If a client sends a message after the operation 'disable queue', the
+	 *  thread triggers a core dump. */
+	os_queue_disable(zinc_cs.con);
+#endif
 	/* Resume the main thread. */
-	os_sem_release(&zinc->suspend);
+	os_sem_release(&zinc_cs.suspend);
 }
 
 /**
- * zinc_exit_send() - send the exit message to bat thread.
+ * zinc_exit_send() - send the exit message to controller thread.
  *
  * Return:	None.
  **/
@@ -107,9 +111,9 @@ static void zinc_exit_send(void)
 	
 	/* Send a test message. */
 	os_memset(&msg, 0, sizeof(msg));
-	msg.param = &zinc_cs;
+	msg.param = zinc_cs.con;
 	msg.cb    = zinc_exit_exec;
-	os_queue_send(zinc_cs.bat, &msg, sizeof(msg));
+	os_queue_send(zinc_cs.con, &msg, sizeof(msg));
 }
 
 /**
@@ -127,13 +131,13 @@ static void zinc_init(void)
 	/* Control the lifetime of the battery. */
 	os_sem_init(&zinc_cs.suspend, 0);
 
-	/* Create the bat thread. */
-	zinc_cs.bat = os_thread_create("bat", OS_THREAD_PRIO_FOREG, 2);
+	/* Create the controller thread. */
+	zinc_cs.con = os_thread_create("con", OS_THREAD_PRIO_FOREG, 2);
 
-	/* Start the bat thread. */
-	os_thread_start(zinc_cs.bat);
+	/* Start the controller thread. */
+	os_thread_start(zinc_cs.con);
 
-	/* Send the exit message to the bat thread. */
+	/* Send the exit message to the controller thread. */
 	zinc_exit_send();
 	
 	/* Wait for the exit message. */

@@ -9,8 +9,8 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <pthread.h>  /* POSIX thread. */
-#include "os_boot.h"  /* OS bootstrapping: os_trap_init() */
+#include <pthread.h>     /* POSIX thread. */
+#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -291,6 +291,44 @@ void os_spin_destroy(spinlock_t *spinlock)
 	OS_TRAP_IF(ret != 0);
 }
 
+/* XXX */
+#if 0
+/* Overall state of the operation system. */
+/**
+ * os_stat - vverall state of the OS.
+ *
+ * @door:  mutex for a critical section.
+ **/
+static struct
+{
+	pthread_mutex_t door;
+} os_stat:
+#endif
+
+/* XXX */
+#if 0
+/**
+ * os_is_idle() - test the idle state of all threads.
+ *
+ * Return:	1 if all threads are idle otherwise 0.
+ **/
+int os_is_idle(void)
+{
+	int stat;
+	
+	/* Enter the critical. */
+	os_cs_enter(&os_stat.door);
+
+	/* Test the queue state of all threads. */
+	stat = os_thread_is_inactive();
+	
+	/* Leave the critical section. */
+	os_cs_leave(&os_stat.door);
+
+	return stat;
+}
+#endif
+
 /**
  * os_init() - initialize the operation system.
  *
@@ -301,6 +339,12 @@ void os_init(void)
 	/* Install a signal handler to generate a core dump, if the test
          * programm has been terminated with Ctrl-C. */
         os_trap_init();
+
+	/* XXX */
+#if 0
+	/* Initialize the mutex for the critical section. */
+	os_cs_init (&os_stat.door);
+#endif
 
 	/* Initialize the os_malloc list. */
 	os_mem_init();
