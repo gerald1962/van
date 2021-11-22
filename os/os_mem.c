@@ -48,7 +48,7 @@ typedef struct {
 
 /* State of the malloc table. */
 /**
- * os_mem_list_t - list for the os_malloc calls.
+ * os_mem_stat_t - list for the os_malloc calls.
  *
  * @protect:   mutex for the critical section.
  * @file:      file list.
@@ -65,7 +65,7 @@ typedef struct {
         unsigned long     malloc_c;
         unsigned long     free_c;
         os_mem_elem_t     elem[OS_MALLOC_LIMIT];
-} os_mem_list_t;
+} os_mem_stat_t;
 
 /**
  * os_mem_t - start addess of the memory allocated with malloc().
@@ -87,7 +87,7 @@ typedef struct {
   ============================================================================*/
 
 /* State of the os_malloc list. */
-static os_mem_list_t os_mem_list;
+static os_mem_stat_t os_mem_stat;
 
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -97,13 +97,53 @@ static os_mem_list_t os_mem_list;
   ============================================================================*/
 
 /**
+ * os_mem_elem_put() - free an os_malloc element.
+ *
+ * @idx:  index of the reserved list element.
+ * @ptr:  address of the external os_malloc buffer.
+ *
+ * Return:     None.
+ **/
+static void os_mem_elem_put(int idx, void *ptr)
+{
+	os_mem_stat_t *p;
+	os_mem_elem_t *elem;
+	
+	/* Get the reference of the os_malloc list. */
+        p = &os_mem_stat;
+
+        /* Enter the critical section. */
+        os_cs_enter(&p->protect);
+
+        /* Entry condition. */
+        OS_TRAP_IF(idx < 0 || idx >= OS_MALLOC_LIMIT);
+
+
+        /* Get the reference of the os_malloc element. */
+        elem = &p->elem[idx];
+
+        /* Test the element state. */
+        OS_TRAP_IF((! elem->allocated) || elem->start != ptr);
+
+        /* Reset the os_malloc element. */
+        elem->allocated = 0;
+
+        /* Increment the free counter. */
+        p->free_c++;
+	
+	/* Leave the critical section. */
+        os_cs_leave(&p->protect);
+
+}
+
+/**
  * os_mem_elem_alloc() - get a new os_malloc element.
  *
  * @p:     address of the os_malloc state.
  *
  * Return:     the os_malloc element.
  **/
-static os_mem_elem_t *os_mem_elem_alloc(os_mem_list_t *p)
+static os_mem_elem_t *os_mem_elem_alloc(os_mem_stat_t *p)
 {
         os_mem_elem_t *elem, *list;
         int  next, last;
@@ -139,7 +179,7 @@ static os_mem_elem_t *os_mem_elem_alloc(os_mem_list_t *p)
 
         return elem;
 
-} /* ipc_malloc_elem_reserve */
+}
 
 /**
  * os_mem_file_idx() - map the file name to index.
@@ -149,7 +189,7 @@ static os_mem_elem_t *os_mem_elem_alloc(os_mem_list_t *p)
  *
  * Return:	the file index.
  **/
-static int os_mem_file_idx(os_mem_list_t *p, char *file)
+static int os_mem_file_idx(os_mem_stat_t *p, char *file)
 {
         int      i, free;
         char   **list;
@@ -186,9 +226,6 @@ static int os_mem_file_idx(os_mem_list_t *p, char *file)
         list[free] = malloc (len);
         OS_TRAP_IF (list[free] == NULL);
 
-	/* Increment the malloc counter. */
-	p->malloc_c++;
-
         /* Save the file name. */
         os_strcpy(list[free], len, file);
 
@@ -205,12 +242,12 @@ static int os_mem_file_idx(os_mem_list_t *p, char *file)
  **/
 static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
 {
-        os_mem_list_t *p;
+        os_mem_stat_t *p;
         os_mem_elem_t *elem;
         int idx;
 
         /* Get the reference of the os_malloc list. */
-        p = &os_mem_list;
+        p = &os_mem_stat;
 
         /* Enter the critical section. */
         os_cs_enter(&p->protect);
@@ -237,20 +274,6 @@ static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
-
-/**
- * os_free() - frees the memory space pointed to by ptr, which must have been
- * returned by a previous call to os_malloc().
- *
- * @ptr:  start address of the allocated memory.
- *
- * Return:	None.
- **/
-void os_free(void *ptr)
-{
-	/* Entry condition. */
-	OS_TRAP_IF (ptr == NULL);
-}
 
 /**
  * os_malloc() - allocates size bytes and returns a pointer to the allocated
@@ -290,6 +313,42 @@ void *os_malloc(size_t size, char *file, unsigned long line)
 }
 
 /**
+ * os_free() - frees the memory space pointed to by ptr, which must have been
+ * returned by a previous call to os_malloc().
+ *
+ * @ptr:  start address of the allocated memory.
+ *
+ * Return:	None.
+ **/
+void os_free(void **ptr)
+{
+	os_mem_t  *mem;
+	
+	/* Entry condition. */
+	OS_TRAP_IF (ptr == NULL || *ptr == NULL);
+
+	/* Calculate the start of the allocated memory. */
+        mem = (os_mem_t *) ((char *) *ptr - sizeof (os_mem_t));
+
+        /* Free the list element. */
+        os_mem_elem_put(mem->list_idx, mem->ptr.start);
+
+        /* Free the allocated buffer. */
+        free(mem);
+
+	/* Reset the pointer. */
+	*ptr = NULL;
+}
+
+/* XXX */
+#if 0
+void os_mem_cleanup(void)
+{
+	/* Free the file names. */
+}
+#endif
+
+/**
  * os_mem_init() - initialize the os_malloc list.
  *
  * Return:	None.
@@ -300,10 +359,10 @@ void os_mem_init(void)
         int i;
 
         /* Initialize the mutex for critical section. */
-        os_cs_init(&os_mem_list.protect);
+        os_cs_init(&os_mem_stat.protect);
 
         /* Get the reference to the first element. */
-        elem = os_mem_list.elem;
+        elem = os_mem_stat.elem;
 
         /* Run thru the os_malloc list. */
         for (i = 0; i < OS_MALLOC_LIMIT; i++, elem++) {

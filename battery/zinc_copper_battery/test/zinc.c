@@ -32,15 +32,15 @@
   ============================================================================*/
 
 /** 
- * zinc_cs - State of the battery program
+ * zinc_stat - State of the battery program
  *
  * @suspend:  suspend the start thread as long as the battery exists.
  * @con:      reference to the controller thread.
  **/
-static struct zinc_cs_s {
+static struct zinc_stat_s {
 	sem_t   suspend;
 	void    *con;
-} zinc_cs;
+} zinc_stat;
 
 
 /*============================================================================
@@ -57,7 +57,14 @@ static struct zinc_cs_s {
  **/
 static void zinc_cleanup(void)
 {
-	printf("%s [main,cleanup]\n", P);
+	void *con;
+	
+	printf("%s [p=main,s=exit,o=cleanup]\n", P);
+
+	/* Destroy the controller thread. */
+	con = zinc_stat.con;
+	zinc_stat.con = NULL;
+	os_thread_delete(con);
 }
 
 
@@ -68,12 +75,12 @@ static void zinc_cleanup(void)
  **/
 static void zinc_wait(void)
 {
-	printf("%s [main,suspend]\n", P);
+	printf("%s [p=main,s=done,o=suspend]\n", P);
 	
 	/* Suspend the main process. */
-	os_sem_wait(&zinc_cs.suspend);
+	os_sem_wait(&zinc_stat.suspend);
 	
-	printf("%s [main,resume]\n", P);
+	printf("%s [p=main,s=exit,o=resume]\n", P);
 }
 
 /**
@@ -85,19 +92,13 @@ static void zinc_wait(void)
  **/
 static void zinc_exit_exec(os_queue_elem_t *msg)
 {
-	printf("%s [con,exit]\n", P);
+	printf("%s [t=con,s=jobs,m=exit]\n", P);
 
 	/* Entry condition. */
-	OS_TRAP_IF(msg == NULL || msg->param != zinc_cs.con);
+	OS_TRAP_IF(msg == NULL || msg->param != zinc_stat.con);
 
-	/* XXX */
-#if 0
-	/* If a client sends a message after the operation 'disable queue', the
-	 *  thread triggers a core dump. */
-	os_queue_disable(zinc_cs.con);
-#endif
 	/* Resume the main thread. */
-	os_sem_release(&zinc_cs.suspend);
+	os_sem_release(&zinc_stat.suspend);
 }
 
 /**
@@ -111,9 +112,9 @@ static void zinc_exit_send(void)
 	
 	/* Send a test message. */
 	os_memset(&msg, 0, sizeof(msg));
-	msg.param = zinc_cs.con;
+	msg.param = zinc_stat.con;
 	msg.cb    = zinc_exit_exec;
-	os_queue_send(zinc_cs.con, &msg, sizeof(msg));
+	os_queue_send(zinc_stat.con, &msg, sizeof(msg));
 }
 
 /**
@@ -123,19 +124,19 @@ static void zinc_exit_send(void)
  **/
 static void zinc_init(void)
 {
-	printf("%s [main,init]\n", P);
+	printf("%s [p=main,s=boot,o=init]\n", P);
 
 	/* Initialize the operating system. */
 	os_init();
 
 	/* Control the lifetime of the battery. */
-	os_sem_init(&zinc_cs.suspend, 0);
+	os_sem_init(&zinc_stat.suspend, 0);
 
 	/* Create the controller thread. */
-	zinc_cs.con = os_thread_create("con", OS_THREAD_PRIO_FOREG, 2);
+	zinc_stat.con = os_thread_create("con", OS_THREAD_PRIO_FOREG, 2);
 
 	/* Start the controller thread. */
-	os_thread_start(zinc_cs.con);
+	os_thread_start(zinc_stat.con);
 
 	/* Send the exit message to the controller thread. */
 	zinc_exit_send();

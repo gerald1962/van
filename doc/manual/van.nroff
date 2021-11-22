@@ -11,44 +11,41 @@
 .\"   --> Header/footers: Set short title, author(s), and dates:
 .ds CH 2-nroff.template                  \" <Short title>
 .ds LF Schueller, Gerald                 \" <Authors>
-.ds RH November 18, 2021                 \" <Submission date>
+.ds RH November 21, 2021                 \" <Submission date>
 .ds CF Expires January 2022              \" <Expiration date>
 .hy 0
 .ad l
 .nf
 .\" 5678901234567 check 72 column width 12345678901234567890123456789012
 VRFB Draft                                                    G. Schueller
-VRFB Working Group                                            Holger Fink
+VRFB Working Group                                            Adrian Posner
 Category: Experimental                                        USC ISI
-Expires January 2022                                          November 14, 2021
+Expires January 2022                                          November 21, 2021
 
 .ce
-Using Wikipedia and Linux for the VAN framework
+Battery Simulation Framework (BAF)
 .ce
-to simulate Vanadium Redox Flow Batteries
 
 .in 3              \"  Basic indent for text is 3 spaces
 .ti 0              \"  "Temporary indent" for next line: 0 spaces
 Status of this Memo
 
-This memo defines an Experimental Architecture for the Battery
-community. This memo does not specify a Battery standard of any
-kind.  Distribution of this memo is unlimited.
+This memo specifies a framework for the Battery community, and requests
+discussion and suggestions for improvements. Please refer to Model-based
+Design and Optimaztion of Vanadium Redox Flow Batteries.
 
 .ti 0
 Abstract
 
-This memo defines how to simulate batteries.
+The Battery Simulation Framework provides a standard method for transporting messages
+over battery links. ...
 
 .in 0
 Table of Contents
 
 .nf
    1. Introduction
-   2. Building with gcc
-   3. Linux kernel sources as pattern
-   4. Emacs configuration
-   5. Integration abstractions over Makefiles
+   2. Battery Link Operations
    ...
 .fi
 .in 3 

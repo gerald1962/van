@@ -1,29 +1,29 @@
 VRFB Draft                                                    G. Schueller
-VRFB Working Group                                            Holger Fink
+VRFB Working Group                                            Adrian Posner
 Category: Experimental                                        USC ISI
-Expires January 2022                                          November 14, 2021
+Expires January 2022                                          November 21, 2021
 
-            Using Wikipedia and Linux for the VAN framework
-               to simulate Vanadium Redox Flow Batteries
+                   Battery Simulation Framework (BAF)
 
-Status of this Memo
+                          Status of this Memo
 
-   This memo defines an Experimental Architecture for the Battery
-   community. This memo does not specify a Battery standard of any
-   kind.  Distribution of this memo is unlimited.
+   This memo specifies a framework for the Battery community, and requests
+   discussion and suggestions for improvements. Please refer to Model-based
+   Design and Optimaztion of Vanadium Redox Flow Batteries.
 
 Abstract
 
-   This memo defines how to simulate batteries.
+   The Battery Simulation Framework provides a standard method for transporting messages
+   over battery links. ...
 
 Table of Contents
 
    1. Introduction
-   2. Building with gcc
-   3. Linux kernel sources as pattern
-   4. Emacs configuration
-   5. Integration abstractions over Makefiles
+   2. Battery Link Operations
    ...
+
+
+
 
 
 

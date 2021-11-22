@@ -29,6 +29,21 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/**
+ * os_stat - overall state of the OS.
+ *
+ * @door:        mutex for a critical section.
+ * @cs_count:    number of created mutexes.
+ * @sem_count:   number of created semaphores.
+ * @spin_count:  number of created spin locks.
+ **/
+static struct
+{
+	atomic_int cs_count;
+	atomic_int sem_count;
+	atomic_int spin_count;
+} os_stat;
+
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
@@ -65,6 +80,8 @@ void os_cs_init(pthread_mutex_t *mutex)
 	
 	ret = pthread_mutexattr_destroy(&attr);
 	OS_TRAP_IF(ret != 0);
+
+	atomic_fetch_add(&os_stat.cs_count, 1);
 }
 
 
@@ -126,6 +143,8 @@ void os_cs_destroy(pthread_mutex_t *mutex)
 	
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
+	
+	atomic_fetch_sub(&os_stat.cs_count, 1);
 }
 
 /**
@@ -147,6 +166,8 @@ void os_sem_init(sem_t *sem, unsigned int init_value)
 
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
+
+	atomic_fetch_add(&os_stat.sem_count, 1);	
 }
 
 /**
@@ -207,6 +228,8 @@ void os_sem_delete(sem_t *sem)
 
 	/* Final condition. */
 	OS_TRAP_IF (ret != 0);
+	
+	atomic_fetch_sub(&os_stat.sem_count, 1);	
 }
 
 
@@ -228,6 +251,8 @@ void os_spin_init(spinlock_t *spinlock)
 
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
+	
+	atomic_fetch_add(&os_stat.spin_count, 1);
 }
 
 
@@ -289,19 +314,27 @@ void os_spin_destroy(spinlock_t *spinlock)
 
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
+	
+	atomic_fetch_sub(&os_stat.spin_count, 1);
 }
 
 /* XXX */
 #if 0
 /* Overall state of the operation system. */
 /**
- * os_stat - vverall state of the OS.
+ * os_stat - overall state of the OS.
  *
- * @door:  mutex for a critical section.
+ * @door:        mutex for a critical section.
+ * @cs_count:    number of created mutexes.
+ * @sem_count:   number of created semaphores.
+ * @spin_count:  number of created spin locks.
  **/
 static struct
 {
 	pthread_mutex_t door;
+	int cs_count;
+	int sem_count;
+	int spin_count;
 } os_stat:
 #endif
 
@@ -340,7 +373,6 @@ void os_init(void)
          * programm has been terminated with Ctrl-C. */
         os_trap_init();
 
-	/* XXX */
 #if 0
 	/* Initialize the mutex for the critical section. */
 	os_cs_init (&os_stat.door);

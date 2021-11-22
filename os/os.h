@@ -47,8 +47,9 @@
         } \
     } while (0)
 
-/* Wrapper for os_mallo(). */
-#define OS_MALLOC(size_)  os_malloc(size_, __FILE__, __LINE__)
+/* Wrapper for os_mallo() and os_free. */
+#define OS_MALLOC(size_)  os_malloc((size_), __FILE__, __LINE__)
+#define OS_FREE(ptr_)     os_free((void **) &(ptr_))
 
 /* XXX FEATURE */
 #define OS_DEBUG
@@ -116,8 +117,8 @@ void os_init(void);
 void os_trap(char *file, const char *function, unsigned long line);
 
 /* Dynamic memory. */
-void os_free(void *ptr);
 void *os_malloc(size_t size, char *file, unsigned long line);
+void os_free(void **ptr);
 
 /* Memory and string. */
 void *os_memset(void *s, int c, size_t n);
@@ -148,6 +149,7 @@ void os_spin_destroy(spinlock_t *spinlock);
 /* Threads. */
 void *os_thread_create(const char *name, os_thread_prio_t prio, int queue_size);
 void os_thread_start(void *thread);
+void os_thread_delete(void *thread);
 
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);

@@ -164,6 +164,8 @@ sudo apt install groff
 groff -t -mandoc -Tascii rfc_template.nroff > rfc_template.txt
 groff -t -mandoc -Tascii van.nroff > van.txt
 
+groff -t -mandoc -Tascii van.nroff > van.txt
+
 
 7. GDB configuration
 
