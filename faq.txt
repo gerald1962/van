@@ -65,6 +65,27 @@ D.5 Delivery
 XXX
 ww
 
+11 Thread Tool
+
+ps
+top
+htop
+
+There's also another option which is true CLI ps -e -T | grep <application name or pid>
+
+-e shows all processes
+-T lists all threads
+| pipes the output to the next command
+grep this filters the contents
+
+
+10. Error names
+
+sudo apt install moreutils
+errno -l or
+errno ESRCH or
+errno 3
+
 
 9. Git
 
@@ -169,6 +190,9 @@ groff -t -mandoc -Tascii van.nroff > van.txt
 
 7. GDB configuration
 
+Manual:
+https://sourceware.org/gdb/current/onlinedocs/gdb/
+
 If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
 
 +--------------------------------+--------------------------------+
@@ -219,6 +243,9 @@ Abgebrochen (Speicherabzug geschrieben)
 gerald@gerald:~/van/battery/zinc_copper_battery/test$ gdb out/zinc core
 
 bt  Backtrace: display the program stack.
+
+Load the core dump file:
+core-file core 
 
 
 4. Common Makefile

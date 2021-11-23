@@ -318,50 +318,6 @@ void os_spin_destroy(spinlock_t *spinlock)
 	atomic_fetch_sub(&os_stat.spin_count, 1);
 }
 
-/* XXX */
-#if 0
-/* Overall state of the operation system. */
-/**
- * os_stat - overall state of the OS.
- *
- * @door:        mutex for a critical section.
- * @cs_count:    number of created mutexes.
- * @sem_count:   number of created semaphores.
- * @spin_count:  number of created spin locks.
- **/
-static struct
-{
-	pthread_mutex_t door;
-	int cs_count;
-	int sem_count;
-	int spin_count;
-} os_stat:
-#endif
-
-/* XXX */
-#if 0
-/**
- * os_is_idle() - test the idle state of all threads.
- *
- * Return:	1 if all threads are idle otherwise 0.
- **/
-int os_is_idle(void)
-{
-	int stat;
-	
-	/* Enter the critical. */
-	os_cs_enter(&os_stat.door);
-
-	/* Test the queue state of all threads. */
-	stat = os_thread_is_inactive();
-	
-	/* Leave the critical section. */
-	os_cs_leave(&os_stat.door);
-
-	return stat;
-}
-#endif
-
 /**
  * os_init() - initialize the operation system.
  *
@@ -372,11 +328,6 @@ void os_init(void)
 	/* Install a signal handler to generate a core dump, if the test
          * programm has been terminated with Ctrl-C. */
         os_trap_init();
-
-#if 0
-	/* Initialize the mutex for the critical section. */
-	os_cs_init (&os_stat.door);
-#endif
 
 	/* Initialize the os_malloc list. */
 	os_mem_init();
