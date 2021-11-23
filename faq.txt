@@ -252,6 +252,12 @@ core-file core
 
 The common makefile is located in ...
 
+5. Packagesp
+
+5.1 Emacs
+
+5.2 Linux
+
 
 3. Emacs-Konfiguration in .emacs
 

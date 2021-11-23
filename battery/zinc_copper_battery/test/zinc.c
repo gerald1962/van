@@ -64,7 +64,11 @@ static void zinc_cleanup(void)
 	/* Destroy the controller thread. */
 	con = zinc_stat.con;
 	zinc_stat.con = NULL;
-	os_thread_delete(con);
+	os_thread_destroy(con);
+	os_sem_delete(&zinc_stat.suspend);
+
+	/* Release the OS resources. */
+	os_exit();
 }
 
 
@@ -132,11 +136,8 @@ static void zinc_init(void)
 	/* Control the lifetime of the battery. */
 	os_sem_init(&zinc_stat.suspend, 0);
 
-	/* Create the controller thread. */
+	/* Create and start the controller thread. */
 	zinc_stat.con = os_thread_create("con", OS_THREAD_PRIO_FOREG, 2);
-
-	/* Start the controller thread. */
-	os_thread_start(zinc_stat.con);
 
 	/* Send the exit message to the controller thread. */
 	zinc_exit_send();

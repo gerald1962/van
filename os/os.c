@@ -32,13 +32,13 @@
 /**
  * os_stat - overall state of the OS.
  *
- * @door:        mutex for a critical section.
+ * @is_init:     1, if the OS has been initialized.
  * @cs_count:    number of created mutexes.
  * @sem_count:   number of created semaphores.
  * @spin_count:  number of created spin locks.
  **/
-static struct
-{
+static struct os_stat_s {
+	atomic_int is_init;
 	atomic_int cs_count;
 	atomic_int sem_count;
 	atomic_int spin_count;
@@ -53,7 +53,6 @@ static struct
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
-
 /**
  * os_cs_init() - initialize the mutex.
  *
@@ -325,6 +324,13 @@ void os_spin_destroy(spinlock_t *spinlock)
  **/
 void os_init(void)
 {
+	int is_init;
+	
+	/* Test the OS state. */
+	is_init = atomic_load(&os_stat.is_init);
+	atomic_store(&os_stat.is_init, 1);
+	OS_TRAP_IF(is_init);
+	
 	/* Install a signal handler to generate a core dump, if the test
          * programm has been terminated with Ctrl-C. */
         os_trap_init();
@@ -334,4 +340,29 @@ void os_init(void)
 	
 	/* Initialize the thread table. */
 	os_thread_init();
+}
+
+/**
+ * os_exit() - release the OS resources.
+ *
+ * Return:	None.
+ **/
+void os_exit(void)
+{
+	struct os_stat_s *p;
+	int is_init;
+
+	/* Test the OS state. */
+	p = &os_stat;	
+	is_init = atomic_load(&p->is_init);
+	OS_TRAP_IF(! is_init);
+
+	os_thread_exit();
+	os_mem_exit();
+
+	/* Test the OS state. */
+	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);
+
+	/* Change the OS state. */
+	atomic_store(&p->is_init, 0);
 }

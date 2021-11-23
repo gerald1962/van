@@ -32,4 +32,8 @@ void os_thread_init(void);
 void os_mem_init(void);
 void os_trap_init(void);
 
+/* Free the OS resources. */
+void os_thread_exit(void);
+void os_mem_exit(void);
+
 #endif /* __os_private_h__ */

@@ -340,14 +340,6 @@ void os_free(void **ptr)
 	*ptr = NULL;
 }
 
-/* XXX */
-#if 0
-void os_mem_cleanup(void)
-{
-	/* Free the file names. */
-}
-#endif
-
 /**
  * os_mem_init() - initialize the os_malloc list.
  *
@@ -369,4 +361,39 @@ void os_mem_init(void)
                 /* Save the element index. */
                 elem->elem_idx = i;
         }
+}
+
+/**
+ * os_mem_exit() - release the malloc list resources.
+ *
+ * Return:	None.
+ **/
+void os_mem_exit(void)
+{
+	os_mem_stat_t *p;
+	char **list;
+	int i;
+
+	p = &os_mem_stat;
+
+	/* Enter the critical section. */
+        os_cs_enter(&p->protect);
+
+	/* Test the state of the malloc list. */
+	OS_TRAP_IF(p->malloc_c != p->free_c);
+
+	/* Get the reference to the file name list. */
+        list = p->file;
+
+	/* Loop thru the file name list. */
+        for (i = 0; i < OS_MALLOC_FILE_LIMIT; i++) {
+		/* Release the file names. */
+		if (list[i] != NULL)
+			free(list[i]);
+	}
+	
+        /* Leave the critical section. */
+        os_cs_leave(&p->protect);
+
+	os_cs_destroy(&p->protect);
 }

@@ -112,6 +112,7 @@ struct os_queue_elem_s {
   ============================================================================*/
 /* Bootstrapping. */
 void os_init(void);
+void os_exit(void);
 
 /* Traps handling. */
 void os_trap(char *file, const char *function, unsigned long line);
@@ -148,8 +149,7 @@ void os_spin_destroy(spinlock_t *spinlock);
 
 /* Threads. */
 void *os_thread_create(const char *name, os_thread_prio_t prio, int queue_size);
-void os_thread_start(void *thread);
-void os_thread_delete(void *thread);
+void os_thread_destroy(void *thread);
 
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
