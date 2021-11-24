@@ -565,6 +565,10 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	/* Allocate the os_thread. */
 	thread = os_thread_alloc(q_size);
 	
+	/* Save the thread name. */
+	os_memset(thread->name, 0, sizeof(thread->name));
+	os_strcpy(thread->name, sizeof(thread->name), name);
+
 	/* Initialize the thread state. */
 	OS_TRACE(("%s [t=%s,s=boot,o=create]\n", OS, thread->name));
 	atomic_store(&thread->state, OS_THREAD_BOOT);
@@ -584,10 +588,6 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	p.sched_priority = prio;
 	ret = pthread_attr_setschedparam(&thread->attr, &p);
 	OS_TRAP_IF(ret != 0);
-
-	/* Save the thread name. */
-	os_memset(thread->name, 0, sizeof(thread->name));
-	os_strcpy(thread->name, sizeof(thread->name), name);
 
 	/* Save the thread prioriiy. */
 	thread->prio  = prio;

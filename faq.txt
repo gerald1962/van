@@ -66,6 +66,17 @@ XXX
 ww
 
 
+13 Gti Difftool
+
+.gitconfig
+
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
 
 12 System Load
 
