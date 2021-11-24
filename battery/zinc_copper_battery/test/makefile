@@ -5,47 +5,19 @@
 # MODULE ist the name of the executable battery simulation.
 MODULE := zinc
 
-
-# Ensure that GLOBALPATH points to the project/view root!
+# Define the location of the van system.
 GLOBALPATH := /home/gerald/van
 
-
-# FEAT_XX
-#
-FEATURE =
-
-
-# List of the van platform sources
-include ${GLOBALPATH}/os/makefile
-
+# Include the makefile to define the pathes for a van system, which is needed
+# for a specific battery model
+include ${GLOBALPATH}/tools/build/makefile_preamble
 
 # Define additional files needed to build the battery simulation.
 VAN_FILES := \
   ${${BUILD_LIB}_FILES} \
   zinc.c
 
-
-# Define their pathes.
-VAN_SRC := \
-    ${GLOBALPATH}/tools/trap \
-    ${GLOBALPATH}/os
-
-
-# Define additional include pathes needed to build the battery simulation.
-VAN_INC :=  $(addprefix -I, ${VAN_SRC})
-
-
-# Define special flags needed to build the battery simulation.
-#
-VAN_CC_FLAGS  =
-VAN_LD_FLAGS  =
-
-
-# Uncommment this line to log all executed commands.
-V = "command line"
-
-
-# Include the framework makefile.
-include ${GLOBALPATH}/tools/build/Makefile.include
+# Include the framework makefile with integration operations.
+include ${GLOBALPATH}/tools/build/makefile_appendix
 
 # makefile ends here.

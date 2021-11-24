@@ -65,6 +65,40 @@ D.5 Delivery
 XXX
 ww
 
+
+
+12 System Load
+
+12.1 glances
+
+12.2 monitorix
+
+http://localhost:8080/monitorix
+
+https://de.wikihow.com/In-Ubuntu-Root-werden
+
+
+https://kifarunix.com/install-monitorix-on-ubuntu/
+
+https://idroot.us/install-monitorix-ubuntu-20-04/
+
+12.3 Saidar
+
+Saidar also allows to monitor system device activities via the command line.
+
+enter image description here
+
+You can install is with this command:
+
+sudo apt-get install saidar
+To start monitoring, run this command:
+
+saidar -c -d 1
+Stats will be refreshed every second.
+
+12.4 Conky
+sudo apt install conky-all
+
 11 Thread Tool
 
 ps
