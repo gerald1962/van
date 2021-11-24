@@ -6,7 +6,7 @@
 MODULE := zinc
 
 # Define the location of the van system.
-GLOBALPATH := /home/gerald/van
+GLOBALPATH := $(abspath ../../..)
 
 # Include the makefile to define the pathes for a van system, which is needed
 # for a specific battery model
@@ -19,5 +19,3 @@ VAN_FILES := \
 
 # Include the framework makefile with integration operations.
 include ${GLOBALPATH}/tools/build/makefile_appendix
-
-# makefile ends here.

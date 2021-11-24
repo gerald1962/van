@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-2.0
-# Makefile for van code
+# Makefile for a van program
 
 # Define the pathes for the van system.
 VAN_SRC := \
@@ -69,7 +69,8 @@ van: ${MODULE_OUTDIR}/${MODULE}
 
 
 echovars:
-	@echo MAKEFILES=${MAKEFILE_LIST}
+	@echo GLOBALPATH: ${GLOBALPATH}
+	@echo MAKEFILES: ${MAKEFILE_LIST}
 	@echo "vpath: ${VAN_SRC}"
 	@echo "ALL_FILES: ${ALL_FILES}"
 	@echo "ALL_OBJS: ${ALL_OBJS}"
@@ -124,5 +125,4 @@ clean:
 	-${Q}rm -fr ${MODULE_OBJDIR}
 	-${Q}rm -fr ${MODULE_DEPDIR}
 	-${Q}rm -fr ${MODULE_OUTDIR}
-
-# Makefile.include ends here.
+	-${Q}rm core TAGS
