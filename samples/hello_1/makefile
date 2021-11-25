@@ -1,16 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0
 
-# This makefile is used to build the zinc copper battery simulation.
-
 # MODULE ist the name of the executable battery simulation.
 MODULE := hello_1
 
-# Define the location of the van system.
+# Define the root of the VAN platform.
 GLOBALPATH := $(abspath ../..)
 
-# Include the makefile to define the pathes for a van system, which is needed
-# for a specific battery model
-include ${GLOBALPATH}/tools/build/makefile_preamble
+# Include the makefile to define the pathes for the VAN platform files.
+include ${GLOBALPATH}/tools/build/makefile_pathes
 
 # Define additional files needed to build the battery simulation.
 VAN_FILES := \
@@ -18,4 +15,4 @@ VAN_FILES := \
   hello_1.c
 
 # Include the framework makefile with integration operations.
-include ${GLOBALPATH}/tools/build/makefile_appendix
+include ${GLOBALPATH}/tools/build/makefile_operations
