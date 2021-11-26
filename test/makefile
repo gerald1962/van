@@ -1,23 +1,49 @@
 # SPDX-License-Identifier: GPL-2.0
 
+# Makefile for COST - coverage of the operating system test
+
 # Define the root of the VAN platform.
 GLOBALPATH := $(abspath ..)
 
 # Include the makefile to define the pathes for the VAN platform files.
 include ${GLOBALPATH}/tools/build/makefile_pathes
 
-TARGET     = vat
+# Name of the test program
+TARGET     = cost
+
+# Integration paths for the test system
 OBJ_DIR    = ./obj
 TEST_PATH  = $(shell pwd)
 OBJ_PATH   = $(TEST_PATH)/obj
 SRC_PATH  += $(TEST_PATH)
 
-CFLAGS += --coverage -g -m32 -Wall
+# Compiler settings:
+# --coverage
+#     Compiler and Linker instruments the code for coverage analysis.
+# -g
+#     Produce debugging information.
+# -m32
+# -m64
+#     Generate code for 32-bit or 64-bit ABI.
+#
+# Wall
+#     Enable all compiler warnings.
+#
+CFLAGS += --coverage -g -Wall
+
+# Libraries for the linker:
+# rt
+#     Real-time extension.
+#
+# pthread
+#     The POSIX thread library
+#
+LIBS = -lrt -lpthread
 
 # List of all sources files, like VAN OS files
 ALL_FILES =  \
 	${${BUILD_LIB}_FILES} \
-	vat.c
+	cost.c
 
 # List of all includes paths, like VAN OS directory
 ALL_INCS += \
@@ -35,38 +61,37 @@ CFLAGS += $(addprefix -I, ${ALL_INCS})
 # Call of the gcc linker
 $(TARGET): $(OBJ_DIR) $(ALL_OBJS)
 	@echo Linking
-	@gcc $(ALL_OBJS) ${CFLAGS} -o ${TARGET} -lrt -lpthread
+	@gcc $(ALL_OBJS) ${CFLAGS} -o ${TARGET} ${LIBS}
 
 # Include all dependency files
 -include $(ALL_DEPS)
 
-# Generation the object and dependency files
+# Generate the object and dependency files
 $(OBJ_DIR)/%o: %c
 	@echo Compiling ${notdir $<}
 	@gcc -c ${CFLAGS} -o $@ $<
 	@gcc -MM ${CFLAGS} $< | sed -e 's!.*:!$(OBJ_DIR)/&!' > $(@:.o=.d)
 
+# Directory for the generated files
 $(OBJ_DIR) :
 	if [ ! -d $(OBJ_DIR) ] ; then mkdir $(OBJ_DIR) ; fi
 
-# Remove all generated files
+# Remove all generated files including the obj subdirectory
 clean: rm_obj_dir
-	rm -f $(TARGET) *gcov* summary.csv
+	rm -f $(TARGET) *gcov* log.txt summary.txt
 
 rm_obj_dir:
 	rm -rf $(OBJ_DIR)
 
-# Analyze the code coverage
-gcov: clean $(TARGET)
-	./$(TARGET) | tee run_gcov.log | (grep -E 'CLAIM|HOSTTEST'; exit 0)
-	(cp *.c $(OBJ_DIR); cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > gcov.log
-	./can.pl $(OBJ_DIR)/*.c.gcov > summary.csv
-	cat summary.csv
+# Extract information from the code coverage with the script can.pl
+can: clean $(TARGET)
+	./$(TARGET)
+	(cp *.c $(OBJ_DIR); cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > log.txt
+	./can.pl $(OBJ_DIR)/*.c.gcov > summary.txt
+	cat summary.txt
 
+# Debug makefile variables
 echovars:
 	@echo GLOBALPATH: ${GLOBALPATH}
 	@echo "ALL_FILES: ${ALL_FILES}"
-	@echo "VPATH: ${VPATH}"
-	@echo OBJ_PATH: ${OBJ_PATH}
-	@echo "ALL_OBJS: ${ALL_OBJS}"
 	@echo "CFLAGS: ${CFLAGS}"

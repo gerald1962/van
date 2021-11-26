@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * VAT tests needed for code coverage.
+ * Coverage of the VAN operating system tests.
  *
  * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
  */
