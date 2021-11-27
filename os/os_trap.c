@@ -60,9 +60,11 @@ void os_trap_handler(int signo)
  **/
 void os_trap_catch(void)
 {
-        /* Install the signal handler to cath SIGINT. */
-        if (signal(SIGINT, os_trap_handler) == SIG_ERR)
-                OS_TRAP();
+	__sighandler_t ret;
+	
+        /* Install the signal handler to catch SIGINT. */
+        ret = signal(SIGINT, os_trap_handler);
+	OS_TRAP_IF(ret == SIG_ERR);
 }
 
 /*============================================================================
@@ -80,8 +82,22 @@ void os_trap_catch(void)
  **/
 void os_trap(char *file, const char *function, unsigned long line)
 {
-	printf("*** core dump at \"%s\", \"%s\", %lu\n", file, function, line);
+	/* Entry condition. */
+	if (file != NULL && function != NULL) {
+		if (os_strcmp(function, "*coverage*") == 0) {
+			printf("*** coverage test at \"%s\", \"%s\", %lu\n",
+			       file, function, line);
 
+			/* Test the trap handler. */
+			os_trap_handler(SIGUSR1);
+			return;
+		}
+		else {
+			printf("*** core dump at \"%s\", \"%s\", %lu\n",
+			       file, function, line);
+		}
+	}
+	
 	/* Force a core dump. */
 	raise(SIGABRT);
 }

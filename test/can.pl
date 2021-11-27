@@ -2,88 +2,134 @@
 
 use strict;
 
-my (%tested, %untested, %other,%fun_d, %fun_c);               # Summary per file
-my ($f_tested, $f_untested, $f_other,$f_fun_d,$f_fun_c);      # Functions
+# Summary per file
+my (%exec_s, %inactive_s, %other, %n_func, %exec_func);
 
-my $f_cnt;
+# Total values
+my ($t_exec_s, $t_inactive_s, $t_other, $t_n_func, $t_exec_func);
+
+my $t_cnt;
 my $f;
 
-sub do_perc {
+# Calculaate the percent value.
+sub percent {
     my $val1 = shift;
     my $val2 = shift;
+    
     if ($val2 == 0) {
 	$val2 = 1;
     }
-    return int(($val1/$val2*100)+0.5);
+    
+    return int(($val1 / $val2 * 100) + 0.5);
 }
-sub do_summary {
+
+# Analyze a coverage file line by line.
+sub file_analyze {
     my $f = shift;
-    $tested{$f}   = 0;
-    $untested{$f} = 0;;
-    $other{$f}    = 0;;
-    $fun_d{$f}    = 0;;
-    $fun_c{$f}    = 0;;
+    
+    $exec_s{$f}     = 0;
+    $inactive_s{$f} = 0;
+    $other{$f}      = 0;
+    $n_func{$f}     = 0;
+    $exec_func{$f}  = 0;
+
+    # Open the coverage file.
     open(F, "$f") || die "Cannot open $f \n";
+
+    # Read line by line.
     while(<F>) {
         if(/^  *-: /) {
-            $other{$f} ++;
+	    # Blank lines or comments.
+            $other{$f}++;
+	    
         } elsif (/^  +#+: /) {
-            $untested{$f} ++;
+	    # Not executed statement.
+            $inactive_s{$f}++;
+
         } elsif (/^  +[1-9][0-9]*: /) {
-            $tested{$f} ++;
+	    # Executed statement.
+            $exec_s{$f}++;
+	    
         } elsif (/^function /) {
-	    my @l;
-            @l= split;
-	    $fun_d{$f}++ ;
-	    if ($l[3] > 0) { # called at least one
-	        $fun_c{$f}++ ;
+	    my @line;
+	    
+            @line = split;
+	    $n_func{$f}++;
+
+	    if ($line[3] > 0) {
+		# Executed function.
+	        $exec_func{$f}++;
+		
 	    } else {
-		$f_cnt++;
-		print "$f_cnt: $f: $l[1] not called\n";
+		# Not executed function.
+		$t_cnt++;
+		print "$t_cnt: $f: $line[1] not called\n";
 	    }
         } else {
 	    # comments
         }
     }
+
+    # Close the coverage file.
     close(F);
 }
+
+# Analyze all coverage files.
 foreach $f (@ARGV) {
-    do_summary($f);
+    # Analyze a coverage file line by line.
+    file_analyze ($f);
 }
-print "\nFile;used; not used; comments;percentage;function defined;function called;percentage\n";
 
-foreach $f (sort(keys(%other))) {
-    my @l=split(/\//,$f);
+print "\n *s; -s; p; *f; #f; p; file\n";
+print "----------------------------\n";
 
-    $f_tested   += $tested{$f};
-    $f_untested += $untested{$f};
-    $f_other    += $other{$f};
-    $f_fun_d    += $fun_d{$f};
-    $f_fun_c    += $fun_c{$f};
+# Loop over all file names.
+foreach $f (sort (keys(%other))) {
+    my @l = split(/\//, $f);
 
-    print "$l[$#l];$tested{$f};$untested{$f};$other{$f};";
+    $t_exec_s     += $exec_s{$f};
+    $t_inactive_s += $inactive_s{$f};
+    $t_other      += $other{$f};
+    $t_n_func     += $n_func{$f};
+    $t_exec_func  += $exec_func{$f};
+
+    # Print the values for a single file.
+    print " $exec_s{$f}; $inactive_s{$f}";
     
-    if ($tested{$f} > 0)  {
-        print  '' . do_perc($tested{$f},($untested{$f}+$tested{$f}));
+    if ($exec_s{$f} > 0)  {
+        print  '; ' . percent($exec_s{$f}, ($inactive_s{$f} + $exec_s{$f}));
     } else {
-        print 0;
+        print "; 0";
     }
-    print "; $fun_d{$f};$fun_c{$f}";
-    if ( $fun_c{$f} > 0 ) {
-	print ';' . do_perc(int($fun_c{$f}) , int($fun_d{$f}) );
+    
+    print "; $exec_func{$f}; $n_func{$f}";
+    
+    if ( $exec_func{$f} > 0 ) {
+	print '; ' . percent(int($exec_func{$f}) , int($n_func{$f}) ) . "; $l[$#l]"
     } else {
-        print ";0";
+        print "; 0; $l[$#l]";
     }
     print "\n";
 }
-if ( $f_tested == 0 ) {$f_tested = 1;}
-if ( $f_fun_d == 0 )  {$f_fun_d = 1;}
 
-print "van;$f_tested;$f_untested;$f_other;" . do_perc($f_tested,($f_untested+$f_tested)) ;
-print "; $f_fun_d;$f_fun_c;" . do_perc(int($f_fun_c) , int($f_fun_d) ) . "\n";
+if ($t_exec_s == 0) {
+    $t_exec_s = 1;
+}
 
-$f_cnt = $f_fun_d - $f_fun_c;
-print "\nSummary:\nexec(s)=$f_tested; incative(s)=$f_untested; ratio(exec(s))=" . do_perc($f_tested,($f_untested+$f_tested)) ;
-print "%;\nexec(f)=$f_fun_c; inactive(f)=$f_cnt; ratio(exec(f))=" . do_perc(int($f_fun_c) , int($f_fun_d) ) . "%\n";
+if ($t_n_func == 0) {
+    $t_n_func = 1;
+}
+
+print "---------------------------\n";
+
+# Print the total values of the coverage analysis.
+print " $t_exec_s; $t_inactive_s; " .
+    percent($t_exec_s, ($t_inactive_s + $t_exec_s));
+
+print "; $t_exec_func; $t_n_func; " .
+    percent(int($t_exec_func), int($t_n_func) ) . "; van\n";
+
+print "---------------------------\n";
+print "*s; -s; p; *f; #f; p; system\n\n";
 
 exit 0;

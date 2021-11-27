@@ -27,7 +27,7 @@
 #define OS_QUEUE_LIMIT  1024
 
 /* Limit of the os_malloc calls without correspondig ms_free calls. */
-#define OS_MALLOC_LIMIT     256
+#define OS_MALLOC_LIMIT     512
 
 /* Limit of the van files with os_malloc calls. */
 #define OS_MALLOC_FILE_LIMIT  3
@@ -49,7 +49,12 @@
 
 /* Wrapper for os_mallo() and os_free. */
 #define OS_MALLOC(size_)  os_malloc((size_), __FILE__, __LINE__)
-#define OS_FREE(ptr_)     os_free((void **) &(ptr_))
+#define OS_FREE(ptr_)     do { os_free((void **) &(ptr_)); } while(0);
+
+/* Wrapper to send a message to any thread. */
+#define OS_SEND(thread_, msg_, size_) do { \
+        os_queue_send((thread_), (os_queue_elem_t *) (msg_), (size_)); \
+} while(0)
 
 /* XXX FEATURE */
 #define OS_DEBUG
