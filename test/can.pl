@@ -3,24 +3,24 @@
 use strict;
 
 # Summary per file
-my (%exec_s, %inactive_s, %other, %n_func, %exec_func);
+my (%exec_s, %inactive_s, %blank, %n_func, %exec_func);
 
 # Total values
-my ($t_exec_s, $t_inactive_s, $t_other, $t_n_func, $t_exec_func);
+my ($t_exec_s, $t_inactive_s, $t_blank, $t_n_func, $t_exec_func);
 
 my $t_cnt;
 my $f;
 
 # Calculaate the percent value.
 sub percent {
-    my $val1 = shift;
-    my $val2 = shift;
+    my $min = shift;
+    my $max = shift;
     
-    if ($val2 == 0) {
-	$val2 = 1;
+    if ($min == 0) {
+	$max = 1;
     }
     
-    return int(($val1 / $val2 * 100) + 0.5);
+    return int(($min / $max * 100) + 0.5);
 }
 
 # Analyze a coverage file line by line.
@@ -29,18 +29,18 @@ sub file_analyze {
     
     $exec_s{$f}     = 0;
     $inactive_s{$f} = 0;
-    $other{$f}      = 0;
+    $blank{$f}      = 0;
     $n_func{$f}     = 0;
     $exec_func{$f}  = 0;
 
     # Open the coverage file.
-    open(F, "$f") || die "Cannot open $f \n";
+    open(F, "$f") || die "Cannot open $f\n";
 
     # Read line by line.
     while(<F>) {
         if(/^  *-: /) {
 	    # Blank lines or comments.
-            $other{$f}++;
+            $blank{$f}++;
 	    
         } elsif (/^  +#+: /) {
 	    # Not executed statement.
@@ -84,12 +84,12 @@ print "\n *s; -s; p; *f; #f; p; file\n";
 print "----------------------------\n";
 
 # Loop over all file names.
-foreach $f (sort (keys(%other))) {
+foreach $f (sort (keys(%blank))) {
     my @l = split(/\//, $f);
 
     $t_exec_s     += $exec_s{$f};
     $t_inactive_s += $inactive_s{$f};
-    $t_other      += $other{$f};
+    $t_blank      += $blank{$f};
     $t_n_func     += $n_func{$f};
     $t_exec_func  += $exec_func{$f};
 
