@@ -130,6 +130,6 @@ print "; $t_exec_func; $t_n_func; " .
     percent(int($t_exec_func), int($t_n_func) ) . "; van\n";
 
 print "---------------------------\n";
-print "*s; -s; p; *f; #f; p; system\n\n";
+print " *s; -s; p; *f; #f; p; system\n\n";
 
 exit 0;

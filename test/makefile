@@ -78,15 +78,16 @@ $(OBJ_DIR) :
 
 # Remove all generated files including the obj subdirectory
 clean: rm_obj_dir
-	rm -f $(TARGET) *gcov* log.txt summary.txt
+	rm -f $(TARGET) error.txt gcov.txt summary.txt test.txt
 
 rm_obj_dir:
 	rm -rf $(OBJ_DIR)
 
 # Extract information from the code coverage with the script can.pl
 can: clean $(TARGET)
-	./$(TARGET)
-	(cp *.c $(OBJ_DIR); cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > log.txt
+	./$(TARGET) | tee error.txt | (grep -E 'MISMATCH|FAILURE'; exit 0)
+	./$(TARGET) -b | tee test.txt | (grep -E 'FAILURE|TEST'; exit 0)
+	(cp *.c $(OBJ_DIR); cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > gcov.txt
 	./can.pl $(OBJ_DIR)/*.c.gcov > summary.txt
 	cat summary.txt
 

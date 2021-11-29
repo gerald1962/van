@@ -27,6 +27,10 @@
   EXPORTED FUNCTIONS
   ============================================================================*/
 
+/* Data gathering. */
+void os_thread_statistics(os_statistics_t *stat);
+void os_mem_statistics(os_statistics_t *stat);
+
 /* Bootstrapping. */
 void os_thread_init(void);
 void os_mem_init(void);

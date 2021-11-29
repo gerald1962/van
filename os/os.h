@@ -109,12 +109,34 @@ struct os_queue_elem_s {
     OS_QUEUE_MSG_HEAD;
 };
 
+/**
+ * os_statistics_t - overall state of the OS.
+ *
+ * @cs_count:   number of created mutexes.
+ * @sem_count:  number of created semaphores.
+ * @spin_count: number of created spin locks.
+ * @malloc_c:   number of the os_malloc calls.
+ * @free_c:     number of the os_free calls.
+ * @thread_c:   number of the installed threads.
+ **/
+typedef struct {
+	int cs_count;
+	int sem_count;
+	int spin_count;
+        int malloc_c;
+        int free_c;
+	int thread_c;
+} os_statistics_t;
+
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+
+void os_statistics(os_statistics_t *stat);
+
 /* Bootstrapping. */
 void os_init(void);
 void os_exit(void);
@@ -129,6 +151,7 @@ void os_free(void **ptr);
 /* Memory and string. */
 void *os_memset(void *s, int c, size_t n);
 void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n);
+int os_memcmp(const void *s1, const void *s2, size_t n);
 size_t os_strnlen(const char *s, size_t maxlen);
 size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);

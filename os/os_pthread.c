@@ -743,6 +743,30 @@ void os_thread_destroy(void *g_thread)
 }
 
 /**
+ * os_thread_statistics() - provide data on the thread state.
+ *
+ * @stat:  address of the status information.
+ *
+ * Return:	None.
+ **/
+void os_thread_statistics(os_statistics_t *stat)
+{
+	struct os_thread_list_s *list;
+
+	/* Get the address of the thread list. */
+	list = &os_thread_list;
+
+	/* Enter the critical section. */
+	os_cs_enter(&list->protect);
+
+	/* Provide the number of the installed threads. */
+	stat->thread_c = list->count;
+	
+	/* Leave the critical section. */
+	os_cs_leave(&list->protect);
+}
+
+/**
  * os_thread_init() - initialize the thread list.
  *
  * Return:	None.

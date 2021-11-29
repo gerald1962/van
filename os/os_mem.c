@@ -55,7 +55,6 @@ typedef struct {
  * @next:      current start index of the element list.
  * @malloc_c:  number of the os_malloc calls.
  * @free_c:    number of the os_free calls.
- * @free_c:    number of the os_free calls.
  * @elem:      os_malloc list.
  **/
 typedef struct {
@@ -133,7 +132,6 @@ static void os_mem_elem_put(int idx, void *ptr)
 	
 	/* Leave the critical section. */
         os_cs_leave(&p->protect);
-
 }
 
 /**
@@ -338,6 +336,31 @@ void os_free(void **ptr)
 
 	/* Reset the pointer. */
 	*ptr = NULL;
+}
+
+/**
+ * os_mem_statistics() - provide data on the memory state.
+ *
+ * @stat:  address of the status information.
+ *
+ * Return:	None.
+ **/
+void os_mem_statistics(os_statistics_t *stat)
+{
+	os_mem_stat_t *p;
+
+	/* Get the reference of the os_malloc list. */
+        p = &os_mem_stat;
+
+	/* Enter the critical section. */
+        os_cs_enter(&p->protect);
+
+	/* Provide the malloc and free counter. */
+	stat->malloc_c = p->malloc_c;
+	stat->free_c   = p->free_c;
+
+	/* Leave the critical section. */
+        os_cs_leave(&p->protect);
 }
 
 /**

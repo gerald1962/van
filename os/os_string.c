@@ -62,6 +62,18 @@ void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)
 }
 
 /**
+ * os_memcmp() - memcmp with additional assertions.
+ *
+ * see memccmp
+ **/
+int os_memcmp(const void *s1, const void *s2, size_t n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(s1 == NULL || s2 == NULL || n < 1);
+	return memcmp(s1, s2, n);
+}
+
+/**
  * os_strnlen() - strnlen with additional assertions.
  *
  * see strnlen

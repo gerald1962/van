@@ -10,12 +10,12 @@
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
 #include <pthread.h>     /* POSIX thread. */
-#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"       /* Operating system: os_sem_init() */
+#include "os.h"          /* Operating system: os_sem_init() */
+#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
@@ -53,6 +53,7 @@ static struct os_stat_s {
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+
 /**
  * os_cs_init() - initialize the mutex.
  *
@@ -82,7 +83,6 @@ void os_cs_init(pthread_mutex_t *mutex)
 
 	atomic_fetch_add(&os_stat.cs_count, 1);
 }
-
 
 /**
  * os_cs_enter() - enter the critical section.
@@ -254,7 +254,6 @@ void os_spin_init(spinlock_t *spinlock)
 	atomic_fetch_add(&os_stat.spin_count, 1);
 }
 
-
 /**
  * os_spin_lock() - aquire an atomic lock.
  *
@@ -315,6 +314,36 @@ void os_spin_destroy(spinlock_t *spinlock)
 	OS_TRAP_IF(ret != 0);
 	
 	atomic_fetch_sub(&os_stat.spin_count, 1);
+}
+
+/**
+ * os_statistics() - provide data on the OS state.
+ *
+ * @stat:  address of the status information.
+ *
+ * Return:	None.
+ **/
+void os_statistics(os_statistics_t *stat)
+{
+	int is_init;
+	
+	/* Test the OS state. */
+	is_init = atomic_load(&os_stat.is_init);
+	OS_TRAP_IF(! is_init);
+	
+	/* Entry condition. */
+	OS_TRAP_IF(stat == NULL);
+	
+	/* Get information about the thread state. */
+	os_thread_statistics(stat);
+	
+	/* Get information about the memory state. */
+	os_mem_statistics(stat);
+
+	/* Complete the data gathering. */
+	stat->cs_count   = os_stat.cs_count;
+	stat->sem_count  = os_stat.cs_count;
+	stat->spin_count = os_stat.spin_count;
 }
 
 /**
