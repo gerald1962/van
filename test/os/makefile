@@ -3,7 +3,7 @@
 # Makefile for COST - coverage of the operating system test
 
 # Define the root of the VAN platform.
-GLOBALPATH := $(abspath ..)
+GLOBALPATH := $(abspath ../..)
 
 # Include the makefile to define the pathes for the VAN platform files.
 include ${GLOBALPATH}/tools/build/makefile_pathes
@@ -78,7 +78,7 @@ $(OBJ_DIR) :
 
 # Remove all generated files including the obj subdirectory
 clean: rm_obj_dir
-	rm -f $(TARGET) error.txt gcov.txt summary.txt test.txt
+	rm -f $(TARGET) core error.txt gcov.txt summary.txt test.txt
 
 rm_obj_dir:
 	rm -rf $(OBJ_DIR)

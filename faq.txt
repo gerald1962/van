@@ -66,6 +66,21 @@ XXX
 ww
 
 
+17 Shared Memory
+
+How to use shared memory in python and C/C++
+https://stackoverflow.com/questions/49103709/how-to-use-shared-memory-in-python-and-c-c/49118076
+
+
+Share memory between C/C++ and Python
+https://pretagteam.com/question/share-memory-between-cc-and-python
+
+https://realpython.com/python-mmap/
+
+Python mmap: Improved File I/O With Memory Mapping
+
+
+
 16 Multi Thread Test
 
 gerald@gerald:~/van/test$ ./cost|grep -E 'test_system|TEST|MISMATCH|FAILURE'

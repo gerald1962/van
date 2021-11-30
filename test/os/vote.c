@@ -17,6 +17,10 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
+
+/* Prompt label. */
+#define P "V)"
+
 /* Size of the message buffer. */
 #define TEST_LEN  32
 
@@ -28,7 +32,7 @@
 #define TEST_ASSERT_EQ(arg1_, arg2_) \
 do { \
 	if ((arg1_) != (arg2_)) { \
-		printf("%s: MISMATCH at %s,%d: %d == %d\n", test_stat.label, \
+		printf("%s %s: MISMATCH at %s,%d: %d == %d\n", P, test_stat.label, \
 		       __FILE__, __LINE__, (arg1_), (arg2_)); \
 		test_stat.error_n++; \
 	} \
@@ -206,7 +210,7 @@ static void test_mt_msg_exec(os_queue_elem_t *m)
 	my_name  = os_thread_name(my_p);
 	his_name = os_thread_name(his_p);
 
-	printf("[%d, %s]: received mt from [%d, %s]\n",
+	printf("%s [%d, %s]: received mt from [%d, %s]\n", P,
 	       my_idx, my_name, his_idx, his_name);
 	
 	/* Test the index and resume the main process. */
@@ -523,7 +527,7 @@ static int test_case_thread(void)
 
 	/* Get the name of the thread. */
 	name = os_thread_name(p);
-	printf("Thread name: %s\n", name);
+	printf("%s Thread name: %s\n", P, name);
 
 	/* Kill the test thread. */
 	os_thread_destroy(p);
@@ -690,7 +694,7 @@ static void test_set_process (char *label, test_elem_t *elem)
 	test_stat_t *s;
 	int ret;
 
-	printf("%s: SELECT\n", label);
+	printf("%s %s: SELECT\n", P, label);
 
 	/* Get the address of the vote state. */
 	s = &test_stat;
@@ -701,8 +705,8 @@ static void test_set_process (char *label, test_elem_t *elem)
 		s->label = elem->label;
 		s->test_n++;
 
-		printf("%s: CALL [%d, %s, %d]\n", label, s->test_n, elem->label,
-		       elem->place);
+		printf("%s %s: CALL [%d, %s, %d]\n", P, label, s->test_n,
+		       elem->label, elem->place);
 
 		/* Execute the test case. */
 		ret = elem->routine();
@@ -714,11 +718,11 @@ static void test_set_process (char *label, test_elem_t *elem)
 		if (ret == elem->expected)
 			continue;
 
-		printf("%s: FAILURE in %s: expected %d, but gotten %d\n",
-		       label, s->label,  elem->expected, ret);
+		printf("%s %s: FAILURE in %s: expected %d, but gotten %d\n",
+		       P, label, s->label,  elem->expected, ret);
         }
 	
-	printf("%s: DONE\n", label);
+	printf("%s %s: DONE\n", P, label);
 }
 
 /**
@@ -778,6 +782,8 @@ static void test_single_case(int n)
 	/* Initialize the test counter. */
 	test_stat.test_n = 1;
 	
+	printf("%s SELECT\n", P);
+
 	/* Initialize the OS. */
 	test_case_boot();
 
@@ -785,11 +791,13 @@ static void test_single_case(int n)
 	os_trace_button(1);
 
 	/* Execute the test case. */
-	printf("CALL [%d, %s, %d]\n", n, elem->label, elem->place);
+	printf("%s CALL [%d, %s, %d]\n", P, n, elem->label, elem->place);
 	elem->routine();
 
 	/* Switch off the OS. */
 	test_case_shutdown();
+	
+	printf("%s DONE\n", P);
 }
 
 /*============================================================================
@@ -824,7 +832,8 @@ int main(int argc, char* argv[])
 	
 	/* Display the test status. */
 	s = &test_stat;
-	printf("\nTEST: %d failures in %d test cases.\n", s->error_n, s->test_n);
+	printf("\n%s TEST: %d failures in %d test cases.\n",
+	       P, s->error_n, s->test_n);
 
 	return (0);
 }
