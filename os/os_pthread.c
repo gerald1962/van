@@ -106,6 +106,9 @@ typedef struct {
   LOCAL DATA
   ============================================================================*/
 
+/* Pointer to the OS configuration */
+static os_conf_t *os_conf_p;
+
 /**
  * os_thread_list_s - list of the installed thread.
  *
@@ -415,15 +418,18 @@ static void os_thread_free(os_thread_t *thread)
 	/* Release the thread element. */
 	list = &os_thread_list;
 
-	/* Test the list index. */
-	OS_TRAP_IF(thread->idx < 0 || thread->idx >= OS_THREAD_LIMIT);
-
 	/* Get the address of the thread list element. */
 	elem = &list->elem[thread->idx];
 
 	/* Enter the critical section. */
 	os_cs_enter(&list->protect);
 
+	/* Test the thread state. */
+	OS_TRAP_IF(! elem->is_in_use);
+
+	/* Reset the thread index. */
+	thread->idx = -1;
+	
 	/* Update the list state. */
 	elem->is_in_use = 0;
 	list->count--;
@@ -557,7 +563,7 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 {
 	struct sched_param p;
 	os_thread_t  *thread;
-	int ret, c_type, orig_c;
+	int len, ret, c_type, orig_c;
 
 	/* Entry condition. */
 	OS_TRAP_IF(name == NULL);
@@ -566,8 +572,10 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	thread = os_thread_alloc(q_size);
 	
 	/* Save the thread name. */
-	os_memset(thread->name, 0, sizeof(thread->name));
-	os_strcpy(thread->name, sizeof(thread->name), name);
+	len = os_strlen(name);
+	OS_TRAP_IF(len >= OS_MAX_NAME_LEN);
+	os_memset(thread->name, 0, OS_MAX_NAME_LEN);
+	os_strcpy(thread->name, OS_MAX_NAME_LEN, name);
 
 	/* Initialize the thread state. */
 	OS_TRACE(("%s [t=%s,s=boot,o=create]\n", OS, thread->name));
@@ -710,6 +718,9 @@ void os_thread_destroy(void *g_thread)
 	/* Decode the reference to the thread state. */
 	thread = g_thread;
 	
+	/* Test the list index. */
+	OS_TRAP_IF(thread->idx < 0 || thread->idx >= OS_THREAD_LIMIT);
+
 	/* The current thread may not delete itself. */
 	current = pthread_getspecific(os_thread_list.key);
 	OS_TRAP_IF(thread == current);
@@ -719,7 +730,6 @@ void os_thread_destroy(void *g_thread)
 	state = atomic_load(&thread->state);
 	atomic_store(&thread->state, OS_THREAD_KILL);
 	OS_TRAP_IF(state != OS_THREAD_READY);	
-
 
 	/* Get the reference to the message queue. . */
 	q = &thread->queue;
@@ -740,6 +750,29 @@ void os_thread_destroy(void *g_thread)
 
 	/* Release the os_thread and queue resources. */
 	os_thread_free(thread);
+}
+
+/**
+ * os_thread_name() - return the pointer to the thread name string.
+ *
+ * @g_thread:  generic address of the os_thread.
+ *
+ * Return:	start address of the thread name.
+ **/
+char *os_thread_name(void *g_thread)
+{
+	os_thread_t  *thread;
+	
+	/* Entry condition. */
+	OS_TRAP_IF(g_thread == NULL);
+
+	/* Decode the reference to the thread state. */
+	thread = g_thread;
+	
+	/* Test the list index. */
+	OS_TRAP_IF(thread->idx < 0 || thread->idx >= OS_THREAD_LIMIT);
+
+	return thread->name;
 }
 
 /**
@@ -769,10 +802,15 @@ void os_thread_statistics(os_statistics_t *stat)
 /**
  * os_thread_init() - initialize the thread list.
  *
+ * conf:  OS configuration.
+ *
  * Return:	None.
  **/
-void os_thread_init(void)
+void os_thread_init(os_conf_t *conf)
 {
+	/* Save the reference to the OS configuration. */
+	os_conf_p = conf;
+	
 	/* Create the mutex for the critical section. */
 	os_cs_init(&os_thread_list.protect);
 

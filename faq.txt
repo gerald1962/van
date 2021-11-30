@@ -66,6 +66,11 @@ XXX
 ww
 
 
+16 Multi Thread Test
+
+gerald@gerald:~/van/test$ ./cost|grep -E 'test_system|TEST|MISMATCH|FAILURE'
+
+
 15 Code Coverage
 
 fatal error: sys/cdefs.h: No such file or directory

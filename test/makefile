@@ -9,7 +9,7 @@ GLOBALPATH := $(abspath ..)
 include ${GLOBALPATH}/tools/build/makefile_pathes
 
 # Name of the test program
-TARGET     = cost
+TARGET     = vote
 
 # Integration paths for the test system
 OBJ_DIR    = ./obj
@@ -43,7 +43,7 @@ LIBS = -lrt -lpthread
 # List of all sources files, like VAN OS files
 ALL_FILES =  \
 	${${BUILD_LIB}_FILES} \
-	cost.c
+	vote.c
 
 # List of all includes paths, like VAN OS directory
 ALL_INCS += \
@@ -86,8 +86,8 @@ rm_obj_dir:
 # Extract information from the code coverage with the script can.pl
 can: clean $(TARGET)
 	./$(TARGET) | tee error.txt | (grep -E 'MISMATCH|FAILURE'; exit 0)
-	./$(TARGET) -b | tee test.txt | (grep -E 'FAILURE|TEST'; exit 0)
-	(cp *.c $(OBJ_DIR); cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > gcov.txt
+	./$(TARGET) | tee test.txt | (grep -E 'FAILURE|TEST'; exit 0)
+	(cd $(OBJ_DIR)/; gcov -b $(ALL_FILES)) > gcov.txt
 	./can.pl $(OBJ_DIR)/*.c.gcov > summary.txt
 	cat summary.txt
 

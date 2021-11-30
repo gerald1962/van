@@ -18,10 +18,10 @@
 #define OS_MAX_STRING_LEN  1048576
 
 /* Maximum length of a name strings. */
-#define OS_MAX_NAME_LEN  8
+#define OS_MAX_NAME_LEN  16
 
 /* Number of the supported threads. */
-#define OS_THREAD_LIMIT  2
+#define OS_THREAD_LIMIT  5
 
 /* Limit of the thread input queue. */
 #define OS_QUEUE_LIMIT  1024
@@ -55,14 +55,6 @@
 #define OS_SEND(thread_, msg_, size_) do { \
         os_queue_send((thread_), (os_queue_elem_t *) (msg_), (size_)); \
 } while(0)
-
-/* XXX FEATURE */
-#define OS_DEBUG
-#if defined (OS_DEBUG)
-#define OS_TRACE(info_)  do { printf info_ ; } while (0)
-#else
-#define OS_TRACE(info_)
-#endif
 
 /*============================================================================
   TYPE DEFINITIONS
@@ -141,7 +133,10 @@ void os_statistics(os_statistics_t *stat);
 void os_init(void);
 void os_exit(void);
 
-/* Traps handling. */
+/* Trace handling. */
+void os_trace_button(int n);
+
+/* Trap handling. */
 void os_trap(char *file, const char *function, unsigned long line);
 
 /* Dynamic memory. */
@@ -177,6 +172,7 @@ void os_spin_destroy(spinlock_t *spinlock);
 
 /* Threads. */
 void *os_thread_create(const char *name, os_thread_prio_t prio, int queue_size);
+char *os_thread_name(void *thread);
 void os_thread_destroy(void *thread);
 
 /* Message queue. */

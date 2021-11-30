@@ -29,6 +29,10 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+
+/* Pointer to the OS configuration */
+static os_conf_t *os_conf_p;
+
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
@@ -85,16 +89,16 @@ void os_trap(char *file, const char *function, unsigned long line)
 	/* Entry condition. */
 	if (file != NULL && function != NULL) {
 		if (os_strcmp(function, "*coverage*") == 0) {
-			printf("*** coverage test at \"%s\", \"%s\", %lu\n",
-			       file, function, line);
+			OS_TRACE(("*** coverage test at \"%s\", \"%s\", %lu\n",
+				  file, function, line));
 
 			/* Test the trap handler. */
 			os_trap_handler(SIGUSR1);
 			return;
 		}
 		else {
-			printf("*** core dump at \"%s\", \"%s\", %lu\n",
-			       file, function, line);
+			OS_TRACE(("*** core dump at \"%s\", \"%s\", %lu\n",
+				  file, function, line));
 		}
 	}
 	
@@ -108,8 +112,11 @@ void os_trap(char *file, const char *function, unsigned long line)
  *
  * Return:	None.
  **/
-void os_trap_init(void)
+void os_trap_init(os_conf_t *conf)
 {
+	/* Save the reference to the OS configuration. */
+	os_conf_p = conf;
+	
 	/* Install the signal handler for the core dump. */
 	os_trap_catch();
 }

@@ -8,6 +8,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include <stdlib.h>  /* Standard lib: exit(). */
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -41,13 +42,14 @@ do { \
   ============================================================================*/
 
 /**
- * test_stat_t - state of cost.
+ * test_stat_t - state of vote.
  *
- * label:      Identifikation of the current test case.
- * @test_n:    Number of the executed test cases.
- * @error_n:   Number of the test case errors.
- * @suspend:   Control semaphore for the main process.
- * @msg_info:  Contents of the message buffer.
+ * label:      identifikation of the current test case.
+ * @test_n:    number of the executed test cases.
+ * @error_n:   number of the test case errors.
+ * @suspend:   control semaphore for the main process.
+ * @msg_info:  contents of the message buffer.
+ * @thread:    thread list for the multi thread test.
  **/
 typedef struct {
 	char  *label;
@@ -55,6 +57,7 @@ typedef struct {
 	int    error_n;
 	sem_t  suspend;
 	char  *msg_info;
+	void  *thread[OS_THREAD_LIMIT];
 
 } test_stat_t;
 	
@@ -84,14 +87,33 @@ typedef struct {
         char buf[TEST_LEN];
 } test_msg_t;
 
+/**
+ * test_mt_msg_t - message for the mult thread test.
+ *
+ * @OS_QUEUE_MSG_HEAD:  generic message header.
+ * @buf:                message information.
+ * @his_idx             index of the sender thread.
+ * @my_idx              index of the receiver thread.
+ **/
+typedef struct {
+        OS_QUEUE_MSG_HEAD;
+        char buf[TEST_LEN];
+	int  his_idx;
+	int  my_idx;
+} test_mt_msg_t;
+
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
 
+static void test_mt_msg_send(int his_idx, int my_idx);
+
 static int test_case_shutdown(void);
+static int test_case_multi_thread(void);
 static int test_case_queue_limit(void);
 static int test_case_malloc_limit(void);
 static int test_case_queue(void);
+static int test_case_thread_limit(void);
 static int test_case_thread(void);
 static int test_case_string(void);
 static int test_case_mem(void);
@@ -103,7 +125,7 @@ static int test_case_boot(void);
   LOCAL DATA
   ============================================================================*/
 
-/* State of the cost program. */
+/* State of the vote program. */
 static test_stat_t test_stat;
 
 /* List of the boot test cases. */
@@ -114,9 +136,11 @@ static test_elem_t test_system[] = {
 	{ TEST_ADD(test_case_mem), 0 },
 	{ TEST_ADD(test_case_string), 0 },
 	{ TEST_ADD(test_case_thread), 0 },
+	{ TEST_ADD(test_case_thread_limit), 0 },
 	{ TEST_ADD(test_case_queue), 0 },
 	{ TEST_ADD(test_case_malloc_limit), 0 },
 	{ TEST_ADD(test_case_queue_limit), 0 },
+	{ TEST_ADD(test_case_multi_thread), 0 },
 	{ TEST_ADD(test_case_shutdown), 0 },
 	{ NULL, NULL, 0 }
 };
@@ -145,6 +169,86 @@ static int test_os_stat(os_statistics_t *expected)
 	ret = os_memcmp(&stat, expected, sizeof(os_statistics_t));
 
 	return ret;
+}
+
+/**
+ * test_mt_msg_exec() - process the multi thread message in the test thread context.
+ *
+ * @m:  pointer to the received message.
+ *
+ * Return:	None.
+ **/
+static void test_mt_msg_exec(os_queue_elem_t *m)
+{
+        test_mt_msg_t *msg;
+	void *my_p, *his_p;
+	char *my_name, *his_name;
+	int my_idx, his_idx, ret;
+	
+	/* Decode the test message. */
+        msg = (test_mt_msg_t *) m;
+
+	/* Copy the thread index verify it. */
+	my_idx  = msg->my_idx;
+	his_idx = msg->his_idx;
+	OS_TRAP_IF(my_idx < 0 || my_idx >= OS_THREAD_LIMIT ||
+		   his_idx < 0 || his_idx >= OS_THREAD_LIMIT);
+	
+	/* Test the message buffer. */
+	ret = os_strcmp(msg->buf, test_stat.msg_info);
+	OS_TRAP_IF(ret != 0);
+
+	/* Map the index to the thread address. */
+	my_p  = test_stat.thread[my_idx];
+	his_p = test_stat.thread[his_idx];
+
+	/* Request the thread name. */
+	my_name  = os_thread_name(my_p);
+	his_name = os_thread_name(his_p);
+
+	printf("[%d, %s]: received mt from [%d, %s]\n",
+	       my_idx, my_name, his_idx, his_name);
+	
+	/* Test the index and resume the main process. */
+	if ((my_idx + 1) >= OS_THREAD_LIMIT) {
+		os_sem_release(&test_stat.suspend);
+		return;
+	}
+
+	/* Send the message to the next thread. */
+	test_mt_msg_send(my_idx, my_idx + 1);
+}
+
+/**
+ * test_mt_msg_send() - send the multi thread message to the next thread.
+ *
+ * @his_idx:  index of the sender thread.
+ * @my_idx:   index of the receiver thread.
+ *
+ * Return:	None.
+ **/
+static void test_mt_msg_send(int his_idx, int my_idx)
+{
+        test_mt_msg_t msg;
+	void *p;
+
+	/* Entry condition. */
+	OS_TRAP_IF(my_idx < 0 || my_idx >= OS_THREAD_LIMIT ||
+		   his_idx < 0 || his_idx >= OS_THREAD_LIMIT);
+
+	/* Map the index to the thread address. */
+	p = test_stat.thread[my_idx];
+	
+	/* Define the test message. */
+	os_memset(&msg, 0, sizeof(msg));
+	msg.param   = p;
+	msg.cb      = test_mt_msg_exec;
+	msg.his_idx = his_idx;
+	msg.my_idx  = my_idx;
+	os_strcpy(msg.buf, TEST_LEN, test_stat.msg_info);
+
+	/* Send the message to the test thread. */
+	OS_SEND(p, &msg, sizeof(msg));
 }
 
 /**
@@ -198,7 +302,7 @@ static void test_msg_send(void *thread)
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2306, 2306, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2311, 2311, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -206,6 +310,60 @@ static int test_case_shutdown(void)
 	
 	/* Release all OS resources. */
 	os_exit();
+	
+	return stat;
+}
+
+/**
+ * test_case_multi_thread() - send a message from one thread to the other.
+ *
+ * Return:	the execution state..
+ **/
+static int test_case_multi_thread(void)
+{
+	os_statistics_t expected = { 2, 2, 0, 2311, 2311, 0 };
+	char name[OS_MAX_NAME_LEN];
+	void **p;
+	int i, stat;
+
+	/* Define the message information. */
+	test_stat.msg_info = "ping";
+
+	/* Get the start adderss of the global thread list. */
+	p = test_stat.thread;
+	
+	/* Create the control semaphore for the main process. */
+	os_sem_init(&test_stat.suspend, 0);
+
+	/* Install all available threads. */
+	for (i = 0; i < OS_THREAD_LIMIT; i++) {
+		/* Build the thread name. */
+		snprintf(name, OS_MAX_NAME_LEN, "test_%d", i + 1);
+		
+		/* Create and start the test thread. */
+		p[i] = os_thread_create(name, OS_THREAD_PRIO_FOREG, 256);
+	}
+
+	/* Send the first multi thread message. */
+	test_mt_msg_send(0, 0);
+	
+	/* Suspend the main process. */
+	os_sem_wait(&test_stat.suspend);
+
+	/* Kill all installed threads. */
+	for (i = 0; i < OS_THREAD_LIMIT; i++) {
+		/* Kill the test thread. */
+		os_thread_destroy(p[i]);
+	}
+
+	/* Release the control semaphore for the main process. */
+	os_sem_delete(&test_stat.suspend);
+
+	/* Reset the global thread list. */
+	os_memset(p, 0, sizeof(void *) * OS_THREAD_LIMIT);
+	
+	/* Verify the OS state. */
+	stat = test_os_stat(&expected);
 	
 	return stat;
 }
@@ -314,6 +472,41 @@ static int test_case_queue(void)
 }
 
 /**
+ * test_case_thread_limit() - install and kill all availabe threads.
+ *
+ * Return:	the execution state..
+ **/
+static int test_case_thread_limit(void)
+{
+	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
+	char name[OS_MAX_NAME_LEN];
+	void *p[OS_THREAD_LIMIT];
+	int i, j, stat;
+
+	j = OS_THREAD_LIMIT;
+	
+	/* Install all available threads. */
+	for (i = 0; i < j; i++) {
+		/* Build the thread name. */
+		snprintf(name, OS_MAX_NAME_LEN, "test_%d", i + 1);
+		
+		/* Create and start the test thread. */
+		p[i] = os_thread_create(name, OS_THREAD_PRIO_FOREG, 256);
+	}
+
+	/* Kill all installed threads. */
+	for (j = j - 1; j >= 0; j--) {
+		/* Kill the test thread. */
+		os_thread_destroy(p[j]);
+	}
+	
+	/* Verify the OS state. */
+	stat = test_os_stat(&expected);
+	
+	return stat;
+}
+
+/**
  * test_case_thread() - test the thread handling.
  *
  * Return:	the execution state..
@@ -322,10 +515,15 @@ static int test_case_thread(void)
 {
 	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
 	void *p;
+	char *name;
 	int stat;
 
 	/* Create and start the test thread. */
 	p = os_thread_create("test", OS_THREAD_PRIO_FOREG, 256);
+
+	/* Get the name of the thread. */
+	name = os_thread_name(p);
+	printf("Thread name: %s\n", name);
 
 	/* Kill the test thread. */
 	os_thread_destroy(p);
@@ -470,6 +668,9 @@ static int test_case_boot(void)
 	/* Initialize all OS layers. */
 	os_init();
 
+	/* Switch off the OS trace. */
+	os_trace_button(0);
+
 	/* Verify the OS state. */
 	stat = test_os_stat(&expected);
 	
@@ -491,10 +692,7 @@ static void test_set_process (char *label, test_elem_t *elem)
 
 	printf("%s: SELECT\n", label);
 
-	/* Backup of the VAN OS status. */
-	//  TS_ENTER();
-	
-	/* Get the address of the cost state. */
+	/* Get the address of the vote state. */
 	s = &test_stat;
 	
 	/* Run thru the list of the test cases. */
@@ -503,13 +701,13 @@ static void test_set_process (char *label, test_elem_t *elem)
 		s->label = elem->label;
 		s->test_n++;
 
-		printf("%s: CALL [%s, %d]\n", label, elem->label, elem->place);
+		printf("%s: CALL [%d, %s, %d]\n", label, s->test_n, elem->label,
+		       elem->place);
 
 		/* Execute the test case. */
 		ret = elem->routine();
 		
-		// check_status();
-
+		/* Verify the test status. */
 		TEST_ASSERT_EQ(elem->expected, ret);
 		
 		/* Evalute the test result. */
@@ -520,14 +718,11 @@ static void test_set_process (char *label, test_elem_t *elem)
 		       label, s->label,  elem->expected, ret);
         }
 	
-	/* Match the backup of the VAN OS status with the current status. */
-	//  TS_LEAVE();
-	
 	printf("%s: DONE\n", label);
 }
 
 /**
- * test_run() - execute the list of the test cases.
+ * test_run() - execute the specific list of test cases.
  *
  * Return:	None.
  **/
@@ -535,6 +730,66 @@ static void test_run(void)
 {
 	/* Execute the list of the test cases. */
 	test_set_process(TEST_ADD(test_system));
+}
+
+static void test_usage(void)
+{
+	printf("VOTE - VAN OS Test Environment \n");
+	printf("  no arg - execute the complete test set with n cases\n");
+	printf("  n      - start the nth test case, except n<=1 or n>=limit \n");
+	printf("  other  - print the usage information.\n");
+	exit (1);
+}
+
+/**
+ * test_single_case() - execute a single test case.
+ *
+ * Return:	None.
+ **/
+static void test_single_case(int n)
+{
+	test_elem_t *elem;
+	int i;
+
+	/* Test the limits of the case list: boot process shall be done once. */
+	if (n < 1)
+		test_usage();
+		
+	/* Get the address of the first test case. */
+	elem = test_system;
+
+	/* Count the number of the  test cases. */
+	for (i = 0; elem->routine; i++, elem++) 
+		;
+
+	/* Test the search result. */
+	if (n <= 1 || n >= i) {
+		printf("vote: invalid test case number %d.\n", n);
+		test_usage();
+	}
+
+	/* Get the address of the first test case. */
+	elem = test_system;
+
+	/* Search for the test case. */
+	for (i = 1; i < n && elem->routine; i++, elem++) 
+		;
+
+	/* Initialize the test counter. */
+	test_stat.test_n = 1;
+	
+	/* Initialize the OS. */
+	test_case_boot();
+
+	/* Switch on the OS trace. */
+	os_trace_button(1);
+
+	/* Execute the test case. */
+	printf("CALL [%d, %s, %d]\n", n, elem->label, elem->place);
+	elem->routine();
+
+	/* Switch off the OS. */
+	test_case_shutdown();
 }
 
 /*============================================================================
@@ -546,16 +801,29 @@ static void test_run(void)
  *
  * Return:	0 or force a software trap.
  **/
-int main(void)
+int main(int argc, char* argv[])
 {
 	test_stat_t *s;
+	int n;
 
-	/* Get the address of the cost status. */
-	s = &test_stat;
+	/* Test the argument counter. */
+	switch(argc) {
+	case 1:
+		/* Execute all test cases. */
+		test_run();
+		break;
+	case 2:
+		/* Decode the test number and execute the nth test case. */
+		n = atoi(argv[1]);
+		test_single_case(n);
+		break;
+	default:
+		test_usage();
+		break;
+	}
 	
-	/* Execute all test cases. */
-	test_run();
-
+	/* Display the test status. */
+	s = &test_stat;
 	printf("\nTEST: %d failures in %d test cases.\n", s->error_n, s->test_n);
 
 	return (0);

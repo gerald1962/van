@@ -29,6 +29,10 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+
+/* OS configuration. */
+static os_conf_t os_conf;
+
 /**
  * os_stat - overall state of the OS.
  *
@@ -347,6 +351,18 @@ void os_statistics(os_statistics_t *stat)
 }
 
 /**
+ * os_trace_button() - change the trace configuration.
+ *
+ * @n:  if n eq. 0, trace off, else trace on.
+ *
+ * Return:	None.
+ **/
+void os_trace_button(int n)
+{
+	os_conf.trace_stat = n;
+}
+
+/**
  * os_init() - initialize the operation system.
  *
  * Return:	None.
@@ -359,16 +375,19 @@ void os_init(void)
 	is_init = atomic_load(&os_stat.is_init);
 	atomic_store(&os_stat.is_init, 1);
 	OS_TRAP_IF(is_init);
+
+	/* Switch on the trace. */
+	os_conf.trace_stat = 1;
 	
 	/* Install a signal handler to generate a core dump, if the test
          * programm has been terminated with Ctrl-C. */
-        os_trap_init();
+        os_trap_init(&os_conf);
 
 	/* Initialize the os_malloc list. */
 	os_mem_init();
 	
 	/* Initialize the thread table. */
-	os_thread_init();
+	os_thread_init(&os_conf);
 }
 
 /**
