@@ -16,6 +16,28 @@
 /*============================================================================
   TYPE DEFINITIONS
   ============================================================================*/
+/**
+ * serv_msg_t - input messages of the server.
+ *
+ * @SERV_OP_INIT_IND_M:   init indication from the operator.
+ * @SERV_CLI_DOWN_IND_M:  down indication from the client.
+ **/
+typedef enum {
+	SERV_OP_INIT_IND_M,
+	SERV_CLI_DOWN_IND_M,
+	SERV_COUNT_M
+} serv_msg_t;
+
+/**
+ * cli_msg_t - input messages of the client.
+ *
+ * @CLI_SERV_UP_IND_M:  up indication from the server.
+ **/
+typedef enum {
+	CLI_SERV_UP_IND_M,
+	CLI_COUNT_M
+} cli_msg_t;
+
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
@@ -26,22 +48,18 @@
 /* ======================= Exported server interfaces ======================= */
 
 /* operater -> server calls */
-void serv_op_init(void *server, void *client);
+void serv_op_init(void);
 void serv_op_exit(void);
 
-/* operater -> server message */
-void serv_op_init_ind_exec(os_queue_elem_t *msg);
-/* client -> server message */
-void serv_cli_down_ind_exec(os_queue_elem_t *msg);
+void serv_send(serv_msg_t id, os_queue_elem_t *msg, int size);
 
 /* ======================= Exported client interfaces ======================= */
 
 /* operater -> client calls */
-void cli_op_init(void *server, void *client);
+void cli_op_init(void);
 void cli_op_exit(void);
 	
-/* server -> client message */
-void cli_serv_up_ind_exec(os_queue_elem_t *msg);
+void cli_send(cli_msg_t id, os_queue_elem_t *msg, int size);
 
 /* ======================= Exported operator interface ====================== */
 

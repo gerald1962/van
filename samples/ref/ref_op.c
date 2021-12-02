@@ -35,13 +35,9 @@
  * ref_stat - state of the research project.
  *
  * @suspend:  suspend the main process while the test is running.
- * @server:   address of the server thread.
- * @client:   address of the server thread.
  **/
 static struct ref_stat_s {
 	sem_t   suspend;
-	void    *server;
-	void    *client;
 } ref_stat;
 
 /*============================================================================
@@ -61,15 +57,6 @@ static void ref_cleanup(void)
 	void *p;
 	
 	printf("%s [p=main,s=exit,o=cleanup]\n", P);
-
-	/* Destroy the client and server thread. */
-	p = ref_stat.client;
-	ref_stat.client = NULL;
-	os_thread_destroy(p);
-	
-	p = ref_stat.server;
-	ref_stat.server = NULL;
-	os_thread_destroy(p);
 
 	/* Release the server and client resources. */
 	serv_op_exit();
@@ -109,8 +96,7 @@ static void op_serv_init_ind_send(void)
 	/* Send the start message to the server thread. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = NULL;
-	msg.cb = serv_op_init_ind_exec;
-	os_queue_send(ref_stat.server, &msg, sizeof(msg));
+	serv_send(SERV_OP_INIT_IND_M, &msg, sizeof(msg));
 }
 
 /**
@@ -133,13 +119,9 @@ static void ref_init(void)
 	/* Control the lifetime of the research programme. */
 	os_sem_init(&ref_stat.suspend, 0);
 
-	/* Create and start the server and client thread. */
-	s->server = os_thread_create("server", OS_THREAD_PRIO_FOREG, 16);
-	s->client = os_thread_create("client", OS_THREAD_PRIO_FOREG, 16);
-
-	/* Initialize the server and client state. */
-	serv_op_init(s->server, s->client);
-	cli_op_init(s->server, s->client);
+	/* Initialize the server and the client state. */
+	serv_op_init();
+	cli_op_init();
 
 	/* Send the thread addresses to the server and client. */
 	op_serv_init_ind_send();

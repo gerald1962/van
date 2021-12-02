@@ -81,6 +81,23 @@ typedef struct {
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/* server -> client message */
+static void cli_serv_up_ind_exec(os_queue_elem_t *msg);
+
+/**
+ * cli_msg_list_s - list of all client input messages.
+ *
+ * @id:  message id.
+ * @cb:  callback for the input message.
+ *
+ **/
+static struct cli_msg_list_s {
+	cli_msg_t      id;
+	os_queue_cb_t  *cb;
+} cli_msg_list[CLI_COUNT_M] = {
+	{ CLI_SERV_UP_IND_M,  cli_serv_up_ind_exec }
+};
+
 /* Client state. */
 static cli_data_t cli_data;
 
@@ -115,13 +132,9 @@ static void cli_serv_down_ind_send(void)
 	/* Send the down indication to the server. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = c->my_addr;
-	msg.cb    = serv_cli_down_ind_exec;
-	os_queue_send(c->serv_addr, &msg, sizeof(msg));
+	serv_send(SERV_CLI_DOWN_IND_M, &msg, sizeof(msg));
 }
 
-/*============================================================================
-  EXPORTED FUNCTIONS
-  ============================================================================*/
 /**
  * cli_serv_up_ind_exec() - up indication from the server.
  *
@@ -129,7 +142,7 @@ static void cli_serv_down_ind_send(void)
  *
  * Return:	None.
  **/
-void cli_serv_up_ind_exec(os_queue_elem_t *msg)
+static void cli_serv_up_ind_exec(os_queue_elem_t *msg)
 {
 	cli_data_t *c;
 
@@ -149,6 +162,28 @@ void cli_serv_up_ind_exec(os_queue_elem_t *msg)
 	cli_serv_down_ind_send();
 }
 
+/*============================================================================
+  EXPORTED FUNCTIONS
+  ============================================================================*/
+/**
+ * cli_send() - send the message to the client thread.
+ *
+ * @id:    id of the input message.
+ * @msg:   generic pointer to the input message.
+ * @size:  size of the input message.
+ *
+ * Return:	None.
+ **/
+void cli_send(cli_msg_t id, os_queue_elem_t *msg, int size)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(id >= CLI_COUNT_M || msg == NULL);
+
+	/* Copy the callback and save the message in the input queue. */
+	msg->cb = cli_msg_list[id].cb;
+	os_queue_send(cli_data.my_addr, msg, size);
+}
+
 /**
  * cli_op_exit() - release the client resources.
  *
@@ -157,6 +192,7 @@ void cli_serv_up_ind_exec(os_queue_elem_t *msg)
 void cli_op_exit(void)
 {
 	cli_data_t *c;
+	void *p;
 
 	/* Get the address of the client state. */
 	c = &cli_data;
@@ -169,17 +205,19 @@ void cli_op_exit(void)
 	/* Release the client resources. */
 	c->is_active = 0;
 	c->my_state  = CLI_S_SELF_RELEASED;
+
+	/* Destroy the client thread. */
+	p = c->my_addr;
+	c->my_addr = NULL;
+	os_thread_destroy(p);
 }
 
 /**
  * cli_op_init() - initialize the client state.
  *
- * @server:  address of the server thread.
- * @client:  address of the client thread.
- *
  * Return:	None.
  **/
-void cli_op_init(void *server, void *client)
+void cli_op_init(void)
 {
 	cli_data_t *c;
 	
@@ -190,10 +228,9 @@ void cli_op_init(void *server, void *client)
 	
 	/* Entry condition. */
 	OS_TRAP_IF(c->is_active);
-	
-	/* Save the thread addersses. */
-	c->my_addr   = client;
-	c->serv_addr = server;
+
+	/* Install the client thread. */
+	c->my_addr = os_thread_create("client", OS_THREAD_PRIO_FOREG, 16);
 
 	/* Allocate the client resources. */
 	c->is_active  = 1;

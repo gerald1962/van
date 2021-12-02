@@ -66,19 +66,37 @@ typedef enum {
  * @cli_state:  client state.
  * @is_active:  1, if the resources are available.
  * @my_addr:    server thread address.
- * @cli_addr:   client thread address.
  **/
 typedef struct {
 	serv_s_self_t  my_state;
 	serv_s_cli_t   cli_state;
 	int    is_active;
 	void  *my_addr;
-	void  *cli_addr;
 } serv_data_t;
 
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/* operater -> server message */
+static void serv_op_init_ind_exec(os_queue_elem_t *msg);
+/* client -> server message */
+static void serv_cli_down_ind_exec(os_queue_elem_t *msg);
+
+/**
+ * serv_msg_list_s - list of all server input messages.
+ *
+ * @id:  message id.
+ * @cb:  callback for the input message.
+ *
+ **/
+static struct serv_msg_list_s {
+	serv_msg_t      id;
+	os_queue_cb_t  *cb;
+} serv_msg_list[SERV_COUNT_M] = {
+	{ SERV_OP_INIT_IND_M,  serv_op_init_ind_exec },
+	{ SERV_CLI_DOWN_IND_M, serv_cli_down_ind_exec }
+};
+
 /* Server state. */
 static serv_data_t serv_data;
 
@@ -104,13 +122,8 @@ static void serv_cli_up_ind_send(void)
 	/* Send the server up indication to the client. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = s->my_addr;
-	msg.cb    = cli_serv_up_ind_exec;
-	os_queue_send(s->cli_addr, &msg, sizeof(msg));
+	cli_send(CLI_SERV_UP_IND_M, &msg, sizeof(msg));
 }
-
-/*============================================================================
-  EXPORTED FUNCTIONS
-  ============================================================================*/
 
 /**
  * serv_cli_down_ind_exec() - the client request the shutdown of the server.
@@ -119,7 +132,7 @@ static void serv_cli_up_ind_send(void)
  *
  * Return:	None.
  **/
-void serv_cli_down_ind_exec(os_queue_elem_t *msg)
+static void serv_cli_down_ind_exec(os_queue_elem_t *msg)
 {
 	serv_data_t *s;
 
@@ -147,7 +160,7 @@ void serv_cli_down_ind_exec(os_queue_elem_t *msg)
  *
  * Return:	None.
  **/
-void serv_op_init_ind_exec(os_queue_elem_t *msg)
+static void serv_op_init_ind_exec(os_queue_elem_t *msg)
 {
 	serv_data_t *s;
 
@@ -167,6 +180,29 @@ void serv_op_init_ind_exec(os_queue_elem_t *msg)
 	serv_cli_up_ind_send();
 }
 
+/*============================================================================
+  EXPORTED FUNCTIONS
+  ============================================================================*/
+
+/**
+ * serv_send() - send the message to the server thread.
+ *
+ * @id:    id of the input message.
+ * @msg:   generic pointer to the input message.
+ * @size:  size of the input message.
+ *
+ * Return:	None.
+ **/
+void serv_send(serv_msg_t id, os_queue_elem_t *msg, int size)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(id >= SERV_COUNT_M || msg == NULL);
+
+	/* Copy the callback and save the message in the input queue. */
+	msg->cb = serv_msg_list[id].cb;
+	os_queue_send(serv_data.my_addr, msg, size);
+}
+
 /**
  * serv_op_exit() - release the server resources.
  *
@@ -175,6 +211,7 @@ void serv_op_init_ind_exec(os_queue_elem_t *msg)
 void serv_op_exit(void)
 {
 	serv_data_t *s;
+	void *p;
 
 	/* Get the address of the server state. */
 	s = &serv_data;
@@ -187,17 +224,19 @@ void serv_op_exit(void)
 	/* Release the server resources. */
 	s->is_active = 0;
 	s->my_state  = SERV_S_SELF_RELEASED;
+
+	/* Destroy the server thread. */
+	p = s->my_addr;
+	s->my_addr = NULL;
+	os_thread_destroy(p);
 }
 
 /**
  * serv_op_init() - initialize the server state.
  *
- * @server:  address of the server thread.
- * @client:  address of the client thread.
- *
  * Return:	None.
  **/
-void serv_op_init(void *server, void *client)
+void serv_op_init(void)
 {
 	serv_data_t *s;
 
@@ -207,9 +246,8 @@ void serv_op_init(void *server, void *client)
 	/* Entry condition. */
 	OS_TRAP_IF(s->is_active);
 
-	/* Save the thread addresses. */
-	s->my_addr  = server;
-	s->cli_addr = client;
+	/* Install the server thread. */
+	s->my_addr = os_thread_create("server", OS_THREAD_PRIO_FOREG, 16);
 	
 	/* Allocate the server resources. */
 	s->is_active = 1;
