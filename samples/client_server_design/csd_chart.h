@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-2.0 */
-#ifndef __ref_chart_h__
-#define __ref_chart_h__
+#ifndef __csd_chart_h__
+#define __csd_chart_h__
 
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
@@ -66,4 +66,4 @@ void cli_send(cli_msg_t id, os_queue_elem_t *msg, int size);
 /* server -> operator call */
 void op_resume(void);
 
-#endif /* __ref_chart_h__ */
+#endif /* __csd_chart_h__ */

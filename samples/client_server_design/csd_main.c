@@ -9,7 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "ref_chart.h"  /* Client and server routins. */
+#include "csd_chart.h"  /* Client and server routins. */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -32,13 +32,13 @@
   ============================================================================*/
 
 /** 
- * ref_stat - state of the research project.
+ * csd_stat - state of the research project.
  *
  * @suspend:  suspend the main process while the test is running.
  **/
-static struct ref_stat_s {
+static struct csd_stat_s {
 	sem_t   suspend;
-} ref_stat;
+} csd_stat;
 
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -48,11 +48,11 @@ static struct ref_stat_s {
   ============================================================================*/
 
 /**
- * ref_cleanup() - free the resources of the research programme.
+ * csd_cleanup() - free the resources of the research programme.
  *
  * Return:	None.
  **/
-static void ref_cleanup(void)
+static void csd_cleanup(void)
 {
 	void *p;
 	
@@ -62,7 +62,7 @@ static void ref_cleanup(void)
 	serv_op_exit();
 	cli_op_exit();
 
-	os_sem_delete(&ref_stat.suspend);
+	os_sem_delete(&csd_stat.suspend);
 
 	/* Release the OS resources. */
 	os_exit();
@@ -70,16 +70,16 @@ static void ref_cleanup(void)
 
 
 /**
- * ref_wait() - suspend the main process.
+ * csd_wait() - suspend the main process.
  *
  * Return:	None.
  **/
-static void ref_wait(void)
+static void csd_wait(void)
 {
 	printf("%s [p=main,s=done,o=suspend]\n", P);
 	
 	/* Suspend the main process. */
-	os_sem_wait(&ref_stat.suspend);
+	os_sem_wait(&csd_stat.suspend);
 	
 	printf("%s [p=main,s=exit,o=resume]\n", P);
 }
@@ -100,16 +100,16 @@ static void op_serv_init_ind_send(void)
 }
 
 /**
- * ref_init() - iniialize the research programme.
+ * csd_init() - iniialize the research programme.
  *
  * Return:	None.
  **/
-static void ref_init(void)
+static void csd_init(void)
 {
-	static struct ref_stat_s *s;
+	static struct csd_stat_s *s;
 
 	/* Get the address of the maint process state. */
-	s = &ref_stat;
+	s = &csd_stat;
 	
 	printf("%s [p=main,s=boot,o=init]\n", P);
 
@@ -117,7 +117,7 @@ static void ref_init(void)
 	os_init();
 
 	/* Control the lifetime of the research programme. */
-	os_sem_init(&ref_stat.suspend, 0);
+	os_sem_init(&csd_stat.suspend, 0);
 
 	/* Initialize the server and the client state. */
 	serv_op_init();
@@ -127,7 +127,7 @@ static void ref_init(void)
 	op_serv_init_ind_send();
 	
 	/* Wait for the resume trigger. */
-	ref_wait();	
+	csd_wait();	
 }
 
 
@@ -145,7 +145,7 @@ void op_resume(void)
 	printf("%s [t=server,s=suspended,m=resume]\n", P);
 
 	/* Resume the main thread. */
-	os_sem_release(&ref_stat.suspend);
+	os_sem_release(&csd_stat.suspend);
 }
 
 /**
@@ -156,10 +156,10 @@ void op_resume(void)
 int main(void)
 {
 	/* Iniialize the research progamme. */
-	ref_init();
+	csd_init();
 
 	/* Free all resources. */
-	ref_cleanup();
+	csd_cleanup();
 	
 	return (0);
 }
