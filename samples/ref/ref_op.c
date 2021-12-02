@@ -19,7 +19,7 @@
   ============================================================================*/
 
 /* Prompt of the research programme. */
-#define P  "S:"
+#define P  "M:"
 
 /*============================================================================
   MACROS
@@ -32,16 +32,17 @@
   ============================================================================*/
 
 /** 
- * shm_stat - state of the research project.
+ * ref_stat - state of the research project.
  *
  * @suspend:  suspend the main process while the test is running.
- * @con:      reference to the controller thread.
+ * @server:   address of the server thread.
+ * @client:   address of the server thread.
  **/
-static struct shm_stat_s {
+static struct ref_stat_s {
 	sem_t   suspend;
-	void    *con;
-} shm_stat;
-
+	void    *server;
+	void    *client;
+} ref_stat;
 
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -51,21 +52,26 @@ static struct shm_stat_s {
   ============================================================================*/
 
 /**
- * shm_cleanup() - free the resources of the research programme.
+ * ref_cleanup() - free the resources of the research programme.
  *
  * Return:	None.
  **/
-static void shm_cleanup(void)
+static void ref_cleanup(void)
 {
-	void *con;
+	void *p;
 	
 	printf("%s [p=main,s=exit,o=cleanup]\n", P);
 
-	/* Destroy the controller thread. */
-	con = shm_stat.con;
-	shm_stat.con = NULL;
-	os_thread_destroy(con);
-	os_sem_delete(&shm_stat.suspend);
+	/* Destroy the client and server thread. */
+	p = ref_stat.client;
+	ref_stat.client = NULL;
+	os_thread_destroy(p);
+	
+	p = ref_stat.server;
+	ref_stat.server = NULL;
+	os_thread_destroy(p);
+	
+	os_sem_delete(&ref_stat.suspend);
 
 	/* Release the OS resources. */
 	os_exit();
@@ -73,60 +79,66 @@ static void shm_cleanup(void)
 
 
 /**
- * shm_wait() - suspend the main process and wait for the exit message.
+ * ref_wait() - suspend the main process.
  *
  * Return:	None.
  **/
-static void shm_wait(void)
+static void ref_wait(void)
 {
 	printf("%s [p=main,s=done,o=suspend]\n", P);
 	
 	/* Suspend the main process. */
-	os_sem_wait(&shm_stat.suspend);
+	os_sem_wait(&ref_stat.suspend);
 	
 	printf("%s [p=main,s=exit,o=resume]\n", P);
 }
 
+	/* XXX */
+#if 0
 /**
- * shm_exit_exec() - execute the exit message in the controller context.
+ * ref_exit_exec() - execute the exit message in the controller context.
  *
  * @msg:  reference to the generic input message.
  *
  * Return:	None.
  **/
-static void shm_exit_exec(os_queue_elem_t *msg)
+static void ref_exit_exec(os_queue_elem_t *msg)
 {
 	printf("%s [t=con,s=jobs,m=exit]\n", P);
 
 	/* Entry condition. */
-	OS_TRAP_IF(msg == NULL || msg->param != shm_stat.con);
+	OS_TRAP_IF(msg == NULL || msg->param != ref_stat.con);
 
 	/* Resume the main thread. */
-	os_sem_release(&shm_stat.suspend);
+	os_sem_release(&ref_stat.suspend);
 }
+#endif
 
 /**
- * shm_exit_send() - send the exit message to controller thread.
+ * ref_exit_send() - send the exit message to controller thread.
  *
  * Return:	None.
  **/
-static void shm_exit_send(void)
+static void ref_exit_send(void)
 {
+	/* XXX */
+#if 0
 	os_queue_elem_t msg;
 	
 	/* Send a test message. */
 	os_memset(&msg, 0, sizeof(msg));
-	msg.param = shm_stat.con;
-	msg.cb    = shm_exit_exec;
-	os_queue_send(shm_stat.con, &msg, sizeof(msg));
+	msg.param = ref_stat.con;
+	msg.cb    = ref_exit_exec;
+	os_queue_send(ref_stat.con, &msg, sizeof(msg));
+#endif
 }
 
 /**
- * shm_init() - iniialize the research programme.
+ * ref_init() - iniialize the research programme.
  *
  * Return:	None.
  **/
-static void shm_init(void)
+static void ref_init(void)
 {
 	printf("%s [p=main,s=boot,o=init]\n", P);
 
@@ -134,22 +146,36 @@ static void shm_init(void)
 	os_init();
 
 	/* Control the lifetime of the research programme. */
-	os_sem_init(&shm_stat.suspend, 0);
+	os_sem_init(&ref_stat.suspend, 0);
 
-	/* Create and start the controller thread. */
-	shm_stat.con = os_thread_create("con", OS_THREAD_PRIO_FOREG, 2);
+	/* Create and start the server and client thread. */
+	ref_stat.server = os_thread_create("server", OS_THREAD_PRIO_FOREG, 16);
+	ref_stat.client = os_thread_create("client", OS_THREAD_PRIO_FOREG, 16);
 
-	/* Send the exit message to the controller thread. */
-	shm_exit_send();
+	/* Send the up ind message to the server and client thread. */
+	ref_exit_send();
 	
-	/* Wait for the exit message. */
-	shm_wait();	
+	/* Wait for the resume trigger. */
+	ref_wait();	
 }
 
 
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+
+/**
+ * op_resume() - resume the main process.
+ *
+ * Return:	0 or force a software trap.
+ **/
+void op_resume(void)
+{
+	printf("%s [t=server,s=suspended,m=resume]\n", P);
+
+	/* Resume the main thread. */
+	os_sem_release(&ref_stat.suspend);
+}
 
 /**
  * main() - start function of the research programme.
@@ -159,10 +185,10 @@ static void shm_init(void)
 int main(void)
 {
 	/* Iniialize the research progamme. */
-	shm_init();
+	ref_init();
 
 	/* Free all resources. */
-	shm_cleanup();
+	ref_cleanup();
 	
 	return (0);
 }

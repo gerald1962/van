@@ -12,7 +12,7 @@ include ${GLOBALPATH}/tools/build/makefile_pathes
 # Define additional files needed to build the research programme.
 VAN_FILES := \
   ${${BUILD_LIB}_FILES} \
-  ref.c
+  ref_op.c
 
 # Include the framework makefile with the integration operations.
 include ${GLOBALPATH}/tools/build/makefile_operations
