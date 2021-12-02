@@ -1,6 +1,32 @@
+// SPDX-License-Identifier: GPL-2.0
 
+/*
+ * Client thread
+ *
+ * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ */
+
+/*============================================================================
+  IMPORTED INCLUDE REFERENCES
+  ============================================================================*/
+#include "ref_chart.h"  /* Client and server routins. */
+
+/*============================================================================
+  EXPORTED INCLUDE REFERENCES
+  ============================================================================*/
+/*============================================================================
+  LOCAL NAME CONSTANTS DEFINITIONS
+  ============================================================================*/
+
+/* Prompt for the client thread. */
 #define P  "C>"
 
+/*============================================================================
+  MACROS
+  ============================================================================*/
+/*============================================================================
+  LOCAL TYPE DEFINITIONS
+  ============================================================================*/
 /**
  * cli_s_self_t - list of the client states.
  *
@@ -35,6 +61,15 @@ typedef enum {
 	CLI_S_SERV_INV
 } cli_s_serv_t;
 
+/**
+ * cli_data_t - client status.
+ *
+ * @my_state:    current client state.
+ * @serv_state:  server state.
+ * @is_active:   1, if the resources are available.
+ * @my_addr:     client thread address.
+ * @cli_addr:    server thread address.
+ **/
 typedef struct {
 	cli_s_self_t  my_state;
 	cli_s_serv_t  serv_state;
@@ -43,28 +78,39 @@ typedef struct {
 	void  *serv_addr;
 } cli_data_t;
 
+/*============================================================================
+  LOCAL DATA
+  ============================================================================*/
 /* Client state. */
-static cli_status_t cli_data;
+static cli_data_t cli_data;
 
+/*============================================================================
+  LOCAL FUNCTION PROTOTYPES
+  ============================================================================*/
+/*============================================================================
+  LOCAL FUNCTIONS
+  ============================================================================*/
+/**
+ * cli_serv_down_ind_send() - send the down indication to the server.
+ *
+ * Return:	None.
+ **/
 static void cli_serv_down_ind_send(void)
 {
 	os_queue_elem_t msg;
 	cli_data_t *c;
 
 	/* Get the address of the client state. */
-	c = &cli_data:
+	c = &cli_data;
 
-	/* XXX */
-#if 1
 	printf("%s [s:ready, m:serv-down] -> [s:locked]\n", P);
 
 	/* Entry condition. */
-	OS_TRAP_IF(c->state != CLI_S_SELF_READY || msg == NULL);
+	OS_TRAP_IF(c->my_state != CLI_S_SELF_READY);
 
 	/* Change the channel states. */
 	c->my_state   = CLI_S_SELF_LOCKED;
 	c->serv_state = CLI_S_SERV_LOCKED;
-#endif
 	
 	/* Send the down indication to the server. */
 	os_memset(&msg, 0, sizeof(msg));
@@ -73,61 +119,50 @@ static void cli_serv_down_ind_send(void)
 	os_queue_send(c->serv_addr, &msg, sizeof(msg));
 }
 
+/*============================================================================
+  EXPORTED FUNCTIONS
+  ============================================================================*/
+/**
+ * cli_serv_up_ind_exec() - up indication from the server.
+ *
+ * @msg:  generic input message.
+ *
+ * Return:	None.
+ **/
 void cli_serv_up_ind_exec(os_queue_elem_t *msg)
 {
 	cli_data_t *c;
 
 	/* Get the address of the client state. */
-	c = &cli_data:
+	c = &cli_data;
 
 	printf("%s [s:init, m:serv-up] -> [s:ready]\n", P);
 	
 	/* Entry condition. */
-	OS_TRAP_IF(c->state != CLI_S_SELF_INIT || msg == NULL);
+	OS_TRAP_IF(c->my_state != CLI_S_SELF_INIT || msg == NULL);
 
 	/* The communication channels between client and server are active. */
 	c->my_state   = CLI_S_SELF_READY;
-	c->serv_state = CLI_S_SERV_READY;
+	c->serv_state = CLI_S_SERV_UP;
 
-	/* Simulate the shutdow interworking initiated by the control terminal. */
-
-	/* XXX Start a count down timer. */
-#if 1
+	/* Simulate the shutdown interworking initiated by the control terminal. */
 	cli_serv_down_ind_send();
-#endif
 }
 
-void cli_op_init_ind_exec(os_queue_elem_t *msg)
-{
-	op_init_ind_msg_t *m;
-	cli_data_t *c;
-
-	/* Get the address of the client state. */
-	c = &cli_data:
-
-	/* Entry condition. */
-	OS_TRAP_IF(c->state != CLI_S_SELF_DOWN || msg == NULL);
-
-	printf("%s [s:down, m:op-init] -> [s:init]\n", P);
-
-	/* Change the client channel state. */
-	c->my_state = CLI_S_SELF_INIT;
-
-	/* Save the thread addersses. */
-	m = (op_init_ind_msg_t *) msg;
-	c->serv_addr = m->serv_addr;
-	c->my_addr   = m->cli_addr;
-}
-
+/**
+ * cli_op_exit() - release the client resources.
+ *
+ * Return:	None.
+ **/
 void cli_op_exit(void)
 {
 	cli_data_t *c;
 
 	/* Get the address of the client state. */
-	c = &cli_data:
+	c = &cli_data;
 
 	/* Entry condition. */
-	OS_TRAP_IF(! c->is_active || c->state != CLI_S_SELF_LOCKED);
+	OS_TRAP_IF(! c->is_active || c->my_state != CLI_S_SELF_LOCKED);
 
 	printf("%s [s:locked, m:op-exit] -> [s:released]\n", P);
 
@@ -136,18 +171,32 @@ void cli_op_exit(void)
 	c->my_state  = CLI_S_SELF_RELEASED;
 }
 
-void cli_op_init(void)
+/**
+ * cli_op_init() - initialize the client state.
+ *
+ * @server:  address of the server thread.
+ * @client:  address of the client thread.
+ *
+ * Return:	None.
+ **/
+void cli_op_init(void *server, void *client)
 {
 	cli_data_t *c;
 	
+	printf("%s [s:down, m:op-init] -> [s:init]\n", P);
+
 	/* Get the address of the client state. */
-	c = &cli_data:
+	c = &cli_data;
 	
 	/* Entry condition. */
 	OS_TRAP_IF(c->is_active);
+	
+	/* Save the thread addersses. */
+	c->my_addr   = client;
+	c->serv_addr = server;
 
 	/* Allocate the client resources. */
 	c->is_active  = 1;
-	c->my_state   = CLI_S_SELF_DOWN;
+	c->my_state   = CLI_S_SELF_INIT;
 	c->serv_state = CLI_S_SERV_DOWN;
 }

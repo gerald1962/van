@@ -9,7 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"      /* Operating system: os_sem_create(). */
+#include "ref_chart.h"  /* Client and server routins. */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -70,7 +70,11 @@ static void ref_cleanup(void)
 	p = ref_stat.server;
 	ref_stat.server = NULL;
 	os_thread_destroy(p);
-	
+
+	/* Release the server and client resources. */
+	serv_op_exit();
+	cli_op_exit();
+
 	os_sem_delete(&ref_stat.suspend);
 
 	/* Release the OS resources. */
@@ -93,44 +97,20 @@ static void ref_wait(void)
 	printf("%s [p=main,s=exit,o=resume]\n", P);
 }
 
-	/* XXX */
-#if 0
 /**
- * ref_exit_exec() - execute the exit message in the controller context.
- *
- * @msg:  reference to the generic input message.
+ * op_init_ind_send() - send the thread addresses to the server and client.
  *
  * Return:	None.
  **/
-static void ref_exit_exec(os_queue_elem_t *msg)
+static void op_serv_init_ind_send(void)
 {
-	printf("%s [t=con,s=jobs,m=exit]\n", P);
-
-	/* Entry condition. */
-	OS_TRAP_IF(msg == NULL || msg->param != ref_stat.con);
-
-	/* Resume the main thread. */
-	os_sem_release(&ref_stat.suspend);
-}
-#endif
-
-/**
- * ref_exit_send() - send the exit message to controller thread.
- *
- * Return:	None.
- **/
-static void ref_exit_send(void)
-{
-	/* XXX */
-#if 0
 	os_queue_elem_t msg;
 	
-	/* Send a test message. */
+	/* Send the start message to the server thread. */
 	os_memset(&msg, 0, sizeof(msg));
-	msg.param = ref_stat.con;
-	msg.cb    = ref_exit_exec;
-	os_queue_send(ref_stat.con, &msg, sizeof(msg));
-#endif
+	msg.param = NULL;
+	msg.cb = serv_op_init_ind_exec;
+	os_queue_send(ref_stat.server, &msg, sizeof(msg));
 }
 
 /**
@@ -140,6 +120,11 @@ static void ref_exit_send(void)
  **/
 static void ref_init(void)
 {
+	static struct ref_stat_s *s;
+
+	/* Get the address of the maint process state. */
+	s = &ref_stat;
+	
 	printf("%s [p=main,s=boot,o=init]\n", P);
 
 	/* Initialize the operating system. */
@@ -149,11 +134,15 @@ static void ref_init(void)
 	os_sem_init(&ref_stat.suspend, 0);
 
 	/* Create and start the server and client thread. */
-	ref_stat.server = os_thread_create("server", OS_THREAD_PRIO_FOREG, 16);
-	ref_stat.client = os_thread_create("client", OS_THREAD_PRIO_FOREG, 16);
+	s->server = os_thread_create("server", OS_THREAD_PRIO_FOREG, 16);
+	s->client = os_thread_create("client", OS_THREAD_PRIO_FOREG, 16);
 
-	/* Send the up ind message to the server and client thread. */
-	ref_exit_send();
+	/* Initialize the server and client state. */
+	serv_op_init(s->server, s->client);
+	cli_op_init(s->server, s->client);
+
+	/* Send the thread addresses to the server and client. */
+	op_serv_init_ind_send();
 	
 	/* Wait for the resume trigger. */
 	ref_wait();	

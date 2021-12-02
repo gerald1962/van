@@ -66,6 +66,15 @@ XXX
 ww
 
 
+18 Eclipse
+
+sudo apt install snap
+sudo snap install --classic eclipse
+eclipse&
+
+https://www.edv-buchversand.de/productinfo.php?replace=false&cnt=productinfo&mode=2&type=2&id=dp-196&index=2&nr=0&art=Blick%20ins%20Buch&preload=false&page=1&view=fit&Toolbar=1&pagemode=none
+
+
 17 Shared Memory
 
 How to use shared memory in python and C/C++

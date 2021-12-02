@@ -1,6 +1,32 @@
+// SPDX-License-Identifier: GPL-2.0
 
+/*
+ * Client thread
+ *
+ * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ */
+
+/*============================================================================
+  IMPORTED INCLUDE REFERENCES
+  ============================================================================*/
+#include "ref_chart.h"  /* Client and server routins. */
+
+/*============================================================================
+  EXPORTED INCLUDE REFERENCES
+  ============================================================================*/
+/*============================================================================
+  LOCAL NAME CONSTANTS DEFINITIONS
+  ============================================================================*/
+
+/* Prompt for the server thread. */
 #define P  "S>"
 
+/*============================================================================
+  MACROS
+  ============================================================================*/
+/*============================================================================
+  LOCAL TYPE DEFINITIONS
+  ============================================================================*/
 /**
  * serv_s_self_t - list of the server states.
  *
@@ -33,6 +59,15 @@ typedef enum {
 	SERV_S_CLI_INV
 } serv_s_cli_t;
 
+/**
+ * serv_data_t - server status.
+ *
+ * @my_state:   current server state.
+ * @cli_state:  client state.
+ * @is_active:  1, if the resources are available.
+ * @my_addr:    server thread address.
+ * @cli_addr:   client thread address.
+ **/
 typedef struct {
 	serv_s_self_t  my_state;
 	serv_s_cli_t   cli_state;
@@ -41,16 +76,30 @@ typedef struct {
 	void  *cli_addr;
 } serv_data_t;
 
+/*============================================================================
+  LOCAL DATA
+  ============================================================================*/
 /* Server state. */
-static serv_status_t serv_data;
+static serv_data_t serv_data;
 
-static serv_cli_up_ind_send(void)
+/*============================================================================
+  LOCAL FUNCTION PROTOTYPES
+  ============================================================================*/
+/*============================================================================
+  LOCAL FUNCTIONS
+  ============================================================================*/
+/**
+ * serv_cli_up_ind_send() - inform the client, that the server is ready.
+ *
+ * Return:	None.
+ **/
+static void serv_cli_up_ind_send(void)
 {
 	os_queue_elem_t msg;
 	serv_data_t *s;
 
 	/* Get the address of the server state. */
-	s = &serv_data:
+	s = &serv_data;
 	
 	/* Send the server up indication to the client. */
 	os_memset(&msg, 0, sizeof(msg));
@@ -59,17 +108,28 @@ static serv_cli_up_ind_send(void)
 	os_queue_send(s->cli_addr, &msg, sizeof(msg));
 }
 
+/*============================================================================
+  EXPORTED FUNCTIONS
+  ============================================================================*/
+
+/**
+ * serv_cli_down_ind_exec() - the client request the shutdown of the server.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
 void serv_cli_down_ind_exec(os_queue_elem_t *msg)
 {
 	serv_data_t *s;
 
 	/* Get the address of the server state. */
-	s = &serv_data:
+	s = &serv_data;
 
 	printf("%s [s:ready, m:down-ind] -> [s:locked]\n", P);
 
 	/* Entry condition. */
-	OS_TRAP_IF(s->state != SERV_S_SELF_READY || msg == NULL);
+	OS_TRAP_IF(s->my_state != SERV_S_SELF_READY || msg == NULL);
 
 	/* Lock the message interface. */
 	s->my_state  = SERV_S_SELF_LOCKED;
@@ -79,40 +139,48 @@ void serv_cli_down_ind_exec(os_queue_elem_t *msg)
 	op_resume();
 }
 
+/**
+ * serv_op_init_ind_exec() - the main process initiates the server client
+ * interworking.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
 void serv_op_init_ind_exec(os_queue_elem_t *msg)
 {
-	op_init_ind_msg_t *m;
 	serv_data_t *s;
 
 	/* Get the address of the server state. */
-	s = &serv_data:
+	s = &serv_data;
 
 	/* Entry condition. */
-	OS_TRAP_IF(s->state != SERV_S_SELF_DOWN || msg == NULL);
+	OS_TRAP_IF(s->my_state != SERV_S_SELF_DOWN || msg == NULL);
 
 	printf("%s [s:down, m:op-init] -> [s:ready]\n", P);
 
 	/* Change the channel states and save the thread addresses. */
 	s->my_state  = SERV_S_SELF_READY;
 	s->cli_state = SERV_S_CLI_UP;
-	
-	m = (op_init_ind_msg_t *) msg;
-	c->serv_addr = m->serv_addr;
-	c->my_addr   = m->serv_addr;
 
 	/* Inform the client, that the server is up and ready. */
 	serv_cli_up_ind_send();
 }
 
+/**
+ * serv_op_exit() - release the server resources.
+ *
+ * Return:	None.
+ **/
 void serv_op_exit(void)
 {
 	serv_data_t *s;
 
 	/* Get the address of the server state. */
-	s = &serv_data:
+	s = &serv_data;
 
 	/* Entry condition. */
-	OS_TRAP_IF(! s->is_active || s->state != SERV_S_SELF_LOCKED);
+	OS_TRAP_IF(! s->is_active || s->my_state != SERV_S_SELF_LOCKED);
 
 	printf("%s [s:locked, m:op-exit] -> [s:released]\n", P);
 
@@ -121,16 +189,28 @@ void serv_op_exit(void)
 	s->my_state  = SERV_S_SELF_RELEASED;
 }
 
-void serv_op_init(void)
+/**
+ * serv_op_init() - initialize the server state.
+ *
+ * @server:  address of the server thread.
+ * @client:  address of the client thread.
+ *
+ * Return:	None.
+ **/
+void serv_op_init(void *server, void *client)
 {
 	serv_data_t *s;
 
 	/* Get the address of the server state. */
-	s = &serv_data:
+	s = &serv_data;
 
 	/* Entry condition. */
 	OS_TRAP_IF(s->is_active);
 
+	/* Save the thread addresses. */
+	s->my_addr  = server;
+	s->cli_addr = client;
+	
 	/* Allocate the server resources. */
 	s->is_active = 1;
 	s->my_state  = SERV_S_SELF_DOWN;
