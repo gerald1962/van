@@ -65,6 +65,24 @@ D.5 Delivery
 XXX
 ww
 
+20 DVI to PDF
+
+dvipdf [ options ] input.dvi [ output.pdf ] ...
+
+
+19 Latex C-Style
+
+google: C code nach Latex
+
+https://tex.stackexchanghttps://tex.stackexchange.com/questions/348651/c-code-to-add-in-the-document/348653
+
+Problems with the xcolor style.
+Die Farben kommentiere ich aus, dann sieht das Ergebnis ganz passabel aus.
+
+Include all sources in csd.ex
+latex csd.tex
+dvipdf csd.dvi
+
 
 18 Eclipse
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * XXX
+ * csd_cli.c
  *
  * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
  */

@@ -125,4 +125,4 @@ clean:
 	-${Q}rm -fr ${MODULE_OBJDIR}
 	-${Q}rm -fr ${MODULE_DEPDIR}
 	-${Q}rm -fr ${MODULE_OUTDIR}
-	-${Q}rm -f core TAGS
+	-${Q}rm -f core TAGS *.aux *.dvi *.log *.pdf 
