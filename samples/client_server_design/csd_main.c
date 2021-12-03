@@ -54,8 +54,6 @@ static struct csd_stat_s {
  **/
 static void csd_cleanup(void)
 {
-	void *p;
-	
 	printf("%s [p=main,s=exit,o=cleanup]\n", P);
 
 	/* Release the server and client resources. */
@@ -116,6 +114,9 @@ static void csd_init(void)
 	/* Initialize the operating system. */
 	os_init();
 
+	/* Switch off the OS trace. */
+	os_trace_button(0);
+	
 	/* Control the lifetime of the research programme. */
 	os_sem_init(&csd_stat.suspend, 0);
 
