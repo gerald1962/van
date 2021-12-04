@@ -1,0 +1,60 @@
+Installation guide
+
+This document is a guide for installing csd as pattern to run algorithm
+on the VAN platform like rad - reseach and development.
+
+Enter van
+cd ~/van/samples
+
+and copy the client_server_design
+cp -r client_server_design rad
+
+Rename all files as follows
+cd rad
+rename 's/csd/rad/' csd*
+
+Exchange the substring csd with rad in each file
+sed -i 's/csd/rad/g' *
+
+Compile and link the program
+make all
+
+and later you can continue with
+make van
+
+Start the executable
+out/rad
+
+Before you archieve it, clean up rad
+make clean
+
+If it works, you should see
+
+M: [p=main,s=boot,o=init]
+O> [t=server,s=boot,o=create]
+O> [t=server,s=ready,o=create]
+O> [t=server,s=1,o=suspend]
+C> [s:down, m:op-init] -> [s:init]
+O> [t=client,s=boot,o=create]
+O> [t=client,s=ready,o=create]
+O> [t=client,s=1,o=suspend]
+M: [p=main,s=done,o=suspend]
+O> [t=server,s=1,o=resume]
+S> [s:down, m:op-init] -> [s:ready]
+O> [t=server,s=1,o=suspend]
+O> [t=client,s=1,o=resume]
+C> [s:init, m:serv-up] -> [s:ready]
+C> [s:ready, m:serv-down] -> [s:locked]
+O> [t=client,s=1,o=suspend]
+O> [t=server,s=1,o=resume]
+S> [s:ready, m:down-ind] -> [s:locked]
+M: [t=server,s=suspended,m=resume]
+O> [t=server,s=1,o=suspend]
+M: [p=main,s=exit,o=resume]
+M: [p=main,s=exit,o=cleanup]
+S> [s:locked, m:op-exit] -> [s:released]
+O> [t=server,s=kill,o=destroy]
+O> [t=server,s=1,o=resume]
+C> [s:locked, m:op-exit] -> [s:released]
+O> [t=client,s=kill,o=destroy]
+O> [t=client,s=1,o=resume]
