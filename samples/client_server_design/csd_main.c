@@ -104,11 +104,6 @@ static void op_serv_init_ind_send(void)
  **/
 static void csd_init(void)
 {
-	static struct csd_stat_s *s;
-
-	/* Get the address of the maint process state. */
-	s = &csd_stat;
-	
 	printf("%s [p=main,s=boot,o=init]\n", P);
 
 	/* Initialize the operating system. */
