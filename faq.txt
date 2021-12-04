@@ -65,6 +65,118 @@ D.5 Delivery
 XXX
 ww
 
+
+25 Github
+
+=van2021
+gerald1962
+
+Token
+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
+
+https://stackoverflow.com/questions/68775869/support-for-password-authentication-was-removed-please-use-a-personal-access-to
+
+git config --global user.name "your_github_username"
+git config --global user.email "your_github_email"
+git config -l
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+Username for 'https://github.com' : username
+Password for 'https://github.com' : give your personal access token here
+git config --global credential.helper cache
+git config --global --unset credential.helper
+
+git clone https://github.com/gerald1962/van
+git pull -v
+
+
+24 Root
+
+sudo -i
+
+23 Interfacing Python and C code
+
+23.1 Tutorial
+
+https://reptate.readthedocs.io/developers/python_c_interface.html
+
+hat mich erst ziemlich verunsichert, aber ich habe es erfolgreich in etwas
+umgewandelt, was mich interessiert:
+
+23.2 VAN Shared Library
+
+van.c
+-----
+#include <stdio.h>
+void hello(void)
+{
+	printf("Hello python, here is Gerald.\n");
+}
+
+makefile:
+---------
+all:
+	gcc -o van.so -shared -fPIC -O2 van.c
+
+
+23.3 Python Link to VAN
+
+van.py:
+------
+from ctypes import *
+lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+van = CDLL(lib_path)
+van.hello.restype = None
+van.hello()
+
+23.4 Test
+
+gerald@gerald:~/van/test/python_c_interface$ python
+Python 2.7.18 (default, Mar  8 2021, 13:02:45) 
+[GCC 9.3.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from ctypes import *
+>>> lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+>>> van = CDLL(lib_path)
+>>> van.hello.restype = None
+>>> van.hello()
+Hello python, here is Gerald.
+>>> quit()
+gerald@gerald:~/van/test/python_c_interface$ 
+
+23.5 GDB
+
+sudo -i
+gdb
+cd /home/gerald/van/test/python_c_interface
+attach <pid>
+b hello
+c
+
+
+22 Save colored emacs text from shell
+
+C-u M-x ps-print-buffer-with-faces
+
+
+21 Python
+
+https://py-tutorial-de.readthedocs.io/de/python-3.3/interpreter.html
+
+21.1 Die interaktive Startup-Datei
+
+import os
+filename = os.environ.get('PYTHONSTARTUP')
+if filename and os.path.isfile(filename):
+    exec(open(filename).read())
+
+21.2 Die Customization Module
+
+>>> import site
+>>> site.getusersitepackages()
+
+'/home/gerald/.local/lib/python2.7/site-packages'
+
+
 20 DVI to PDF
 
 dvipdf [ options ] input.dvi [ output.pdf ] ...
