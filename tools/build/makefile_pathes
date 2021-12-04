@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0
+
+# This makefile is used to include the pathes for the system resources.
+
+# List of the van platform sources
+include ${GLOBALPATH}/os/makefile
