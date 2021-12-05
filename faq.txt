@@ -1,71 +1,3 @@
-=logisch2021
-
-A. Manifest
-
-Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
-
-Open issues:
-o State of the art
-o Theory behind the simulation
-o What does the simulation show?
-o A simulation shall refer to potential customers.
-...
-
-And we are doing that with a battery simulation defined with the programming language C.
-The executable program runs on a Linux PC.
-
-
-B. Battery Integration
-
-Compile and link from scratch:
-make all
-
-Compile and link continuously:
-make van
-
-Update the dependencies:
-make depend
-
-
-C. Meeting Minutes - Mo 15. Nov
-
-Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
-
-Present: Holger, Adrain, Simon, Herbert, Gerald
-
-Historic droll stories, I will skip them here.
-
-Furthermore is Holger's overview picture on the whiteboard.
-
-
-D. Research, Development, Integration, Test and Delivery
-
-If one looks at what is required, no matter how small or large: such key feature you should consider.
-
-D.1 Research
-
-Action Item:
-e.g with Presentation with Linux LibreOffice Impress
-e.g Current state as LaTeX paper
-
-D.2 Development
-
-If you want I am able to present the current state of the tool devepment.
-
-D.3 Integration
-
-My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
-
-D.4 Test
-
-XXX
-
-D.5 Delivery
-
-XXX
-ww
-
-
 25 Github
 
 =van2021
@@ -92,6 +24,7 @@ git pull -v
 24 Root
 
 sudo -i
+
 
 23 Interfacing Python and C code
 
@@ -210,14 +143,12 @@ https://www.edv-buchversand.de/productinfo.php?replace=false&cnt=productinfo&mod
 How to use shared memory in python and C/C++
 https://stackoverflow.com/questions/49103709/how-to-use-shared-memory-in-python-and-c-c/49118076
 
-
 Share memory between C/C++ and Python
 https://pretagteam.com/question/share-memory-between-cc-and-python
 
 https://realpython.com/python-mmap/
 
 Python mmap: Improved File I/O With Memory Mapping
-
 
 
 16 Multi Thread Test
@@ -525,3 +456,142 @@ gerald@gerald:~/van/battery/zinc_copper_battery/test$ sudo apt install build-ess
 
 gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./zinc
 zinc copper batter
+
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
