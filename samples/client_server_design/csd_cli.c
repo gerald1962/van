@@ -68,14 +68,12 @@ typedef enum {
  * @serv_state:  server state.
  * @is_active:   1, if the resources are available.
  * @my_addr:     client thread address.
- * @cli_addr:    server thread address.
  **/
 typedef struct {
 	cli_s_self_t  my_state;
 	cli_s_serv_t  serv_state;
 	int    is_active;
 	void  *my_addr;
-	void  *serv_addr;
 } cli_data_t;
 
 /*============================================================================

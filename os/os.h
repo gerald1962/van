@@ -178,4 +178,10 @@ void os_thread_destroy(void *thread);
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
+/* Shared memory. */
+void os_vcreate(void);
+void os_vdestroy(void);
+void os_popen(void);
+void os_pclose(void);
+
 #endif /* __os_h__ */

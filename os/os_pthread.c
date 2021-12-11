@@ -623,7 +623,7 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
  *
  * @g_thread:  generic address of the os_thread.
  * @msg:       reference to the message.
- * size:       size of the message.
+ * @size:      size of the message.
  *
  * Return:	None.
  **/

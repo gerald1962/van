@@ -118,7 +118,7 @@ depend: ${MODULE_DEPDIR} ${MODULE_DEPFILES}
 
 tags:
 	@echo "Generate tag file for Emacs"
-	-${Q}find /home/gerald/van -name "*.[ch]" -print | etags -L -
+	-${Q}find ${GLOBALPATH} -name "*.[ch]" -print | etags -L -
 
 clean:
 	@echo "Removing all output files"

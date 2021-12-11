@@ -1,3 +1,98 @@
+A Changes
+
+	geändert:       ../faq.txt
+	geändert:       ../os/makefile
+	geändert:       ../os/os.h
+	geändert:       ../os/os_pthread.c
+	neue Datei:     ../os/os_shm.c
+	geändert:       ../samples/client_server_design/csd_cli.c
+	geändert:       python_c_interface/van.c
+	geändert:       python_c_interface/van.py
+	gelöscht:       python_c_interface/van.so
+	neue Datei:     shared_memory/makefile
+	neue Datei:     shared_memory/sac_chart.h
+	neue Datei:     shared_memory/sac_main.c
+	neue Datei:     shared_memory/sac_py.c
+	neue Datei:     shared_memory/sac_van.c
+	neue Datei:     shared_memory/shm.txt
+	geändert:       ../tools/build/makefile_operations
+
+
+30 AR-VR Standardisierung
+
+https://www.khronos.org/
+
+
+29 Linux Atomic-Operations
+
+C atomic_exchange(volatile A *object, C desired)
+https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/atomic_exchange.html
+
+
+28 IPC - Shared Memory
+
+28.4 Shm File
+
+ dd - convert and copy a file
+
+dd if=/dev/zero of=shm.txt bs=8192 count=1
+
+
+28.3 Named Semaphores
+
+lsof - list open files
+
+gerald@gerald:~$ lsof /dev/shm/sem.*
+COMMAND    PID   USER  FD   TYPE DEVICE SIZE/OFF NODE NAME
+sac     399626 gerald DEL    REG   0,26           594 /dev/shm/sem.py_int
+sac     399626 gerald DEL    REG   0,26           589 /dev/shm/sem.van_int
+
+Remove named semaphore:
+rm /dev/shm/sem.*
+
+28.2 shm_open
+
+man shm_open
+
+28.1 ipcs
+
+man ipcs
+--------
+ipcs -s
+
+NAME
+       ipcs - show information on IPC facilities
+
+SYNOPSIS
+       ipcs [options]
+
+DESCRIPTION
+       ipcs  shows  information on the inter-process communication facilities for which the calling process
+       has read access.  By default it shows information about all three resources: shared memory segments,
+       message queues, and semaphore arrays.
+
+
+
+27 Shared Library
+
+https://www.cprogramming.com/tutorial/shared-libraries-linux-gcc.html
+
+
+
+26 Linux
+
+26.1 Sources
+
+https://github.com/torvalds/linux
+
+26.2 Documentation
+
+https://www.kernel.org/doc/html/latest/
+
+
+
+git config -l
+
 25 Github
 
 =van2021
@@ -53,6 +148,20 @@ all:
 
 23.3 Python Link to VAN
 
+from ctypes import *
+
+c_char *
+c_int
+
+s = "Hello, van"
+c_s = c_char_p(s)
+print(c_s.value)
+
+n = len(s)
+c_n = c_int(n)
+print(c_n.value)
+
+
 van.py:
 ------
 from ctypes import *
@@ -84,6 +193,11 @@ cd /home/gerald/van/test/python_c_interface
 attach <pid>
 b hello
 c
+
+23.6 OS
+
+os_python_shm.c
+os_van_shm.c
 
 
 22 Save colored emacs text from shell
