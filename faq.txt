@@ -18,6 +18,14 @@ A Changes
 	geändert:       ../tools/build/makefile_operations
 
 
+31 Asynchronour I/O
+
+https://titanwolf.org/Network/Articles/Article?AID=cc3ad12f-1f90-43b6-b2f3-29d29f8e59da
+https://man7.org/linux/man-pages/man7/sigevent.7.html
+http://davmac.org/davpage/linux/async-io.html
+https://man7.org/linux/man-pages/man7/signal.7.html
+
+
 30 AR-VR Standardisierung
 
 https://www.khronos.org/

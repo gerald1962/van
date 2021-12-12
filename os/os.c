@@ -388,6 +388,9 @@ void os_init(void)
 	
 	/* Initialize the thread table. */
 	os_thread_init(&os_conf);
+
+	/* Initialize the shared memory devices. */
+	os_shm_init();
 }
 
 /**
@@ -405,6 +408,7 @@ void os_exit(void)
 	is_init = atomic_load(&p->is_init);
 	OS_TRAP_IF(! is_init);
 
+	os_shm_exit();
 	os_thread_exit();
 	os_mem_exit();
 

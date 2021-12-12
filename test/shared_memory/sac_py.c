@@ -64,16 +64,18 @@ typedef enum {
 /**
  * py_data_t - py status.
  *
+ * @dev_id:     id of the py shared memory device.
  * @my_state:   current py state.
  * @van_state:  van state.
  * @is_active:  1, if the resources are available.
  * @my_addr:    py thread address.
  **/
 typedef struct {
-	py_s_self_t  my_state;
-	py_s_van_t   van_state;
-	int          is_active;
-	void        *my_addr;
+	os_dev_type_t  dev_id;
+	py_s_self_t    my_state;
+	py_s_van_t     van_state;
+	int            is_active;
+	void          *my_addr;
 } py_data_t;
 
 /*============================================================================
@@ -143,7 +145,9 @@ static void py_van_down_ind_send(void)
 static void py_van_up_ind_exec(os_queue_elem_t *msg)
 {
 	py_data_t *p;
-
+	char *buf;
+	int n;
+	
 	/* Get the address of the py state. */
 	p = &py_data;
 
@@ -157,13 +161,34 @@ static void py_van_up_ind_exec(os_queue_elem_t *msg)
 	p->van_state = PY_S_VAN_UP;
 
 	/* Initialize the shared memory device. */
-	os_popen();
+	p->dev_id = os_open("/python");
 
+	/* XXX */
+#if 0
+	/* Wait for the unsolicited responses from van. */
+	for(;;) {
+		buf = NULL;
+		n = os_sync_read(p->dev_id, &buf, 1024);
+		OS_TRAP_IF(n < 1 || buf == NULL);	
+		printf("%s [b:\"%s\", s:%d]\n", P, buf, n);
+	}
+#else
+	/* XXX Wait for the unsolicited responses from van. */
+	buf = NULL;
+	n = os_sync_read(p->dev_id, &buf, 1024);
+	OS_TRAP_IF(n < 1 || buf == NULL);	
+	printf("%s [b:\"%s\", s:%d]\n", P, buf, n);
+
+	/* Release the DL buffer. */
+	n = os_sync_read(p->dev_id, NULL, 0);
+	OS_TRAP_IF(n > 0);
+	
 	/* Release the shared memory device. */
-	os_pclose();
+	os_close(p->dev_id);
 	
 	/* Simulate the shutdown interworking initiated by the control terminal. */
 	py_van_down_ind_send();
+#endif
 }
 
 /*============================================================================

@@ -109,8 +109,8 @@ static void sac_init(void)
 	/* Initialize the operating system. */
 	os_init();
 
-	/* Switch off the OS trace. */
-	os_trace_button(0);
+	/* Switch on the OS trace. */
+	os_trace_button(1);
 
 	/* Control the lifetime of the research programme. */
 	os_sem_init(&sac_stat.suspend, 0);

@@ -62,16 +62,18 @@ typedef enum {
 /**
  * van_data_t - van status.
  *
+ * @dev_id:     id of the van shared memory device.
  * @my_state:   current van state.
  * @py_state:   py state.
  * @is_active:  1, if the resources are available.
  * @my_addr:    van thread address.
  **/
 typedef struct {
-	van_s_self_t  my_state;
-	van_s_py_t    py_state;
-	int           is_active;
-	void         *my_addr;
+	os_dev_type_t   dev_id;
+	van_s_self_t   my_state;
+	van_s_py_t     py_state;
+	int            is_active;
+	void          *my_addr;
 } van_data_t;
 
 /*============================================================================
@@ -149,7 +151,7 @@ static void van_py_down_ind_exec(os_queue_elem_t *msg)
 	v->py_state = VAN_S_PY_LOCKED;
 
 	/* Release the shared memory device. */
-	os_vdestroy();
+	os_close(v->dev_id);
 	
 	/* Resume the main process. */
 	op_resume();
@@ -180,10 +182,25 @@ static void van_op_init_ind_exec(os_queue_elem_t *msg)
 	v->py_state = VAN_S_PY_UP;
 
 	/* Create the shared memory device. */
-	os_vcreate();
+	v->dev_id = os_open("/van");
 	
 	/* Inform py, that van is up and ready. */
 	van_py_up_ind_send();
+	
+	/* XXX Send an unsolicited response. */
+	os_sync_write(v->dev_id, "*READY*", 8);
+
+	/* XXX */
+#if 0
+	char buf[32];
+	int i, n;
+	
+	/* Test the DL channel of the shared memory device. */
+	for (i = 0; i < 999999; i++) {
+		n = snprintf(buf, 32, "%d", i);
+		os_sync_write(v->dev_id, buf, n + 1);		
+	}
+#endif
 }
 
 /*============================================================================
