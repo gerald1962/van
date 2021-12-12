@@ -1,5 +1,5 @@
 A Changes
-
+1.
 	geändert:       ../faq.txt
 	geändert:       ../os/makefile
 	geändert:       ../os/os.h
@@ -16,6 +16,20 @@ A Changes
 	neue Datei:     shared_memory/sac_van.c
 	neue Datei:     shared_memory/shm.txt
 	geändert:       ../tools/build/makefile_operations
+2.
+	geändert:       faq.txt
+	geändert:       os/os.c
+	geändert:       os/os.h
+	geändert:       os/os_private.h
+	neue Datei:     os/os_python.c
+	geändert:       os/os_shm.c
+	neue Datei:     os/os_van.c
+	neue Datei:     os/shm.txt
+	neue Datei:     test/shared_memory/loop.sh
+	geändert:       test/shared_memory/sac_main.c
+	geändert:       test/shared_memory/sac_py.c
+	geändert:       test/shared_memory/sac_van.c
+	geändert:       test/shared_memory/shm.txt
 
 
 31 Asynchronour I/O
