@@ -96,4 +96,3 @@ echovars:
 	@echo GLOBALPATH: ${GLOBALPATH}
 	@echo "ALL_FILES: ${ALL_FILES}"
 	@echo "CFLAGS: ${CFLAGS}"
-#
