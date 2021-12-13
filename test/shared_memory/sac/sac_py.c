@@ -168,19 +168,19 @@ static void py_van_up_ind_exec(os_queue_elem_t *msg)
 	/* Wait for the unsolicited responses from van. */
 	for(;;) {
 		buf = NULL;
-		n = os_sync_read(p->dev_id, &buf, 1024);
+		n = os_sync_pread(p->dev_id, &buf, 1024);
 		OS_TRAP_IF(n < 1 || buf == NULL);	
 		printf("%s [b:\"%s\", s:%d]\n", P, buf, n);
 	}
 #else
 	/* XXX Wait for the unsolicited responses from van. */
 	buf = NULL;
-	n = os_sync_read(p->dev_id, &buf, 1024);
+	n = os_sync_pread(p->dev_id, &buf, 1024);
 	OS_TRAP_IF(n < 1 || buf == NULL);	
 	printf("%s [b:\"%s\", s:%d]\n", P, buf, n);
 
 	/* Release the DL buffer. */
-	n = os_sync_read(p->dev_id, NULL, 0);
+	n = os_sync_pread(p->dev_id, NULL, 0);
 	OS_TRAP_IF(n > 0);
 	
 	/* Release the shared memory device. */
