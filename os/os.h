@@ -120,6 +120,19 @@ typedef struct {
 	int thread_c;
 } os_statistics_t;
 
+/**
+ * os_dev_type_t - ids of the shared memory devices.
+ *
+ * OS_DEV_VAN:    id of the van shared memory device.
+ * OS_DEV_PY:     id of the py shared memory device.
+ * OS_DEV_COUNT:  number of the shared memory devices.
+ **/
+typedef enum {
+	OS_DEV_VAN,
+	OS_DEV_PY,
+	OS_DEV_COUNT
+} os_dev_type_t;
+	
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
@@ -177,5 +190,12 @@ void os_thread_destroy(void *thread);
 
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
+
+/* Shared memory. */
+int os_open(char *device_name);
+void os_close(int dev_id);
+void os_sync_write(int dev_id, char *buf, int count);
+int os_sync_pread(int dev_id, char **buf, int count);
+int os_sync_read(int dev_id, char *buf, int count);
 
 #endif /* __os_h__ */
