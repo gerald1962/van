@@ -1,5 +1,6 @@
 A Changes
-erald@gerald:~/van$ git merge shared_memory
+
+gerald@gerald:~/van$ git merge shared_memory
 Aktualisiere 89e0235..208d845
 Fast-forward
  faq.txt                                | 136 +++++++++++++++
@@ -38,6 +39,48 @@ Fast-forward
  create mode 100644 test/shared_memory/sac_van.c
  create mode 100644 test/shared_memory/shm.txt
 
+gerald@gerald:~/van$ git merge shared_memory
+Aktualisiere 208d845..8bed21b
+Fast-forward
+ faq.txt                                  |  69 +++++++++++++++++++++++++++++++++---------------------------
+ lib/makefile                             |  22 ++++++++++++++++++++
+ os/os.c                                  |   2 +-
+ os/os.h                                  |   3 ++-
+ os/os_private.h                          |   2 +-
+ os/os_pthread.c                          |   1 -
+ os/os_shm.c                              | 112 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------------
+ os/shm.txt                               | Bin 8192 -> 8192 bytes
+ test/python_c_interface/makefile         |   4 ----
+ test/python_c_interface/van.c            |  14 -------------
+ test/python_c_interface/van.py           |  38 ++++++++++++++++++++++-----------
+ test/shared_memory/pot/makefile          |  16 ++++++++++++++
+ test/shared_memory/pot/pot.c             |  32 ++++++++++++++++++++++++++++
+ test/shared_memory/{ => sac}/loop.sh     |   0
+ test/shared_memory/{ => sac}/makefile    |   4 +---
+ test/shared_memory/{ => sac}/sac_chart.h |   0
+ test/shared_memory/{ => sac}/sac_main.c  |   0
+ test/shared_memory/{ => sac}/sac_py.c    |   0
+ test/shared_memory/{ => sac}/sac_van.c   |   0
+ test/shared_memory/{ => sac}/shm.txt     | Bin
+ test/shared_memory/vat/makefile          |  16 ++++++++++++++
+ test/shared_memory/vat/vat.c             |  30 ++++++++++++++++++++++++++
+ tools/build/makefile_operations          |  16 ++++++++++++--
+ 23 files changed, 293 insertions(+), 88 deletions(-)
+ create mode 100644 lib/makefile
+ delete mode 100644 test/python_c_interface/makefile
+ delete mode 100644 test/python_c_interface/van.c
+ mode change 100644 => 100755 test/python_c_interface/van.py
+ create mode 100644 test/shared_memory/pot/makefile
+ create mode 100644 test/shared_memory/pot/pot.c
+ rename test/shared_memory/{ => sac}/loop.sh (100%)
+ rename test/shared_memory/{ => sac}/makefile (91%)
+ rename test/shared_memory/{ => sac}/sac_chart.h (100%)
+ rename test/shared_memory/{ => sac}/sac_main.c (100%)
+ rename test/shared_memory/{ => sac}/sac_py.c (100%)
+ rename test/shared_memory/{ => sac}/sac_van.c (100%)
+ rename test/shared_memory/{ => sac}/shm.txt (100%)
+ create mode 100644 test/shared_memory/vat/makefile
+ create mode 100644 test/shared_memory/vat/vat.c
 
 31 Asynchronour I/O
 
