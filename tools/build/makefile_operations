@@ -28,8 +28,11 @@ endif
 # Compile flags.
 CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas
 
-# Linker flags.
+# Static linker flags.
 LD_FLAGS :=  -g -static -lpthread
+
+# Shared library flags.
+SL_FLAGS :=  -g -shared -lpthread
 
 
 # Aggregate variables.
@@ -59,10 +62,19 @@ Q=
 # Define the search pathes to all source files.
 vpath %.c ${VAN_SRC}
 
-.PHONY: all van echosvars makedir depend_all depend tags clean
+.PHONY: all lib van echosvars makedir depend_all depend tags clean
 
 
 all: clean makedir depend ${MODULE_OUTDIR}/${MODULE} tags
+
+
+# Now we need to actually turn this object file into a shared library. We will
+# call it libvan.so:
+lib: clean makedir ${ALL_OBJS}
+	${Q}echo Shared Library ${MODULE}
+	${Q}gcc ${ALL_OBJS}  ${SL_FLAGS} -o ${MODULE}
+	${Q}rm -fr ${MODULE_OBJDIR}
+	${Q}rm -fr ${MODULE_OUTDIR}
 
 
 van: ${MODULE_OUTDIR}/${MODULE}
