@@ -390,7 +390,7 @@ void os_init(void)
 	os_thread_init(&os_conf);
 
 	/* Initialize the shared memory devices. */
-	os_shm_init();
+	os_shm_init(&os_conf);
 }
 
 /**

@@ -195,6 +195,7 @@ void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 int os_open(char *device_name);
 void os_close(int dev_id);
 void os_sync_write(int dev_id, char *buf, int count);
-int os_sync_read(int dev_id, char **buf, int count);
+int os_sync_pread(int dev_id, char **buf, int count);
+int os_sync_read(int dev_id, char *buf, int count);
 
 #endif /* __os_h__ */

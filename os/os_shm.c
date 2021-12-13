@@ -176,6 +176,9 @@ typedef struct {
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/* Pointer to the OS configuration */
+static os_conf_t *os_conf_p;
+
 /* List of the shared memory devices. */
 static os_dev_t os_device[OS_DEV_COUNT];
 
@@ -279,7 +282,7 @@ static void os_dlq_add(os_dev_t *dev, int count, int consumed)
  **/
 static void os_py_exit_exec(os_queue_elem_t *msg)
 {
-	printf("%s [s:ready, m:py-exit] -> [s:ready]\n", PP);
+	OS_TRACE(("%s [s:ready, m:py-exit] -> [s:ready]\n", PP));
 }
 
 /**
@@ -303,7 +306,7 @@ static void os_py_int_exec(os_queue_elem_t *msg)
 
 	/* Loop thru the py interrupts triggered by van. */
 	for(;;) {
-		printf("%s [s:ready, m:py-int] -> [s:suspended]\n", PP);
+		OS_TRACE(("%s [s:ready, m:py-int] -> [s:suspended]\n", PP));
 
 		/* Wait for the py_int trigger. */
 		os_sem_wait(p->my_int);
@@ -311,10 +314,10 @@ static void os_py_int_exec(os_queue_elem_t *msg)
 		/* Test the thread state. */
 		down = atomic_load(&p->down);
 		if (down) {
-			printf("%s [s:suspended, m:py-int] -> [s:down]\n", PP);
+			OS_TRACE(("%s [s:suspended, m:py-int] -> [s:down]\n", PP));
 			return;
 		} else {
-			printf("%s [s:suspended, m:py-int] -> [s:ready]\n", PP);
+			OS_TRACE(("%s [s:suspended, m:py-int] -> [s:ready]\n", PP));
 		}
 
 		/* Get the pointer to the shm topology and to the py input queue. */
@@ -337,7 +340,7 @@ static void os_py_int_exec(os_queue_elem_t *msg)
 				/* Test the read method. */
 				sync_read = atomic_exchange(&p->sync_read, 0);
 
-				printf("%s dl_count=%d, sync_read=%d\n", PP, t->dl_count, sync_read);
+				OS_TRACE(("%s dl_count=%d, sync_read=%d\n", PP, t->dl_count, sync_read));
 
 				if (sync_read)
 					os_sem_release(&p->suspend_reader);
@@ -350,8 +353,8 @@ static void os_py_int_exec(os_queue_elem_t *msg)
 #if 0
 				p->async_write_cb();
 #endif
-				printf("%s pending:%d, consumed:%d\n", PP,
-				       shm_m->consumed, p->pending_ul);
+				OS_TRACE(("%s pending:%d, consumed:%d\n", PP,
+					  shm_m->consumed, p->pending_ul));
 				atomic_store(&p->pending_ul, 0);
 			}
 		
@@ -373,7 +376,7 @@ static void os_py_int_exec(os_queue_elem_t *msg)
  **/
 static void os_van_exit_exec(os_queue_elem_t *msg)
 {
-	printf("%s [s:ready, m:van-exit] -> [s:ready]\n", VP);
+	OS_TRACE(("%s [s:ready, m:van-exit] -> [s:ready]\n", VP));
 }
 
 /**
@@ -396,7 +399,7 @@ static void os_van_int_exec(os_queue_elem_t *msg)
 
 	/* Loop thru the van interrupts triggered by py. */
 	for(;;) {
-		printf("%s [s:ready, m:van-int] -> [s:suspended]\n", VP);
+		OS_TRACE(("%s [s:ready, m:van-int] -> [s:suspended]\n", VP));
 
 		/* Wait for the van_int trigger. */
 		os_sem_wait(v->my_int);
@@ -404,10 +407,10 @@ static void os_van_int_exec(os_queue_elem_t *msg)
 		/* Test the thread state. */
 		down = atomic_load(&v->down);
 		if (down) {
-			printf("%s [s:suspended, m:van-int] -> [s:down]\n", VP);
+			OS_TRACE(("%s [s:suspended, m:van-int] -> [s:down]\n", VP));
 			return;
 		} else {
-			printf("%s [s:suspended, m:van-int] -> [s:ready]\n", VP);
+			OS_TRACE(("%s [s:suspended, m:van-int] -> [s:ready]\n", VP));
 		}
 	
 		/* Get the pointer of the van shm input queue. */
@@ -472,13 +475,13 @@ static void os_shm_close(os_dev_t *s)
 	/* Delete the mutex for the critical sections in os_sync_write. */
 	os_cs_destroy(&s->write_mutex);
 
-	/* Delete the mutex for the critical sections in os_sync_read. */
+	/* Delete the mutex for the critical sections in os_sync_pread. */
 	os_cs_destroy(&s->read_mutex);
 
 	/* Destroy the semaphore for os_sync_write(). */
 	os_sem_delete(&s->suspend_writer);
 	
-	/* Destroy the semaphore for os_sync_read(). */
+	/* Destroy the semaphore for os_sync_pread(). */
 	os_sem_delete(&s->suspend_reader);
 }
 
@@ -516,7 +519,7 @@ static void os_shm_open(os_dev_t *s)
 	/* Create the mutex for the critical sections in os_sync_write. */
 	os_cs_init(&s->write_mutex);
 	
-	/* Create the mutex for the critical sections in os_sync_read. */
+	/* Create the mutex for the critical sections in os_sync_pread. */
 	os_cs_init(&s->read_mutex);
 	
 	/* Get the reference to the shm topology. */
@@ -549,7 +552,7 @@ static void os_shm_open(os_dev_t *s)
 	/* Create the semaphore for os_sync_write(). */
 	os_sem_init(&s->suspend_writer, 0);
 	
-	/* Create the semaphore for os_sync_read(). */
+	/* Create the semaphore for os_sync_pread(). */
 	os_sem_init(&s->suspend_reader, 0);
 }
 
@@ -838,7 +841,7 @@ void os_sync_write(int dev_id, char *buf, int count)
 }
 
 /**
- * os_sync_read() - py or van waits for incoming payload. With each successiv call, the reference to the
+ * os_sync_pread() - py or van waits for incoming payload. With each successiv call, the reference to the
  * previous call is released automatically.
  *
  * @dev_id:  id of the shared memory device.
@@ -847,7 +850,7 @@ void os_sync_write(int dev_id, char *buf, int count)
  *
  * Return:	number of the received bytes.
  **/
-int os_sync_read(int dev_id, char **buf, int count)
+int os_sync_pread(int dev_id, char **buf, int count)
 {
 	os_shm_top_t *top;
 	os_dev_t *p;
@@ -909,12 +912,85 @@ int os_sync_read(int dev_id, char **buf, int count)
 }
 
 /**
+ * os_sync_read() - py or van waits for incoming payload.
+ *
+ * @dev_id:  id of the shared memory device.
+ * @buf:     pointer to the received payload.
+ * @count:   size of the destination buffer.
+ *
+ * Return:	number of the received bytes.
+ **/
+int os_sync_read(int dev_id, char *buf, int count)
+{
+	os_shm_top_t *top;
+	os_dev_t *p;
+	int n;
+
+	/* Entry condition. */	
+	OS_TRAP_IF(dev_id != OS_DEV_PY);
+
+	/* Get the address of the py shared memory state. */
+	p = &os_device[OS_DEV_PY];
+
+	/* Entry condition. */
+	OS_TRAP_IF(! p->init || buf == NULL || count < 1);
+
+	/* Get the pointer to the shm topology. */
+	top = &p->top;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&p->read_mutex);
+
+	/* Define the read method. */
+	atomic_store(&p->sync_read, 1);
+
+	/* Test the buffer state. */
+	if (buf == NULL || count < 1) {
+		/* Leave the critical section. */
+		os_cs_leave(&p->read_mutex);	
+		return 0;
+	}
+	
+	/* Wait for the DL payload. */
+	for(;;) {
+		/* Get the number of the received bytes. */
+		n = atomic_exchange(&top->dl_count, 0);
+
+		/* Test the number of the received bytest. */
+		if (n < 1) { 
+			/* Suspend the read user. */
+			os_sem_wait(&p->suspend_reader);
+			continue;
+		}
+
+		break;
+	}
+
+	/* Test the user buffer. */
+	OS_TRAP_IF(count < n);
+	
+	/* Copy the received payload. */
+	os_memcpy(buf, count, top->dl_start, n);
+
+	/* Release the pending DL buffer. */
+	os_ulq_add(p, 0, 1);
+	
+	/* Leave the critical section. */
+	os_cs_leave(&p->read_mutex);	
+
+	return n;
+}
+
+/**
  * os_shm_init() - define the device id and name.
  *
  * Return:	None.
  **/
-void os_shm_init(void)
+void os_shm_init(os_conf_t *conf)
 {
+	/* Save the reference to the OS configuration. */
+	os_conf_p = conf;
+	
 	/* Save the device id and name. */
 	os_device[OS_DEV_VAN].id   = OS_DEV_VAN;
 	os_device[OS_DEV_VAN].name = OS_VAN_NAME;

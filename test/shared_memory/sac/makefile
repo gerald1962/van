@@ -4,14 +4,12 @@
 MODULE := sac
 
 # Define the root of the VAN platform.
-GLOBALPATH := $(abspath ../..)
+GLOBALPATH := $(abspath ../../..)
 
 # Include the makefile to define the pathes for the VAN platform files.
 include ${GLOBALPATH}/tools/build/makefile_pathes
 
 # Define additional files needed to build the research programme.
-#
-# os_van_shm.c
 #
 VAN_FILES := \
   ${${BUILD_LIB}_FILES} \

@@ -51,7 +51,7 @@ void os_mem_statistics(os_statistics_t *stat);
 void os_trap_init(os_conf_t *conf);
 void os_mem_init(void);
 void os_thread_init(os_conf_t *conf);
-void os_shm_init(void);
+void os_shm_init(os_conf_t *conf);
 
 /* Test and free the OS resources. */
 void os_shm_exit(void);

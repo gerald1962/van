@@ -1,35 +1,42 @@
 A Changes
-1.
-	geändert:       ../faq.txt
-	geändert:       ../os/makefile
-	geändert:       ../os/os.h
-	geändert:       ../os/os_pthread.c
-	neue Datei:     ../os/os_shm.c
-	geändert:       ../samples/client_server_design/csd_cli.c
-	geändert:       python_c_interface/van.c
-	geändert:       python_c_interface/van.py
-	gelöscht:       python_c_interface/van.so
-	neue Datei:     shared_memory/makefile
-	neue Datei:     shared_memory/sac_chart.h
-	neue Datei:     shared_memory/sac_main.c
-	neue Datei:     shared_memory/sac_py.c
-	neue Datei:     shared_memory/sac_van.c
-	neue Datei:     shared_memory/shm.txt
-	geändert:       ../tools/build/makefile_operations
-2.
-	geändert:       faq.txt
-	geändert:       os/os.c
-	geändert:       os/os.h
-	geändert:       os/os_private.h
-	neue Datei:     os/os_python.c
-	geändert:       os/os_shm.c
-	neue Datei:     os/os_van.c
-	neue Datei:     os/shm.txt
-	neue Datei:     test/shared_memory/loop.sh
-	geändert:       test/shared_memory/sac_main.c
-	geändert:       test/shared_memory/sac_py.c
-	geändert:       test/shared_memory/sac_van.c
-	geändert:       test/shared_memory/shm.txt
+erald@gerald:~/van$ git merge shared_memory
+Aktualisiere 89e0235..208d845
+Fast-forward
+ faq.txt                                | 136 +++++++++++++++
+ os/makefile                            |   1 +
+ os/os.c                                |   4 +
+ os/os.h                                |  19 ++
+ os/os_private.h                        |   8 +-
+ os/os_pthread.c                        |   2 +-
+ os/os_python.c                         |  35 ++++
+ os/os_shm.c                            | 941 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ os/os_van.c                            |  35 ++++
+ os/shm.txt                             | Bin 0 -> 8192 bytes
+ samples/client_server_design/csd_cli.c |   2 -
+ test/python_c_interface/van.c          |  12 +-
+ test/python_c_interface/van.py         |  15 +-
+ test/python_c_interface/van.so         | Bin 18672 -> 0 bytes
+ test/shared_memory/loop.sh             |  25 +++
+ test/shared_memory/makefile            |  23 +++
+ test/shared_memory/sac_chart.h         |  80 +++++++++
+ test/shared_memory/sac_main.c          | 161 +++++++++++++++++
+ test/shared_memory/sac_py.c            | 268 +++++++++++++++++++++++++++++
+ test/shared_memory/sac_van.c           | 279 ++++++++++++++++++++++++++++++
+ test/shared_memory/shm.txt             | Bin 0 -> 8192 bytes
+ tools/build/makefile_operations        |   2 +-
+ 22 files changed, 2038 insertions(+), 10 deletions(-)
+ create mode 100644 os/os_python.c
+ create mode 100644 os/os_shm.c
+ create mode 100644 os/os_van.c
+ create mode 100644 os/shm.txt
+ delete mode 100755 test/python_c_interface/van.so
+ create mode 100755 test/shared_memory/loop.sh
+ create mode 100644 test/shared_memory/makefile
+ create mode 100644 test/shared_memory/sac_chart.h
+ create mode 100644 test/shared_memory/sac_main.c
+ create mode 100644 test/shared_memory/sac_py.c
+ create mode 100644 test/shared_memory/sac_van.c
+ create mode 100644 test/shared_memory/shm.txt
 
 
 31 Asynchronour I/O

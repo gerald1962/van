@@ -1,18 +1,32 @@
+#!/usr/bin/python3
+
+import os
+import time
 from ctypes import *
-lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+lib_path = os.path.join(os.environ['HOME'],'van/lib/libvan.so')
 van = CDLL(lib_path)
-van.s_write.restype = c_int
-van.s_read.restype = c_int
+van.os_init.restype = None
+van.os_trace_button.restype = None
+van.os_open.restype = c_int
+van.os_sync_read.restype = c_int
+van.os_sync_read.argtypes = [c_int, c_char_p, c_int]
+van.os_exit.restype = None
 
-s = "Hello, van"
-c_s = c_char_p(s)
-print(c_s.value)
+van.os_init()
+van.os_trace_button(0)
+id = van.os_open(b"/python")
 
-n = len(s)
-c_n = c_int(n)
-print(c_n.value)
+buf = create_string_buffer(512)
 
-c_w = van.s_write(c_s, c_n)
+start_time = time.time()
 
-c_r = van.s_read(c_s, c_n)
-print(c_s.value)
+while 1:
+    n = van.os_sync_read(id, buf, 512)
+    print ('received: [b:{}, s:{}]' . format(buf.value, n))
+    if buf.value == b'That\'s it.':
+        end_time = time.time()
+        print(end_time - start_time)
+        break
+
+van.os_close(id)
+van.os_exit()
