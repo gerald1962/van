@@ -1,0 +1,511 @@
+
+/home/gerald/van/test/shared_memory/pot/pot.c,43
+#define P P3,17
+int main(void)main5,37
+
+/home/gerald/van/test/shared_memory/sac/sac_van.c,1322
+#define P P22,787
+	VAN_S_SELF_DOWN,VAN_S_SELF_DOWN40,1490
+	VAN_S_SELF_READY,VAN_S_SELF_READY41,1508
+	VAN_S_SELF_LOCKED,VAN_S_SELF_LOCKED42,1527
+	VAN_S_SELF_RELEASED,VAN_S_SELF_RELEASED43,1547
+	VAN_S_SELF_INVVAN_S_SELF_INV44,1569
+} van_s_self_t;van_s_self_t45,1585
+	VAN_S_PY_DOWN,VAN_S_PY_DOWN56,1844
+	VAN_S_PY_UP,VAN_S_PY_UP57,1860
+	VAN_S_PY_LOCKED,VAN_S_PY_LOCKED58,1874
+	VAN_S_PY_INVVAN_S_PY_INV59,1892
+} van_s_py_t;van_s_py_t60,1906
+	os_dev_type_t   dev_id;dev_id72,2178
+	van_s_self_t   my_state;my_state73,2203
+	van_s_py_t     py_state;py_state74,2229
+	int            is_active;is_active75,2255
+	void          *my_addr;my_addr76,2282
+} van_data_t;van_data_t77,2307
+static struct van_msg_list_s {van_msg_list_s94,2791
+	van_msg_t      id;id95,2822
+	os_queue_cb_t  *cb;cb96,2842
+} van_msg_list[VAN_COUNT_M] = {van_msg_list97,2863
+static van_data_t van_data;van_data103,3009
+static void van_py_up_ind_send(void)van_py_up_ind_send116,3489
+static void van_py_down_ind_exec(os_queue_elem_t *msg)van_py_down_ind_exec137,3919
+static void van_op_init_ind_exec(os_queue_elem_t *msg)van_op_init_ind_exec168,4572
+void van_send(van_msg_t id, os_queue_elem_t *msg, int size)van_send219,5804
+void van_op_exit(void)van_op_exit234,6159
+void van_op_init(void)van_op_init262,6677
+
+/home/gerald/van/test/shared_memory/sac/sac_py.c,1250
+#define P P22,785
+	PY_S_SELF_DOWN,PY_S_SELF_DOWN41,1545
+	PY_S_SELF_INIT,PY_S_SELF_INIT42,1562
+	PY_S_SELF_READY,PY_S_SELF_READY43,1579
+	PY_S_SELF_LOCKED,PY_S_SELF_LOCKED44,1597
+	PY_S_SELF_RELEASED,PY_S_SELF_RELEASED45,1616
+	PY_S_SELF_INVPY_S_SELF_INV46,1637
+} py_s_self_t;py_s_self_t47,1652
+	PY_S_VAN_DOWN,PY_S_VAN_DOWN58,1917
+	PY_S_VAN_UP,PY_S_VAN_UP59,1933
+	PY_S_VAN_LOCKED,PY_S_VAN_LOCKED60,1947
+	PY_S_VAN_INVPY_S_VAN_INV61,1965
+} py_s_van_t;py_s_van_t62,1979
+	os_dev_type_t  dev_id;dev_id74,2247
+	py_s_self_t    my_state;my_state75,2271
+	py_s_van_t     van_state;van_state76,2297
+	int            is_active;is_active77,2324
+	void          *my_addr;my_addr78,2351
+} py_data_t;py_data_t79,2376
+static struct py_msg_list_s {py_msg_list_s94,2769
+	py_msg_t        id;id95,2799
+	os_queue_cb_t  *cb;cb96,2820
+} py_msg_list[PY_COUNT_M] = {py_msg_list97,2841
+static py_data_t py_data;py_data102,2933
+static void py_van_down_ind_send(void)py_van_down_ind_send115,3416
+static void py_van_up_ind_exec(os_queue_elem_t *msg)py_van_up_ind_exec145,4051
+void py_send(py_msg_t id, os_queue_elem_t *msg, int size)py_send206,5623
+void py_op_exit(void)py_op_exit221,5971
+void py_op_init(void)py_op_init249,6497
+
+/home/gerald/van/test/shared_memory/sac/sac_main.c,405
+#define P P22,812
+static struct sac_stat_s {sac_stat_s39,1481
+	sem_t   suspend;suspend40,1508
+} sac_stat;sac_stat41,1526
+static void sac_cleanup(void)sac_cleanup55,2000
+static void sac_wait(void)sac_wait75,2308
+static void op_van_init_ind_send(void)op_van_init_ind_send90,2599
+static void sac_init(void)sac_init105,2897
+void op_resume(void)op_resume139,3630
+int main(void)main152,3878
+
+/home/gerald/van/test/shared_memory/sac/sac_chart.h,373
+#define __sac_chart_h____sac_chart_h__10,155
+	VAN_OP_INIT_IND_M,VAN_OP_INIT_IND_M33,1143
+	VAN_PY_DOWN_IND_M,VAN_PY_DOWN_IND_M34,1163
+	VAN_COUNT_MVAN_COUNT_M35,1183
+} van_msg_t;van_msg_t36,1196
+	PY_VAN_UP_IND_M,PY_VAN_UP_IND_M44,1319
+	PY_COUNT_MPY_COUNT_M45,1337
+} py_msg_t;py_msg_t46,1349
+#define SRV_SEND(SRV_SEND62,1935
+#define PY_SEND(PY_SEND72,2254
+
+/home/gerald/van/test/shared_memory/vat/vat.c,43
+#define P P3,17
+int main(void)main5,37
+
+/home/gerald/van/test/os/vote.c,2392
+#define P P22,867
+#define TEST_LEN TEST_LEN25,917
+#define TEST_ASSERT_EQ(TEST_ASSERT_EQ32,1145
+#define TEST_ADD(TEST_ADD42,1412
+	char  *label;label59,2010
+	int    test_n;test_n60,2025
+	int    error_n;error_n61,2041
+	sem_t  suspend;suspend62,2058
+	char  *msg_info;msg_info63,2075
+	void  *thread[OS_THREAD_LIMIT];thread64,2093
+} test_stat_t;test_stat_t66,2127
+	char *label;label77,2345
+	int   (*routine) (void);routine78,2359
+	int   place;place79,2385
+	int   expected;expected80,2399
+} test_elem_t;test_elem_t81,2416
+        OS_QUEUE_MSG_HEAD;OS_QUEUE_MSG_HEAD90,2584
+        char buf[TEST_LEN];buf91,2611
+} test_msg_t;test_msg_t92,2639
+        OS_QUEUE_MSG_HEAD;OS_QUEUE_MSG_HEAD103,2935
+        char buf[TEST_LEN];buf104,2962
+	int  his_idx;his_idx105,2990
+	int  my_idx;my_idx106,3005
+} test_mt_msg_t;test_mt_msg_t107,3019
+static test_stat_t test_stat;test_stat133,3925
+static test_elem_t test_system[] = {test_system136,3991
+static int test_os_stat(os_statistics_t *expected)test_os_stat163,4832
+static void test_mt_msg_exec(os_queue_elem_t *m)test_mt_msg_exec185,5298
+static void test_mt_msg_send(int his_idx, int my_idx)test_mt_msg_send234,6562
+static void test_msg_exec(os_queue_elem_t *m)test_msg_exec265,7299
+static void test_msg_send(void *thread)test_msg_send288,7752
+static int test_case_shutdown(void)test_case_shutdown307,8164
+static int test_case_multi_thread(void)test_case_multi_thread326,8518
+static int test_case_queue_limit(void)test_case_queue_limit380,9852
+static int test_case_malloc_limit(void)test_case_malloc_limit420,10793
+static int test_case_queue(void)test_case_queue445,11240
+static int test_case_thread_limit(void)test_case_thread_limit483,12097
+static int test_case_thread(void)test_case_thread518,12849
+static int test_case_string(void)test_case_string550,13531
+static int test_case_mem(void)test_case_mem590,14348
+static int test_case_sync(void)test_case_sync611,14701
+static int test_case_trap(void)test_case_trap648,15395
+static int test_case_boot(void)test_case_boot667,15753
+static void test_set_process (char *label, test_elem_t *elem)test_set_process692,16195
+static void test_run(void)test_run733,17136
+static void test_usage(void)test_usage739,17253
+static void test_single_case(int n)test_single_case753,17622
+int main(int argc, char* argv[])main812,18910
+
+/home/gerald/van/os/os_van.c,0
+
+/home/gerald/van/os/os_mem.c,1478
+        int    elem_idx;elem_idx42,1672
+        int    file_idx;file_idx43,1697
+        unsigned long line;line44,1722
+        int    allocated;allocated45,1750
+        void  *start;start46,1776
+} os_mem_elem_t;os_mem_elem_t47,1798
+        pthread_mutex_t   protect;protect61,2177
+        char             *file[OS_MALLOC_FILE_LIMIT];file62,2212
+        int               next;next63,2266
+        unsigned long     malloc_c;malloc_c64,2298
+        unsigned long     free_c;free_c65,2334
+        os_mem_elem_t     elem[OS_MALLOC_LIMIT];elem66,2368
+} os_mem_stat_t;os_mem_stat_t67,2417
+        int list_idx;list_idx77,2665
+                unsigned long long align;align79,2703
+                void *start;start80,2745
+        } ptr;ptr81,2774
+} os_mem_t;os_mem_t82,2789
+static os_mem_stat_t os_mem_stat;os_mem_stat89,3011
+static void os_mem_elem_put(int idx, void *ptr)os_mem_elem_put106,3597
+static os_mem_elem_t *os_mem_elem_alloc(os_mem_stat_t *p)os_mem_elem_alloc144,4481
+static int os_mem_file_idx(os_mem_stat_t *p, char *file)os_mem_file_idx190,5576
+static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)os_mem_elem_get241,6922
+void *os_malloc(size_t size, char *file, unsigned long line)os_malloc286,8120
+void os_free(void **ptr)os_free321,9040
+void os_mem_statistics(os_statistics_t *stat)os_mem_statistics348,9606
+void os_mem_init(void)os_mem_init371,10075
+void os_mem_exit(void)os_mem_exit394,10610
+
+/home/gerald/van/os/os_string.c,484
+void *os_memset(void *s, int c, size_t n)os_memset45,1986
+void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)os_memcpy57,2184
+int os_memcmp(const void *s1, const void *s2, size_t n)os_memcmp69,2473
+size_t os_strnlen(const char *s, size_t maxlen)os_strnlen81,2714
+size_t os_strlen(const char *s)os_strlen93,2951
+char *os_strcpy(char *dest, int dest_n, const char *src)os_strcpy113,3225
+int os_strcmp(const char *s1, const char *s2)os_strcmp136,3648
+
+/home/gerald/van/os/os_pthread.c,2822
+	spinlock_t       protect;protect43,1772
+	sem_t            suspend_c;suspend_c44,1799
+	os_queue_elem_t  anchor;anchor45,1828
+	os_queue_elem_t  stopper;stopper46,1854
+	int              limit;limit47,1881
+	int              count;count48,1906
+	volatile int     is_running;is_running49,1931
+	atomic_int       busy_send;busy_send50,1961
+} os_queue_t;os_queue_t51,1990
+	OS_THREAD_BOOT,    /* 0 */OS_THREAD_BOOT62,2292
+	OS_THREAD_READY,   /* 1 */OS_THREAD_READY63,2320
+	OS_THREAD_KILL,    /* 2 */OS_THREAD_KILL64,2348
+	OS_THREAD_INVALID  /* 3 */OS_THREAD_INVALID65,2376
+} os_thread_state_t;os_thread_state_t66,2404
+	_Atomic os_thread_state_t  state;state82,2892
+	int               idx;idx83,2927
+	char              name[OS_MAX_NAME_LEN + 1];name84,2951
+	os_thread_prio_t  prio;prio85,2997
+	pthread_attr_t    attr;attr86,3022
+	pthread_t         pthread;pthread87,3047
+	os_queue_t        queue;queue88,3075
+	sem_t             suspend_p;suspend_p89,3101
+} os_thread_t;os_thread_t90,3131
+	os_thread_t  thread;thread100,3353
+	int          idx;idx101,3375
+	int          is_in_use;is_in_use102,3394
+} os_thread_elem_t;os_thread_elem_t103,3419
+static os_conf_t *os_conf_p;os_conf_p109,3651
+static struct os_thread_list_s {os_thread_list_s120,3951
+	os_thread_elem_t  elem[OS_THREAD_LIMIT];elem121,3984
+	int               count;count122,4026
+	pthread_mutex_t   protect;protect123,4052
+	pthread_key_t     key;key124,4080
+	pthread_once_t    once_c;once_c125,4104
+} os_thread_list;os_thread_list127,4132
+static int os_queue_loop(os_thread_t *thread, int count)os_queue_loop144,4722
+static int os_thread_suspend(os_thread_t *thread, int *count_p)os_thread_suspend208,6146
+static void os_pthread_once_init(void)os_pthread_once_init277,7670
+static void os_thread_save(os_thread_t *thread)os_thread_save293,7982
+static void *os_thread_cb(void *arg)os_thread_cb321,8576
+static void os_queue_free(os_queue_t *q)os_queue_free367,9554
+static void os_thread_free(os_thread_t *thread)os_thread_free402,10243
+static void os_queue_init(os_thread_t *thread, int q_size)os_queue_init448,11225
+static os_thread_t *os_thread_alloc(int q_size)os_thread_alloc484,11987
+static os_thread_prio_t os_thread_prio(os_thread_prio_t prio)os_thread_prio534,13032
+void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)os_thread_create561,13792
+void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size)os_queue_send629,15606
+void os_thread_destroy(void *g_thread)os_thread_destroy706,17528
+char *os_thread_name(void *g_thread)os_thread_name761,19009
+void os_thread_statistics(os_statistics_t *stat)os_thread_statistics784,19458
+void os_thread_init(os_conf_t *conf)os_thread_init808,19940
+void os_thread_exit(void)os_thread_exit825,20321
+
+/home/gerald/van/os/os_shm.h,388
+#define __os_shm_h____os_shm_h__3,60
+	int (*open) (char *device_name);open26,1221
+	void (*close) (int dev_id);close27,1255
+	void (*sync_write) (int dev_id, char *buf, int count);sync_write28,1284
+	int (*sync_pread) (int dev_id, char **buf, int count);sync_pread29,1340
+	int (*sync_read) (int dev_id, char *buf, int count);sync_read30,1396
+} os_shm_ops_t;os_shm_ops_t31,1450
+
+/home/gerald/van/os/os.c,1204
+static os_conf_t os_conf;os_conf34,1455
+static struct os_stat_s {os_stat_s44,1722
+	atomic_int is_init;is_init45,1748
+	atomic_int cs_count;cs_count46,1769
+	atomic_int sem_count;sem_count47,1791
+	atomic_int spin_count;spin_count48,1814
+} os_stat;os_stat49,1838
+void os_cs_init(pthread_mutex_t *mutex)os_cs_init68,2504
+void os_cs_enter(pthread_mutex_t *mutex)os_cs_enter98,3081
+void os_cs_leave(pthread_mutex_t *mutex)os_cs_leave118,3389
+void os_cs_destroy(pthread_mutex_t *mutex)os_cs_destroy138,3691
+void os_sem_init(sem_t *sem, unsigned int init_value)os_sem_init161,4110
+void os_sem_wait(sem_t *sem)os_sem_wait183,4483
+void os_sem_release(sem_t *sem)os_sem_release203,4775
+void os_sem_delete(sem_t *sem)os_sem_delete223,5064
+void os_spin_init(spinlock_t *spinlock)os_spin_init246,5404
+void os_spin_lock(spinlock_t *spinlock)os_spin_lock268,5770
+void os_spin_unlock(spinlock_t *spinlock)os_spin_unlock288,6085
+void os_spin_destroy(spinlock_t *spinlock)os_spin_destroy308,6406
+void os_statistics(os_statistics_t *stat)os_statistics330,6784
+void os_trace_button(int n)os_trace_button360,7431
+void os_init(void)os_init370,7566
+void os_exit(void)os_exit401,8202
+
+/home/gerald/van/os/os_shm.c,3396
+#define OS_VAN_NAME OS_VAN_NAME23,917
+#define OS_PY_NAME OS_PY_NAME24,994
+#define OS_SHM_FILE OS_SHM_FILE29,1167
+#define OS_SHM_SIZE OS_SHM_SIZE31,1225
+#define OS_BUF_SIZE OS_BUF_SIZE32,1295
+#define OS_VAN_INT OS_VAN_INT33,1369
+#define OS_PY_INT OS_PY_INT34,1434
+#define OS_THREAD_Q_SIZE OS_THREAD_Q_SIZE35,1502
+#define OS_SHM_Q_SIZE OS_SHM_Q_SIZE36,1580
+#define VP VP43,1863
+#define PP PP46,1919
+	int  size;size75,2883
+	int  consumed;consumed76,2895
+} os_shm_msg_t;os_shm_msg_t77,2911
+	os_shm_msg_t     ring[OS_SHM_Q_SIZE];ring87,3120
+	int  tail;tail88,3159
+	int  head;head89,3171
+} os_shm_queue_t;os_shm_queue_t90,3183
+	pthread_mutex_t  q_mutex;q_mutex108,3772
+	os_shm_queue_t  *dl_queue;dl_queue109,3799
+	atomic_int       dl_count;dl_count110,3827
+	int    dl_size;dl_size111,3855
+	char  *dl_start;dl_start112,3872
+	char  *dl_end;dl_end113,3890
+	os_shm_queue_t  *ul_queue;ul_queue114,3906
+	atomic_int       ul_count;ul_count115,3934
+	int    ul_size;ul_size116,3962
+	char  *ul_start;ul_start117,3979
+	char  *ul_end;ul_end118,3997
+} os_shm_top_t;os_shm_top_t119,4013
+	os_dev_type_t  id;id148,5364
+	char   *name;name149,5384
+	int     init;init150,5399
+	char   *file_name;file_name151,5414
+	int     fd;fd152,5434
+	off_t   size;size153,5447
+	void   *start;start154,5462
+	char   *my_int_name;my_int_name155,5478
+	char   *other_int_name;other_int_name156,5500
+	sem_t  *my_int;my_int157,5525
+	sem_t  *other_int;other_int158,5542
+	void   *thread;thread159,5562
+	sem_t   suspend_writer;suspend_writer160,5579
+	sem_t   suspend_reader;suspend_reader161,5604
+	atomic_int       pending_ul;pending_ul162,5629
+	atomic_int       pending_dl;pending_dl163,5659
+	atomic_int       down;down164,5689
+	atomic_int       sync_read;sync_read165,5713
+	atomic_int       sync_write;sync_write166,5742
+	pthread_mutex_t  write_mutex;write_mutex167,5772
+	pthread_mutex_t  read_mutex;read_mutex168,5803
+	os_shm_top_t     top;top169,5833
+} os_dev_t;os_dev_t170,5856
+static os_conf_t *os_conf_p;os_conf_p176,6080
+static os_dev_t os_device[OS_DEV_COUNT];os_device179,6151
+static void os_ulq_add(os_dev_t *dev, int count, int consumed)os_ulq_add196,6781
+static void os_dlq_add(os_dev_t *dev, int count, int consumed)os_dlq_add238,7687
+static void os_py_exit_exec(os_queue_elem_t *msg)os_py_exit_exec279,8531
+static void os_py_int_exec(os_queue_elem_t *msg)os_py_int_exec292,8830
+static void os_van_exit_exec(os_queue_elem_t *msg)os_van_exit_exec373,10728
+static void os_van_int_exec(os_queue_elem_t *msg)os_van_int_exec386,11031
+static void os_shm_close(os_dev_t *s)os_shm_close449,12509
+static void os_shm_open(os_dev_t *s)os_shm_open491,13547
+static void os_py_close(os_dev_t *p)os_py_close563,15439
+static void os_py_open(os_dev_t *p)os_py_open595,16166
+static void os_van_close(os_dev_t *v)os_van_close636,17201
+static void os_van_open(os_dev_t *v)os_van_open677,18138
+int os_open(char *device_name)os_open729,19639
+void os_close(int dev_id)os_close768,20356
+void os_sync_write(int dev_id, char *buf, int count)os_sync_write796,20955
+int os_sync_pread(int dev_id, char **buf, int count)os_sync_pread849,22348
+int os_sync_read(int dev_id, char *buf, int count)os_sync_read919,23873
+void os_shm_init(os_conf_t *conf)os_shm_init985,25179
+void os_shm_exit(void)os_shm_exit1003,25589
+
+/home/gerald/van/os/os.h,1620
+#define __os_h____os_h__3,56
+#define F F15,610
+#define OS_MAX_STRING_LEN OS_MAX_STRING_LEN18,690
+#define OS_MAX_NAME_LEN OS_MAX_NAME_LEN21,766
+#define OS_THREAD_LIMIT OS_THREAD_LIMIT24,834
+#define OS_QUEUE_LIMIT OS_QUEUE_LIMIT27,901
+#define OS_MALLOC_LIMIT OS_MALLOC_LIMIT30,1002
+#define OS_MALLOC_FILE_LIMIT OS_MALLOC_FILE_LIMIT33,1086
+#define OS_TRAP(OS_TRAP40,1315
+#define OS_TRAP_IF(OS_TRAP_IF43,1371
+#define OS_MALLOC(OS_MALLOC51,1529
+#define OS_FREE(OS_FREE52,1594
+#define OS_SEND(OS_SEND55,1713
+typedef pthread_mutex_t spinlock_t;spinlock_t64,2056
+	OS_THREAD_PRIO_HARDRT  = 99,OS_THREAD_PRIO_HARDRT75,2411
+	OS_THREAD_PRIO_SOFTRT  = 50,OS_THREAD_PRIO_SOFTRT76,2441
+	OS_THREAD_PRIO_BACKG   = 40,OS_THREAD_PRIO_BACKG77,2471
+	OS_THREAD_PRIO_FOREG   = 35,OS_THREAD_PRIO_FOREG78,2501
+	OS_THREAD_PRIO_DEFAULT = 5OS_THREAD_PRIO_DEFAULT79,2531
+} os_thread_prio_t;os_thread_prio_t80,2559
+typedef struct os_queue_elem_s os_queue_elem_t;os_queue_elem_t83,2630
+typedef void os_queue_cb_t(os_queue_elem_t *msg);os_queue_cb_t86,2720
+#define OS_QUEUE_MSG_HEAD OS_QUEUE_MSG_HEAD95,2965
+struct os_queue_elem_s {os_queue_elem_s100,3084
+    OS_QUEUE_MSG_HEAD;OS_QUEUE_MSG_HEAD101,3109
+	int cs_count;cs_count115,3487
+	int sem_count;sem_count116,3502
+	int spin_count;spin_count117,3518
+        int malloc_c;malloc_c118,3535
+        int free_c;free_c119,3557
+	int thread_c;thread_c120,3577
+} os_statistics_t;os_statistics_t121,3592
+	OS_DEV_VAN,OS_DEV_VAN131,3854
+	OS_DEV_PY,OS_DEV_PY132,3867
+	OS_DEV_COUNTOS_DEV_COUNT133,3879
+} os_dev_type_t;os_dev_type_t134,3893
+
+/home/gerald/van/os/os_trap.c,290
+static os_conf_t *os_conf_p;os_conf_p34,1484
+void os_trap_handler(int signo)os_trap_handler50,2024
+void os_trap_catch(void)os_trap_catch65,2395
+void os_trap(char *file, const char *function, unsigned long line)os_trap87,2933
+void os_trap_init(os_conf_t *conf)os_trap_init115,3526
+
+/home/gerald/van/os/os_private.h,170
+#define __os_private_h____os_private_h__3,64
+#define OS OS15,551
+#define OS_TRACE(OS_TRACE22,763
+	int trace_stat;trace_stat36,1157
+} os_conf_t;os_conf_t37,1174
+
+/home/gerald/van/os/os_python.c,0
+
+/home/gerald/van/battery/zinc_copper_battery/test/zinc.c,463
+#define P P22,781
+static struct zinc_stat_s {zinc_stat_s40,1503
+	sem_t   suspend;suspend41,1531
+	void    *con;con42,1549
+} zinc_stat;zinc_stat43,1564
+static void zinc_cleanup(void)zinc_cleanup58,2041
+static void zinc_wait(void)zinc_wait80,2430
+static void zinc_exit_exec(os_queue_elem_t *msg)zinc_exit_exec97,2781
+static void zinc_exit_send(void)zinc_exit_send113,3123
+static void zinc_init(void)zinc_init129,3434
+int main(void)main159,4175
+
+/home/gerald/van/samples/client_server_design/csd_cli.c,1253
+#define P P22,800
+	CLI_S_SELF_DOWN,CLI_S_SELF_DOWN41,1589
+	CLI_S_SELF_INIT,CLI_S_SELF_INIT42,1607
+	CLI_S_SELF_READY,CLI_S_SELF_READY43,1625
+	CLI_S_SELF_LOCKED,CLI_S_SELF_LOCKED44,1644
+	CLI_S_SELF_RELEASED,CLI_S_SELF_RELEASED45,1664
+	CLI_S_SELF_INVCLI_S_SELF_INV46,1686
+} cli_s_self_t;cli_s_self_t47,1702
+	CLI_S_SERV_DOWN,CLI_S_SERV_DOWN58,1990
+	CLI_S_SERV_UP,CLI_S_SERV_UP59,2008
+	CLI_S_SERV_LOCKED,CLI_S_SERV_LOCKED60,2024
+	CLI_S_SERV_INVCLI_S_SERV_INV61,2044
+} cli_s_serv_t;cli_s_serv_t62,2060
+	cli_s_self_t  my_state;my_state73,2299
+	cli_s_serv_t  serv_state;serv_state74,2324
+	int    is_active;is_active75,2351
+	void  *my_addr;my_addr76,2370
+} cli_data_t;cli_data_t77,2387
+static struct cli_msg_list_s {cli_msg_list_s92,2795
+	cli_msg_t      id;id93,2826
+	os_queue_cb_t  *cb;cb94,2846
+} cli_msg_list[CLI_COUNT_M] = {cli_msg_list95,2867
+static cli_data_t cli_data;cli_data100,2969
+static void cli_serv_down_ind_send(void)cli_serv_down_ind_send113,3463
+static void cli_serv_up_ind_exec(os_queue_elem_t *msg)cli_serv_up_ind_exec143,4128
+void cli_send(cli_msg_t id, os_queue_elem_t *msg, int size)cli_send175,5041
+void cli_op_exit(void)cli_op_exit190,5399
+void cli_op_init(void)cli_op_init218,5929
+
+/home/gerald/van/samples/client_server_design/csd_main.c,407
+#define P P22,800
+static struct csd_stat_s {csd_stat_s39,1469
+	sem_t   suspend;suspend40,1496
+} csd_stat;csd_stat41,1514
+static void csd_cleanup(void)csd_cleanup55,1988
+static void csd_wait(void)csd_wait75,2305
+static void op_serv_init_ind_send(void)op_serv_init_ind_send90,2603
+static void csd_init(void)csd_init105,2907
+void op_resume(void)op_resume139,3681
+int main(void)main152,3932
+
+/home/gerald/van/samples/client_server_design/csd_serv.c,1328
+#define P P22,800
+	SERV_S_SELF_DOWN,SERV_S_SELF_DOWN40,1518
+	SERV_S_SELF_READY,SERV_S_SELF_READY41,1537
+	SERV_S_SELF_LOCKED,SERV_S_SELF_LOCKED42,1557
+	SERV_S_SELF_RELEASED,SERV_S_SELF_RELEASED43,1578
+	SERV_S_SELF_INVSERV_S_SELF_INV44,1601
+} serv_s_self_t;serv_s_self_t45,1618
+	SERV_S_CLI_DOWN,SERV_S_CLI_DOWN56,1908
+	SERV_S_CLI_UP,SERV_S_CLI_UP57,1926
+	SERV_S_CLI_LOCKED,SERV_S_CLI_LOCKED58,1942
+	SERV_S_CLI_INVSERV_S_CLI_INV59,1962
+} serv_s_cli_t;serv_s_cli_t60,1978
+	serv_s_self_t  my_state;my_state71,2214
+	serv_s_cli_t   cli_state;cli_state72,2240
+	int    is_active;is_active73,2267
+	void  *my_addr;my_addr74,2286
+} serv_data_t;serv_data_t75,2303
+static struct serv_msg_list_s {serv_msg_list_s92,2805
+	serv_msg_t      id;id93,2837
+	os_queue_cb_t  *cb;cb94,2858
+} serv_msg_list[SERV_COUNT_M] = {serv_msg_list95,2879
+static serv_data_t serv_data;serv_data101,3035
+static void serv_cli_up_ind_send(void)serv_cli_up_ind_send114,3534
+static void serv_cli_down_ind_exec(os_queue_elem_t *msg)serv_cli_down_ind_exec135,3997
+static void serv_op_init_ind_exec(os_queue_elem_t *msg)serv_op_init_ind_exec163,4606
+void serv_send(serv_msg_t id, os_queue_elem_t *msg, int size)serv_send196,5495
+void serv_op_exit(void)serv_op_exit211,5859
+void serv_op_init(void)serv_op_init239,6395
+
+/home/gerald/van/samples/client_server_design/csd_chart.h,393
+#define __csd_chart_h____csd_chart_h__10,155
+	SERV_OP_INIT_IND_M,SERV_OP_INIT_IND_M33,1163
+	SERV_CLI_DOWN_IND_M,SERV_CLI_DOWN_IND_M34,1184
+	SERV_COUNT_MSERV_COUNT_M35,1206
+} serv_msg_t;serv_msg_t36,1220
+	CLI_SERV_UP_IND_M,CLI_SERV_UP_IND_M44,1362
+	CLI_COUNT_MCLI_COUNT_M45,1382
+} cli_msg_t;cli_msg_t46,1395
+#define SRV_SEND(SRV_SEND62,1992
+#define CLI_SEND(CLI_SEND72,2324
+
+/home/gerald/van/samples/hello_1/hello_1.c,752
+#define BUF_LEN BUF_LEN3,75
+        OS_QUEUE_MSG_HEAD;                                         // (3)OS_QUEUE_MSG_HEAD5,169
+        char buf[BUF_LEN];                                         // (4)buf6,243
+} hello_msg_t;                                                     // (5)hello_msg_t7,317
+static char *hello = "Hello battery 1";                            // (6)hello9,392
+static sem_t suspend;                                              // (7)suspend10,466
+static void hello_exec(os_queue_elem_t *m)                         // (8)hello_exec12,541
+static void hello_send(void *bat)                                  // (13)hello_send21,906
+int main(void)                                                     // (20)main32,1403
