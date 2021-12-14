@@ -29,8 +29,9 @@
 /* XXX */
 #if 0
 #define OS_SHM_FILE  "shm.txt"   /* Name of the shared memory file. */
+#define OS_SHM_FILE  "/home/gerald/van_development/van/os/shm.txt"
 #else
-#define OS_SHM_FILE  "/home/gerald/van/os/shm.txt"
+#define OS_SHM_FILE  "/home/gerald/github/van/os/shm.txt"
 #endif
 #define OS_SHM_SIZE  8192        /* Expected size of the shm file. */
 #define OS_BUF_SIZE  2048        /* Size of the UL/DL transfer buffer. */

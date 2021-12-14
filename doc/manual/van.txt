@@ -1,0 +1,60 @@
+VRFB Draft                                                    G. Schueller
+VRFB Working Group                                            Adrian Posner
+Category: Experimental                                        USC ISI
+Expires January 2022                                          November 21, 2021
+
+                   Battery Simulation Framework (BAF)
+
+                          Status of this Memo
+
+   This memo specifies a framework for the Battery community, and requests
+   discussion and suggestions for improvements. Please refer to Model-based
+   Design and Optimaztion of Vanadium Redox Flow Batteries.
+
+Abstract
+
+   The Battery Simulation Framework provides a standard method for transporting messages
+   over battery links. ...
+
+Table of Contents
+
+   1. Introduction
+   2. Battery Link Operations
+   ...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+.\" 11/10/08 Template updated to align with Copyright Notice as
+.\" defined in RFC 5378 (BCP 78).
+.pl 10.0i
+.po 0
+.ll 7.2i
+.lt 7.2i
+.nr LL 7.2i
+.nr LT 7.2i
+.ds RF FORMFEED[Page %]
+.ds LH VAN Draft
+.\"   --> Header/footers: Set short title, author(s), and dates:
+.ds CH 2-nroff.template                  \" <Short title>
+.ds LF Schueller, Gerald                 \" <Authors>
+.ds RH November 21, 2021                 \" <Submission date>
+.ds CF Expires January 2022              \" <Expiration date>
+.hy 0
+.ad l
+.nf
+.\" 5678901234567 check 72 column width 12345678901234567890123456789012
+VRFB Draft                                                    G. Schueller
+VRFB Working Group                                            Adrian Posner
+Category: Experimental                                        USC ISI
+Expires January 2022                                          November 21, 2021
+
+.ce
+Battery Simulation Framework (BAF)
+.ce
+
+.in 3              \"  Basic indent for text is 3 spaces
+.ti 0              \"  "Temporary indent" for next line: 0 spaces
+Status of this Memo
+
+This memo specifies a framework for the Battery community, and requests
+discussion and suggestions for improvements. Please refer to Model-based
+Design and Optimaztion of Vanadium Redox Flow Batteries.
+
+.ti 0
+Abstract
+
+The Battery Simulation Framework provides a standard method for transporting messages
+over battery links. ...
+
+.in 0
+Table of Contents
+
+.nf
+   1. Introduction
+   2. Battery Link Operations
+   ...
+.fi
+.in 3 
+.ti 0

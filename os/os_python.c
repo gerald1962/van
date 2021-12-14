@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Van shared memory driver.
+ * Python shared memory driver.
  *
  * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -9,6 +9,8 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include "os_shm.h"      /* Shared memory entry points. */
+
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
   ============================================================================*/
