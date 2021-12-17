@@ -128,6 +128,19 @@ char *os_strcpy(char *dest, int dest_n, const char *src)
 }
 
 /**
+ * os_strncmp() - strncmp with additional assertions.
+ *
+ * see strncmp
+ **/
+
+int os_strncmp(const char *s1, const char *s2, int n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(s1 == NULL || s2 == NULL || n > OS_MAX_STRING_LEN);
+	return strncmp(s1, s2, n);
+}
+
+/**
  * os_strcmp() - strcmp with additional assertions.
  *
  * see strcmp

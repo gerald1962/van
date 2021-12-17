@@ -25,7 +25,7 @@ from ctypes import *  # Allow calling C functions in shared libraries.
 # VAN DLL FOR BATTERY DESIGN.
 # ============================================================================
 # Load the van shared library.
-lib_path = os.path.join(os.environ['HOME'],'github/van/lib/libvan.so')
+lib_path = os.path.join(os.environ['HOME'],'van_development/van/lib/libvan.so')
 van = CDLL(lib_path)
 
 # Declarations of the van interfaces.
@@ -42,30 +42,74 @@ van.os_close.restype  = None
 van.os_exit.argtypes = None
 van.os_exit.restype  = None
 
-# Boot the van OS, switch off tracing and create the python shared memory device
-# for the communication with van.
-van.os_init()
-van.os_trace_button(0)
-id = van.os_open(b"/python")
+# ============================================================================
+# LOCAL FUNCTIONS
+# ============================================================================
+# van_communication() - test the receiving of DL data from van.
+#
+# dev_id: identity code of the python shared memory device.
+#
+# Return:	None.
+#
+def van_dl_communication(dev_id):
+    # Allocate the buffer for sync_read.
+    buf = create_string_buffer(512)
 
-# Allocate the buffer for sync_read.
-buf = create_string_buffer(512)
+    # Beginning of the measurement.
+    start_time = time.time()
 
-# Beginning of the measurement.
-start_time = time.time()
+    # Read and analyze all DL data from van.
+    while 1:
+        # Copy data from the receive channel.
+        n = van.os_sync_read(dev_id, buf, 512)
+        print ('python< received: [b:{}, s:{}]' . format(buf.value, n))
 
-# Read and analyze all DL data from van.
-while 1:
-    # Copy data from the receive channel.
-    n = van.os_sync_read(id, buf, 512)
-    print ('python< received: [b:{}, s:{}]' . format(buf.value, n))
+        # End condition for the read loop and calcuate the execution time.
+        if buf.value == b'That\'s it.':
+            end_time = time.time()
+            print('elapsed timme: {}' . format(end_time - start_time))
+            break
 
-    # End condition for the read loop and calcuate the execution time.
-    if buf.value == b'That\'s it.':
-        end_time = time.time()
-        print('elapsed timme: {}' . format(end_time - start_time))
-        break
+    return
+    
+# van_exit() - destroy the python shared memoy device and shutdown the van OS.
+#
+# dev_id: identity code of the python shared memory device.
+#
+# Return:	None.
+#
+def van_exit(dev_id):
+    van.os_close(dev_id)
+    van.os_exit()
+    return
 
-# Destroy the python shared memoy device and shutdown the van OS.
-van.os_close(id)
-van.os_exit()
+# van_init() - install the python shared memory device.
+#
+# Return:	identity code of the python device.
+#
+def van_init():
+    # Boot the van OS, switch off tracing and create the python shared memory device
+    # for the communication with van.
+    van.os_init()
+    van.os_trace_button(0)
+    id = van.os_open(b"/python")
+    return id;
+
+# main() - test the communication with van.
+#
+# Return:	None.
+#
+def main():
+    # Install the python shared memory device.
+    id = van_init();
+
+    # Test the receiving of DL data from van.
+    van_dl_communication(id);
+    
+    # Destroy the python shared memoy device and shutdown the van OS.
+    van_exit(id);
+    return
+
+# Entry point for battery development.
+#
+main();

@@ -7,6 +7,7 @@
   ============================================================================*/
 #include <stdio.h>      /* Standard C library:   printf(). */
 #include <semaphore.h>  /* Semaphore operations: sem_t. */
+#include <stdatomic.h>  /* ISO C11 Standard:  7.17  Atomics */
 
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
@@ -21,7 +22,7 @@
 #define OS_MAX_NAME_LEN  16
 
 /* Number of the supported threads. */
-#define OS_THREAD_LIMIT  5
+#define OS_THREAD_LIMIT  7
 
 /* Limit of the thread input queue. */
 #define OS_QUEUE_LIMIT  1024
@@ -30,7 +31,10 @@
 #define OS_MALLOC_LIMIT     512
 
 /* Limit of the van files with os_malloc calls. */
-#define OS_MALLOC_FILE_LIMIT  3
+#define OS_MALLOC_FILE_LIMIT  5
+
+/* Size of the UL/DL transfer buffer. */
+#define OS_BUF_SIZE  2048
 
 /*============================================================================
   MACROS
@@ -163,6 +167,7 @@ int os_memcmp(const void *s1, const void *s2, size_t n);
 size_t os_strnlen(const char *s, size_t maxlen);
 size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);
+int os_strncmp(const char *s1, const char *s2, int n);
 int os_strcmp(const char *s1, const char *s2);
 
 /* Critical section. */
@@ -195,7 +200,7 @@ void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 int os_open(char *device_name);
 void os_close(int dev_id);
 void os_sync_write(int dev_id, char *buf, int count);
-int os_sync_pread(int dev_id, char **buf, int count);
+int os_sync_zread(int dev_id, char **buf, int count);
 int os_sync_read(int dev_id, char *buf, int count);
 
 #endif /* __os_h__ */

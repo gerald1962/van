@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Coverage of the VAN operating system tests.
+ * Coverage of the VAN operating system tests:
+ * van OS test environment.
  *
  * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -172,6 +173,23 @@ static int test_os_stat(os_statistics_t *expected)
 	/* Compare the current with expected OS state. */
 	ret = os_memcmp(&stat, expected, sizeof(os_statistics_t));
 
+	/* Test the result. */
+	if (ret != 0) {
+		printf("vote: expected: [cs=%d, sem=%d, spin=%d, malloc=%d, free=%d, thread=%d]\n",
+		       expected->cs_count,
+		       expected->sem_count,
+		       expected->spin_count,
+		       expected->malloc_c,
+		       expected->free_c,
+		       expected->thread_c);
+		printf("vote: gotten:   [cs=%d, sem=%d, spin=%d, malloc=%d, free=%d, thread=%d]\n",
+		       stat.cs_count,
+		       stat.sem_count,
+		       stat.spin_count,
+		       stat.malloc_c,
+		       stat.free_c,
+		       stat.thread_c);
+	}
 	return ret;
 }
 
@@ -306,7 +324,7 @@ static void test_msg_send(void *thread)
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2311, 2311, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2315, 2313, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -325,7 +343,7 @@ static int test_case_shutdown(void)
  **/
 static int test_case_multi_thread(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2311, 2311, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2315, 2313, 0 };
 	char name[OS_MAX_NAME_LEN];
 	void **p;
 	int i, stat;
@@ -379,7 +397,7 @@ static int test_case_multi_thread(void)
  **/
 static int test_case_queue_limit(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2306, 2306, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2308, 2306, 0 };
 	void *p;
 	int i, stat;
 
@@ -419,7 +437,7 @@ static int test_case_queue_limit(void)
  **/
 static int test_case_malloc_limit(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2050, 2050, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2052, 2050, 0 };
 	int i, stat;
 	void *p;
 
@@ -444,7 +462,7 @@ static int test_case_malloc_limit(void)
  **/
 static int test_case_queue(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2, 2, 0 };
+	os_statistics_t expected = { 2, 2, 0, 4, 2, 0 };
 	void *p;
 	int stat;
 
@@ -482,7 +500,7 @@ static int test_case_queue(void)
  **/
 static int test_case_thread_limit(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
+	os_statistics_t expected = { 2, 2, 0, 3, 1, 0 };
 	char name[OS_MAX_NAME_LEN];
 	void *p[OS_THREAD_LIMIT];
 	int i, j, stat;
@@ -517,7 +535,7 @@ static int test_case_thread_limit(void)
  **/
 static int test_case_thread(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
+	os_statistics_t expected = { 2, 2, 0, 3, 1, 0 };
 	void *p;
 	char *name;
 	int stat;
@@ -549,7 +567,7 @@ static int test_case_thread(void)
  **/
 static int test_case_string(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
+	os_statistics_t expected = { 2, 2, 0, 3, 1, 0 };
 	char    s1[TEST_LEN], *s2 = "*coverage*";
 	int n, stat;
 
@@ -589,7 +607,7 @@ static int test_case_string(void)
  **/
 static int test_case_mem(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 1, 1, 0 };
+	os_statistics_t expected = { 2, 2, 0, 3, 1, 0 };
 	void *p;
 	int stat;
 
@@ -610,7 +628,7 @@ static int test_case_mem(void)
  **/
 static int test_case_sync(void)
 {	
-	os_statistics_t expected = { 2, 2, 0, 0, 0, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2, 0, 0 };
 	sem_t           sem;
 	pthread_mutex_t mutex;
 	spinlock_t      spinlock;
@@ -647,7 +665,7 @@ static int test_case_sync(void)
  **/
 static int test_case_trap(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 0, 0, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2, 0, 0 };
 	int stat;
 
 	/* Use the test agreement. */
@@ -666,7 +684,7 @@ static int test_case_trap(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 0, 0, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
@@ -736,9 +754,14 @@ static void test_run(void)
 	test_set_process(TEST_ADD(test_system));
 }
 
+/**
+ * test_usage() - provide information aboute the vote configuration.
+ *
+ * Return:	None.
+ **/
 static void test_usage(void)
 {
-	printf("VOTE - VAN OS Test Environment \n");
+	printf("VOTE - VAN OS Test Environment\n");
 	printf("  no arg - execute the complete test set with n cases\n");
 	printf("  n      - start the nth test case, except n<=1 or n>=limit \n");
 	printf("  other  - print the usage information.\n");
@@ -809,7 +832,7 @@ static void test_single_case(int n)
  *
  * Return:	0 or force a software trap.
  **/
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 	test_stat_t *s;
 	int n;

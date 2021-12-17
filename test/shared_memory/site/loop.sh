@@ -9,10 +9,10 @@ while [  $i -lt $limit ]; do
 
     let i=i+1
 
-    # Start the test of the shared memory concept.
-    out/sac
+    # Execute the simultaneous test experiment.
+    out/site
 
-    # Test the return code of the makefile.
+    # Test the site execution result.
     if [ $? -eq 0 ]; 
     then 
 	echo "*** executed successfully:" $i

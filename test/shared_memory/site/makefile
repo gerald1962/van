@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 # Name of the executable research programme.
-MODULE := sac
+MODULE := site
 
 # Define the root of the VAN platform.
 GLOBALPATH := $(abspath ../../..)
@@ -13,9 +13,7 @@ include ${GLOBALPATH}/tools/build/makefile_pathes
 #
 VAN_FILES := \
   ${${BUILD_LIB}_FILES} \
-  sac_main.c \
-  sac_van.c \
-  sac_py.c
+  site.c
 
 # Include the framework makefile with the integration operations.
 include ${GLOBALPATH}/tools/build/makefile_operations
