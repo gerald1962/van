@@ -20,6 +20,14 @@
 #define OS_PY_NAME  "/python"  /* Name of the python shared memory device. */
 #define PP          "P-I>"     /* Prompt for the py_int thread. */
 
+#if defined(USE_OS_RT)
+#define PRIO    OS_THREAD_PRIO_HARDRT
+#else
+#define PRIO    OS_THREAD_PRIO_SOFTRT
+#endif
+
+#define Q_SIZE  OS_THREAD_Q_SIZE
+
 /*============================================================================
   MACROS
   ============================================================================*/
@@ -447,8 +455,7 @@ static int py_open(char *name)
 	os_shm_open(p);
 	
 	/* Install the py interrupt handler/thread. */
-	p->thread = os_thread_create("py_int", OS_THREAD_PRIO_SOFTRT,
-				     OS_THREAD_Q_SIZE);	
+	p->thread = os_thread_create("py_int", PRIO, Q_SIZE);	
 	
 	/* Change the state of the shm area. */
 	p->init = 1;

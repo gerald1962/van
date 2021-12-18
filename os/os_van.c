@@ -17,13 +17,20 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-/*============================================================================
-  MACROS
-  ============================================================================*/
-
 #define OS_VAN_NAME  "/van"  /* Name of the van shared memory device. */
 #define VP  "V-I>"           /* Prompt for the van_int thread. */
 
+#if defined(USE_OS_RT)
+#define PRIO    OS_THREAD_PRIO_HARDRT
+#else
+#define PRIO    OS_THREAD_PRIO_SOFTRT
+#endif
+
+#define Q_SIZE  OS_THREAD_Q_SIZE
+
+/*============================================================================
+  MACROS
+  ============================================================================*/
 /*============================================================================
   LOCAL TYPE DEFINITIONS
   ============================================================================*/
@@ -462,7 +469,7 @@ static int van_open(char *name)
 	os_memset(v->start, 0, v->size);
 
 	/* Install the van interrupt handler/thread. */
-	v->thread = os_thread_create("van_int", OS_THREAD_PRIO_SOFTRT, OS_THREAD_Q_SIZE);
+	v->thread = os_thread_create("van_int", PRIO, Q_SIZE);
 	
 	/* Change the state of the shm area. */
 	v->init = 1;

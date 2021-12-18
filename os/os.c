@@ -250,8 +250,11 @@ void os_spin_init(spinlock_t *spinlock)
 	/* Entry condition. */
 	OS_TRAP_IF(spinlock == NULL);
 
+#if defined(USE_PTHREAD_SPIN)
+	ret = pthread_spin_init(spinlock, PTHREAD_PROCESS_SHARED);
+#else
 	ret = pthread_mutex_init(spinlock, NULL);
-
+#endif
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
 	
@@ -272,8 +275,11 @@ void os_spin_lock(spinlock_t *spinlock)
 	/* Entry condition. */
 	OS_TRAP_IF(spinlock == NULL);
 
+#if defined(USE_PTHREAD_SPIN)
+	ret = pthread_spin_lock(spinlock);
+#else
 	ret = pthread_mutex_lock(spinlock);
-
+#endif
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
 }
@@ -291,9 +297,12 @@ void os_spin_unlock(spinlock_t *spinlock)
 	
 	/* Entry condition. */
 	OS_TRAP_IF(spinlock == NULL);
-
+	
+#if defined(USE_PTHREAD_SPIN)
+	ret = pthread_spin_unlock(spinlock);
+#else
 	ret = pthread_mutex_unlock(spinlock);
-
+#endif
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
 }
@@ -311,9 +320,12 @@ void os_spin_destroy(spinlock_t *spinlock)
 	
 	/* Entry condition. */
 	OS_TRAP_IF(spinlock == NULL);
-
+	
+#if defined(USE_PTHREAD_SPIN)
+	ret = pthread_spin_destroy(spinlock);
+#else
 	ret = pthread_mutex_destroy(spinlock);
-
+#endif
 	/* Final condition. */
 	OS_TRAP_IF(ret != 0);
 	

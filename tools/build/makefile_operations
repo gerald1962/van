@@ -27,12 +27,15 @@ endif
 
 # Compile flags.
 CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas
+# CC_FLAGS := -O3 -Wall -Wno-unknown-pragmas
 
 # Static linker flags.
 LD_FLAGS :=  -g -static -lpthread
+# LD_FLAGS :=  -O3 -static -lpthread
 
 # Shared library flags.
-SL_FLAGS :=  -g -shared -lpthread
+LIB_FLAGS :=  -g -shared -lpthread
+# LIB_FLAGS :=  -O3 -shared -lpthread
 
 
 # Aggregate variables.
@@ -72,7 +75,7 @@ all: clean makedir depend ${MODULE_OUTDIR}/${MODULE} tags
 # call it libvan.so:
 lib: clean makedir ${ALL_OBJS}
 	${Q}echo Shared Library ${MODULE}
-	${Q}gcc ${ALL_OBJS}  ${SL_FLAGS} -o ${MODULE}
+	${Q}gcc ${ALL_OBJS}  ${LIB_FLAGS} -o ${MODULE}
 	${Q}rm -fr ${MODULE_OBJDIR}
 	${Q}rm -fr ${MODULE_OUTDIR}
 

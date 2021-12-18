@@ -25,10 +25,12 @@
 
 #define PRIO       OS_THREAD_PRIO_FOREG  /* Thread foreground priority. */
 #define Q_SIZE     4                     /* Size of the thread input queue. */
-#define MAX_SIZE   (OS_BUF_SIZE - 1)     /* Fill level of a transfer buffer. */
-#define MIN_SIZE   32                    /* Minimum of the fill level. */
-#define FILL_CHAR  'X'                   /* Fill char of a transfer buffer. */
-#define FINAL_CHAR '?'                   /* Contents of the final payload. */
+#define MIN_SIZE   1                     /* Minimum of the fill level. */
+#define MAX_SIZE   OS_BUF_SIZE           /* Fill level of a transfer buffer. */
+
+#define DL_F_CHAR   'd'  /* DL fill character. */
+#define UL_F_CHAR   'u'  /* UL fill character. */
+#define FINAL_CHAR  '#'  /* Contents of the final payload. */
 
 /*============================================================================
   MACROS
@@ -50,8 +52,11 @@
  *
  * @copy_rd:       if 1, call sync. write and sync. copy read.
  * @dl_wr_cycles:  number of the DL write cycles.
- * @ul_cycles:     number of the UL cycles.
- * @n_chars:       fill the transfer buffer with n characters.
+ * @ul_wr_cycles:  number of the UL write cycles.
+ * @dl_buf_size:   fill the DL transfer buffer with n characters.
+ * @ul_buf_size:   fill the UL transfer buffer with n characters.
+ * @dl_fill_char:  DL fill character.
+ * @ul_fill_char:  UL fill character.
  * @os_trace:      if 1, activate the OS trace.
  * @my_trace:      if 1, activate the site trace.
  *
@@ -72,12 +77,16 @@
  * @ul_rd_b:       UL read buffer.
  * @ul_wr_b:       UL write buffer.
  * @dl_ref_b:      reference buffer to detect DL transfer errors.
+ * @ul_ref_b:      reference buffer to detect UL transfer errors.
  **/
 static struct site_stat_s {
 	int  copy_rd;
 	int  dl_wr_cycles;
-	int  ul_cycles;
-	int  n_chars;
+	int  ul_wr_cycles;
+	int  dl_buf_size;
+	int  ul_buf_size;
+	int  dl_fill_char;
+	int  ul_fill_char;
 	int  os_trace;
 	int  my_trace;
 	
@@ -98,6 +107,7 @@ static struct site_stat_s {
 	char    ul_rd_b[OS_BUF_SIZE];
 	char    ul_wr_b[OS_BUF_SIZE];
 	char    dl_ref_b[OS_BUF_SIZE];
+	char    ul_ref_b[OS_BUF_SIZE];
 } site_stat;
 
 /*============================================================================
@@ -131,35 +141,33 @@ static void site_ul_writer_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *buf;
-	int i, n;
+	int i;
 
 	/* Get the pointer to the site state. */
 	s   = &site_stat;
 	buf = s->ul_wr_b;
 	
 	/* Test the UL counter. */
-	if (s->ul_cycles < 1)
+	if (s->ul_wr_cycles < 1)
 		goto end;
 	
 	TRACE(("ul_writer> [s:ready,o:generate]\n"));
 
 	/* Initialize the UL write buffer. */
 	os_memset(buf, 0, OS_BUF_SIZE);
-	os_memset(buf, FILL_CHAR, s->n_chars);
+	os_memset(buf, s->ul_fill_char, s->ul_buf_size);
 
 	/* The py ul_writer thread generates data for van with the sync write
-	 *  interace. */
-	for (i = 0; i < s->ul_cycles; i++) {
-		n = snprintf(buf, OS_BUF_SIZE, "%d", i);
-		os_sync_write(s->py_id, buf, n + 1);
-
-		TRACE(("ul_writer> sent: [b:\"%s\", s:%d]\n", buf, n));
+	 * interface. */
+	for (i = 0; i < s->ul_wr_cycles; i++) {
+		os_sync_write(s->py_id, buf, s->ul_buf_size);
+		TRACE(("ul_writer> sent: [c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->ul_buf_size));
 	}
 
-	n = snprintf(buf, OS_BUF_SIZE, "That's it.");
-	os_sync_write(s->py_id, buf, n + 1);		
-	
-	TRACE(("ul_writer> sent: [b:\"%s\", s:%d]\n", buf, n));
+	/* Send the final char to van. */
+	*buf = FINAL_CHAR;
+	os_sync_write(s->py_id, buf, s->ul_buf_size);
+	TRACE(("ul_writer> sent: [c:%d, b:\"%c\", s:%d]\n", i, *buf, s->ul_buf_size));
 
 end:
 	/* Resume the main process. */
@@ -179,48 +187,58 @@ static void site_ul_reader_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *zbuf, *buf, *b;
-	int n;
-	
+	int i, n, stat;
+
 	/* Get the pointer to the site state. */
 	s    = &site_stat;
 	zbuf = NULL;
 	buf  = s->ul_rd_b;
 
 	/* Test the UL counter. */
-	if (s->ul_cycles < 1)
+	if (s->ul_wr_cycles < 1)
 		goto end;
 	
 	TRACE(("ul_reader> [s:ready,o:analyze]\n"));
 
 	/* The van ul_writer thread analyzes data from py with the sync zero
-	 *  copy read interface. */
-	for(;;) {
+	 * copy read interface or with the copy read interface. */
+	for(i = 0;; i++) {
 		/* Test the read mode. */
 		if (s->copy_rd) {
+			/* Receive the UL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
 			n = os_sync_read(s->van_id, buf, OS_BUF_SIZE);
-			OS_TRAP_IF(n < 1);
+			OS_TRAP_IF(n != s->ul_buf_size);
 			b = buf;
 		}
 		else {
+			/* Receive the UL paylaod with the zero copy read interface. */
 			zbuf = NULL;
 			n = os_sync_zread(s->van_id, &zbuf, OS_BUF_SIZE);
-			OS_TRAP_IF(n < 1 || zbuf == NULL);
+			OS_TRAP_IF(zbuf == NULL || n != s->ul_buf_size);
 			b = zbuf;
 		}
 
-		TRACE(("ul_reader> received: [b:\"%s\", s:%d]\n", b, n));
-			
-		if (os_strcmp(b, "That's it.") == 0)
+		/* Test the end condition of the test. */
+		if (*b == FINAL_CHAR) {
+			TRACE(("ul_reader> received: [c:%d, b:\"%c\", s:%d]\n", i, *b, n));
 			break;
+		}
+
+		/* Test the contents of UL buffer. */
+		stat = os_memcmp(b, s->ul_ref_b, s->ul_buf_size);
+		OS_TRAP_IF(stat != 0);
 	}
-	
+
 	/* Test the read mode. */
 	if (! s->copy_rd) {
 		/* Release the pending UL buffer. */
 		n = os_sync_zread(s->van_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
+
+	/* Test the UL cycle counter */
+	OS_TRAP_IF(i != s->ul_wr_cycles);
 
 end:
 	/* Resume the main process. */
@@ -240,7 +258,7 @@ static void site_dl_reader_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *zbuf, *buf, *b;
-	int i, n;
+	int i, n, stat;
 
 	/* Get the pointer to the site state. */
 	s    = &site_stat;
@@ -256,21 +274,21 @@ static void site_dl_reader_exec(os_queue_elem_t *msg)
 	/* Fill the DL reference buffer. */
 
 	/* The py dl_writer thread analyzes data from van with the sync zero
-	 * copy read interface. */
+	 * copy read interface or with the copy read interface. */
 	for(i = 0;; i++) {
 		/* Test the read mode. */
 		if (s->copy_rd) {
 			/* Receive the DL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
 			n = os_sync_read(s->py_id, buf, OS_BUF_SIZE);
-			OS_TRAP_IF(n != s->n_chars);
+			OS_TRAP_IF(n != s->dl_buf_size);
 			b = buf;
 		}
 		else {
 			/* Receive the DL paylaod with the zero copy read interface. */
 			zbuf = NULL;
 			n = os_sync_zread(s->py_id, &zbuf, OS_BUF_SIZE);
-			OS_TRAP_IF(zbuf == NULL || n != s->n_chars);
+			OS_TRAP_IF(zbuf == NULL || n != s->dl_buf_size);
 			b = zbuf;
 		}
 
@@ -281,11 +299,15 @@ static void site_dl_reader_exec(os_queue_elem_t *msg)
 		}
 		
 		TRACE(("dl_reader> received: [c:%d, b:\"%c...\", s:%d]\n", i, *b, n));
+
+		/* Test the contents of DL buffer. */
+		stat = os_memcmp(b, s->dl_ref_b, s->dl_buf_size);
+		OS_TRAP_IF(stat != 0);
 	}
 
 	/* Test the read mode. */
 	if (! s->copy_rd) {
-		/* Release the pending UL buffer. */
+		/* Release the pending DL buffer. */
 		n = os_sync_zread(s->py_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
@@ -325,19 +347,19 @@ static void site_dl_writer_exec(os_queue_elem_t *msg)
 
 	/* Initialize the DL write buffer. */
 	os_memset(buf, 0, OS_BUF_SIZE);
-	os_memset(buf, FILL_CHAR, s->n_chars);
+	os_memset(buf, s->dl_fill_char, s->dl_buf_size);
 
 	/* The van dl_writer thread generates data for py with the sync write
-	 * interace. */
+	 * interface. */
 	for (i = 0; i < s->dl_wr_cycles; i++) {
-		os_sync_write(s->van_id, buf, s->n_chars);
-		TRACE(("dl_writer> sent: [c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->n_chars));
+		os_sync_write(s->van_id, buf, s->dl_buf_size);
+		TRACE(("dl_writer> sent: [c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->dl_buf_size));
 	}
 
 	/* Send the final char to py. */
 	*buf = FINAL_CHAR;
-	os_sync_write(s->van_id, buf, s->n_chars);		
-	TRACE(("dl_writer> sent: [c:%d, b:\"%c\", s:%d]\n", i, *buf, s->n_chars));
+	os_sync_write(s->van_id, buf, s->dl_buf_size);
+	TRACE(("dl_writer> sent: [c:%d, b:\"%c\", s:%d]\n", i, *buf, s->dl_buf_size));
 
 end:
 	/* Resume the main process. */
@@ -423,6 +445,10 @@ static void site_init(void)
 	/* Get the pointer to the site state. */
 	s = &site_stat;
 	
+	/* Fill the DL and UL reference buffer. */
+	os_memset(s->dl_ref_b, s->dl_fill_char, s->dl_buf_size);
+	os_memset(s->ul_ref_b, s->ul_fill_char, s->ul_buf_size);
+	
 	/* Initialize the operating system. */
 	os_init();
 
@@ -468,14 +494,26 @@ static void site_init(void)
  **/
 static void site_usage(void)
 {
+	struct site_stat_s *s;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
 	printf("site - simultaneous van<->python data transfer experiments\n");
+	
+	printf("  -i x  I/O configuration: substiute x with:\n");
+	printf("          a: asynchronous read and write\n");
+	printf("          c: sync. copy read and write\n");
+	printf("          z: sync. zero copy read and sync. copy write\n");
+	
 	printf("  -z    perform the test with sync. write and sync. zero copy read\n");
 	printf("  -c    perform the test with sync. write and sync. copy read\n");
+	
 	printf("  -d n  number of DL cycles\n");
 	printf("  -u n  number of UL cycles\n");
-	printf("  -b n  fill the DL transfer buffer with n characters: [%d, %d]\n",
+	printf("  -l n  fill the DL transfer buffer with n characters: [%d, %d]\n",
 	       MIN_SIZE, MAX_SIZE);
-	printf("  -a n  fill the UL transfer buffer with n characters: [%d, %d]\n",
+	printf("  -s n  fill the UL transfer buffer with n characters: [%d, %d]\n",
 	       MIN_SIZE, MAX_SIZE);
 	printf("  -f c  DL fill character\n");
 	printf("  -r c  UL fill character\n");
@@ -484,21 +522,95 @@ static void site_usage(void)
 	printf("  -h    show this usage\n");
 	printf("\nDefault settings:\n");
 	printf("  zero copy read\n");
-	printf("  DL cycles: %d\n", site_stat.dl_wr_cycles);
-	printf("  UL cycles: %d\n", site_stat.ul_cycles);
+	printf("  DL cycles: %d\n", s->dl_wr_cycles);
+	printf("  UL cycles: %d\n", s->ul_wr_cycles);
+	printf("  DL buf size: %d\n", s->dl_buf_size);
+	printf("  UL buf size: %d\n", s->ul_buf_size);
+	printf("  DL fill char: %c\n", s->dl_fill_char);	
+	printf("  UL fill char: %c\n", s->ul_fill_char);	
+	printf("  Final char: %c\n", FINAL_CHAR);	
 	printf("  OS trace off\n");
 	printf("  Site trace off\n");
-	printf("  Number of fill chars: %d\n", site_stat.n_chars);
 }
 
 /**
- * void site_buf_size() - define the character number of a transfer buffer.
+ * site_ul_fill_char() - analyze the requested UL fill character
  *
  * @arg:  pointer to the digit string.
  *
  * Return:	0 or force a software trap.
  **/
-static void site_buf_size(char *arg)
+static void site_ul_fill_char(char *arg)
+{
+	struct site_stat_s *s;	
+	int len;
+	
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	if (arg == NULL) {
+		site_usage();
+		exit(1);
+	}
+
+	/* Test the argument. */
+	len = os_strlen(arg);
+	if (len != 1) {
+		site_usage();
+		exit(1);
+	}
+
+	/* Save and test the fill char. */
+	s->ul_fill_char = *arg;
+	if (s->ul_fill_char == FINAL_CHAR) {
+		site_usage();
+		exit(1);
+	}
+}
+
+/**
+ * site_dl_fill_char() - analyze the requested DL fill character
+ *
+ * @arg:  pointer to the digit string.
+ *
+ * Return:	0 or force a software trap.
+ **/
+static void site_dl_fill_char(char *arg)
+{
+	struct site_stat_s *s;	
+	int len;
+	
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	if (arg == NULL) {
+		site_usage();
+		exit(1);
+	}
+
+	/* Test the argument. */
+	len = os_strlen(arg);
+	if (len != 1) {
+		site_usage();
+		exit(1);
+	}
+
+	/* Save and test the fill char. */
+	s->dl_fill_char = *arg;
+	if (s->dl_fill_char == FINAL_CHAR) {
+		site_usage();
+		exit(1);
+	}
+}
+
+/**
+ * void site_ul_buf_size() - define the character number of a UL transfer buffer.
+ *
+ * @arg:  pointer to the digit string.
+ *
+ * Return:	0 or force a software trap.
+ **/
+static void site_ul_buf_size(char *arg)
 {
 	struct site_stat_s *s;
 	
@@ -511,28 +623,55 @@ static void site_buf_size(char *arg)
 	}
 
 	/* Convert the digit string and test the number. */
-	s->n_chars = strtol(arg, NULL, 10);
-	if (s->n_chars < MIN_SIZE || s->n_chars > MAX_SIZE) {
+	s->ul_buf_size = strtol(arg, NULL, 10);
+	if (s->ul_buf_size < MIN_SIZE || s->ul_buf_size > MAX_SIZE) {
 		site_usage();
 		exit(1);
 	}
 }
 
 /**
- * site_ul_cycles() - define the number of the UL cycles
+ * void site_dl_buf_size() - define the character number of a DL transfer buffer.
  *
  * @arg:  pointer to the digit string.
  *
  * Return:	0 or force a software trap.
  **/
-static void site_ul_cycles(char *arg)
+static void site_dl_buf_size(char *arg)
+{
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s   = &site_stat;
+
+	if (arg == NULL) {
+		site_usage();
+		exit(1);
+	}
+
+	/* Convert the digit string and test the number. */
+	s->dl_buf_size = strtol(arg, NULL, 10);
+	if (s->dl_buf_size < MIN_SIZE || s->dl_buf_size > MAX_SIZE) {
+		site_usage();
+		exit(1);
+	}
+}
+
+/**
+ * site_ul_wr_cycles() - define the number of the UL cycles
+ *
+ * @arg:  pointer to the digit string.
+ *
+ * Return:	0 or force a software trap.
+ **/
+static void site_ul_wr_cycles(char *arg)
 {
 	if (arg == NULL) {
 		site_usage();
 		exit(1);
 	}
 
-	site_stat.ul_cycles = strtol(arg, NULL, 10);
+	site_stat.ul_wr_cycles = strtol(arg, NULL, 10);
 }
 
 /**
@@ -559,12 +698,20 @@ static void site_dl_wr_cycles(char *arg)
  **/
 static void site_default(void)
 {
-	site_stat.copy_rd   = 0;
-	site_stat.dl_wr_cycles = 0;
-	site_stat.ul_cycles = 0;
-	site_stat.os_trace  = 0;
-	site_stat.my_trace  = 0;
-	site_stat.n_chars   = MIN_SIZE;
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	s->copy_rd      = 0;
+	s->dl_wr_cycles = 0;
+	s->ul_wr_cycles = 0;
+	s->dl_buf_size  = MIN_SIZE;
+	s->ul_buf_size  = MIN_SIZE;
+	s->dl_fill_char = DL_F_CHAR;
+	s->ul_fill_char = UL_F_CHAR;
+	s->os_trace     = 0;
+	s->my_trace     = 0;
 }
 
 /*============================================================================
@@ -577,39 +724,52 @@ static void site_default(void)
  **/
 int main(int argc, char *argv[])
 {
+	struct site_stat_s *s;
 	int opt;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
 
 	/* Define the site default settings. */
 	site_default();
 	
 	/* Analyze the site arguments. */
-	while ((opt = getopt(argc, argv, "a:b:cd:f:hor:tu:z")) != -1) {
+	while ((opt = getopt(argc, argv, "cd:f:hl:or:s:tu:z")) != -1) {
 		/* Analyze the current argument. */
 		switch (opt) {
-		case 'b':
-			site_buf_size(optarg);
-			break;
 		case 'c':
-			site_stat.copy_rd = 1;
+			s->copy_rd = 1;
 			break;
 		case 'd':
 			site_dl_wr_cycles(optarg);
+			break;
+		case 'f':
+			site_dl_fill_char(optarg);
 			break;
 		case 'h':
 			site_usage();
 			exit(0);
 			break;
+		case 'l':
+			site_dl_buf_size(optarg);
+			break;
 		case 'o':
-			site_stat.os_trace = 1;
+			s->os_trace = 1;
+			break;
+		case 'r':
+			site_ul_fill_char(optarg);
+			break;
+		case 's':
+			site_ul_buf_size(optarg);
 			break;
 		case 't':
-			site_stat.my_trace = 1;
+			s->my_trace = 1;
 			break;
 		case 'u':
-			site_ul_cycles(optarg);
+			site_ul_wr_cycles(optarg);
 			break;
 		case 'z':
-			site_stat.copy_rd = 0;
+			s->copy_rd = 0;
 			break;
 		default:
 			site_usage();
@@ -625,12 +785,16 @@ int main(int argc, char *argv[])
 	site_cleanup();
 
 	printf("\nTest settings:\n");
-	printf("  Copy read: %d\n", site_stat.copy_rd);
-	printf("  DL cycles: %d\n", site_stat.dl_wr_cycles);
-	printf("  UL cycles: %d\n", site_stat.ul_cycles);
-	printf("  OS trace: %d\n", site_stat.os_trace);
-	printf("  Site trace: %d\n", site_stat.my_trace);
-	printf("  Number of fill chars: %d\n", site_stat.n_chars);
+	printf("  Copy read: %d\n", s->copy_rd);
+	printf("  DL cycles: %d\n", s->dl_wr_cycles);
+	printf("  UL cycles: %d\n", s->ul_wr_cycles);
+	printf("  DL buf size: %d\n", s->dl_buf_size);
+	printf("  UL buf size: %d\n", s->ul_buf_size);
+	printf("  DL fill char: %c\n", s->dl_fill_char);	
+	printf("  UL fill char: %c\n", s->ul_fill_char);
+	printf("  Final char: %c\n", FINAL_CHAR);	
+	printf("  OS trace: %d\n", s->os_trace);
+	printf("  Site trace: %d\n", s->my_trace);
 	
 	return (0);
 }

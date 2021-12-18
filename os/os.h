@@ -12,6 +12,9 @@
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
+// #define USE_PTHREAD_SPIN  /* Replace mutex with spin interfaces. */
+// #define USE_OS_RT         /* Hard realtime priority. */
+
 /* Name of the current funtion. */
 #define F  __FUNCTION__
 
@@ -65,7 +68,11 @@
   ============================================================================*/
 
 /* Map the spinlock to mutex. */
+#if defined(USE_PTHREAD_SPIN)
+typedef pthread_spinlock_t spinlock_t;
+#else
 typedef pthread_mutex_t spinlock_t;
+#endif
 
 /**
  * os_thread_prio_t - supported thread priorities.
