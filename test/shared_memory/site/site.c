@@ -47,10 +47,24 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/**
+ * iot_t - I/O configuration.
+ *
+ * @IO_SYNC_COPY:  call sync. write and sync. copy read.
+ * @IO_SYNC_ZERO:  call sync. write and sync. zero copy read.
+ * @IO_ASYNC:      perform read and write asynchronously.
+ **/
+typedef enum {
+	IO_SYNC_COPY,
+	IO_SYNC_ZERO,
+	IO_ASYNC
+} io_t;
+
 /** 
  * site_stat - state of the bidirectional data transfer.
  *
- * @copy_rd:       if 1, call sync. write and sync. copy read.
+ * @van_io:        van I/O configuration.
+ * @python_io:     python I/O configuration.
  * @dl_wr_cycles:  number of the DL write cycles.
  * @ul_wr_cycles:  number of the UL write cycles.
  * @dl_buf_size:   fill the DL transfer buffer with n characters.
@@ -59,6 +73,11 @@
  * @ul_fill_char:  UL fill character.
  * @os_trace:      if 1, activate the OS trace.
  * @my_trace:      if 1, activate the site trace.
+ *
+ * @dl_wr_count:   count the number of the DL van write_cb calls.
+ * @dl_rd_count:   count the number of the DL py read_cb calls.
+ * @ul_rd_count:   count the number of the UL van read_cb calls.
+ * @ul_wr_count:   count the number of the UL py write_cb calls.
  *
  * @dl_wr_done:    if 1, the van DL writer thread has done its job.
  * @dl_rd_done:    if 1, the py DL reader has finished the data receive.
@@ -80,16 +99,22 @@
  * @ul_ref_b:      reference buffer to detect UL transfer errors.
  **/
 static struct site_stat_s {
-	int  copy_rd;
-	int  dl_wr_cycles;
-	int  ul_wr_cycles;
-	int  dl_buf_size;
-	int  ul_buf_size;
-	int  dl_fill_char;
-	int  ul_fill_char;
-	int  os_trace;
-	int  my_trace;
-	
+	io_t  van_io;
+	io_t  python_io;
+	int   dl_wr_cycles;
+	int   ul_wr_cycles;
+	int   dl_buf_size;
+	int   ul_buf_size;
+	int   dl_fill_char;
+	int   ul_fill_char;
+	int   os_trace;
+	int   my_trace;
+#if defined(AIO)
+	int   dl_wr_count;
+	int   dl_rd_count;
+	int   ul_rd_count;
+	int   ul_wr_count;
+#endif
 	atomic_int  dl_wr_done;
 	atomic_int  dl_rd_done;
 	atomic_int  ul_rd_done;
@@ -129,15 +154,373 @@ void site_resume(void)
 	os_sem_release(&site_stat.suspend);
 }
 
+#if defined(AIO)
 /**
- * site_ul_writer_exec() - the py ul_writer thread generates UL test data for
+ * site_aio_dl_rd_cb() - the python irq thread delivers DL data from van.
+ *
+ * @dev_id:  py device id.
+ * @buf:     pointer to the shared memory buffer.
+ * @count:   size of the DL payload.
+ *
+ * Return:	the number of the consumed characters.
+ **/
+static int site_aio_dl_rd_cb(int dev_id, char *buf, int count)
+{
+	struct site_stat_s *s;
+	int stat;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	/* Entry condition. */
+	OS_TRAP_IF(s->py_id != dev_id || buf == NULL || count != s->dl_buf_size);
+
+	/* Test the end condition of the test. */
+	if (*buf == FINAL_CHAR) {
+		TRACE(("dl_reader> received: [i/o:a, c:%d, b:\"%c\", s:%d]\n",
+		       s->dl_rd_count, *buf, count));
+		
+		/* Test the DL read counter */
+		OS_TRAP_IF(s->dl_rd_count != s->dl_wr_cycles);
+		
+		/* Resume the main process. */
+		atomic_store(&s->dl_rd_done, 1);
+		site_resume();
+
+		return count;
+	}
+	
+	/* Test the DL read counter */
+	OS_TRAP_IF(s->dl_rd_count >= s->dl_wr_cycles);
+		
+	TRACE(("dl_reader> received: [i/o:a, c:%d, b:\"%c...\", s:%d]\n",
+	       s->dl_rd_count, *buf, count));
+		
+	/* Test the contents of the DL buffer. */
+	stat = os_memcmp(buf, s->dl_ref_b, count);
+	OS_TRAP_IF(stat != 0);
+
+	/* Update the DL read counter. */
+	s->dl_rd_count++;
+	
+	return count;
+}
+#endif
+
+/**
+ * site_aio_dl_rd_exec() - the python dl_reader thread is inactiv because of the
+ * async. I/O configuration.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
+static void site_aio_dl_rd_exec(os_queue_elem_t *msg)
+{
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s   = &site_stat;
+	
+	/* Test the DL counter. */
+	if (s->dl_wr_cycles < 1) {
+		/* Resume the main process. */
+		atomic_store(&s->dl_rd_done, 1);
+		site_resume();
+		return;
+	}
+	
+	TRACE(("dl_reader> [i/o:a, s:ready, o:inactive]\n"));
+
+#if defined(AIO)
+	/* Trigger the py interrupt handler to invoke the async. read and write
+	 *  callback. */
+	os_aio_read(s->py_id);
+	os_aio_write(s->py_id);
+#else
+	/* XXX */
+	/* Resume the main process. */
+	atomic_store(&s->dl_rd_done, 1);
+	site_resume();
+#endif
+}
+
+#if defined(AIO)
+/**
+ * site_aio_ul_wr_cb() - the py irq thread requests UL data if available.
+ *
+ * @dev_id:  py device id.
+ * @buf:     pointer to the shared memory buffer.
+ * @count:   size of the shared memory buffer.
+ *
+ * Return:	number of the saved characters.
+ **/
+static int site_aio_ul_wr_cb(int dev_id, char *buf, int count)
+{
+	struct site_stat_s *s;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	/* Entry condition. */
+	OS_TRAP_IF(s->py_id != dev_id || buf == NULL || count != OS_BUF_SIZE);
+
+	/* Test the generation status. */
+	if (s->ul_wr_cycles < 1)
+		return 0;
+	
+	/* Test the cycle counter. */
+	if (s->ul_wr_count > s->ul_wr_cycles) {
+		/* Resume the main process. */
+		atomic_store(&s->ul_wr_done, 1);
+		site_resume();
+		return 0;
+	}
+	
+	/* Fill the send buffer. */
+	os_memset(buf, 0, OS_BUF_SIZE);
+	os_memset(buf, s->ul_fill_char, s->ul_buf_size);
+	
+	/* Test the cycle counter. */
+	if (s->ul_wr_count == s->ul_wr_cycles)
+		*buf = FINAL_CHAR;
+
+	TRACE(("ul_writer> sent: [i/o:a, c:%d, b:\"%c...\", s:%d]\n",
+	       s->ul_wr_count, *buf, s->ul_buf_size));
+
+	/* Increment the cycle counter. */
+	s->ul_wr_count++;
+	
+	return s->ul_buf_size;
+}
+#endif
+
+/**
+ * site_aio_ul_wr_exec() - the python ul_writer thread triggers the python
+ * driver to start the UL transfer.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
+static void site_aio_ul_wr_exec(os_queue_elem_t *msg)
+{
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s   = &site_stat;
+	
+	/* Test the UL counter. */
+	if (s->ul_wr_cycles < 1) {
+		/* Resume the main process. */
+		atomic_store(&s->ul_wr_done, 1);
+		site_resume();
+		return;
+	}
+
+	TRACE(("ul_writer> [i/o:a, s:ready, o:trigger]\n"));
+
+#if defined(AIO)
+	/* Trigger the py interrupt handler to invoke the async. write and read
+	 *  callback. */
+	os_aio_write(s->py_id);
+	os_aio_read(s->py_id);
+#else
+	/* XXX */
+	/* Resume the main process. */
+	atomic_store(&s->ul_wr_done, 1);
+	site_resume();
+#endif	
+}
+
+#if defined(AIO)
+/**
+ * site_aio_ul_rd_cb() - the van irq thread delivers UL data from py.
+ *
+ * @dev_id:  van device id.
+ * @buf:     pointer to the shared memory buffer.
+ * @count:   size of the DL payload.
+ *
+ * Return:	the number of the consumed characters.
+ **/
+static int site_aio_ul_rd_cb(int dev_id, char *buf, int count)
+{
+	struct site_stat_s *s;
+	int stat;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	/* Entry condition. */
+	OS_TRAP_IF(s->van_id != dev_id || buf == NULL || count != s->ul_buf_size);
+
+	/* Test the end condition of the test. */
+	if (*buf == FINAL_CHAR) {
+		TRACE(("ul_reader> received: [i/o:a, c:%d, b:\"%c\", s:%d]\n",
+		       s->dl_rd_count, *buf, count));
+		
+		/* Test the UL read counter */
+		OS_TRAP_IF(s->ul_rd_count != s->ul_wr_cycles);
+		
+		/* Resume the main process. */
+		atomic_store(&s->ul_rd_done, 1);
+		site_resume();
+
+		return count;
+	}
+	
+	/* Test the UL read counter */
+	OS_TRAP_IF(s->ul_rd_count >= s->ul_wr_cycles);
+		
+	TRACE(("ul_reader> received: [i/o:a, c:%d, b:\"%c...\", s:%d]\n",
+	       s->ul_rd_count, *buf, count));
+		
+	/* Test the contents of the UL buffer. */
+	stat = os_memcmp(buf, s->ul_ref_b, count);
+	OS_TRAP_IF(stat != 0);
+
+	/* Update the UL read counter. */
+	s->ul_rd_count++;
+	
+	return count;
+}
+#endif
+
+/**
+ * site_aio_ul_rd_exec() - the van ul_reader thread is inactiv because of the
+ * async. I/O configuration.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
+static void site_aio_ul_rd_exec(os_queue_elem_t *msg)
+{
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s   = &site_stat;
+	
+	/* Test the UL counter. */
+	if (s->ul_wr_cycles < 1) {
+		/* Resume the main process. */
+		atomic_store(&s->ul_rd_done, 1);
+		site_resume();
+		return;
+	}
+	
+	TRACE(("ul_reader> [i/o:a, s:ready, o:inactive]\n"));
+
+#if defined(AIO)
+	/* Trigger the van interrupt handler to invoke the async. write and read
+	 * callback. */
+	os_aio_write(s->van_id);
+	os_aio_read(s->van_id);
+#else
+	/* XXX */
+	/* Resume the main process. */
+	atomic_store(&s->ul_rd_done, 1);
+	site_resume();
+#endif	
+}
+
+#if defined(AIO)
+/**
+ * site_aio_dl_wr_cb() - the van irq thread requests DL data if available.
+ *
+ * @dev_id:  van device id.
+ * @buf:     pointer to the shared memory buffer.
+ * @count:   size of the shared memory buffer.
+ *
+ * Return:	number of the saved characters.
+ **/
+static int site_aio_dl_wr_cb(int dev_id, char *buf, int count)
+{
+	struct site_stat_s *s;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
+	/* Entry condition. */
+	OS_TRAP_IF(s->van_id != dev_id || buf == NULL || count != OS_BUF_SIZE);
+	
+	/* Test the generation status. */
+	if (s->dl_wr_cycles < 1)
+		return 0;
+
+	/* Test the cycle counter. */
+	if (s->dl_wr_count > s->dl_wr_cycles) {
+		/* Resume the main process. */
+		atomic_store(&s->dl_wr_done, 1);
+		site_resume();
+		return 0;
+	}
+	
+	/* Fill the send buffer. */
+	os_memset(buf, 0, OS_BUF_SIZE);
+	os_memset(buf, s->dl_fill_char, s->dl_buf_size);
+	
+	/* Test the cycle counter. */
+	if (s->dl_wr_count == s->dl_wr_cycles)
+		*buf = FINAL_CHAR;
+
+	TRACE(("dl_writer> sent: [i/o:a, c:%d, b:\"%c...\", s:%d]\n",
+	       s->dl_wr_count, *buf, s->dl_buf_size));
+
+	/* Increment the cycle counter. */
+	s->dl_wr_count++;
+	
+	return s->dl_buf_size;
+}
+#endif
+
+/**
+ * site_aio_dl_wr_exec() - the van dl_writer thread triggers the van driver
+ * to start the DL transfer.
+ *
+ * @msg:  addess of the generic input message.
+ *
+ * Return:	None.
+ **/
+static void site_aio_dl_wr_exec(os_queue_elem_t *msg)
+{
+	struct site_stat_s *s;
+	
+	/* Get the pointer to the site state. */
+	s   = &site_stat;
+
+	/* Test the DL counter. */
+	if (s->dl_wr_cycles < 1) {
+		/* Resume the main process. */
+		atomic_store(&s->dl_wr_done, 1);
+		site_resume();
+		return;
+	}
+	
+	TRACE(("dl_writer> [i/o:a, s:ready, o:trigger]\n"));
+
+#if defined(AIO)
+	/* Trigger the van interrupt handler to invoke the async. write and read
+	 * callback. */
+	os_aio_write(s->van_id);
+	os_aio_read(s->van_id);
+#else
+	/* XXX */
+	/* Resume the main process. */
+	atomic_store(&s->dl_wr_done, 1);
+	site_resume();
+#endif	
+}
+
+/**
+ * site_sync_ul_wr_exec() - the py ul_writer thread generates UL test data for
  * van.
  *
  * @msg:  addess of the generic input message.
  *
  * Return:	None.
  **/
-static void site_ul_writer_exec(os_queue_elem_t *msg)
+static void site_sync_ul_wr_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *buf;
@@ -151,7 +534,7 @@ static void site_ul_writer_exec(os_queue_elem_t *msg)
 	if (s->ul_wr_cycles < 1)
 		goto end;
 	
-	TRACE(("ul_writer> [s:ready,o:generate]\n"));
+	TRACE(("ul_writer> [i/o:s, s:ready, o:generate]\n"));
 
 	/* Initialize the UL write buffer. */
 	os_memset(buf, 0, OS_BUF_SIZE);
@@ -161,13 +544,13 @@ static void site_ul_writer_exec(os_queue_elem_t *msg)
 	 * interface. */
 	for (i = 0; i < s->ul_wr_cycles; i++) {
 		os_sync_write(s->py_id, buf, s->ul_buf_size);
-		TRACE(("ul_writer> sent: [c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->ul_buf_size));
+		TRACE(("ul_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->ul_buf_size));
 	}
 
 	/* Send the final char to van. */
 	*buf = FINAL_CHAR;
 	os_sync_write(s->py_id, buf, s->ul_buf_size);
-	TRACE(("ul_writer> sent: [c:%d, b:\"%c\", s:%d]\n", i, *buf, s->ul_buf_size));
+	TRACE(("ul_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->ul_buf_size));
 
 end:
 	/* Resume the main process. */
@@ -176,14 +559,14 @@ end:
 }
 
 /**
- * site_ul_reader_exec() - the van ul_reader thread analyzes the received UL test
+ * site_sync_ul_rd_exec() - the van ul_reader thread analyzes the received UL test
  * data from py.
  *
  * @msg:  addess of the generic input message.
  *
  * Return:	None.
  **/
-static void site_ul_reader_exec(os_queue_elem_t *msg)
+static void site_sync_ul_rd_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *zbuf, *buf, *b;
@@ -198,13 +581,13 @@ static void site_ul_reader_exec(os_queue_elem_t *msg)
 	if (s->ul_wr_cycles < 1)
 		goto end;
 	
-	TRACE(("ul_reader> [s:ready,o:analyze]\n"));
+	TRACE(("ul_reader> [i/o:s, s:ready, o:analyze]\n"));
 
 	/* The van ul_writer thread analyzes data from py with the sync zero
 	 * copy read interface or with the copy read interface. */
 	for(i = 0;; i++) {
 		/* Test the read mode. */
-		if (s->copy_rd) {
+		if (s->van_io == IO_SYNC_COPY) {
 			/* Receive the UL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
 			n = os_sync_read(s->van_id, buf, OS_BUF_SIZE);
@@ -221,17 +604,17 @@ static void site_ul_reader_exec(os_queue_elem_t *msg)
 
 		/* Test the end condition of the test. */
 		if (*b == FINAL_CHAR) {
-			TRACE(("ul_reader> received: [c:%d, b:\"%c\", s:%d]\n", i, *b, n));
+			TRACE(("ul_reader> received: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *b, n));
 			break;
 		}
 
-		/* Test the contents of UL buffer. */
-		stat = os_memcmp(b, s->ul_ref_b, s->ul_buf_size);
-		OS_TRAP_IF(stat != 0);
+		/* Test the contents of the UL buffer. */
+		stat = os_memcmp(b, s->ul_ref_b, n);
+		OS_TRAP_IF(stat != 0 || n != s->ul_buf_size);
 	}
 
 	/* Test the read mode. */
-	if (! s->copy_rd) {
+	if (s->van_io == IO_SYNC_ZERO) {
 		/* Release the pending UL buffer. */
 		n = os_sync_zread(s->van_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
@@ -247,14 +630,14 @@ end:
 }
 
 /**
- * site_dl_reader_exec() - the py dl_reader thread analyzes the received DL test
+ * site_sync_dl_rd_exec() - the py dl_reader thread analyzes the received DL test
  * data from van.
  *
  * @msg:  addess of the generic input message.
  *
  * Return:	None.
  **/
-static void site_dl_reader_exec(os_queue_elem_t *msg)
+static void site_sync_dl_rd_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *zbuf, *buf, *b;
@@ -269,15 +652,13 @@ static void site_dl_reader_exec(os_queue_elem_t *msg)
 	if (s->dl_wr_cycles < 1)
 		goto end;
 
-	TRACE(("dl_reader> [s:ready,o:analyze]\n"));
-
-	/* Fill the DL reference buffer. */
+	TRACE(("dl_reader> [i/o:s, s:ready, o:analyze]\n"));
 
 	/* The py dl_writer thread analyzes data from van with the sync zero
 	 * copy read interface or with the copy read interface. */
 	for(i = 0;; i++) {
 		/* Test the read mode. */
-		if (s->copy_rd) {
+		if (s->python_io == IO_SYNC_COPY) {
 			/* Receive the DL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
 			n = os_sync_read(s->py_id, buf, OS_BUF_SIZE);
@@ -294,19 +675,19 @@ static void site_dl_reader_exec(os_queue_elem_t *msg)
 
 		/* Test the end condition of the test. */
 		if (*b == FINAL_CHAR) {
-			TRACE(("dl_reader> received: [c:%d, b:\"%c\", s:%d]\n", i, *b, n));
+			TRACE(("dl_reader> received: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *b, n));
 			break;
 		}
 		
-		TRACE(("dl_reader> received: [c:%d, b:\"%c...\", s:%d]\n", i, *b, n));
+		TRACE(("dl_reader> received: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *b, n));
 
-		/* Test the contents of DL buffer. */
-		stat = os_memcmp(b, s->dl_ref_b, s->dl_buf_size);
-		OS_TRAP_IF(stat != 0);
+		/* Test the contents of the DL buffer. */
+		stat = os_memcmp(b, s->dl_ref_b, n);
+		OS_TRAP_IF(stat != 0 || n != s->dl_buf_size);
 	}
 
 	/* Test the read mode. */
-	if (! s->copy_rd) {
+	if (s->python_io == IO_SYNC_ZERO) {
 		/* Release the pending DL buffer. */
 		n = os_sync_zread(s->py_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
@@ -322,14 +703,14 @@ end:
 }
 
 /**
- * site_dl_writer_exec() - the van dl_writer thread generates DL test data for
+ * site_sync_dl_wr_exec() - the van dl_writer thread generates DL test data for
  * py.
  *
  * @msg:  addess of the generic input message.
  *
  * Return:	None.
  **/
-static void site_dl_writer_exec(os_queue_elem_t *msg)
+static void site_sync_dl_wr_exec(os_queue_elem_t *msg)
 {
 	struct site_stat_s *s;
 	char *buf;
@@ -343,7 +724,7 @@ static void site_dl_writer_exec(os_queue_elem_t *msg)
 	if (s->dl_wr_cycles < 1)
 		goto end;
 	
-	TRACE(("dl_writer> [s:ready,o:generate]\n"));
+	TRACE(("dl_writer> [i/o:s, s:ready, o:generate]\n"));
 
 	/* Initialize the DL write buffer. */
 	os_memset(buf, 0, OS_BUF_SIZE);
@@ -353,13 +734,13 @@ static void site_dl_writer_exec(os_queue_elem_t *msg)
 	 * interface. */
 	for (i = 0; i < s->dl_wr_cycles; i++) {
 		os_sync_write(s->van_id, buf, s->dl_buf_size);
-		TRACE(("dl_writer> sent: [c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->dl_buf_size));
+		TRACE(("dl_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->dl_buf_size));
 	}
 
 	/* Send the final char to py. */
 	*buf = FINAL_CHAR;
 	os_sync_write(s->van_id, buf, s->dl_buf_size);
-	TRACE(("dl_writer> sent: [c:%d, b:\"%c\", s:%d]\n", i, *buf, s->dl_buf_size));
+	TRACE(("dl_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->dl_buf_size));
 
 end:
 	/* Resume the main process. */
@@ -439,6 +820,9 @@ static void site_init(void)
 {
 	struct site_stat_s *s;
 	os_queue_elem_t msg;
+#if defined(AIO)
+	os_aio_cb_t aio;
+#endif	
 
 	TRACE(("%s [p:main,s:boot,o:init]\n", P));
 
@@ -470,21 +854,69 @@ static void site_init(void)
 
 	/* Activate all data transfer threads. */
 	os_memset(&msg, 0, sizeof(msg));
-	
-	msg.cb = site_dl_writer_exec;
-	OS_SEND(s->dl_writer, &msg, sizeof(msg));
-	
-	msg.cb = site_dl_reader_exec;
-	OS_SEND(s->dl_reader, &msg, sizeof(msg));
-	
-	msg.cb = site_ul_reader_exec;
-	OS_SEND(s->ul_reader, &msg, sizeof(msg));
-	
-	msg.cb = site_ul_writer_exec;
-	OS_SEND(s->ul_writer, &msg, sizeof(msg));
 
+	/* Test the van I/O configuration */
+	if (s->van_io == IO_ASYNC) {
+#if defined(AIO)
+		/* Install the van read and write callback for the asynchronous actions. */
+		aio.write_cb = site_aio_dl_wr_cb;
+		aio.read_cb  = site_aio_ul_rd_cb;
+		os_aio_action(s->van_id, &aio);
+#endif
+		msg.cb = site_aio_dl_wr_exec;
+		OS_SEND(s->dl_writer, &msg, sizeof(msg));
+	
+		msg.cb = site_aio_ul_rd_exec;
+		OS_SEND(s->ul_reader, &msg, sizeof(msg));
+	}
+	else {
+		msg.cb = site_sync_dl_wr_exec;
+		OS_SEND(s->dl_writer, &msg, sizeof(msg));
+	
+		msg.cb = site_sync_ul_rd_exec;
+		OS_SEND(s->ul_reader, &msg, sizeof(msg));
+	}
+	
+	/* Test the python I/O configuration */
+	if (s->python_io == IO_ASYNC) {
+#if defined(AIO)
+		/* Install the python read and write callback for the asynchronous actions. */
+		aio.write_cb = site_aio_ul_wr_cb;
+		aio.read_cb  = site_aio_dl_rd_cb;
+		os_aio_action(s->py_id, &aio);
+#endif
+		msg.cb = site_aio_dl_rd_exec;
+		OS_SEND(s->dl_reader, &msg, sizeof(msg));
+	
+		msg.cb = site_aio_ul_wr_exec;
+		OS_SEND(s->ul_writer, &msg, sizeof(msg));
+	}
+	else {
+		msg.cb = site_sync_dl_rd_exec;
+		OS_SEND(s->dl_reader, &msg, sizeof(msg));
+	
+		msg.cb = site_sync_ul_wr_exec;
+		OS_SEND(s->ul_writer, &msg, sizeof(msg));
+	}
+	
 	/* Wait for the resume trigger. */
 	site_wait();
+}
+
+/**
+ * io_to_string() - convert the I/O configuration to string.
+ *
+ * @io:  van or python I/O configuration.
+ *
+ * Return:	the I/O string.
+ **/
+static char *io_to_string(io_t io)
+{
+	switch(io) {
+	case IO_SYNC_ZERO: return "z";
+	case IO_ASYNC:     return "a";
+	default:           return "c";
+	}
 }
 
 /**
@@ -500,15 +932,14 @@ static void site_usage(void)
 	s = &site_stat;
 
 	printf("site - simultaneous van<->python data transfer experiments\n");
-	
-	printf("  -i x  I/O configuration: substiute x with:\n");
-	printf("          a: asynchronous read and write\n");
-	printf("          c: sync. copy read and write\n");
-	printf("          z: sync. zero copy read and sync. copy write\n");
-	
-	printf("  -z    perform the test with sync. write and sync. zero copy read\n");
-	printf("  -c    perform the test with sync. write and sync. copy read\n");
-	
+	printf("  -v x  van I/O configuration: substiute x with:\n");
+	printf("        a  asynchronous read and write\n");
+	printf("        c  sync. copy read and write\n");
+	printf("        z  sync. zero copy read and sync. copy write\n");
+	printf("  -p x  python I/O configuration: substiute x with:\n");
+	printf("        a  asynchronous read and write\n");
+	printf("        c  sync. copy read and write\n");
+	printf("        z  sync. zero copy read and sync. copy write\n");
 	printf("  -d n  number of DL cycles\n");
 	printf("  -u n  number of UL cycles\n");
 	printf("  -l n  fill the DL transfer buffer with n characters: [%d, %d]\n",
@@ -521,32 +952,30 @@ static void site_usage(void)
 	printf("  -t    activate the site trace\n");
 	printf("  -h    show this usage\n");
 	printf("\nDefault settings:\n");
-	printf("  zero copy read\n");
-	printf("  DL cycles: %d\n", s->dl_wr_cycles);
-	printf("  UL cycles: %d\n", s->ul_wr_cycles);
-	printf("  DL buf size: %d\n", s->dl_buf_size);
-	printf("  UL buf size: %d\n", s->ul_buf_size);
+	printf("  van I/O:      %s\n", io_to_string(s->van_io));
+	printf("  python I/O:   %s\n", io_to_string(s->python_io));
+	printf("  DL cycles:    %d\n", s->dl_wr_cycles);
+	printf("  UL cycles:    %d\n", s->ul_wr_cycles);
+	printf("  DL buf size:  %d\n", s->dl_buf_size);
+	printf("  UL buf size:  %d\n", s->ul_buf_size);
 	printf("  DL fill char: %c\n", s->dl_fill_char);	
-	printf("  UL fill char: %c\n", s->ul_fill_char);	
-	printf("  Final char: %c\n", FINAL_CHAR);	
-	printf("  OS trace off\n");
-	printf("  Site trace off\n");
+	printf("  UL fill char: %c\n", s->ul_fill_char);
+	printf("  Final char:   %c\n", FINAL_CHAR);	
+	printf("  OS trace:     %d\n", s->os_trace);
+	printf("  site trace:   %d\n", s->my_trace);
 }
 
 /**
- * site_ul_fill_char() - analyze the requested UL fill character
+ * site_fill_char() - analyze the requested DL or UL fill character
  *
- * @arg:  pointer to the digit string.
+ * @arg:        pointer to the digit string.
+ * @fill_char:  pointer to the fill character.
  *
  * Return:	0 or force a software trap.
  **/
-static void site_ul_fill_char(char *arg)
+static void site_fill_char(char *arg, int *fill_char)
 {
-	struct site_stat_s *s;	
 	int len;
-	
-	/* Get the pointer to the site state. */
-	s = &site_stat;
 
 	if (arg == NULL) {
 		site_usage();
@@ -561,33 +990,72 @@ static void site_ul_fill_char(char *arg)
 	}
 
 	/* Save and test the fill char. */
-	s->ul_fill_char = *arg;
-	if (s->ul_fill_char == FINAL_CHAR) {
+	*fill_char = *arg;
+	if (*fill_char == FINAL_CHAR) {
 		site_usage();
 		exit(1);
 	}
 }
 
 /**
- * site_dl_fill_char() - analyze the requested DL fill character
+ * site_buf_size() - define the character number of a DL or UL transfer
+ * buffer.
  *
- * @arg:  pointer to the digit string.
+ * @arg:   pointer to the digit string.
+ * @size:  pointer to the buffer size.
  *
  * Return:	0 or force a software trap.
  **/
-static void site_dl_fill_char(char *arg)
+static void site_buf_size(char *arg, int *size)
 {
-	struct site_stat_s *s;	
-	int len;
-	
-	/* Get the pointer to the site state. */
-	s = &site_stat;
-
 	if (arg == NULL) {
 		site_usage();
 		exit(1);
 	}
 
+	/* Convert the digit string and test the number. */
+	*size = strtol(arg, NULL, 10);
+	if (*size < MIN_SIZE || *size > MAX_SIZE) {
+		site_usage();
+		exit(1);
+	}
+}
+
+/**
+ * site_wr_cycles() - define the number of the DL or UL cycles
+ *
+ * @arg:     pointer to the digit string.
+ * @cycles:  pointer to the cycle setting.
+ *
+ * Return:	0 or force a software trap.
+ **/
+static void site_wr_cycles(char *arg, int *cycles)
+{
+	if (arg == NULL) {
+		site_usage();
+		exit(1);
+	}
+	
+	*cycles = strtol(arg, NULL, 10);
+}
+
+/**
+ * site_io() - van or python I/O configuration.
+ *
+ * @arg:  pointer to the digit string.
+ * @io:   pointer to I/O setting.
+ *
+ * Return:	0 or force a software trap.
+ **/
+static void site_io(char *arg, io_t *io)
+{
+	int len;
+	
+	if (arg == NULL) {
+		site_usage();
+		exit(1);
+	}
+	
 	/* Test the argument. */
 	len = os_strlen(arg);
 	if (len != 1) {
@@ -595,104 +1063,26 @@ static void site_dl_fill_char(char *arg)
 		exit(1);
 	}
 
-	/* Save and test the fill char. */
-	s->dl_fill_char = *arg;
-	if (s->dl_fill_char == FINAL_CHAR) {
+	/* Analyze the argument. */
+	switch(*arg) {
+	case 'a':
+		*io = IO_ASYNC;
+		break;
+	case 'c':
+		*io = IO_SYNC_COPY;
+		break;
+	case 'z':
+		*io = IO_SYNC_ZERO;
+		break;
+	default:
 		site_usage();
 		exit(1);
+		break;
 	}
 }
 
 /**
- * void site_ul_buf_size() - define the character number of a UL transfer buffer.
- *
- * @arg:  pointer to the digit string.
- *
- * Return:	0 or force a software trap.
- **/
-static void site_ul_buf_size(char *arg)
-{
-	struct site_stat_s *s;
-	
-	/* Get the pointer to the site state. */
-	s   = &site_stat;
-
-	if (arg == NULL) {
-		site_usage();
-		exit(1);
-	}
-
-	/* Convert the digit string and test the number. */
-	s->ul_buf_size = strtol(arg, NULL, 10);
-	if (s->ul_buf_size < MIN_SIZE || s->ul_buf_size > MAX_SIZE) {
-		site_usage();
-		exit(1);
-	}
-}
-
-/**
- * void site_dl_buf_size() - define the character number of a DL transfer buffer.
- *
- * @arg:  pointer to the digit string.
- *
- * Return:	0 or force a software trap.
- **/
-static void site_dl_buf_size(char *arg)
-{
-	struct site_stat_s *s;
-	
-	/* Get the pointer to the site state. */
-	s   = &site_stat;
-
-	if (arg == NULL) {
-		site_usage();
-		exit(1);
-	}
-
-	/* Convert the digit string and test the number. */
-	s->dl_buf_size = strtol(arg, NULL, 10);
-	if (s->dl_buf_size < MIN_SIZE || s->dl_buf_size > MAX_SIZE) {
-		site_usage();
-		exit(1);
-	}
-}
-
-/**
- * site_ul_wr_cycles() - define the number of the UL cycles
- *
- * @arg:  pointer to the digit string.
- *
- * Return:	0 or force a software trap.
- **/
-static void site_ul_wr_cycles(char *arg)
-{
-	if (arg == NULL) {
-		site_usage();
-		exit(1);
-	}
-
-	site_stat.ul_wr_cycles = strtol(arg, NULL, 10);
-}
-
-/**
- * site_dl_wr_cycles() - define the number of the DL cycles
- *
- * @arg:  pointer to the digit string.
- *
- * Return:	0 or force a software trap.
- **/
-static void site_dl_wr_cycles(char *arg)
-{
-	if (arg == NULL) {
-		site_usage();
-		exit(1);
-	}
-	
-	site_stat.dl_wr_cycles = strtol(arg, NULL, 10);
-}
-
-/**
- * void site_default() - define the site default settings.
+ * site_default() - define the site default settings.
  *
  * Return:	0 or force a software trap.
  **/
@@ -703,7 +1093,8 @@ static void site_default(void)
 	/* Get the pointer to the site state. */
 	s = &site_stat;
 
-	s->copy_rd      = 0;
+	s->van_io       = IO_SYNC_COPY;
+	s->python_io    = IO_SYNC_COPY;
 	s->dl_wr_cycles = 0;
 	s->ul_wr_cycles = 0;
 	s->dl_buf_size  = MIN_SIZE;
@@ -734,42 +1125,42 @@ int main(int argc, char *argv[])
 	site_default();
 	
 	/* Analyze the site arguments. */
-	while ((opt = getopt(argc, argv, "cd:f:hl:or:s:tu:z")) != -1) {
+	while ((opt = getopt(argc, argv, "d:f:hl:op:r:s:tu:v:")) != -1) {
 		/* Analyze the current argument. */
 		switch (opt) {
-		case 'c':
-			s->copy_rd = 1;
-			break;
 		case 'd':
-			site_dl_wr_cycles(optarg);
+			site_wr_cycles(optarg, &s->dl_wr_cycles);
 			break;
 		case 'f':
-			site_dl_fill_char(optarg);
+			site_fill_char(optarg, &s->dl_fill_char);
 			break;
 		case 'h':
 			site_usage();
 			exit(0);
 			break;
 		case 'l':
-			site_dl_buf_size(optarg);
+			site_buf_size(optarg, &s->dl_buf_size);
 			break;
 		case 'o':
 			s->os_trace = 1;
 			break;
+		case 'p':
+			site_io(optarg, &s->python_io);
+			break;
 		case 'r':
-			site_ul_fill_char(optarg);
+			site_fill_char(optarg, &s->ul_fill_char);
 			break;
 		case 's':
-			site_ul_buf_size(optarg);
+			site_buf_size(optarg, &s->ul_buf_size);
 			break;
 		case 't':
 			s->my_trace = 1;
 			break;
 		case 'u':
-			site_ul_wr_cycles(optarg);
+			site_wr_cycles(optarg, &s->ul_wr_cycles);
 			break;
-		case 'z':
-			s->copy_rd = 0;
+		case 'v':
+			site_io(optarg, &s->van_io);
 			break;
 		default:
 			site_usage();
@@ -785,16 +1176,17 @@ int main(int argc, char *argv[])
 	site_cleanup();
 
 	printf("\nTest settings:\n");
-	printf("  Copy read: %d\n", s->copy_rd);
-	printf("  DL cycles: %d\n", s->dl_wr_cycles);
-	printf("  UL cycles: %d\n", s->ul_wr_cycles);
-	printf("  DL buf size: %d\n", s->dl_buf_size);
-	printf("  UL buf size: %d\n", s->ul_buf_size);
+	printf("  van I/O:      %s\n", io_to_string(s->van_io));
+	printf("  python I/O:   %s\n", io_to_string(s->python_io));
+	printf("  DL cycles:    %d\n", s->dl_wr_cycles);
+	printf("  UL cycles:    %d\n", s->ul_wr_cycles);
+	printf("  DL buf size:  %d\n", s->dl_buf_size);
+	printf("  UL buf size:  %d\n", s->ul_buf_size);
 	printf("  DL fill char: %c\n", s->dl_fill_char);	
 	printf("  UL fill char: %c\n", s->ul_fill_char);
-	printf("  Final char: %c\n", FINAL_CHAR);	
-	printf("  OS trace: %d\n", s->os_trace);
-	printf("  Site trace: %d\n", s->my_trace);
+	printf("  Final char:   %c\n", FINAL_CHAR);	
+	printf("  OS trace:     %d\n", s->os_trace);
+	printf("  site trace:   %d\n", s->my_trace);
 	
 	return (0);
 }
