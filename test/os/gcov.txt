@@ -1,0 +1,77 @@
+File '/home/gerald/github/van/os/os.c'
+Lines executed:100.00% of 105
+Branches executed:100.00% of 68
+Taken at least once:50.00% of 68
+Calls executed:42.86% of 56
+Creating 'os.c.gcov'
+
+File '/home/gerald/github/van/os/os_mem.c'
+Lines executed:100.00% of 91
+Branches executed:100.00% of 42
+Taken at least once:69.05% of 42
+Calls executed:65.38% of 26
+Creating 'os_mem.c.gcov'
+
+File '/home/gerald/github/van/os/os_pthread.c'
+Lines executed:98.62% of 217
+Branches executed:96.61% of 118
+Taken at least once:56.78% of 118
+Calls executed:64.58% of 96
+Creating 'os_pthread.c.gcov'
+
+File '/home/gerald/github/van/os/os_python.c'
+Lines executed:94.81% of 231
+Branches executed:93.67% of 158
+Taken at least once:58.86% of 158
+Calls executed:63.75% of 80
+Creating 'os_python.c.gcov'
+
+File '/home/gerald/github/van/os/os_shm.c'
+Lines executed:100.00% of 108
+Branches executed:100.00% of 44
+Taken at least once:59.09% of 44
+Calls executed:80.70% of 57
+Creating 'os_shm.c.gcov'
+
+File '/home/gerald/github/van/os/os_string.c'
+Lines executed:100.00% of 29
+Branches executed:100.00% of 40
+Taken at least once:52.50% of 40
+Calls executed:18.18% of 11
+Creating 'os_string.c.gcov'
+
+File '/home/gerald/github/van/os/os_trap.c'
+Lines executed:75.00% of 24
+Branches executed:77.78% of 18
+Taken at least once:38.89% of 18
+Calls executed:38.46% of 13
+Creating 'os_trap.c.gcov'
+
+File '/home/gerald/github/van/os/os_van.c'
+Lines executed:92.19% of 256
+Branches executed:94.19% of 172
+Taken at least once:56.40% of 172
+Calls executed:57.58% of 99
+Creating 'os_van.c.gcov'
+
+File 'vote.c'
+Lines executed:72.31% of 65
+Branches executed:100.00% of 11
+Taken at least once:54.55% of 11
+Calls executed:66.67% of 30
+Creating 'vote.c.gcov'
+
+File 'vote_but.c'
+Lines executed:100.00% of 159
+Branches executed:100.00% of 42
+Taken at least once:66.67% of 42
+Calls executed:90.91% of 88
+Creating 'vote_but.c.gcov'
+
+File 'vote_vip.c'
+Lines executed:100.00% of 128
+Branches executed:100.00% of 44
+Taken at least once:59.09% of 44
+Calls executed:77.78% of 63
+Creating 'vote_vip.c.gcov'
+

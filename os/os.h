@@ -14,6 +14,8 @@
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
 
+// #define OS_CLOSE_NET
+
 // #define USE_PTHREAD_SPIN  /* Replace mutex with spin interfaces. */
 // #define USE_OS_RT         /* Hard realtime priority. */
 
@@ -40,16 +42,6 @@
 
 /* Size of the UL/DL transfer buffer. */
 #define OS_BUF_SIZE  2048
-
-/**
- * os_open flags:
- * @O_DEFAULT:  All I/O operations on the device descriptor will suspend the
- *              caller.
- * @O_NBLOCK:   All I/O operations on the device descriptor will NOT suspend
- *              the caller.
- **/
-#define O_DEFAULT  0x0
-#define O_NBLOCK   0x1
 
 /*============================================================================
   MACROS
@@ -251,8 +243,9 @@ void os_thread_destroy(void *thread);
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
 /* Shared memory. */
-int os_open(char *device_name /*, int flags */);
+int os_open(char *device_name);
 void os_close(int dev_id);
+
 /* Synchronous I/O operations. */
 void os_write(int dev_id, char *buf, int count);
 int os_zread(int dev_id, char **buf, int count);

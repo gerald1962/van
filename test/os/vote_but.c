@@ -490,6 +490,9 @@ static int but_string(void)
 	stat = os_strcmp(s1, s2);
 	TEST_ASSERT_EQ(0, stat);
 	
+	stat = os_strncmp(s1, s2, n);
+	TEST_ASSERT_EQ(0, stat);
+
 	/* Verify the OS state. */
 	stat = test_os_stat(&expected);
 	

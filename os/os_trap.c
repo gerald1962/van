@@ -54,7 +54,7 @@ void os_trap_handler(int signo)
                 printf("%s: received SIGINT, generate a core dump.\n", F);
 		
 		/* Release critical device resources. */
-		os_shm_ripcord();
+		os_shm_ripcord(0);
 			
                 raise(SIGABRT);
         }
@@ -96,6 +96,9 @@ void os_trap(char *file, const char *function, unsigned long line)
 			OS_TRACE(("*** coverage test at \"%s\", \"%s\", %lu\n",
 				  file, function, line));
 
+			/* Test the release of critical device resources. */
+			os_shm_ripcord(1);
+			
 			/* Test the trap handler. */
 			os_trap_handler(SIGUSR1);
 			return;
@@ -107,7 +110,7 @@ void os_trap(char *file, const char *function, unsigned long line)
 	}
 	
 	/* Release critical device resources. */
-	os_shm_ripcord();
+	os_shm_ripcord(0);
 			
 	/* Force a core dump. */
 	raise(SIGABRT);

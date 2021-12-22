@@ -258,13 +258,6 @@ static int van_read(int dev_id, char *buf, int count)
 	/* Define the read method. */
 	atomic_store(&v->sync_read, 1);
 
-	/* Test the buffer state. */
-	if (buf == NULL || count < 1) {
-		/* Leave the critical section. */
-		os_cs_leave(&v->read_mutex);	
-		return 0;
-	}
-	
 	/* Wait for the UL payload. */
 	for(;;) {
 		/* Get the number of the received bytes. */
@@ -279,7 +272,10 @@ static int van_read(int dev_id, char *buf, int count)
 
 		break;
 	}
-
+	
+	/* Release the sync. read operation. */
+	atomic_store(&v->sync_read, 0);
+	
 	/* Test the user buffer. */
 	OS_TRAP_IF(count < n);
 	
@@ -324,9 +320,6 @@ static int van_zread(int dev_id, char **buf, int count)
 	/* Enter the critical section. */
 	os_cs_enter(&v->read_mutex);
 
-	/* Define the read method. */
-	atomic_store(&v->sync_read, 1);
-
 	/* If the UL payload is pending, send the shm message to py. */
 	pending_ul = atomic_exchange(&v->pending_ul, 0);
 	if (pending_ul)
@@ -338,6 +331,9 @@ static int van_zread(int dev_id, char **buf, int count)
 		os_cs_leave(&v->read_mutex);	
 		return 0;
 	}
+	
+	/* Update the sync. read flag. */
+	atomic_store(&v->sync_read, 1);
 	
 	/* Wait for the UL payload. */
 	for(;;) {
@@ -358,6 +354,9 @@ static int van_zread(int dev_id, char **buf, int count)
 	*buf = top->ul_start;
 	atomic_store(&v->pending_ul, 1);
 
+	/* Release the sync. read operation. */
+	atomic_store(&v->sync_read, 0);
+	
 	/* Leave the critical section. */
 	os_cs_leave(&v->read_mutex);	
 
@@ -415,6 +414,7 @@ static void van_write(int dev_id, char *buf, int count)
 	os_cs_leave(&v->write_mutex);	
 }
 
+#if defined(OS_CLOSE_NET)
 /**
  * van_exit_exec() - the van_int thread shall not be suspended with named
  * van_int semphore.
@@ -427,6 +427,7 @@ static void van_exit_exec(os_queue_elem_t *msg)
 {
 	OS_TRACE(("%s [s:ready, m:van-exit] -> [s:ready]\n", VP));
 }
+#endif
 
 /**
  * van_close() - the van process shall call this function to remove the
@@ -438,7 +439,9 @@ static void van_exit_exec(os_queue_elem_t *msg)
  **/
 static void van_close(int dev_id)
 {
+#if defined(OS_CLOSE_NET)
 	os_queue_elem_t msg;
+#endif
 	os_dev_t *v;
 	int rv;
 
@@ -449,13 +452,14 @@ static void van_close(int dev_id)
 	/* Change the state of the shm area. */
 	v->init = 0;
 
+#if defined(OS_CLOSE_NET)
 	/* Define the van_int terminate message. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = v->thread;
-	msg.cb    = van_exit_exec;
-	
-	/* Resume the van_int thread, to terminate it. */
+	msg.cb    = van_exit_exec;	
 	OS_SEND(v->thread, &msg, sizeof(msg));
+#endif
+	/* Resume the van_int thread, to terminate it. */
 	atomic_store(&v->down, 1);
 	os_sem_release(v->my_int);
 	
@@ -482,7 +486,7 @@ static void van_close(int dev_id)
 }
 
 /**
- * van_int_write() - resume the syspend caller in write or request DL data
+ * van_int_write() - resume the suspend caller in van_write or request DL data
  * from the aio user.
  *
  * @v:  pointer to the van device state.
@@ -508,7 +512,8 @@ static void van_int_write(os_dev_t *v, os_shm_top_t *t)
 	/* Reset the write trigger. */
 	atomic_store(&v->aio_wr_trigger, 0);
 
-	/* Test the DL status. */
+	/* Test the release status of the DL buffer, which py has not
+	 * consumed. */
 	pending_dl = atomic_load(&v->pending_dl);
 	if (pending_dl)
 		return;
@@ -763,9 +768,11 @@ static int van_open(char *name)
 /**
  * os_van_ripcord() - release critical van device resources.
  *
+ * @coverage:  if 0, release critical device resoures.
+ *
  * Return:	None.
  **/
-void os_van_ripcord(void)
+void os_van_ripcord(int coverage)
 {
 	os_dev_t *v;
 
@@ -773,7 +780,7 @@ void os_van_ripcord(void)
 	v = os_van_device;
 
 	/* Test the van device state. */
-	if (v == NULL)
+	if (v == NULL || coverage)
 		return;
 
 	/* Remove the reference to the van semaphore. */

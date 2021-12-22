@@ -52,7 +52,7 @@ void os_thread_init(os_conf_t *conf);
 void os_shm_init(os_conf_t *conf);
 
 /* Test and free the OS resources. */
-void os_shm_ripcord(void);
+void os_shm_ripcord(int coverage);
 void os_shm_exit(void);
 void os_thread_exit(void);
 void os_mem_exit(void);

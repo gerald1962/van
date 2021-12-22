@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2324, 2322, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2323, 2321, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -111,7 +111,7 @@ static void test_run(void)
 	but_run();
 	
 	/* Test the van device interworking with the python device. */
-	// vip_run();
+	vip_run();
 	
 	test_set_process(TEST_ADD(shutdown_system));
 }

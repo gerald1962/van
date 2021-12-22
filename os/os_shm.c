@@ -417,13 +417,15 @@ void os_shm_exit(void)
 /**
  * os_shm_trap() - release critical device resources.
  *
+ * @coverage:  if 0, release critical device resoures.
+ *
  * Return:	None.
  **/
-void os_shm_ripcord(void)
+void os_shm_ripcord(int coverage)
 {
 	/* Release critical py device resources. */
-	os_py_ripcord();
+	os_py_ripcord(coverage);
 	
 	/* Release critical van device resources. */
-	os_van_ripcord();
+	os_van_ripcord(coverage);
 }

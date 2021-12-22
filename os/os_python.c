@@ -258,13 +258,6 @@ int py_read(int dev_id, char *buf, int count)
 	/* Define the read method. */
 	atomic_store(&p->sync_read, 1);
 
-	/* Test the buffer state. */
-	if (buf == NULL || count < 1) {
-		/* Leave the critical section. */
-		os_cs_leave(&p->read_mutex);	
-		return 0;
-	}
-	
 	/* Wait for the DL payload. */
 	for(;;) {
 		/* Get the number of the received bytes. */
@@ -279,6 +272,9 @@ int py_read(int dev_id, char *buf, int count)
 
 		break;
 	}
+	
+	/* Release the sync. read operation. */
+	atomic_store(&p->sync_read, 0);
 
 	/* Test the user buffer. */
 	OS_TRAP_IF(count < n);
@@ -324,9 +320,6 @@ static int py_zread(int dev_id, char **buf, int count)
 	/* Enter the critical section. */
 	os_cs_enter(&p->read_mutex);
 
-	/* Define the read method. */
-	atomic_store(&p->sync_read, 1);
-
 	/* If the DL payload is, send the shm message to van. */
 	pending_dl = atomic_exchange(&p->pending_dl, 0);
 	if (pending_dl)
@@ -339,6 +332,9 @@ static int py_zread(int dev_id, char **buf, int count)
 		return 0;
 	}
 	
+	/* Define the read method. */
+	atomic_store(&p->sync_read, 1);
+
 	/* Wait for the DL payload. */
 	for(;;) {
 		/* Get the number of the received bytes. */
@@ -353,6 +349,9 @@ static int py_zread(int dev_id, char **buf, int count)
 
 		break;
 	}
+	
+	/* Release the sync. read operation. */
+	atomic_store(&p->sync_read, 0);
 
 	/* Get the pointer to the received payload. */
 	*buf = top->dl_start;
@@ -415,6 +414,7 @@ static void py_write (int dev_id, char *buf, int count)
 	os_cs_leave(&p->write_mutex);	
 }
 
+#if defined(OS_CLOSE_NET)
 /**
  * py_exit_exec() - the py_int thread shall not be suspended with named
  * py_int semphore.
@@ -427,6 +427,7 @@ static void py_exit_exec(os_queue_elem_t *msg)
 {
 	OS_TRACE(("%s [s:ready, m:py-exit] -> [s:ready]\n", PP));
 }
+#endif
 
 /**
  * py_close() - the python process shall call this function to remove the
@@ -438,7 +439,9 @@ static void py_exit_exec(os_queue_elem_t *msg)
  **/
 static void py_close(int dev_id)
 {
+#if defined(OS_CLOSE_NET)
 	os_queue_elem_t msg;
+#endif
 	os_dev_t *p;
 	
 	/* Entry conditon. */
@@ -448,13 +451,14 @@ static void py_close(int dev_id)
 	/* Change the state of the shm area. */
 	p->init = 0;
 	
+#if defined(OS_CLOSE_NET)
 	/* Define the py_int terminate message. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = p->thread;
 	msg.cb    = py_exit_exec;
-	
-	/* Resume the py_int thread, to terminate it. */
 	OS_SEND(p->thread, &msg, sizeof(msg));
+#endif
+	/* Resume the py_int thread, to terminate it. */
 	atomic_store(&p->down, 1);
 	os_sem_release(p->my_int);
 	
@@ -495,7 +499,8 @@ static void py_int_write(os_dev_t *p, os_shm_top_t *t)
 	/* Reset the write trigger. */
 	atomic_store(&p->aio_wr_trigger, 0);
 
-	/* Test the UL status. */
+	/* Test the release status of the UL buffer, which van has not
+	 * consumed. */
 	pending_ul = atomic_load(&p->pending_ul);
 	if (pending_ul)
 		return;
@@ -709,9 +714,11 @@ static int py_open(char *name)
 /**
  * os_py_ripcord() - release critical van device resources.
  *
+ * @coverage:  if 0, release critical device resoures.
+ *
  * Return:	None.
  **/
-void os_py_ripcord(void)
+void os_py_ripcord(int coverage)
 {
 	os_dev_t *p;
 
@@ -719,7 +726,7 @@ void os_py_ripcord(void)
 	p = os_py_device;
 
 	/* Test the van device state. */
-	if (p == NULL)
+	if (p == NULL || coverage)
 		return;
 
 	/* Remove the reference to the python semaphore. */

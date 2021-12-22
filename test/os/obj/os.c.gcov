@@ -1,0 +1,573 @@
+        -:    0:Source:/home/gerald/github/van/os/os.c
+        -:    1:// SPDX-License-Identifier: GPL-2.0
+        -:    2:
+        -:    3:/*
+        -:    4: * Operatin system interfaces.
+        -:    5: *
+        -:    6: * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+        -:    7: */
+        -:    8:
+        -:    9:/*============================================================================
+        -:   10:  IMPORTED INCLUDE REFERENCES
+        -:   11:  ============================================================================*/
+        -:   12:#include <pthread.h>     /* POSIX thread. */
+        -:   13:
+        -:   14:/*============================================================================
+        -:   15:  EXPORTED INCLUDE REFERENCES
+        -:   16:  ============================================================================*/
+        -:   17:#include "os.h"          /* Operating system: os_sem_init() */
+        -:   18:#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
+        -:   19:
+        -:   20:/*============================================================================
+        -:   21:  LOCAL NAME CONSTANTS DEFINITIONS
+        -:   22:  ============================================================================*/
+        -:   23:/*============================================================================
+        -:   24:  MACROS
+        -:   25:  ============================================================================*/
+        -:   26:/*============================================================================
+        -:   27:  LOCAL TYPE DEFINITIONS
+        -:   28:  ============================================================================*/
+        -:   29:/*============================================================================
+        -:   30:  LOCAL DATA
+        -:   31:  ============================================================================*/
+        -:   32:
+        -:   33:/* OS configuration. */
+        -:   34:static os_conf_t os_conf;
+        -:   35:
+        -:   36:/**
+        -:   37: * os_stat - overall state of the OS.
+        -:   38: *
+        -:   39: * @is_init:     1, if the OS has been initialized.
+        -:   40: * @cs_count:    number of created mutexes.
+        -:   41: * @sem_count:   number of created semaphores.
+        -:   42: * @spin_count:  number of created spin locks.
+        -:   43: **/
+        -:   44:static struct os_stat_s {
+        -:   45:	atomic_int is_init;
+        -:   46:	atomic_int cs_count;
+        -:   47:	atomic_int sem_count;
+        -:   48:	atomic_int spin_count;
+        -:   49:} os_stat;
+        -:   50:
+        -:   51:/*============================================================================
+        -:   52:  LOCAL FUNCTION PROTOTYPES
+        -:   53:  ============================================================================*/
+        -:   54:/*============================================================================
+        -:   55:  LOCAL FUNCTIONS
+        -:   56:  ============================================================================*/
+        -:   57:/*============================================================================
+        -:   58:  EXPORTED FUNCTIONS
+        -:   59:  ============================================================================*/
+        -:   60:
+        -:   61:/**
+        -:   62: * os_cs_init() - initialize the mutex.
+        -:   63: *
+        -:   64: * @mutex:  address of the mutex.
+        -:   65: *
+        -:   66: * Return:	None.
+        -:   67: **/
+function os_cs_init called 22 returned 100% blocks executed 67%
+       22:   68:void os_cs_init(pthread_mutex_t *mutex)
+        -:   69:{
+        -:   70:	pthread_mutexattr_t attr;
+        -:   71:	int ret;
+        -:   72:	
+        -:   73:	/* Entry condition. */
+      22*:   74:	OS_TRAP_IF(mutex == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:   75:	
+       22:   76:	ret = pthread_mutexattr_init(&attr);
+call    0 returned 100%
+      22*:   77:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:   78:	
+       22:   79:	ret = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
+call    0 returned 100%
+      22*:   80:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:   81:	
+       22:   82:	ret = pthread_mutex_init(mutex, &attr);
+call    0 returned 100%
+      22*:   83:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:   84:	
+       22:   85:	ret = pthread_mutexattr_destroy(&attr);
+call    0 returned 100%
+      22*:   86:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:   87:
+       22:   88:	atomic_fetch_add(&os_stat.cs_count, 1);
+       22:   89:}
+        -:   90:
+        -:   91:/**
+        -:   92: * os_cs_enter() - enter the critical section.
+        -:   93: *
+        -:   94: * @mutex:  address of the mutex.
+        -:   95: *
+        -:   96: * Return:	None.
+        -:   97: **/
+function os_cs_enter called 9455 returned 100% blocks executed 67%
+     9455:   98:void os_cs_enter(pthread_mutex_t *mutex)
+        -:   99:{
+        -:  100:	int ret;
+        -:  101:	
+        -:  102:	/* Entry condition. */
+    9455*:  103:	OS_TRAP_IF(mutex == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  104:	
+     9455:  105:	ret = pthread_mutex_lock(mutex);
+call    0 returned 100%
+        -:  106:	
+        -:  107:	/* Final condition. */
+    9502*:  108:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+     9502:  109:}
+        -:  110:
+        -:  111:/**
+        -:  112: * os_cs_leave() - leave the critical section.
+        -:  113: *
+        -:  114: * @mutex:  address of the mutex.
+        -:  115: *
+        -:  116: * Return:	None.
+        -:  117: **/
+function os_cs_leave called 9502 returned 100% blocks executed 67%
+     9502:  118:void os_cs_leave(pthread_mutex_t *mutex)
+        -:  119:{
+        -:  120:	int ret;
+        -:  121:	
+        -:  122:	/* Entry condition. */
+    9502*:  123:	OS_TRAP_IF(mutex == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  124:	
+     9502:  125:	ret = pthread_mutex_unlock(mutex);
+call    0 returned 100%
+        -:  126:	
+        -:  127:	/* Final condition. */
+    9487*:  128:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+     9487:  129:}
+        -:  130:
+        -:  131:/**
+        -:  132: * os_cs_destroy() - delete the mutex.
+        -:  133: *
+        -:  134: * @mutex:  address of the mutex.
+        -:  135: *
+        -:  136: * Return:	None.
+        -:  137: **/
+function os_cs_destroy called 22 returned 100% blocks executed 67%
+       22:  138:void os_cs_destroy(pthread_mutex_t *mutex)
+        -:  139:{
+        -:  140:	int ret;
+        -:  141:	
+        -:  142:	/* Entry condition. */
+      22*:  143:	OS_TRAP_IF(mutex == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  144:	
+       22:  145:	ret = pthread_mutex_destroy(mutex);
+call    0 returned 100%
+        -:  146:	
+        -:  147:	/* Final condition. */
+      22*:  148:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  149:	
+       22:  150:	atomic_fetch_sub(&os_stat.cs_count, 1);
+       22:  151:}
+        -:  152:
+        -:  153:/**
+        -:  154: * os_sem_init() - initialize the semaphore.
+        -:  155: *
+        -:  156: * @sem:         address of the semaphore.
+        -:  157: * @init_value:  inital value of the semaphore counter.
+        -:  158: *
+        -:  159: * Return:	None.
+        -:  160: **/
+function os_sem_init called 106 returned 100% blocks executed 67%
+      106:  161:void os_sem_init(sem_t *sem, unsigned int init_value)
+        -:  162:{
+        -:  163:	int ret;
+        -:  164:	
+        -:  165:	/* Entry condition. */
+     106*:  166:	OS_TRAP_IF(sem == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  167:
+      106:  168:	ret = sem_init(sem, 0, init_value);
+call    0 returned 100%
+        -:  169:
+        -:  170:	/* Final condition. */
+     106*:  171:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  172:
+      106:  173:	atomic_fetch_add(&os_stat.sem_count, 1);	
+      106:  174:}
+        -:  175:
+        -:  176:/**
+        -:  177: * os_sem_wait() - suspend the current thread.
+        -:  178: *
+        -:  179: * @sem:         address of the semaphore.
+        -:  180: *
+        -:  181: * Return:	None.
+        -:  182: **/
+function os_sem_wait called 245 returned 100% blocks executed 67%
+      245:  183:void os_sem_wait(sem_t *sem)
+        -:  184:{
+        -:  185:	int ret;
+        -:  186:	
+        -:  187:	/* Entry condition. */
+     245*:  188:	OS_TRAP_IF(sem == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  189:
+      245:  190:	ret = sem_wait(sem);
+call    0 returned 100%
+        -:  191:
+        -:  192:	/* Final condition. */
+     245*:  193:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+      245:  194:}
+        -:  195:
+        -:  196:/**
+        -:  197: * os_sem_release() - release the current thread.
+        -:  198: *
+        -:  199: * @sem:         address of the semaphore.
+        -:  200: *
+        -:  201: * Return:	None.
+        -:  202: **/
+function os_sem_release called 758 returned 100% blocks executed 67%
+      758:  203:void os_sem_release(sem_t *sem)
+        -:  204:{
+        -:  205:	int ret;
+        -:  206:	
+        -:  207:	/* Entry condition. */
+     758*:  208:	OS_TRAP_IF(sem == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  209:
+      758:  210:	ret = sem_post(sem);
+call    0 returned 100%
+        -:  211:
+        -:  212:	/* Final condition. */
+     759*:  213:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+      759:  214:}
+        -:  215:
+        -:  216:/**
+        -:  217: * os_sem_delete() - destroy the semaphore.
+        -:  218: *
+        -:  219: * @sem:         address of the semaphore.
+        -:  220: *
+        -:  221: * Return:	None.
+        -:  222: **/
+function os_sem_delete called 106 returned 100% blocks executed 67%
+      106:  223:void os_sem_delete(sem_t *sem)
+        -:  224:{
+        -:  225:	int ret;
+        -:  226:	
+        -:  227:	/* Entry condition. */
+     106*:  228:	OS_TRAP_IF (sem == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  229:
+      106:  230:	ret = sem_destroy (sem);
+call    0 returned 100%
+        -:  231:
+        -:  232:	/* Final condition. */
+     106*:  233:	OS_TRAP_IF (ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  234:	
+      106:  235:	atomic_fetch_sub(&os_stat.sem_count, 1);	
+      106:  236:}
+        -:  237:
+        -:  238:
+        -:  239:/**
+        -:  240: * os_spin_init() - initialize the spinlock.
+        -:  241: *
+        -:  242: * @sem:         address of the spinlock.
+        -:  243: *
+        -:  244: * Return:	None.
+        -:  245: **/
+function os_spin_init called 46 returned 100% blocks executed 67%
+       46:  246:void os_spin_init(spinlock_t *spinlock)
+        -:  247:{
+        -:  248:	int ret;
+        -:  249:	
+        -:  250:	/* Entry condition. */
+      46*:  251:	OS_TRAP_IF(spinlock == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  252:
+        -:  253:#if defined(USE_PTHREAD_SPIN)
+        -:  254:	ret = pthread_spin_init(spinlock, PTHREAD_PROCESS_SHARED);
+        -:  255:#else
+       46:  256:	ret = pthread_mutex_init(spinlock, NULL);
+call    0 returned 100%
+        -:  257:#endif
+        -:  258:	/* Final condition. */
+      46*:  259:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  260:	
+       46:  261:	atomic_fetch_add(&os_stat.spin_count, 1);
+       46:  262:}
+        -:  263:
+        -:  264:/**
+        -:  265: * os_spin_lock() - aquire an atomic lock.
+        -:  266: *
+        -:  267: * @sem:         address of the spinlock.
+        -:  268: *
+        -:  269: * Return:	None.
+        -:  270: **/
+function os_spin_lock called 1718 returned 103% blocks executed 67%
+     1718:  271:void os_spin_lock(spinlock_t *spinlock)
+        -:  272:{
+        -:  273:	int ret;
+        -:  274:	
+        -:  275:	/* Entry condition. */
+    1718*:  276:	OS_TRAP_IF(spinlock == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  277:
+        -:  278:#if defined(USE_PTHREAD_SPIN)
+        -:  279:	ret = pthread_spin_lock(spinlock);
+        -:  280:#else
+     1718:  281:	ret = pthread_mutex_lock(spinlock);
+call    0 returned 103%
+        -:  282:#endif
+        -:  283:	/* Final condition. */
+    1774*:  284:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+     1774:  285:}
+        -:  286:
+        -:  287:/**
+        -:  288: * os_spin_unlock() - unlock the spinlock.
+        -:  289: *
+        -:  290: * @sem:         address of the spinlock.
+        -:  291: *
+        -:  292: * Return:	None.
+        -:  293: **/
+function os_spin_unlock called 1774 returned 99% blocks executed 67%
+     1774:  294:void os_spin_unlock(spinlock_t *spinlock)
+        -:  295:{
+        -:  296:	int ret;
+        -:  297:	
+        -:  298:	/* Entry condition. */
+    1774*:  299:	OS_TRAP_IF(spinlock == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  300:	
+        -:  301:#if defined(USE_PTHREAD_SPIN)
+        -:  302:	ret = pthread_spin_unlock(spinlock);
+        -:  303:#else
+     1774:  304:	ret = pthread_mutex_unlock(spinlock);
+call    0 returned 99%
+        -:  305:#endif
+        -:  306:	/* Final condition. */
+    1754*:  307:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+     1754:  308:}
+        -:  309:
+        -:  310:/**
+        -:  311: * os_spin_destroy() - destroy the spinlock.
+        -:  312: *
+        -:  313: * @sem:         address of the spinlock.
+        -:  314: *
+        -:  315: * Return:	None.
+        -:  316: **/
+function os_spin_destroy called 46 returned 100% blocks executed 67%
+       46:  317:void os_spin_destroy(spinlock_t *spinlock)
+        -:  318:{
+        -:  319:	int ret;
+        -:  320:	
+        -:  321:	/* Entry condition. */
+      46*:  322:	OS_TRAP_IF(spinlock == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  323:	
+        -:  324:#if defined(USE_PTHREAD_SPIN)
+        -:  325:	ret = pthread_spin_destroy(spinlock);
+        -:  326:#else
+       46:  327:	ret = pthread_mutex_destroy(spinlock);
+call    0 returned 100%
+        -:  328:#endif
+        -:  329:	/* Final condition. */
+      46*:  330:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  331:	
+       46:  332:	atomic_fetch_sub(&os_stat.spin_count, 1);
+       46:  333:}
+        -:  334:
+        -:  335:/**
+        -:  336: * os_statistics() - provide data on the OS state.
+        -:  337: *
+        -:  338: * @stat:  address of the status information.
+        -:  339: *
+        -:  340: * Return:	None.
+        -:  341: **/
+function os_statistics called 34 returned 100% blocks executed 71%
+       34:  342:void os_statistics(os_statistics_t *stat)
+        -:  343:{
+        -:  344:	int is_init;
+        -:  345:	
+        -:  346:	/* Test the OS state. */
+       34:  347:	is_init = atomic_load(&os_stat.is_init);
+      34*:  348:	OS_TRAP_IF(! is_init);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  349:	
+        -:  350:	/* Entry condition. */
+      34*:  351:	OS_TRAP_IF(stat == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  352:	
+        -:  353:	/* Get information about the thread state. */
+       34:  354:	os_thread_statistics(stat);
+call    0 returned 100%
+        -:  355:	
+        -:  356:	/* Get information about the memory state. */
+       34:  357:	os_mem_statistics(stat);
+call    0 returned 100%
+        -:  358:
+        -:  359:	/* Complete the data gathering. */
+       34:  360:	stat->cs_count   = os_stat.cs_count;
+       34:  361:	stat->sem_count  = os_stat.cs_count;
+       34:  362:	stat->spin_count = os_stat.spin_count;
+       34:  363:}
+        -:  364:
+        -:  365:/**
+        -:  366: * os_trace_button() - change the trace configuration.
+        -:  367: *
+        -:  368: * @n:  if n eq. 0, trace off, else trace on.
+        -:  369: *
+        -:  370: * Return:	None.
+        -:  371: **/
+function os_trace_button called 2 returned 100% blocks executed 100%
+        2:  372:void os_trace_button(int n)
+        -:  373:{
+        2:  374:	os_conf.trace_stat = n;
+        2:  375:}
+        -:  376:
+        -:  377:/**
+        -:  378: * os_init() - initialize the operation system.
+        -:  379: *
+        -:  380: * Return:	None.
+        -:  381: **/
+function os_init called 2 returned 100% blocks executed 86%
+        2:  382:void os_init(void)
+        -:  383:{
+        -:  384:	int is_init;
+        -:  385:	
+        -:  386:	/* Test the OS state. */
+        2:  387:	is_init = atomic_load(&os_stat.is_init);
+        2:  388:	atomic_store(&os_stat.is_init, 1);
+       2*:  389:	OS_TRAP_IF(is_init);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  390:
+        -:  391:	/* Switch on the trace. */
+        2:  392:	os_conf.trace_stat = 1;
+        -:  393:	
+        -:  394:	/* Install a signal handler to generate a core dump, if the test
+        -:  395:         * programm has been terminated with Ctrl-C. */
+        2:  396:        os_trap_init(&os_conf);
+call    0 returned 100%
+        -:  397:
+        -:  398:	/* Initialize the os_malloc list. */
+        2:  399:	os_mem_init();
+call    0 returned 100%
+        -:  400:	
+        -:  401:	/* Initialize the thread table. */
+        2:  402:	os_thread_init(&os_conf);
+call    0 returned 100%
+        -:  403:
+        -:  404:	/* Initialize the shared memory devices. */
+        2:  405:	os_shm_init(&os_conf);
+call    0 returned 100%
+        2:  406:}
+        -:  407:
+        -:  408:/**
+        -:  409: * os_exit() - release the OS resources.
+        -:  410: *
+        -:  411: * Return:	None.
+        -:  412: **/
+function os_exit called 2 returned 100% blocks executed 80%
+        2:  413:void os_exit(void)
+        -:  414:{
+        -:  415:	struct os_stat_s *p;
+        -:  416:	int is_init;
+        -:  417:
+        -:  418:	/* Test the OS state. */
+        2:  419:	p = &os_stat;	
+        2:  420:	is_init = atomic_load(&p->is_init);
+       2*:  421:	OS_TRAP_IF(! is_init);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  422:
+        2:  423:	os_shm_exit();
+call    0 returned 100%
+        2:  424:	os_thread_exit();
+call    0 returned 100%
+        2:  425:	os_mem_exit();
+call    0 returned 100%
+        -:  426:
+        -:  427:	/* Test the OS state. */
+       2*:  428:	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+call    6 never executed
+        -:  429:
+        -:  430:	/* Change the OS state. */
+        2:  431:	atomic_store(&p->is_init, 0);
+        2:  432:}

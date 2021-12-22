@@ -179,10 +179,10 @@ void os_shm_close(os_dev_t *s);
 
 void os_van_init(os_conf_t *conf, os_dev_ops_t *op);
 void os_van_exit(void);
-void os_van_ripcord(void);
+void os_van_ripcord(int coverage);
 
 void os_py_init(os_conf_t *conf, os_dev_ops_t *op);
 void os_py_exit(void);
-void os_py_ripcord(void);
+void os_py_ripcord(int coverage);
 
 #endif /* __os_shm_h__ */
