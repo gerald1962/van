@@ -1,20 +1,38 @@
 #include "os.h"
 
-#define AIO
-
-#define P  "vat> "
+#define P  "vat>"
 
 static struct {
 	int    dev_id;   /* Van dvice id. */
 	int    cycles;   /* Number of the test cycles. */
-	int    count;    /* Current test counter. */
+	int    sent;     /* Current send counter. */
+	int    received; /* Current receive counter. */
 	sem_t  suspend;  /* Waiting for the end of the test. */
 } v;
 
-#if defined(AIO)
 /* Async. data sink. */
 static int aio_read_cb(int dev_id, char *buf, int count)
 {
+	int n;
+	
+	/* Entry condition. */
+	OS_TRAP_IF(dev_id != v.dev_id || buf == NULL || count < 1);
+
+	if (v.received <= v.cycles) {
+		printf("%s receivd: [b:\"%s\", s:%d]\n", P, buf, count);
+
+		/* Convert and test the received counter. */
+		if (v.received < v.cycles) {
+			n = strtol(buf, NULL, 10);
+			OS_TRAP_IF(n != v.received);
+		}
+		
+		v.received++;
+		return count;
+	}
+
+	/* It is done. */
+	os_sem_release(&v.suspend);
 	return count;
 }
 
@@ -23,19 +41,24 @@ static int aio_write_cb(int dev_id, char *buf, int count)
 {
 	int n;
 
-	if (v.count < v.cycles) {
+	/* Entry condition. */
+	OS_TRAP_IF(dev_id != v.dev_id || buf == NULL || count != OS_BUF_SIZE);
+	
+	if (v.sent < v.cycles) {
 		/* The generator continues to run. */
-		n = snprintf(buf, OS_BUF_SIZE, "%d", v.count);
-		printf("%s sent: [b:\"%s\", s:%d]\n", P, buf, n);
-		v.count++;
+		n = snprintf(buf, OS_BUF_SIZE, "%d", v.sent);
+		n++;
+		printf("%s sent:    [b:\"%s\", s:%d]\n", P, buf, n);
+		v.sent++;
 		return n;
 	}
 	
-	if (v.count == v.cycles) {
+	if (v.sent == v.cycles) {
 		/* The generator sends the last message. */
 		n = snprintf(buf, OS_BUF_SIZE, "That's it.");
-		printf("%s sent: [b:\"%s\", s:%d]\n", P, buf, n);
-		v.count++;
+		n++;
+		printf("%s sent:    [b:\"%s\", s:%d]\n", P, buf, n);
+		v.sent++;
 		return n;
 	}
 
@@ -45,11 +68,9 @@ static int aio_write_cb(int dev_id, char *buf, int count)
 	os_sem_release(&v.suspend);
 	return 0;
 }
-#endif
 	
 int main(void)
 {
-#if defined(AIO)
 	os_aio_cb_t aio;
 
 	/* Test cycles. */
@@ -61,7 +82,8 @@ int main(void)
 	/* Main control semaphore. */
 	os_sem_init(&v.suspend, 0);
 
-	/* Disable the user-friendly OS - FOS - trace and create the van server device. */
+	/* Disable the user-friendly OS - FOS - trace and create the van server
+	 * device. */
 	os_trace_button(0);
 	v.dev_id = os_open("/van");
 
@@ -74,8 +96,9 @@ int main(void)
 	os_aio_write(v.dev_id);
 	os_aio_read(v.dev_id);
 
-	/* Wait for end of the test. */
-	os_sem_wait(&v.suspend);
+	/* Wait for the end of the test. */
+	while(v.sent <= v.cycles && v.received <= v.cycles)
+		os_sem_wait(&v.suspend);
 
 	/* Free the used FOS resources. */
 	os_close(v.dev_id);
@@ -83,29 +106,4 @@ int main(void)
 	os_exit();
 	
 	return 0;
-#else
-	char buf[32];
-	int dev_id, i, n;
-	
-	os_init();
-	os_trace_button(0);
-	dev_id = os_open("/van");
-	
-	for (i = 0; i < 999999; i++) {
-		n = snprintf(buf, 32, "%d", i);
-		os_sync_write(dev_id, buf, n + 1);
-
-		printf("%s sent: [b:\"%s\", s:%d]\n", P, buf, n);
-	}
-
-	n = snprintf(buf, 32, "That's it.");
-	os_sync_write(dev_id, buf, n + 1);		
-	
-	printf("%s sent: [b:\"%s\", s:%d]\n", P, buf, n);
-		
-	os_close(dev_id);
-	os_exit();
-	
-	return 0;
-#endif
 }

@@ -11,7 +11,6 @@
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
 #include <unistd.h>  /* Common Unix interfaces: getopt().*/
-#include <stdlib.h>  /* Common C interfaces: exit().*/
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -109,12 +108,12 @@ static struct site_stat_s {
 	int   ul_fill_char;
 	int   os_trace;
 	int   my_trace;
-#if defined(AIO)
+
 	int   dl_wr_count;
 	int   dl_rd_count;
 	int   ul_rd_count;
 	int   ul_wr_count;
-#endif
+
 	atomic_int  dl_wr_done;
 	atomic_int  dl_rd_done;
 	atomic_int  ul_rd_done;
@@ -154,7 +153,6 @@ void site_resume(void)
 	os_sem_release(&site_stat.suspend);
 }
 
-#if defined(AIO)
 /**
  * site_aio_dl_rd_cb() - the python irq thread delivers DL data from van.
  *
@@ -205,7 +203,6 @@ static int site_aio_dl_rd_cb(int dev_id, char *buf, int count)
 	
 	return count;
 }
-#endif
 
 /**
  * site_aio_dl_rd_exec() - the python dl_reader thread is inactiv because of the
@@ -232,20 +229,12 @@ static void site_aio_dl_rd_exec(os_queue_elem_t *msg)
 	
 	TRACE(("dl_reader> [i/o:a, s:ready, o:inactive]\n"));
 
-#if defined(AIO)
 	/* Trigger the py interrupt handler to invoke the async. read and write
 	 *  callback. */
 	os_aio_read(s->py_id);
 	os_aio_write(s->py_id);
-#else
-	/* XXX */
-	/* Resume the main process. */
-	atomic_store(&s->dl_rd_done, 1);
-	site_resume();
-#endif
 }
 
-#if defined(AIO)
 /**
  * site_aio_ul_wr_cb() - the py irq thread requests UL data if available.
  *
@@ -293,7 +282,6 @@ static int site_aio_ul_wr_cb(int dev_id, char *buf, int count)
 	
 	return s->ul_buf_size;
 }
-#endif
 
 /**
  * site_aio_ul_wr_exec() - the python ul_writer thread triggers the python
@@ -320,20 +308,12 @@ static void site_aio_ul_wr_exec(os_queue_elem_t *msg)
 
 	TRACE(("ul_writer> [i/o:a, s:ready, o:trigger]\n"));
 
-#if defined(AIO)
 	/* Trigger the py interrupt handler to invoke the async. write and read
 	 *  callback. */
 	os_aio_write(s->py_id);
 	os_aio_read(s->py_id);
-#else
-	/* XXX */
-	/* Resume the main process. */
-	atomic_store(&s->ul_wr_done, 1);
-	site_resume();
-#endif	
 }
 
-#if defined(AIO)
 /**
  * site_aio_ul_rd_cb() - the van irq thread delivers UL data from py.
  *
@@ -384,7 +364,6 @@ static int site_aio_ul_rd_cb(int dev_id, char *buf, int count)
 	
 	return count;
 }
-#endif
 
 /**
  * site_aio_ul_rd_exec() - the van ul_reader thread is inactiv because of the
@@ -411,20 +390,12 @@ static void site_aio_ul_rd_exec(os_queue_elem_t *msg)
 	
 	TRACE(("ul_reader> [i/o:a, s:ready, o:inactive]\n"));
 
-#if defined(AIO)
 	/* Trigger the van interrupt handler to invoke the async. write and read
 	 * callback. */
 	os_aio_write(s->van_id);
 	os_aio_read(s->van_id);
-#else
-	/* XXX */
-	/* Resume the main process. */
-	atomic_store(&s->ul_rd_done, 1);
-	site_resume();
-#endif	
 }
 
-#if defined(AIO)
 /**
  * site_aio_dl_wr_cb() - the van irq thread requests DL data if available.
  *
@@ -472,7 +443,6 @@ static int site_aio_dl_wr_cb(int dev_id, char *buf, int count)
 	
 	return s->dl_buf_size;
 }
-#endif
 
 /**
  * site_aio_dl_wr_exec() - the van dl_writer thread triggers the van driver
@@ -499,17 +469,10 @@ static void site_aio_dl_wr_exec(os_queue_elem_t *msg)
 	
 	TRACE(("dl_writer> [i/o:a, s:ready, o:trigger]\n"));
 
-#if defined(AIO)
 	/* Trigger the van interrupt handler to invoke the async. write and read
 	 * callback. */
 	os_aio_write(s->van_id);
 	os_aio_read(s->van_id);
-#else
-	/* XXX */
-	/* Resume the main process. */
-	atomic_store(&s->dl_wr_done, 1);
-	site_resume();
-#endif	
 }
 
 /**
@@ -543,13 +506,13 @@ static void site_sync_ul_wr_exec(os_queue_elem_t *msg)
 	/* The py ul_writer thread generates data for van with the sync write
 	 * interface. */
 	for (i = 0; i < s->ul_wr_cycles; i++) {
-		os_sync_write(s->py_id, buf, s->ul_buf_size);
+		os_write(s->py_id, buf, s->ul_buf_size);
 		TRACE(("ul_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->ul_buf_size));
 	}
 
 	/* Send the final char to van. */
 	*buf = FINAL_CHAR;
-	os_sync_write(s->py_id, buf, s->ul_buf_size);
+	os_write(s->py_id, buf, s->ul_buf_size);
 	TRACE(("ul_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->ul_buf_size));
 
 end:
@@ -590,14 +553,14 @@ static void site_sync_ul_rd_exec(os_queue_elem_t *msg)
 		if (s->van_io == IO_SYNC_COPY) {
 			/* Receive the UL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
-			n = os_sync_read(s->van_id, buf, OS_BUF_SIZE);
+			n = os_read(s->van_id, buf, OS_BUF_SIZE);
 			OS_TRAP_IF(n != s->ul_buf_size);
 			b = buf;
 		}
 		else {
 			/* Receive the UL paylaod with the zero copy read interface. */
 			zbuf = NULL;
-			n = os_sync_zread(s->van_id, &zbuf, OS_BUF_SIZE);
+			n = os_zread(s->van_id, &zbuf, OS_BUF_SIZE);
 			OS_TRAP_IF(zbuf == NULL || n != s->ul_buf_size);
 			b = zbuf;
 		}
@@ -616,7 +579,7 @@ static void site_sync_ul_rd_exec(os_queue_elem_t *msg)
 	/* Test the read mode. */
 	if (s->van_io == IO_SYNC_ZERO) {
 		/* Release the pending UL buffer. */
-		n = os_sync_zread(s->van_id, NULL, 0);
+		n = os_zread(s->van_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
 
@@ -661,14 +624,14 @@ static void site_sync_dl_rd_exec(os_queue_elem_t *msg)
 		if (s->python_io == IO_SYNC_COPY) {
 			/* Receive the DL paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
-			n = os_sync_read(s->py_id, buf, OS_BUF_SIZE);
+			n = os_read(s->py_id, buf, OS_BUF_SIZE);
 			OS_TRAP_IF(n != s->dl_buf_size);
 			b = buf;
 		}
 		else {
 			/* Receive the DL paylaod with the zero copy read interface. */
 			zbuf = NULL;
-			n = os_sync_zread(s->py_id, &zbuf, OS_BUF_SIZE);
+			n = os_zread(s->py_id, &zbuf, OS_BUF_SIZE);
 			OS_TRAP_IF(zbuf == NULL || n != s->dl_buf_size);
 			b = zbuf;
 		}
@@ -689,7 +652,7 @@ static void site_sync_dl_rd_exec(os_queue_elem_t *msg)
 	/* Test the read mode. */
 	if (s->python_io == IO_SYNC_ZERO) {
 		/* Release the pending DL buffer. */
-		n = os_sync_zread(s->py_id, NULL, 0);
+		n = os_zread(s->py_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
 
@@ -733,13 +696,13 @@ static void site_sync_dl_wr_exec(os_queue_elem_t *msg)
 	/* The van dl_writer thread generates data for py with the sync write
 	 * interface. */
 	for (i = 0; i < s->dl_wr_cycles; i++) {
-		os_sync_write(s->van_id, buf, s->dl_buf_size);
+		os_write(s->van_id, buf, s->dl_buf_size);
 		TRACE(("dl_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->dl_buf_size));
 	}
 
 	/* Send the final char to py. */
 	*buf = FINAL_CHAR;
-	os_sync_write(s->van_id, buf, s->dl_buf_size);
+	os_write(s->van_id, buf, s->dl_buf_size);
 	TRACE(("dl_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->dl_buf_size));
 
 end:
@@ -820,9 +783,7 @@ static void site_init(void)
 {
 	struct site_stat_s *s;
 	os_queue_elem_t msg;
-#if defined(AIO)
 	os_aio_cb_t aio;
-#endif	
 
 	TRACE(("%s [p:main,s:boot,o:init]\n", P));
 
@@ -857,12 +818,11 @@ static void site_init(void)
 
 	/* Test the van I/O configuration */
 	if (s->van_io == IO_ASYNC) {
-#if defined(AIO)
 		/* Install the van read and write callback for the asynchronous actions. */
 		aio.write_cb = site_aio_dl_wr_cb;
 		aio.read_cb  = site_aio_ul_rd_cb;
 		os_aio_action(s->van_id, &aio);
-#endif
+
 		msg.cb = site_aio_dl_wr_exec;
 		OS_SEND(s->dl_writer, &msg, sizeof(msg));
 	
@@ -879,12 +839,11 @@ static void site_init(void)
 	
 	/* Test the python I/O configuration */
 	if (s->python_io == IO_ASYNC) {
-#if defined(AIO)
 		/* Install the python read and write callback for the asynchronous actions. */
 		aio.write_cb = site_aio_ul_wr_cb;
 		aio.read_cb  = site_aio_dl_rd_cb;
 		os_aio_action(s->py_id, &aio);
-#endif
+
 		msg.cb = site_aio_dl_rd_exec;
 		OS_SEND(s->dl_reader, &msg, sizeof(msg));
 	
