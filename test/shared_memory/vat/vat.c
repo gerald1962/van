@@ -77,7 +77,7 @@ int main(void)
 	v.cycles = 99999;
 
 	/* Van OS. */
-	os_init();
+	os_init(1);
 
 	/* Main control semaphore. */
 	os_sem_init(&v.suspend, 0);
@@ -85,7 +85,7 @@ int main(void)
 	/* Disable the user-friendly OS - FOS - trace and create the van server
 	 * device. */
 	os_trace_button(0);
-	v.dev_id = os_open("/van");
+	v.dev_id = os_open("/van_py");
 
 	/* Use the async. FOS I/O operations. */
 	aio.write_cb = aio_write_cb;

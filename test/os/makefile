@@ -29,7 +29,8 @@ SRC_PATH  += $(TEST_PATH)
 # Wall
 #     Enable all compiler warnings.
 #
-CFLAGS += --coverage -g -Wall
+# CFLAGS += --coverage -g -Wall
+CFLAGS += --coverage -g -Wall -DUSE_TCL_STUBS -ICLINC
 
 # Libraries for the linker:
 # rt
@@ -38,7 +39,8 @@ CFLAGS += --coverage -g -Wall
 # pthread
 #     The POSIX thread library
 #
-LIBS = -lrt -lpthread
+# LIBS = -lrt -lpthread
+LIBS = -lrt -lpthread -LCLLIB -ltclstub
 
 # List of all sources files, like VAN OS files
 ALL_FILES =  \

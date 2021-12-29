@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Operatin system interfaces.
+ * Operating system interfaces.
  *
  * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -375,11 +375,14 @@ void os_trace_button(int n)
 }
 
 /**
- * os_init() - initialize the operation system.
+ * os_init() - ensure the one time call and propagate the trace interface to the
+ * submodules.
+ *
+ * @creator:  if 1, create the shared memory resources.
  *
  * Return:	None.
  **/
-void os_init(void)
+void os_init(int creator)
 {
 	int is_init;
 	
@@ -400,13 +403,13 @@ void os_init(void)
 	
 	/* Initialize the thread table. */
 	os_thread_init(&os_conf);
-
-	/* Initialize the shared memory devices. */
-	os_shm_init(&os_conf);
+	
+	/* Install the shared memory area. */
+	os_cab_init(&os_conf, creator);
 }
 
 /**
- * os_exit() - release the OS resources.
+ * os_exit() - ensure the one the one time call and test pending resources.
  *
  * Return:	None.
  **/
@@ -420,7 +423,7 @@ void os_exit(void)
 	is_init = atomic_load(&p->is_init);
 	OS_TRAP_IF(! is_init);
 
-	os_shm_exit();
+	os_cab_exit();
 	os_thread_exit();
 	os_mem_exit();
 

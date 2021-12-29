@@ -56,8 +56,8 @@ van.os_exit.restype  = None
 #
 def van_loop(dev_id):
     # Allocate the buffer for sync_read.
-    buf = create_string_buffer(512)
-
+    buf = create_string_buffer(2048)
+    
     # Beginning of the measurement.
     start_time = time.time()
 
@@ -65,7 +65,7 @@ def van_loop(dev_id):
     i = 0
     while 1:
         # Copy data from the receive channel.
-        n = van.os_read(dev_id, buf, 512)
+        n = van.os_read(dev_id, buf, 2048)
         print ('python> received: [b:{}, s:{}]' . format(buf.value, n))
 
         # End condition for the read loop and calcuate the execution time.
@@ -104,7 +104,7 @@ def van_exit(dev_id):
 def van_init():
     # Boot the van OS, switch off tracing and create the python shared memory device
     # for the communication with van.
-    van.os_init()
+    van.os_init(0)
     van.os_trace_button(0)
     id = van.os_open(b"/python")
     return id;

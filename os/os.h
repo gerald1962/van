@@ -14,6 +14,9 @@
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
 
+#define MANY_CABLE
+
+
 // #define OS_CLOSE_NET
 
 // #define USE_PTHREAD_SPIN  /* Replace mutex with spin interfaces. */
@@ -170,19 +173,6 @@ typedef struct {
 	int thread_c;
 } os_statistics_t;
 
-/**
- * os_dev_type_t - ids of the shared memory devices.
- *
- * OS_DEV_VAN:    id of the van shared memory device.
- * OS_DEV_PY:     id of the py shared memory device.
- * OS_DEV_COUNT:  number of the shared memory devices.
- **/
-typedef enum {
-	OS_DEV_VAN,
-	OS_DEV_PY,
-	OS_DEV_COUNT
-} os_dev_type_t;
-	
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
@@ -193,7 +183,11 @@ typedef enum {
 void os_statistics(os_statistics_t *stat);
 
 /* Bootstrapping. */
+#if defined MANY_CABLE
+void os_init(int creator);
+#else
 void os_init(void);
+#endif
 void os_exit(void);
 
 /* Trace handling. */

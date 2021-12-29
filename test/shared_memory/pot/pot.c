@@ -7,7 +7,7 @@ int main(void)
 	char buf[OS_BUF_SIZE];
 	int dev_id, done, i, n, count;
 	
-	os_init();
+	os_init(0);
 	os_trace_button(0);
 	dev_id = os_open("/python");
 

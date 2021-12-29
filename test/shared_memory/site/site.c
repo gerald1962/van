@@ -795,13 +795,13 @@ static void site_init(void)
 	os_memset(s->ul_ref_b, s->ul_fill_char, s->ul_buf_size);
 	
 	/* Initialize the operating system. */
-	os_init();
+	os_init(1);
 
 	/* Configure the OS trace. */
 	os_trace_button(s->os_trace);
 
 	/* Install the van and py shm device. */
-	s->van_id = os_open("/van");
+	s->van_id = os_open("/van_py");
 	s->py_id  = os_open("/python");
 
 	/* Install all test threads. */

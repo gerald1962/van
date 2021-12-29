@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2323, 2321, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2321, 2321, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -82,11 +82,11 @@ static int test_case_shutdown(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2, 0, 0 };
+	os_statistics_t expected = { 2, 2, 0, 0, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
-	os_init();
+	os_init(1);
 
 	/* Switch off the OS trace. */
 	os_trace_button(0);
