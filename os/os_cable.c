@@ -143,10 +143,12 @@ typedef struct {
 /**
  * cab_msg_t - shm input message with payload status information.
  *
+ * @id:        message counter.
  * @size:      size of the payload.
  * @consumed:  if 1, the payload has been processed.
  **/
 typedef struct {
+	unsigned char id;
 	int  size;
 	int  consumed;
 } cab_msg_t;
@@ -186,6 +188,7 @@ typedef struct {
  *
  * @id:                device id.
  * @name:              name of the shared memory device.
+ * @mode:              devie mode like O_NBLOCK: non blocking I/O operations.
  * @my_int:            points to the my named semaphore.
  * @other_int:         points to the named semaphore of the other device.
  * @thread:            address of the interrup handler/thread.
@@ -196,6 +199,7 @@ typedef struct {
  * @pending_in:        if 1, the input buffer is pending.
  * @out:               output channel.
  * @pending_out:       if 1, the ouput buffer is pending.
+ * @msg_id;            message counter about shared memory.
  * @q_mutex:           critical section in cab_queue_add.
  *
  * @aio_cb:            aio read and write callbacks.
@@ -214,6 +218,7 @@ typedef struct {
 typedef struct {
 	cab_type_t  id;
 	char   *name;
+	int     mode;
 	sem_t  *my_int;
 	sem_t  *other_int;
 	void   *thread;
@@ -224,6 +229,7 @@ typedef struct {
 	atomic_int       pending_in;
 	cab_io_t         out;
 	atomic_int       pending_out;
+	unsigned char    msg_id;
 	pthread_mutex_t  q_mutex;
 	
 	os_aio_cb_t      aio_cb;
@@ -291,9 +297,13 @@ static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
 	/* Fill the next free message. */
 	head = q->head;
 	msg = &q->ring[head];
+	msg->id       = dev->msg_id;
 	msg->size     = count;
 	msg->consumed = consumed;
 
+	/* Increment the message counter. */
+	dev->msg_id++;
+	
 	/* Increment and test the end of the message list. */
 	head++;
 	if (head >= CAB_Q_SIZE)
@@ -301,6 +311,9 @@ static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
 
 	OS_TRAP_IF(head == q->tail);
 	q->head = head;
+
+	OS_TRACE(("%s %s: msg-snd: [i=%u, s=%d, c=%d]\n", P, dev->name,
+		  msg->id, msg->size, msg->consumed));
 
 	/* Trigger the interrupt of the other device. */
 	os_sem_release(dev->other_int);
@@ -400,9 +413,6 @@ static void cab_int_read(cab_dev_t *dev, cab_io_t *in, int count)
 		/* Test the read method. */
 		sync = atomic_exchange(&dev->sync_read, 0);
 
-		OS_TRACE(("%s %s: p_count=%d, read=%d\n", P, dev->name,
-			  in->p_count, sync));
-
 		if (sync)
 			os_sem_release(&dev->suspend_reader);
 	}
@@ -423,7 +433,7 @@ static void cab_int_exec(os_queue_elem_t *g_msg)
 	cab_dev_t *dev;
 	cab_io_t *in, *out;
 	char *n;
-	int down;
+	int down, pending_out;
 
 	/* Get the address of the device state. */
 	dev = g_msg->param;
@@ -468,8 +478,8 @@ static void cab_int_exec(os_queue_elem_t *g_msg)
 		while (q->tail != q->head) {
 			msg = &q->ring[q->tail];
 
-			OS_TRACE(("%s %s:[s:read, size:%d] -> [s:ready]\n",
-				  P, n, msg->size));
+			OS_TRACE(("%s %s: msg-rcv: [i=%u, s=%d, c=%d]\n", P, n,
+				  msg->id, msg->size, msg->consumed));
 			
 			/* Test the input payload state. */
 			if (msg->size > 0) {
@@ -477,13 +487,11 @@ static void cab_int_exec(os_queue_elem_t *g_msg)
 				cab_int_read(dev, in, msg->size);
 			}
 
-			OS_TRACE(("%s %s:[s:read, consumed:%d] -> [s:ready]\n",
-				  P, n, msg->consumed));
-			
 			/* Test the state of the output playload. */
 			if (msg->consumed) {
 				/* Release the output buffer. */
-				atomic_store(&dev->pending_out, 0);
+				pending_out = atomic_exchange(&dev->pending_out, 0);
+				OS_TRAP_IF(! pending_out);
 
 				/* Trigger the user actions. */
 				cab_int_write(dev, out);
@@ -549,8 +557,12 @@ static void cab_q_add(cab_dev_t *dev, int count, int consumed)
 	/* Fill the next free message. */
 	head = q->head;
 	msg = &q->ring[head];
+	msg->id       = dev->msg_id;
 	msg->size     = count;
 	msg->consumed = consumed;
+	
+	/* Increment the message counter. */
+	dev->msg_id++;
 
 	/* Increment and test the end of the message list. */
 	head++;
@@ -559,6 +571,9 @@ static void cab_q_add(cab_dev_t *dev, int count, int consumed)
 
 	OS_TRAP_IF(head == q->tail);
 	q->head = head;
+
+	OS_TRACE(("%s %s: msg-snd: [i=%u, s=%d, c=%d]\n", P, dev->name,
+		  msg->id, msg->size, msg->consumed));
 
 	/* Trigger the interrupt of the other device. */
 	os_sem_release(dev->other_int);
@@ -803,7 +818,17 @@ int os_zread(int dev_id, char **buf, int count)
 		os_cs_leave(&dev->read_mutex);	
 		return 0;
 	}
-	
+
+	/* Test the device mode. */
+	if (dev->mode == O_NBLOCK) {
+		/* Get the number of the received bytes. */
+		n = atomic_exchange(&in->p_count, 0);
+		if (n > 0)
+			goto l_zcopy;
+		else
+			goto l_leave;
+	}
+
 	/* Update the sync. read flag. */
 	atomic_store(&dev->sync_read, 1);
 	
@@ -822,13 +847,15 @@ int os_zread(int dev_id, char **buf, int count)
 		break;
 	}
 
-	/* Get the pointer to the received payload. */
-	*buf = in->b_start;
-	atomic_store(&dev->pending_in, 1);
-
 	/* Release the sync. read operation. */
 	atomic_store(&dev->sync_read, 0);
-	
+
+l_zcopy:
+	/* Get the pointer to the received payload. */
+	atomic_store(&dev->pending_in, 1);
+	*buf = in->b_start;
+
+l_leave:
 	/* Leave the critical section. */
 	os_cs_leave(&dev->read_mutex);	
 
@@ -862,6 +889,16 @@ int os_read(int dev_id, char *buf, int count)
 	/* Enter the critical section. */
 	os_cs_enter(&dev->read_mutex);
 
+	/* Test the device mode. */
+	if (dev->mode == O_NBLOCK) {
+		/* Get the number of the received bytes. */
+		n = atomic_exchange(&in->p_count, 0);
+		if (n > 0)
+			goto l_copy;
+		else
+			goto l_leave;
+	}
+	
 	/* Define the read method. */
 	atomic_store(&dev->sync_read, 1);
 
@@ -882,7 +919,8 @@ int os_read(int dev_id, char *buf, int count)
 	
 	/* Release the sync. read operation. */
 	atomic_store(&dev->sync_read, 0);
-	
+
+l_copy:
 	/* Test the user buffer. */
 	OS_TRAP_IF(count < n);
 	
@@ -891,7 +929,8 @@ int os_read(int dev_id, char *buf, int count)
 
 	/* Release the pending input buffer. */
 	cab_q_add(dev, 0, 1);
-	
+
+l_leave:
 	/* Leave the critical section. */
 	os_cs_leave(&dev->read_mutex);	
 
@@ -906,13 +945,17 @@ int os_read(int dev_id, char *buf, int count)
  * @buf:     pointer to the payload.
  * @count:   size of the payload.
  *
- * Return:	None.
+ * Return:	the number of the copied bytes.
  **/
-void os_write(int dev_id, char *buf, int count)
+int os_write(int dev_id, char *buf, int count)
 {
 	cab_dev_t *dev;
 	cab_io_t *out;
-
+	int n, pending_out;
+	
+	/* Initialize the return value. */
+	n = 0;
+			
 	/* Entry conditon. */
 	OS_TRAP_IF(buf == NULL || count < 1);
 
@@ -925,12 +968,22 @@ void os_write(int dev_id, char *buf, int count)
 	/* Enter the critical section. */
 	os_cs_enter(&dev->write_mutex);
 
-	/* Test the state of the output buffer. */
-	OS_TRAP_IF(out->b_size < count || dev->pending_out);
+	/* Copy the state of the output buffer. */
+	pending_out = atomic_load(&dev->pending_out);
 
-	/* Change the output state. */
-	atomic_store(&dev->pending_out, 1);
-	atomic_store(&dev->sync_write, 1);
+	/* Test the device mode. */
+	if (dev->mode != O_NBLOCK) {
+		/* Change the output state. */
+		atomic_store(&dev->sync_write, 1);
+	}
+	else {
+		/* Test the state of the output buffer. */
+		if (pending_out)
+			goto l_leave;
+	}
+	
+	/* Test the state of the output buffer. */
+	OS_TRAP_IF(out->b_size < count || pending_out);
 
 	/* Fill the output buffer. */
 	os_memcpy(out->b_start, out->b_size, buf, count);
@@ -938,14 +991,24 @@ void os_write(int dev_id, char *buf, int count)
 	/* Save the size of the payload. */
 	atomic_store(&out->p_count, count);
 		
+	/* Change the output state. */
+	atomic_store(&dev->pending_out, 1);
+		
 	/* Send the control message to the other device. */
 	cab_q_add(dev, count, 0);
 
 	/* Suspend the caller until the action is executed. */
-	os_sem_wait(&dev->suspend_writer);
+	if (dev->mode != O_NBLOCK)
+		os_sem_wait(&dev->suspend_writer);
 
+	/* Update the return value. */
+	n = count;
+
+l_leave:
 	/* Leave the critical section. */
-	os_cs_leave(&dev->write_mutex);	
+	os_cs_leave(&dev->write_mutex);
+		
+	return n;
 }
 
 /**
@@ -1054,17 +1117,18 @@ void os_aio_action(int dev_id, os_aio_cb_t *cb)
  * for the shared memory transer.
  *
  * @device_name:  name of the shared memory deivce: "/van_tcl" or "/tcl".
- *
+ * @mode:         0: blocking I/O, O_NBLOCK: non blocking I/O.
+ * 
  * Return:	the device id.
  **/
-int os_open(char *device_name)
+int os_open(char *device_name, int mode)
 {
 	os_queue_elem_t msg;
 	cab_conf_t *conf;
 	cab_dev_t *dev;
 	void *addr;
 	int i;
-	
+
 	/* Entry condition. */
 	OS_TRAP_IF(device_name == NULL);
 
@@ -1087,6 +1151,10 @@ int os_open(char *device_name)
 	dev->id = conf->id;
 	dev->name = conf->dev_name;
 
+	/* Test the device mode. */
+	if (mode == O_NBLOCK)
+		dev->mode = O_NBLOCK;
+	
 	/* Get the reference to my named semaphore. */
 	dev->my_int = sem_open(conf->my_int_n, O_CREAT);
 	OS_TRAP_IF(dev->my_int == SEM_FAILED);

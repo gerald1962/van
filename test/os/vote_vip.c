@@ -133,7 +133,7 @@ static void vip_wait(void)
  **/
 static int vip_stop(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2321, 2321, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2330, 2330, 0 };
 	int stat;
 
 	/* Remove the py device. */
@@ -227,7 +227,7 @@ static int vip_van_read_cb(int dev_id, char *buf, int count)
 
 static int vip_aio(void)
 {
-	os_statistics_t expected = { 10, 10, 4, 2321, 2317, 4 };
+	os_statistics_t expected = { 10, 10, 4, 2330, 2326, 4 };
 	os_aio_cb_t cb;
 	int stat;
 
@@ -310,7 +310,7 @@ static void vip_van_zsync_2048b(os_queue_elem_t *m)
 
 static int vip_zsync_2048b(void)
 {
-	os_statistics_t expected = { 10, 10, 4, 2321, 2317, 4 };
+	os_statistics_t expected = { 10, 10, 4, 2330, 2326, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -371,7 +371,7 @@ static void vip_van_sync_1b(os_queue_elem_t *m)
 
 static int vip_sync_1b(void)
 {
-	os_statistics_t expected = { 10, 10, 4, 2319, 2315, 4 };
+	os_statistics_t expected = { 10, 10, 4, 2328, 2324, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -398,7 +398,7 @@ static int vip_sync_1b(void)
  **/
 static int vip_start(void)
 {
-	os_statistics_t expected = { 10, 10, 4, 2317, 2313, 4 };
+	os_statistics_t expected = { 10, 10, 4, 2326, 2322, 4 };
 	int stat;
 
 	/* Create the control semaphore for the main process. */
@@ -409,10 +409,10 @@ static int vip_start(void)
 	vip.py  = os_thread_create("py", VIP_PRIO, VIP_QSIZE);
 
 	/* Install the van device. */
-	vip.van_id = os_open("/van_py");
+	vip.van_id = os_open("/van_py", 0);
 	
 	/* Install the python device. */
-	vip.py_id = os_open("/python");
+	vip.py_id = os_open("/python", 0);
 	
 	/* Verify the OS state. */
 	stat = test_os_stat(&expected);

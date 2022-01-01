@@ -14,11 +14,6 @@
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
 
-#define MANY_CABLE
-
-
-// #define OS_CLOSE_NET
-
 // #define USE_PTHREAD_SPIN  /* Replace mutex with spin interfaces. */
 // #define USE_OS_RT         /* Hard realtime priority. */
 
@@ -32,7 +27,7 @@
 #define OS_MAX_NAME_LEN  16
 
 /* Number of the supported threads. */
-#define OS_THREAD_LIMIT  7
+#define OS_THREAD_LIMIT  16
 
 /* Limit of the thread input queue. */
 #define OS_QUEUE_LIMIT  1024
@@ -45,6 +40,10 @@
 
 /* Size of the UL/DL transfer buffer. */
 #define OS_BUF_SIZE  2048
+
+/* Neither the os_open() nor any subsequent I/O operations on the device
+ * descriptor which is returned will cause the calling process to wait. */
+#define O_NBLOCK  0x1
 
 /*============================================================================
   MACROS
@@ -183,11 +182,7 @@ typedef struct {
 void os_statistics(os_statistics_t *stat);
 
 /* Bootstrapping. */
-#if defined MANY_CABLE
 void os_init(int creator);
-#else
-void os_init(void);
-#endif
 void os_exit(void);
 
 /* Trace handling. */
@@ -236,12 +231,12 @@ void os_thread_destroy(void *thread);
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
-/* Shared memory. */
-int os_open(char *device_name);
+/* Shared memory devices. */
+int os_open(char *device_name, int mode);
 void os_close(int dev_id);
 
 /* Synchronous I/O operations. */
-void os_write(int dev_id, char *buf, int count);
+int os_write(int dev_id, char *buf, int count);
 int os_zread(int dev_id, char **buf, int count);
 int os_read(int dev_id, char *buf, int count);
 

@@ -9,7 +9,7 @@ int main(void)
 	
 	os_init(0);
 	os_trace_button(0);
-	dev_id = os_open("/python");
+	dev_id = os_open("/python", 0);
 
 	for(done = 0, i = 0; ! done; i++) {
 		n = os_read(dev_id, buf, OS_BUF_SIZE);		

@@ -239,7 +239,7 @@ static void but_msg_send(void *thread)
  **/
 static int but_multi_thread(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2313, 2313, 0 };
+	os_statistics_t expected = { 2, 2, 0, 2322, 2322, 0 };
 	char name[OS_MAX_NAME_LEN];
 	void **p;
 	int i, stat;
