@@ -1,0 +1,76 @@
+1. Abstract
+-----------
+o New cable theory, see ~/github/van/os/os_cable.c
+
+In detail I will present it later, since it is not complete.
+
+1.1 Motivation
+--------------
+Connect any device like battery or display with a controller.
+
+You can do it with with a certain vision:
+o What is a van cable ?
+o How does work a van cable ?
+
+If I am pleased with the outcome, there is a power point presentation.
+
+2. Download
+-----------
+cd ~
+rm -fr github
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+
+3. Overview
+-----------
+cd  ~/github/van
+tree
+
+4. Delivery Test
+----------------
+cd ~/github/van/test/shared_memory/site
+make all
+./site_test.sh 11
+
+5. Van Lib
+----------
+cd ~/github/van/lib
+make lib
+
+6. IPC Test
+-----------
+Open 2 terminals
+
+6.1.1. Vat Terminal
+...................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+6.1.2. Pot Terminal
+................
+cd ~/github/van/test/shared_memory/pot
+make
+./pot
+
+7. Python Test
+--------------
+Open 2 terminals.
+
+7.1.1. Vat Terminal
+...................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+7.3.2. Python Terminal
+......................
+cd ~/github/van/test/python_c_interface
+./van.py
+
+6. Coverage
+-----------
+cd ~/github/van/test/os
+make can
+./vote
