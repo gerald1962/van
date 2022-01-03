@@ -113,7 +113,9 @@ typedef struct {
  * @n_wr_done:    if 1, the py N writer has done the data generation.
  * @suspend:      suspend the main process while the test is running.
  * @c_id:         id of the ctrl. tech. or van shm device.
+ * @c_wait_id:    id of the assigned controller wait element.
  * @n_id:         id of the py or tcl shm deice.
+ * @n_wait_id:    id of the assigned neighbour wait element.
  * @n_writer:     address of the ctrl. tech. writer thread.
  * @c_reader:     address of the neighbour reader thread.
  * @n_reader:     address of the ctrl. tech. reader thread.
@@ -152,7 +154,9 @@ static struct site_stat_s {
 	atomic_int  n_wr_done;
 	sem_t   suspend;
 	int     c_id;
+	int     c_wait_id;
 	int     n_id;
+	int     n_wait_id;
 	
 	void   *c_writer;
 	void   *c_reader;
@@ -182,7 +186,7 @@ static char *io_to_string(io_t io);
  *
  * Return:	None.
  **/
-void site_resume(void)
+static void site_resume(void)
 {
 	TRACE(("%s [p:nain,s:suspended,m:resume]\n", P));
 
@@ -194,14 +198,19 @@ void site_resume(void)
  * site_nb_sync_n_write() - the neighbour sends data with the non
  * blocking synchronous write operation to the ctrl. tech.
  *
+ * @wait_cond:  if we return 1, repeat the write operation.
+ *
  * Return:	0, if the write operation is complete.
  **/
-static int site_nb_sync_n_write(void)
+static int site_nb_sync_n_write(int *wait_cond)
 {
 	struct site_stat_s *s;
 	char *mode, *buf;
 	int done, size, n;
-
+	
+	/* Initialize the return value. */
+	*wait_cond = 0;
+	
 	/* Get the pointer to the site state. */
 	s = &site_stat;
 
@@ -241,9 +250,11 @@ static int site_nb_sync_n_write(void)
 
 	/* Send the buffer. */
 	n = os_write(s->n_id, buf, size);
-	if (n < 1)
+	if (n < 1) {
+		*wait_cond = 1;
 		return 1;
-
+	}
+	
 	OS_TRAP_IF(n != size);
 	TRACE(("neighbour> sent: [i/o:%s, c:%d, b:\"%c...\", s:%d]\n",
 	       mode, s->n_wr_count, *buf, size));
@@ -257,13 +268,18 @@ static int site_nb_sync_n_write(void)
  * site_nb_sync_n_read() - the neighbour thread analyzes data from the ctrl_tech
  * with the sync zero copy read interface or with the copy read interface.
  *
+ * @wait_cond:  if we return 1, repeat the read operation.
+ *
  * Return:	0, if the read operation is complete.
  **/
-static int site_nb_sync_n_read(void)
+static int site_nb_sync_n_read(int *wait_cond)
 {
 	struct site_stat_s *s;
 	char *zbuf, *b, *mode;
 	int done, size, n, stat;
+	
+	/* Initialize the return value. */
+	*wait_cond = 0;
 
 	/* Get the pointer to the site state. */
 	s = &site_stat;
@@ -294,9 +310,11 @@ static int site_nb_sync_n_read(void)
 
 		/* Wait for data from the ctrl_tech. */
 		n = os_read(s->n_id, s->n_rd_b, OS_BUF_SIZE);
-		if (n < 1)
+		if (n < 1) {
+			*wait_cond = 1;
 			return 1;
-			
+		}
+		
 		OS_TRAP_IF(n != size);
 		b = s->n_rd_b;
 	}
@@ -306,9 +324,11 @@ static int site_nb_sync_n_read(void)
 		
 		/* Wait for data from the ctrl_tech. */
 		n = os_zread(s->n_id, &zbuf, OS_BUF_SIZE);
-		if (n < 1)
+		if (n < 1) {
+			*wait_cond = 1;
 			return 1;
-			
+		}
+		
 		OS_TRAP_IF(zbuf == NULL || n != size);
 		b = zbuf;
 	}
@@ -359,18 +379,38 @@ static int site_nb_sync_n_read(void)
  **/
 static void site_nb_sync_n_exec(os_queue_elem_t *msg)
 {
-	int busy_read, busy_write;
+	struct site_stat_s *s;
+	int busy_read, busy_write, wait_for_in, wait_for_out;
 
 	/* Initialize the return values. */
 	busy_read  = 1;
 	busy_write = 1;
 	
+	/* Initialize the wait condition for cable I/O. */
+	wait_for_in  = 0;
+	wait_for_out = 0;
+
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
 	/* The neighbour thread analyzes data from the ctrl_tech with the non
 	 * blocking sync zero copy or with the copy read interface or sends data
 	 * with the non blocking write operation. */
 	while (busy_read || busy_write) {
-		busy_read  = site_nb_sync_n_read();
-		busy_write = site_nb_sync_n_write();
+		/* Try to continue the I/O transfer. */
+		busy_read  = site_nb_sync_n_read(&wait_for_in);
+		busy_write = site_nb_sync_n_write(&wait_for_out);
+		
+		/* Test the final condition. */
+		if (! busy_write && ! busy_read)
+			break;
+		
+		/* Optimize the loop to transfer I/O data. */
+		if (wait_for_in || wait_for_out) {
+			TRACE(("neighbour> waiting: [input:%d, output:%d]\n",
+			       wait_for_in, wait_for_out));
+			os_wait(s->n_wait_id);
+		}
 	}
 }
 
@@ -378,13 +418,18 @@ static void site_nb_sync_n_exec(os_queue_elem_t *msg)
  * site_nb_sync_c_read() - the ctrl. tech. thread analyzes data from the ctrl_tech
  * with the non blocking sync zero copy or with the copy read interface.
  *
+ * @wait_cond:  if we return 1, repeat the read operation.
+ *
  * Return:	0, if the read operation is complete.
  **/
-static int site_nb_sync_c_read(void)
+static int site_nb_sync_c_read(int *wait_cond)
 {
 	struct site_stat_s *s;
 	char *zbuf, *b, *mode;
 	int done, size, n, stat;
+	
+	/* Initialize the return value. */
+	*wait_cond = 0;
 
 	/* Get the pointer to the site state. */
 	s = &site_stat;
@@ -415,9 +460,11 @@ static int site_nb_sync_c_read(void)
 
 		/* Wait for data from the neighbour. */
 		n = os_read(s->c_id, s->c_rd_b, OS_BUF_SIZE);
-		if (n < 1)
+		if (n < 1) {
+			*wait_cond = 1;
 			return 1;
-			
+		}
+		
 		OS_TRAP_IF(n != size);
 		b = s->c_rd_b;
 	}
@@ -427,9 +474,11 @@ static int site_nb_sync_c_read(void)
 		
 		/* Wait for data from the neighbour. */
 		n = os_zread(s->c_id, &zbuf, OS_BUF_SIZE);
-		if (n < 1)
+		if (n < 1) {
+			*wait_cond = 1;
 			return 1;
-			
+		}
+		
 		OS_TRAP_IF(zbuf == NULL || n != size);
 		b = zbuf;
 	}
@@ -474,14 +523,19 @@ static int site_nb_sync_c_read(void)
  * site_nb_sync_c_write() - the ctrl. tech. sends data with the non
  * blocking synchronous write operation to the neighbour: either python or tcl/tk.
  *
+ * @wait_cond:  if we return 1, repeat the write operation.
+ *
  * Return:	0, if the write operation is complete.
  **/
-static int site_nb_sync_c_write(void)
+static int site_nb_sync_c_write(int *wait_cond)
 {
 	struct site_stat_s *s;
 	char *mode, *buf;
 	int done, size, n;
 
+	/* Initialize the return value. */
+	*wait_cond = 0;
+	
 	/* Get the pointer to the site state. */
 	s = &site_stat;
 
@@ -521,9 +575,11 @@ static int site_nb_sync_c_write(void)
 
 	/* Send the buffer. */
 	n = os_write(s->c_id, buf, size);
-	if (n < 1)
+	if (n < 1) {
+		*wait_cond = 1;
 		return 1;
-
+	}
+	
 	OS_TRAP_IF(n != size);
 	TRACE(("ctrl_tech> sent: [i/o:%s, c:%d, b:\"%c...\", s:%d]\n",
 	       mode, s->c_wr_count, *buf, size));
@@ -543,17 +599,37 @@ static int site_nb_sync_c_write(void)
  **/
 static void site_nb_sync_c_exec(os_queue_elem_t *msg)
 {
-	int busy_write, busy_read;
+	struct site_stat_s *s;
+	int busy_write, busy_read, wait_for_in, wait_for_out;
 
-	/* Initialize the return values. */
+	/* Initialize the return values of cable wire. */
 	busy_write = 1;
 	busy_read  = 1;
 
+	/* Initialize the wait condition for cable I/O. */
+	wait_for_in  = 0;
+	wait_for_out = 0;
+	
+	/* Get the pointer to the site state. */
+	s = &site_stat;
+
 	/* The C ctrl_tech thread generates data for the py or tcl neighbour or
 	 * receives data from the neighbour. */
-	while (busy_write || busy_read) {
-		busy_write = site_nb_sync_c_write();
-		busy_read = site_nb_sync_c_read();
+	for (;;) {
+		/* Try to continue the I/O transfer. */
+		busy_write = site_nb_sync_c_write(&wait_for_in);
+		busy_read  = site_nb_sync_c_read(&wait_for_out);
+
+		/* Test the final condition. */
+		if (! busy_write && ! busy_read)
+			break;
+		
+		/* Optimize the loop to transfer I/O data. */
+		if (wait_for_in || wait_for_out) {
+			TRACE(("ctrl_tech> waiting: [input:%d, output:%d]\n",
+			       wait_for_in, wait_for_out));
+			os_wait(s->c_wait_id);
+		}
 	}
 }
 
@@ -1129,7 +1205,7 @@ static void site_cleanup(void)
 	
 	/* Get the pointer to the site state. */
 	s = &site_stat;
-	
+
 	/* Remove all test threads. */
 	os_thread_destroy(s->c_writer);
 	os_thread_destroy(s->c_reader);
@@ -1138,10 +1214,17 @@ static void site_cleanup(void)
 	os_thread_destroy(s->ctrl_tech);
 	os_thread_destroy(s->neighbour);
 	
-	/* Remove the n and the c shm device. */
+	/* Remove the N and the C shm device. */
 	os_close(s->n_id);	
 	os_close(s->c_id);	
 
+	/* Release the wait ressources. */
+	if (s->c_io == IO_SYNC_NB_COPY || s->c_io == IO_SYNC_NB_ZERO)
+		os_wait_release(s->c_wait_id);
+	
+	if (s->n_io == IO_SYNC_NB_COPY || s->n_io == IO_SYNC_NB_ZERO)
+		os_wait_release(s->n_wait_id);
+	
 	/* Release the control semaphore for the main process. */
 	os_sem_delete(&s->suspend);
 
@@ -1192,6 +1275,7 @@ static void site_init(void)
 	struct site_stat_s *s;
 	os_queue_elem_t msg;
 	os_aio_cb_t aio;
+	int wait_list[1];
 
 	TRACE(("%s [p:main,s:boot,o:init]\n", P));
 
@@ -1209,15 +1293,30 @@ static void site_init(void)
 	os_trace_button(s->os_trace);
 
 	/* Install the cable from the ctrl. tech. to the neighbour. */
-	if (s->c_io == IO_SYNC_NB_COPY || s->c_io == IO_SYNC_NB_ZERO)
+	if (s->c_io == IO_SYNC_NB_COPY || s->c_io == IO_SYNC_NB_ZERO) {
 		s->c_id = os_open(s->cc.l_name, O_NBLOCK);
-	else
+
+		/* Avoid an endlos loop, if no ctrl. tech. I/O data are 
+		 * available. */
+		wait_list[0] = s->c_id;
+		s->c_wait_id = os_wait_init(wait_list, 1);
+	}
+	else {
 		s->c_id = os_open(s->cc.l_name, 0);
+	}
 		
-	if (s->n_io == IO_SYNC_NB_COPY || s->n_io == IO_SYNC_NB_ZERO)
-		s->n_id  = os_open(s->cc.f_name, O_NBLOCK);
-	else
-		s->n_id  = os_open(s->cc.f_name, 0);
+	/* Install the cable from neighbour to the the ctrl. tech. */
+	if (s->n_io == IO_SYNC_NB_COPY || s->n_io == IO_SYNC_NB_ZERO) {
+		s->n_id = os_open(s->cc.f_name, O_NBLOCK);
+		
+		/* Avoid an endlos loop, if no neighbour I/O data are 
+		 * available. */
+		wait_list[0] = s->n_id;
+		s->n_wait_id = os_wait_init(wait_list, 1);
+	}
+	else {
+		s->n_id = os_open(s->cc.f_name, 0);
+	}
 	
 	/* Install all test threads. */
 	s->c_writer = os_thread_create("c_writer", PRIO, Q_SIZE);

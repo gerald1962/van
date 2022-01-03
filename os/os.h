@@ -13,7 +13,6 @@
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-
 // #define USE_PTHREAD_SPIN  /* Replace mutex with spin interfaces. */
 // #define USE_OS_RT         /* Hard realtime priority. */
 
@@ -239,6 +238,9 @@ void os_close(int dev_id);
 int os_write(int dev_id, char *buf, int count);
 int os_zread(int dev_id, char **buf, int count);
 int os_read(int dev_id, char *buf, int count);
+int os_wait_init(int *list, int len);
+void os_wait_release(int id);
+void os_wait(int id);
 
 /* Asynchronous I/O operations. */
 void os_aio_action(int dev_id, os_aio_cb_t *cb);

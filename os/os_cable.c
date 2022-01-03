@@ -212,6 +212,8 @@ typedef struct {
  * @suspend_reader:    suspend the read caller in read.
  * @sync_write:        if 1, the user has invoked write.
  * @sync_read:         if 1, the user has invoked read.
+ * @sync_wait          if 1, update the wait condition.
+ * @wait_id;           assignd id, to select the wait element.
  * @write_mutex:       protect the critical sections in write.
  * @read_mutex:        protect the critical sections in read.
  **/
@@ -242,9 +244,33 @@ typedef struct {
 	sem_t   suspend_reader;
 	atomic_int       sync_read;
 	atomic_int       sync_write;
+	atomic_int       sync_wait;
+	int              wait_id;
+
 	pthread_mutex_t  write_mutex;
 	pthread_mutex_t  read_mutex;
 } cab_dev_t;
+
+/**
+ * cab_wait_t - state of a suspended caller in os_wait, who is waiting for a
+ * read or write event.
+ *
+ * @mutex:     protect the critical section in the wait operations.
+ * @id:        id of the wait element.
+ * @assigned:  if 1, the element has been addressed.
+ * @suspend:   suspend the wait caller.
+ * @probe:     if 1, the caller shall probe all input and output wires.
+ **/
+typedef struct {
+	pthread_mutex_t  mutex;
+
+	struct cab_wait_elem_s {
+		int id;
+		int assigned;
+		sem_t       suspend;
+		atomic_int  probe;
+	} elem[CAB_COUNT];
+} cab_wait_t;
 
 /*============================================================================
   LOCAL DATA
@@ -269,6 +295,9 @@ static cab_conf_t cab_conf[] = {
 
 /* List of all shared memory devices. */
 static cab_dev_t *cab_device[CAB_COUNT];
+
+/* State of the suspended caller in the wait operations. */
+static cab_wait_t cab_wait;
 
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -320,8 +349,36 @@ static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
 }
 
 /**
- * cab_int_write() - resume the suspend caller in os_write or request output
- * data from the aio user.
+ * cab_wait_trigger() - the interrupt handler resumes the suspended os_wait
+ * caller, if events are available for the input or output wire for all devices,
+ * that interest them.
+ *
+ * @dev:      pointer to the shm device.
+ * event:     readable or writeable.
+ *
+ * Return:	None.
+ **/
+static void cab_wait_trigger(cab_dev_t *dev, char *event)
+{
+	struct cab_wait_elem_s *elem;
+	int probe;
+	
+	/* Get the pointer to the wait state. */
+	elem = &cab_wait.elem[dev->wait_id];
+	OS_TRAP_IF(! elem->assigned);
+	
+	/* Update the wait condition. */
+	probe = atomic_exchange(&elem->probe, 1);
+	if (! probe) {
+		OS_TRACE(("%s %s: wakeup: [i=%d, e=%s]\n",
+			  P, dev->name, dev->wait_id, event));
+		os_sem_release(&elem->suspend);
+	}
+}
+
+/**
+ * cab_int_write() - resume the suspend caller in os_write, os_wait or request
+ * output data from the aio user.
  *
  * @dev:  pointer to the device state.
  * @out:  pointer to the output channel.
@@ -330,16 +387,22 @@ static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
  **/
 static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
 {
-	int aio_use, sync, pending_out, count;
-	
+	int aio_use, sync_write, sync_wait, pending_out, count;
+
 	/* Test the aio status request. */
 	aio_use = atomic_load(&dev->aio_use);
 	if (! aio_use) {
 		/* Test the write method. */
-		sync = atomic_exchange(&dev->sync_write, 0);
-		if (sync)
+		sync_write = atomic_exchange(&dev->sync_write, 0);
+		if (sync_write) {
 			os_sem_release(&dev->suspend_writer);
-		
+		}
+		else {
+			/* Test the wait condition. */
+			sync_wait = atomic_load(&dev->sync_wait);
+			if (sync_wait)
+				cab_wait_trigger(dev, "writeable");
+		}
 		return;
 	}
 
@@ -368,7 +431,7 @@ static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
 
 /**
  * cab_int_read() - pass the input payload to the async. caller or resume the
- * suspended caller in read or zread.
+ * suspended caller in os_read, os_zread or os_wait.
  *
  * @dev:    pointer to the device state.
  * @in:     pointer to the input channel.
@@ -378,8 +441,8 @@ static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
  **/
 static void cab_int_read(cab_dev_t *dev, cab_io_t *in, int count)
 {
-	int aio_use, sync, consumed;
-	
+	int aio_use, sync_read, consumed, sync_wait;
+
 	/* Test the aio status. */
 	aio_use = atomic_load(&dev->aio_use);
 	if (aio_use) {
@@ -411,10 +474,16 @@ static void cab_int_read(cab_dev_t *dev, cab_io_t *in, int count)
 		atomic_store(&in->p_count, count);
 			
 		/* Test the read method. */
-		sync = atomic_exchange(&dev->sync_read, 0);
-
-		if (sync)
+		sync_read = atomic_exchange(&dev->sync_read, 0);
+		if (sync_read) {
 			os_sem_release(&dev->suspend_reader);
+		}
+		else {
+			/* Test the wait condition. */
+			sync_wait = atomic_load(&dev->sync_wait);
+			if (sync_wait)
+				cab_wait_trigger(dev, "readable");
+		}
 	}
 }
 
@@ -737,7 +806,7 @@ void os_close(int dev_id)
 	/* Map the id to the device state. */
 	dev = cab_dev_get(dev_id);
 	
-	/* Resume the interrup thread, to terminate it. */
+	/* Resume the interrupt thread, to terminate it. */
 	atomic_store(&dev->down, 1);
 	os_sem_release(dev->my_int);
 	
@@ -780,6 +849,119 @@ void os_close(int dev_id)
 	cab_device[i] = NULL;
 	
 	OS_FREE(dev);
+}
+
+/** 
+ * os_wait() - the caller shall be suspended, until a read or write event is
+ * available for the wires of a cable.
+ *
+ * @wait_id:  id of the wait element.
+ *
+ * Return:	None.
+ **/
+void os_wait(int id)
+{
+	struct cab_wait_elem_s *elem;
+	int probe;
+
+	/* Entry condition. */
+	OS_TRAP_IF(id < 0 || id >= CAB_COUNT);
+	
+	/* Get the pointer to the wait state. */
+	elem = &cab_wait.elem[id];
+	OS_TRAP_IF(! elem->assigned);
+	
+	/* Test the state of the merged state of all input and output wires. */
+	probe = atomic_exchange(&elem->probe, 0);
+	if (! probe)
+		os_sem_wait(&elem->suspend);
+}
+
+/** 
+ * os_wait_release() - free the wait element.
+ *
+ * @id:  id of the assigned element.
+ *
+ * Return:	None.
+ **/
+void os_wait_release(int id)
+{
+	struct cab_wait_elem_s *elem;
+	cab_wait_t *w;
+	
+	/* Get the pointer to the wait state. */
+	w = &cab_wait;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&w->mutex);
+	
+	/* Entry condition. */
+	OS_TRAP_IF(id < 0 || id >= CAB_COUNT);
+
+	/* Get the pointer to the wait element. */
+	elem = &w->elem[id];
+	OS_TRAP_IF(! elem->assigned);
+	
+	/* Free the wait element. */
+	elem->assigned = 0;
+		
+	/* Leave the critical section. */
+	os_cs_leave(&w->mutex);
+}
+
+/** 
+ * os_wait_init() - if a device has been opened with O_NBLOCK - non blocking mode, it is allowed to suspend the
+ * caller. He wants be resumed if reading or writing is possible again, i.e. if
+ * one or the other wire of a cable can be used. 
+ *
+ * @list:  list of device ids.
+ * @len:   number of the list elements.
+ *
+ * Return:	the id of the assigned wait element.
+ **/
+int os_wait_init(int *list, int len)
+{
+	struct cab_wait_elem_s *elem;
+	cab_wait_t *w;
+	cab_dev_t *dev;
+	int i, wait_id;
+	
+	/* Entry condition. */
+	OS_TRAP_IF(list == NULL || len < 1);
+
+	/* Get the pointer to the wait state. */
+	w = &cab_wait;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&w->mutex);
+
+	/* Search for a free wait element. */
+	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
+		if (! elem->assigned)
+			break;
+	}
+
+	OS_TRAP_IF(i >= CAB_COUNT);
+	wait_id = i;
+	elem->assigned = 1;
+
+	/* Run thru the device id list. */
+	for (i = 0; i < len; i++) {
+		/* Request the pointer to the device state. */
+		dev = cab_dev_get(list[i]);
+
+		/* Test the device mode. */
+		OS_TRAP_IF(dev->mode != O_NBLOCK);
+
+		/* Propagate the wait condition to the device state. */
+		dev->wait_id = wait_id;
+		atomic_store(&dev->sync_wait, 1);
+	}
+
+	/* Leave the critical section. */
+	os_cs_leave(&w->mutex);
+
+	return wait_id;
 }
 
 /**
@@ -1275,12 +1457,25 @@ void os_cab_ripcord(int coverage)
 void os_cab_exit(void)
 {
 	cab_shell_t *s;
+	cab_wait_t *w;
 	char *name;
 	int i, rv;
 	
 	/* Test the state of all shared memory devices. */
 	for (i = 0; i < CAB_COUNT; i++)
 		OS_TRAP_IF(cab_device[i] != NULL);
+
+	/* Get the pointer to the wait state. */
+	w = &cab_wait;
+	
+	/* Release the resources for the wait condition. */
+	for (i = 0; i < CAB_COUNT; i++) {
+		/* Test the state of the wait condition. */
+		OS_TRAP_IF(w->elem[i].assigned);
+		os_sem_delete(&w->elem[i].suspend);
+	}
+	
+	os_cs_destroy(&w->mutex);
 
 	/* Get the address of the shm shell. */
 	s = &cab_shell;
@@ -1321,6 +1516,10 @@ void os_cab_exit(void)
  **/
 void os_cab_init(os_conf_t *conf, int creator)
 {
+	struct cab_wait_elem_s *elem;
+	cab_wait_t *w;
+	int i;
+
 	/* Save the reference to the OS configuration. */
 	os_conf_p = conf;
 
@@ -1334,4 +1533,15 @@ void os_cab_init(os_conf_t *conf, int creator)
 
 	/* Create the clean shared memory area. */
 	cab_map();
+
+	/* Get the pointer to the wait state. */
+	w = &cab_wait;
+	
+	/* Creaate the resources for the wait condition. */
+	os_cs_init(&w->mutex);
+	
+	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
+		elem->id = i;
+		os_sem_init(&elem->suspend, 0);
+	}
 }
