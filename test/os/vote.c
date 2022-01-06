@@ -4,7 +4,7 @@
  * Coverage of the VAN operating system tests:
  * van OS test environment.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 2330, 2330, 0 };
+	os_statistics_t expected = { 3, 3, 0, 2330, 2330, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -82,7 +82,7 @@ static int test_case_shutdown(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 2, 2, 0, 0, 0, 0 };
+	os_statistics_t expected = { 3, 3, 0, 0, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
@@ -110,8 +110,8 @@ static void test_run(void)
 	/* Basic van OS interfaces under test. */
 	but_run();
 	
-	/* Test the van device interworking with the python device. */
-	vip_run();
+	/* Test the controller interworking with the battery endpoind. */
+	cob_run();
 	
 	test_set_process(TEST_ADD(shutdown_system));
 }
@@ -290,8 +290,8 @@ int main(int argc, char *argv[])
 	/* Initialize the basic test system. */
 	but_init(&test_stat);
 	
-	/* Initialize van-py test system. */
-	vip_init(&test_stat);
+	/* Initialize controller-battery test system. */
+	cob_init(&test_stat);
 	
 	/* Test the argument counter. */
 	switch(argc) {

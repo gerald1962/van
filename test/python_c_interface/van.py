@@ -25,7 +25,7 @@ from ctypes import *  # Allow calling C functions in shared libraries.
 # VAN DLL FOR BATTERY DESIGN.
 # ============================================================================
 # Load the van shared library.
-lib_path = os.path.join(os.environ['HOME'],'github/van/lib/libvan.so')
+lib_path = os.path.join(os.environ['HOME'],'van_development/van/lib/libvan.so')
 van = CDLL(lib_path)
 
 # Declarations of the van interfaces.
@@ -106,7 +106,7 @@ def van_init():
     # for the communication with van.
     van.os_init(0)
     van.os_trace_button(0)
-    id = van.os_open(b"/python", 0)
+    id = van.os_open(b"/battery", 0)
     return id;
 #
 

@@ -4,7 +4,7 @@
  * site - Simultaneous C and N date transer experiments from the c or van
  * to a n - py or tcl - and back.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 
 /*============================================================================
@@ -66,12 +66,12 @@ typedef enum {
 /**
  * ct_t - cable type.
  *
- * @CT_VAN_PY:   van-python cable.
- * @CT_VAN_TCL:  van-tcl cable.
+ * @CT_CTRL_BA:  controller-battery cable.
+ * @CT_CTRL_DI:  controller-display cable.
  **/
 typedef enum {
-	CT_VAN_PY,
-	CT_VAN_TCL
+	CT_CTRL_BA,
+	CT_CTRL_DI
 } ct_t;
 
 /**
@@ -249,7 +249,7 @@ static int site_nb_sync_n_write(int *wait_cond)
 		*buf = FINAL_CHAR;
 
 	/* Send the buffer. */
-	n = os_write(s->n_id, buf, size);
+	n = os_c_write(s->n_id, buf, size);
 	if (n < 1) {
 		*wait_cond = 1;
 		return 1;
@@ -309,7 +309,7 @@ static int site_nb_sync_n_read(int *wait_cond)
 		os_memset(s->n_rd_b, 0, OS_BUF_SIZE);
 
 		/* Wait for data from the ctrl_tech. */
-		n = os_read(s->n_id, s->n_rd_b, OS_BUF_SIZE);
+		n = os_c_read(s->n_id, s->n_rd_b, OS_BUF_SIZE);
 		if (n < 1) {
 			*wait_cond = 1;
 			return 1;
@@ -323,7 +323,7 @@ static int site_nb_sync_n_read(int *wait_cond)
 		zbuf = NULL;
 		
 		/* Wait for data from the ctrl_tech. */
-		n = os_zread(s->n_id, &zbuf, OS_BUF_SIZE);
+		n = os_c_zread(s->n_id, &zbuf, OS_BUF_SIZE);
 		if (n < 1) {
 			*wait_cond = 1;
 			return 1;
@@ -341,7 +341,7 @@ static int site_nb_sync_n_read(int *wait_cond)
 		/* Test the read mode. */
 		if (s->n_io == IO_SYNC_NB_ZERO) {
 			/* Release the pending N buffer. */
-			n = os_zread(s->n_id, NULL, 0);
+			n = os_c_zread(s->n_id, NULL, 0);
 			OS_TRAP_IF(n > 0);
 		}
 
@@ -409,7 +409,7 @@ static void site_nb_sync_n_exec(os_queue_elem_t *msg)
 		if (wait_for_in || wait_for_out) {
 			TRACE(("neighbour> waiting: [input:%d, output:%d]\n",
 			       wait_for_in, wait_for_out));
-			os_wait(s->n_wait_id);
+			os_c_wait(s->n_wait_id);
 		}
 	}
 }
@@ -459,7 +459,7 @@ static int site_nb_sync_c_read(int *wait_cond)
 		os_memset(s->c_rd_b, 0, OS_BUF_SIZE);
 
 		/* Wait for data from the neighbour. */
-		n = os_read(s->c_id, s->c_rd_b, OS_BUF_SIZE);
+		n = os_c_read(s->c_id, s->c_rd_b, OS_BUF_SIZE);
 		if (n < 1) {
 			*wait_cond = 1;
 			return 1;
@@ -473,7 +473,7 @@ static int site_nb_sync_c_read(int *wait_cond)
 		zbuf = NULL;
 		
 		/* Wait for data from the neighbour. */
-		n = os_zread(s->c_id, &zbuf, OS_BUF_SIZE);
+		n = os_c_zread(s->c_id, &zbuf, OS_BUF_SIZE);
 		if (n < 1) {
 			*wait_cond = 1;
 			return 1;
@@ -491,7 +491,7 @@ static int site_nb_sync_c_read(int *wait_cond)
 		/* Test the read mode. */
 		if (s->c_io == IO_SYNC_NB_ZERO) {
 			/* Release the pending C buffer. */
-			n = os_zread(s->c_id, NULL, 0);
+			n = os_c_zread(s->c_id, NULL, 0);
 			OS_TRAP_IF(n > 0);
 		}
 
@@ -574,7 +574,7 @@ static int site_nb_sync_c_write(int *wait_cond)
 		*buf = FINAL_CHAR;
 
 	/* Send the buffer. */
-	n = os_write(s->c_id, buf, size);
+	n = os_c_write(s->c_id, buf, size);
 	if (n < 1) {
 		*wait_cond = 1;
 		return 1;
@@ -628,7 +628,7 @@ static void site_nb_sync_c_exec(os_queue_elem_t *msg)
 		if (wait_for_in || wait_for_out) {
 			TRACE(("ctrl_tech> waiting: [input:%d, output:%d]\n",
 			       wait_for_in, wait_for_out));
-			os_wait(s->c_wait_id);
+			os_c_wait(s->c_wait_id);
 		}
 	}
 }
@@ -711,8 +711,8 @@ static void site_aio_c_rd_exec(os_queue_elem_t *msg)
 
 	/* Trigger the py interrupt hancer to invoke the async. read and write
 	 *  callback. */
-	os_aio_read(s->c_id);
-	os_aio_write(s->c_id);
+	os_c_aread(s->c_id);
+	os_c_awrite(s->c_id);
 }
 
 /**
@@ -790,8 +790,8 @@ static void site_aio_n_wr_exec(os_queue_elem_t *msg)
 
 	/* Trigger the py interrupt hancer to invoke the async. write and read
 	 *  callback. */
-	os_aio_write(s->n_id);
-	os_aio_read(s->n_id);
+	os_c_awrite(s->n_id);
+	os_c_aread(s->n_id);
 }
 
 /**
@@ -872,8 +872,8 @@ static void site_aio_n_rd_exec(os_queue_elem_t *msg)
 
 	/* Trigger the van interrupt hancer to invoke the async. write and read
 	 * callback. */
-	os_aio_write(s->n_id);
-	os_aio_read(s->n_id);
+	os_c_awrite(s->n_id);
+	os_c_aread(s->n_id);
 }
 
 /**
@@ -951,8 +951,8 @@ static void site_aio_c_wr_exec(os_queue_elem_t *msg)
 
 	/* Trigger the van interrupt hancer to invoke the async. write and read
 	 * callback. */
-	os_aio_write(s->c_id);
-	os_aio_read(s->c_id);
+	os_c_awrite(s->c_id);
+	os_c_aread(s->c_id);
 }
 
 /**
@@ -986,13 +986,13 @@ static void site_sync_n_wr_exec(os_queue_elem_t *msg)
 	/* The py n_writer thread generates data for van with the sync write
 	 * interface. */
 	for (i = 0; i < s->n_wr_cycles; i++) {
-		os_write(s->n_id, buf, s->n_buf_size);
+		os_c_write(s->n_id, buf, s->n_buf_size);
 		TRACE(("n_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->n_buf_size));
 	}
 
 	/* Send the final char to van. */
 	*buf = FINAL_CHAR;
-	os_write(s->n_id, buf, s->n_buf_size);
+	os_c_write(s->n_id, buf, s->n_buf_size);
 	TRACE(("n_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->n_buf_size));
 
 end:
@@ -1033,14 +1033,14 @@ static void site_sync_c_rd_exec(os_queue_elem_t *msg)
 		if (s->c_io == IO_SYNC_BL_COPY) {
 			/* Receive the N paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
-			n = os_read(s->c_id, buf, OS_BUF_SIZE);
+			n = os_c_read(s->c_id, buf, OS_BUF_SIZE);
 			OS_TRAP_IF(n != s->n_buf_size);
 			b = buf;
 		}
 		else {
 			/* Receive the N paylaod with the zero copy read interface. */
 			zbuf = NULL;
-			n = os_zread(s->c_id, &zbuf, OS_BUF_SIZE);
+			n = os_c_zread(s->c_id, &zbuf, OS_BUF_SIZE);
 			OS_TRAP_IF(zbuf == NULL || n != s->n_buf_size);
 			b = zbuf;
 		}
@@ -1059,7 +1059,7 @@ static void site_sync_c_rd_exec(os_queue_elem_t *msg)
 	/* Test the read mode. */
 	if (s->c_io == IO_SYNC_BL_ZERO) {
 		/* Release the pending N buffer. */
-		n = os_zread(s->c_id, NULL, 0);
+		n = os_c_zread(s->c_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
 
@@ -1104,14 +1104,14 @@ static void site_sync_n_rd_exec(os_queue_elem_t *msg)
 		if (s->n_io == IO_SYNC_BL_COPY) {
 			/* Receive the C paylaod with the copy read interface. */
 			os_memset(buf, 0, OS_BUF_SIZE);
-			n = os_read(s->n_id, buf, OS_BUF_SIZE);
+			n = os_c_read(s->n_id, buf, OS_BUF_SIZE);
 			OS_TRAP_IF(n != s->c_buf_size);
 			b = buf;
 		}
 		else {
 			/* Receive the C paylaod with the zero copy read interface. */
 			zbuf = NULL;
-			n = os_zread(s->n_id, &zbuf, OS_BUF_SIZE);
+			n = os_c_zread(s->n_id, &zbuf, OS_BUF_SIZE);
 			OS_TRAP_IF(zbuf == NULL || n != s->c_buf_size);
 			b = zbuf;
 		}
@@ -1132,7 +1132,7 @@ static void site_sync_n_rd_exec(os_queue_elem_t *msg)
 	/* Test the read mode. */
 	if (s->n_io == IO_SYNC_BL_ZERO) {
 		/* Release the pending C buffer. */
-		n = os_zread(s->n_id, NULL, 0);
+		n = os_c_zread(s->n_id, NULL, 0);
 		OS_TRAP_IF(n > 0);
 	}
 
@@ -1176,14 +1176,14 @@ static void site_sync_c_wr_exec(os_queue_elem_t *msg)
 	/* The C c_writer thread generates data for py or tcl neighbour with the
 	 * sync write interface. */
 	for (i = 0; i < s->c_wr_cycles; i++) {
-		os_write(s->c_id, buf, s->c_buf_size);
+		os_c_write(s->c_id, buf, s->c_buf_size);
 		
 		TRACE(("c_writer> sent: [i/o:s, c:%d, b:\"%c...\", s:%d]\n", i, *buf, s->c_buf_size));
 	}
 
 	/* Send the final char to py. */
 	*buf = FINAL_CHAR;
-	os_write(s->c_id, buf, s->c_buf_size);
+	os_c_write(s->c_id, buf, s->c_buf_size);
 	TRACE(("c_writer> sent: [i/o:s, c:%d, b:\"%c\", s:%d]\n", i, *buf, s->c_buf_size));
 
 l_end:
@@ -1215,15 +1215,15 @@ static void site_cleanup(void)
 	os_thread_destroy(s->neighbour);
 	
 	/* Remove the N and the C shm device. */
-	os_close(s->n_id);	
-	os_close(s->c_id);	
+	os_c_close(s->n_id);	
+	os_c_close(s->c_id);	
 
 	/* Release the wait ressources. */
 	if (s->c_io == IO_SYNC_NB_COPY || s->c_io == IO_SYNC_NB_ZERO)
-		os_wait_release(s->c_wait_id);
+		os_c_wait_release(s->c_wait_id);
 	
 	if (s->n_io == IO_SYNC_NB_COPY || s->n_io == IO_SYNC_NB_ZERO)
-		os_wait_release(s->n_wait_id);
+		os_c_wait_release(s->n_wait_id);
 	
 	/* Release the control semaphore for the main process. */
 	os_sem_delete(&s->suspend);
@@ -1294,28 +1294,28 @@ static void site_init(void)
 
 	/* Install the cable from the ctrl. tech. to the neighbour. */
 	if (s->c_io == IO_SYNC_NB_COPY || s->c_io == IO_SYNC_NB_ZERO) {
-		s->c_id = os_open(s->cc.l_name, O_NBLOCK);
+		s->c_id = os_c_open(s->cc.l_name, O_NBLOCK);
 
 		/* Avoid an endlos loop, if no ctrl. tech. I/O data are 
 		 * available. */
 		wait_list[0] = s->c_id;
-		s->c_wait_id = os_wait_init(wait_list, 1);
+		s->c_wait_id = os_c_wait_init(wait_list, 1);
 	}
 	else {
-		s->c_id = os_open(s->cc.l_name, 0);
+		s->c_id = os_c_open(s->cc.l_name, 0);
 	}
 		
 	/* Install the cable from neighbour to the the ctrl. tech. */
 	if (s->n_io == IO_SYNC_NB_COPY || s->n_io == IO_SYNC_NB_ZERO) {
-		s->n_id = os_open(s->cc.f_name, O_NBLOCK);
+		s->n_id = os_c_open(s->cc.f_name, O_NBLOCK);
 		
 		/* Avoid an endlos loop, if no neighbour I/O data are 
 		 * available. */
 		wait_list[0] = s->n_id;
-		s->n_wait_id = os_wait_init(wait_list, 1);
+		s->n_wait_id = os_c_wait_init(wait_list, 1);
 	}
 	else {
-		s->n_id = os_open(s->cc.f_name, 0);
+		s->n_id = os_c_open(s->cc.f_name, 0);
 	}
 	
 	/* Install all test threads. */
@@ -1355,7 +1355,7 @@ static void site_init(void)
 		/* Install the van read and write callback for the asynchronous actions. */
 		aio.write_cb = site_aio_c_wr_cb;
 		aio.read_cb  = site_aio_c_rd_cb;
-		os_aio_action(s->c_id, &aio);
+		os_c_action(s->c_id, &aio);
 
 		msg.cb = site_aio_c_wr_exec;
 		OS_SEND(s->c_writer, &msg, sizeof(msg));
@@ -1386,7 +1386,7 @@ static void site_init(void)
 		/* Install the python read and write callback for the asynchronous actions. */
 		aio.write_cb = site_aio_n_wr_cb;
 		aio.read_cb  = site_aio_n_rd_cb;
-		os_aio_action(s->n_id, &aio);
+		os_c_action(s->n_id, &aio);
 
 		msg.cb = site_aio_n_wr_exec;
 		OS_SEND(s->n_writer, &msg, sizeof(msg));
@@ -1426,7 +1426,7 @@ static char *io_to_string(io_t io)
 static char *ct_to_string(void)
 {
 	switch(site_stat.cc.type) {
-	case CT_VAN_PY: return "p";
+	case CT_CTRL_BA: return "p";
 	default:        return "t";
 	}
 }
@@ -1444,6 +1444,7 @@ static void site_usage(void)
 	s = &site_stat;
 
 	printf("site - simultaneous van<->python data transfer experiments\n");
+	printf("  -h    show this usage\n");
 	printf("  -c x  cable configuration: substiute x with:\n");
 	printf("        p  van-python cable: \"/van_py\"  <-> \"/python\"\n");
 	printf("        t  van-tcl cable:    \"/van_tcl\" <-> \"/tcl\"\n");
@@ -1469,7 +1470,6 @@ static void site_usage(void)
 	printf("  -r c  N fill character\n");
 	printf("  -o    activate the OS trace\n");
 	printf("  -t    activate the site trace\n");
-	printf("  -h    show this usage\n");
 	printf("\nDefault settings:\n");
 	printf("  Cabling:                 %s\n", ct_to_string());
 	printf("  Van or ctrl. tech. I/O:  %s\n", io_to_string(s->c_io));
@@ -1544,7 +1544,7 @@ static void site_buf_size(char *arg, int *size)
 /**
  * site_wr_cycles() - define the number of the C or N cycles
  *
- * @arg:     pointer to the digit string.
+ * @arg:     pointer to the current argument string.
  * @cycles:  pointer to the cycle setting.
  *
  * Return:	0 or force a software trap.
@@ -1562,7 +1562,7 @@ static void site_wr_cycles(char *arg, int *cycles)
 /**
  * site_io() - van or python I/O configuration.
  *
- * @arg:  pointer to the char string.
+ * @arg:  pointer to the current argument string.
  * @io:   pointer to I/O setting.
  *
  * Return:	0 or force a software trap.
@@ -1623,14 +1623,14 @@ static void site_cable_conf(char *arg, cc_t *cc)
 	/* Analyze the argument. */
 	switch(*arg) {
 	case 'p':
-		cc->type   = CT_VAN_PY;
-		cc->l_name = "/van_py";
-		cc->f_name = "/python";
+		cc->type   = CT_CTRL_BA;
+		cc->l_name = "/ctrl_batt";
+		cc->f_name = "/battery";
 		break;
 	case 't':
-		cc->type   = CT_VAN_TCL;
-		cc->l_name = "/van_tcl";
-		cc->f_name = "/tcl";
+		cc->type   = CT_CTRL_DI;
+		cc->l_name = "/ctrl_disp";
+		cc->f_name = "/display";
 		break;
 	default:
 		site_usage();
@@ -1642,7 +1642,7 @@ static void site_cable_conf(char *arg, cc_t *cc)
 /**
  * site_default() - define the site default settings.
  *
- * Return:	0 or force a software trap.
+ * Return:	None.
  **/
 static void site_default(void)
 {
@@ -1651,19 +1651,19 @@ static void site_default(void)
 	/* Get the pointer to the site state. */
 	s = &site_stat;
 
-	s->cc.type      = CT_VAN_PY;
-	s->cc.l_name    = "/van_py";
-	s->cc.f_name    = "/python";
-	s->c_io      = IO_SYNC_BL_COPY;
-	s->n_io       = IO_SYNC_BL_COPY;
+	s->cc.type     = CT_CTRL_BA;
+	s->cc.l_name   = "/ctrl_batt";
+	s->cc.f_name   = "/battery";
+	s->c_io        = IO_SYNC_BL_COPY;
+	s->n_io        = IO_SYNC_BL_COPY;
 	s->c_wr_cycles = 0;
 	s->n_wr_cycles = 0;
 	s->c_buf_size  = MIN_SIZE;
 	s->n_buf_size  = MIN_SIZE;
 	s->c_fill_char = C_F_CHAR;
 	s->n_fill_char = N_F_CHAR;
-	s->os_trace     = 0;
-	s->my_trace     = 0;
+	s->os_trace    = 0;
+	s->my_trace    = 0;
 }
 
 /*============================================================================

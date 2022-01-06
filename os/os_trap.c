@@ -30,7 +30,6 @@
   LOCAL DATA
   ============================================================================*/
 
-/* Pointer to the OS configuration */
 static os_conf_t *os_conf_p;
 
 /*============================================================================
@@ -103,8 +102,8 @@ void os_trap(char *file, const char *function, unsigned long line)
 			return;
 		}
 		else {
-			OS_TRACE(("*** core dump at \"%s\", \"%s\", %lu\n",
-				  file, function, line));
+			printf ("*** trigger core dump at \"%s\", \"%s\", %lu\n",
+				file, function, line);
 		}
 	}
 

@@ -72,8 +72,8 @@ void test_set_process(char *label, test_elem_t *elem);
 void but_init(test_stat_t *stat);
 void but_run(void);
 
-/* Test the van device interworking with the python device. */
-void vip_init(test_stat_t *stat);
-void vip_run(void);
+/* Test the controller interworking with the battery endpoint. */
+void cob_init(test_stat_t *stat);
+void cob_run(void);
 
 #endif /* __vote_h__ */

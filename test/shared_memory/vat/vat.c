@@ -85,23 +85,23 @@ int main(void)
 	/* Disable the user-friendly OS - FOS - trace and create the van server
 	 * device. */
 	os_trace_button(0);
-	v.dev_id = os_open("/van_py", 0);
+	v.dev_id = os_c_open("/ctrl_batt", 0);
 
 	/* Use the async. FOS I/O operations. */
 	aio.write_cb = aio_write_cb;
 	aio.read_cb  = aio_read_cb;
-	os_aio_action(v.dev_id, &aio);
+	os_c_action(v.dev_id, &aio);
 
 	/* Trigger the FOS to invoke the async. callbacks. */
-	os_aio_write(v.dev_id);
-	os_aio_read(v.dev_id);
+	os_c_awrite(v.dev_id);
+	os_c_aread(v.dev_id);
 
 	/* Wait for the end of the test. */
 	while(v.sent <= v.cycles && v.received <= v.cycles)
 		os_sem_wait(&v.suspend);
 
 	/* Free the used FOS resources. */
-	os_close(v.dev_id);
+	os_c_close(v.dev_id);
 	os_sem_delete(&v.suspend);	
 	os_exit();
 	

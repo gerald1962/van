@@ -9,10 +9,10 @@ int main(void)
 	
 	os_init(0);
 	os_trace_button(0);
-	dev_id = os_open("/python", 0);
+	dev_id = os_c_open("/battery", 0);
 
 	for(done = 0, i = 0; ! done; i++) {
-		n = os_read(dev_id, buf, OS_BUF_SIZE);		
+		n = os_c_read(dev_id, buf, OS_BUF_SIZE);		
 		OS_TRAP_IF(n < 1);
 		
 		printf("%s received: [b:\"%s\", s:%d]\n", P, buf, n);
@@ -25,10 +25,10 @@ int main(void)
 			OS_TRAP_IF(i != count);
 		}
 		
-		os_write(dev_id, buf, n);
+		os_c_write(dev_id, buf, n);
 	}
 		
-	os_close(dev_id);
+	os_c_close(dev_id);
 	os_exit();
 
 	return 0;

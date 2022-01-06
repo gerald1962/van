@@ -32,29 +32,29 @@
 
 #define CAB_Q_SIZE     4  /* Data transfer queue size about shm. */
 
-/* Configuration of the van controller. */
-#define CAB_VP_INT  "van_vp_int"   /* Van python interrupt simulation. */
-#define CAB_VT_INT  "van_vt_int"   /* Van tcl interrupt simulation. */
-#define CAB_VP_N    "/van_py"      /* Name of the van-python shm device. */
-#define CAB_VT_N    "/van_tcl"     /* Name of the van-tcl shm device. */
-#define CAB_VP_T    "ctrl_vp_int"  /* Name of the van-python int. handler. */
-#define CAB_VT_T    "ctrl_vt_int"  /* Name of the van-tcl int. handler. */
+/* Configuration of the controll cable endpoints . */
+#define CAB_CB_INT  "van_c_ba_int" /* Ctrl-battery interrupt simulation. */
+#define CAB_CD_INT  "van_c_di_int" /* Ctrl-display interrupt simulation. */
+#define CAB_CB_N    "/ctrl_batt"   /* Name of the battery shm device. */
+#define CAB_CD_N    "/ctrl_disp"   /* Name of the display shm device. */
+#define CAB_CB_T    "c_batt_int"   /* Name of the ctrl-batt int. handler. */
+#define CAB_CD_T    "c_disp_int"   /* Name of the ctrl-disp int. handler. */
 
-/* Configuration of the van devices. */
-#define CAB_PY_INT   "van_py_int"   /* Python interrupt simulation. */
-#define CAB_TCL_INT  "van_tcl_int"  /* Tcl interrupt simulation. */
-#define CAB_PY_N     "/python"      /* Name of the python shm device. */
-#define CAB_TCL_N    "/tcl"         /* Name of the tcl shm device. */
-#define CAB_PY_T     "dev_py_int"   /* Name of the python int. handler. */
-#define CAB_TCL_T    "dev_tcl_int"  /* Name of the tcl int. handler. */
+/* Configuration of the neighbour endpoints. */
+#define CAB_BA_INT  "van_batt_int"  /* Battery interrupt simulation. */
+#define CAB_DI_INT  "van_disp_int"  /* Display interrupt simulation. */
+#define CAB_BA_N    "/battery"      /* Name of the batter shm device. */
+#define CAB_DI_N    "/display"      /* Name of the display shm device. */
+#define CAB_BA_T    "battery_int"   /* Name of the batery int. handler. */
+#define CAB_DI_T    "display_int"   /* Name of the display int. handler. */
 
 /* Start index of the van-python and van-tcl shared memory resources. */
-#define CAB_VP_OFFS_V  0
-#define CAB_VT_OFFS_V  ( (sizeof(cab_queue_t) * 2) + ((OS_BUF_SIZE) * 2) + sizeof(int) )
+#define CAB_CB_OFFS_V  0
+#define CAB_CD_OFFS_V  ( (sizeof(cab_queue_t) * 2) + ((OS_BUF_SIZE) * 2) + sizeof(int) )
 
 /* Aligned start index of the van-python and van-tcl shared memory resources. */
-#define CAB_VP_OFFS_A  CAB_VP_OFFS_V
-#define CAB_VT_OFFS_A  CAB_ALIGN(CAB_VT_OFFS_V, sizeof(int))
+#define CAB_CB_OFFS_A  CAB_CB_OFFS_V
+#define CAB_CD_OFFS_A  CAB_ALIGN(CAB_CD_OFFS_V, sizeof(int))
 
 #define OS_SHM_Q_SIZE     4  /* Data transfer queue size about shm. */
 #define OS_THREAD_Q_SIZE  8  /* Input queue size of the van/py thread. */
@@ -86,17 +86,17 @@
 /**
  * cab_type_t - ids of the shared memory devices.
  *
- * CAB_VP:     id of the van-py shared memory socket device.
- * CAB_VT:     id of the van-tcl shared memory socket device.
- * CAB_PY:     id of the py shared memory connector device.
- * CAB_TCL:    id of the tcl shared memory connector device.
+ * CAB_CB:  id of the ctrl-batterry shared memory device.
+ * CAB_CD:  id of the ctrl-display shared memory device.
+ * CAB_BA:  id of the battery shared memory device.
+ * CAB_DI:  id of the display shared memory device.
  * CAB_COUNT:  number of the shared memory devices.
  **/
 typedef enum {
-	CAB_VP,
-	CAB_VT,
-	CAB_PY,
-	CAB_TCL,
+	CAB_CB,
+	CAB_CD,
+	CAB_BA,
+	CAB_DI,
 	CAB_COUNT
 } cab_type_t;
 
@@ -252,7 +252,7 @@ typedef struct {
 } cab_dev_t;
 
 /**
- * cab_wait_t - state of a suspended caller in os_wait, who is waiting for a
+ * cab_wait_t - state of a suspended caller in os_c_wait, who is waiting for a
  * read or write event.
  *
  * @mutex:     protect the critical section in the wait operations.
@@ -280,16 +280,16 @@ static os_conf_t *os_conf_p;
 
 /* Pillars of the shared memory transfer. */
 static cab_shell_t cab_shell = {
-	{ CAB_VP_INT, CAB_VT_INT, CAB_PY_INT, CAB_TCL_INT },
+	{ CAB_CB_INT, CAB_CD_INT, CAB_BA_INT, CAB_DI_INT },
 	NULL
 };
 
 /* Configuration of the shared memory devices. */
 static cab_conf_t cab_conf[] = {
-	{ CAB_VP,  1, CAB_VP_N,  CAB_VP_T,  CAB_VP_INT,  CAB_PY_INT,  CAB_VP_OFFS_A },
-	{ CAB_VT,  1, CAB_VT_N,  CAB_VT_T,  CAB_VT_INT,  CAB_TCL_INT, CAB_VT_OFFS_A },
-	{ CAB_PY,  0, CAB_PY_N,  CAB_PY_T,  CAB_PY_INT,  CAB_VP_INT,  CAB_VP_OFFS_A },
-	{ CAB_TCL, 0, CAB_TCL_N, CAB_TCL_T, CAB_TCL_INT, CAB_VT_INT,  CAB_VT_OFFS_A },
+	{ CAB_CB, 1, CAB_CB_N, CAB_CB_T, CAB_CB_INT, CAB_BA_INT, CAB_CB_OFFS_A },
+	{ CAB_CD, 1, CAB_CD_N, CAB_CD_T, CAB_CD_INT, CAB_DI_INT, CAB_CD_OFFS_A },
+	{ CAB_BA, 0, CAB_BA_N, CAB_BA_T, CAB_BA_INT, CAB_CB_INT, CAB_CB_OFFS_A },
+	{ CAB_DI, 0, CAB_DI_N, CAB_DI_T, CAB_DI_INT, CAB_CD_INT, CAB_CD_OFFS_A },
 	{ 0, }
 };
 
@@ -349,7 +349,7 @@ static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
 }
 
 /**
- * cab_wait_trigger() - the interrupt handler resumes the suspended os_wait
+ * cab_wait_trigger() - the interrupt handler resumes the suspended os_c_wait
  * caller, if events are available for the input or output wire for all devices,
  * that interest them.
  *
@@ -377,7 +377,7 @@ static void cab_wait_trigger(cab_dev_t *dev, char *event)
 }
 
 /**
- * cab_int_write() - resume the suspend caller in os_write, os_wait or request
+ * cab_int_write() - resume the suspend caller in os_c_write, os_c_wait or request
  * output data from the aio user.
  *
  * @dev:  pointer to the device state.
@@ -431,7 +431,7 @@ static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
 
 /**
  * cab_int_read() - pass the input payload to the async. caller or resume the
- * suspended caller in os_read, os_zread or os_wait.
+ * suspended caller in os_c_read, os_c_zread or os_c_wait.
  *
  * @dev:    pointer to the device state.
  * @in:     pointer to the input channel.
@@ -791,14 +791,14 @@ static void cab_create(void)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * os_close() - the user shall call this function to remove the
+ * os_c_close() - the user shall call this function to remove the
  * shared memory ressources.
  *
  * @dev_id:  id of the shared memory device.
  *
  * Return:	None.
  **/
-void os_close(int dev_id)
+void os_c_close(int dev_id)
 {
 	cab_dev_t *dev;
 	int rv, i;
@@ -820,16 +820,16 @@ void os_close(int dev_id)
 	rv = sem_close(dev->other_int);
 	OS_TRAP_IF(rv != 0);
 
-	/* Destroy the semaphore for os_write(). */
+	/* Destroy the semaphore for os_c_write(). */
 	os_sem_delete(&dev->suspend_writer);
 	
-	/* Destroy the semaphore for os_read(). */
+	/* Destroy the semaphore for os_c_read(). */
 	os_sem_delete(&dev->suspend_reader);
 	
-	/* Delete the mutex for the critical sections in os_write. */
+	/* Delete the mutex for the critical sections in os_c_write. */
 	os_cs_destroy(&dev->write_mutex);
 
-	/* Delete the mutex for the critical sections in os_zread. */
+	/* Delete the mutex for the critical sections in os_c_zread. */
 	os_cs_destroy(&dev->read_mutex);
 
 	/* Delete the mutex for the critical sections in aio_action and in aio_write. */
@@ -852,14 +852,14 @@ void os_close(int dev_id)
 }
 
 /** 
- * os_wait() - the caller shall be suspended, until a read or write event is
+ * os_c_wait() - the caller shall be suspended, until a read or write event is
  * available for the wires of a cable.
  *
  * @wait_id:  id of the wait element.
  *
  * Return:	None.
  **/
-void os_wait(int id)
+void os_c_wait(int id)
 {
 	struct cab_wait_elem_s *elem;
 	int probe;
@@ -878,13 +878,13 @@ void os_wait(int id)
 }
 
 /** 
- * os_wait_release() - free the wait element.
+ * os_c_wait_release() - free the wait element.
  *
  * @id:  id of the assigned element.
  *
  * Return:	None.
  **/
-void os_wait_release(int id)
+void os_c_wait_release(int id)
 {
 	struct cab_wait_elem_s *elem;
 	cab_wait_t *w;
@@ -910,7 +910,7 @@ void os_wait_release(int id)
 }
 
 /** 
- * os_wait_init() - if a device has been opened with O_NBLOCK - non blocking mode, it is allowed to suspend the
+ * os_c_wait_init() - if a device has been opened with O_NBLOCK - non blocking mode, it is allowed to suspend the
  * caller. He wants be resumed if reading or writing is possible again, i.e. if
  * one or the other wire of a cable can be used. 
  *
@@ -919,7 +919,7 @@ void os_wait_release(int id)
  *
  * Return:	the id of the assigned wait element.
  **/
-int os_wait_init(int *list, int len)
+int os_c_wait_init(int *list, int len)
 {
 	struct cab_wait_elem_s *elem;
 	cab_wait_t *w;
@@ -965,7 +965,7 @@ int os_wait_init(int *list, int len)
 }
 
 /**
- * os_zread() - the caller for incoming payload. With each successiv call, the
+ * os_c_zread() - the caller for incoming payload. With each successiv call, the
  * reference to the previous call is released automatically.
  *
  * @dev_id:  id of the shared memory device.
@@ -974,7 +974,7 @@ int os_wait_init(int *list, int len)
  *
  * Return:	number of the received bytes.
  **/
-int os_zread(int dev_id, char **buf, int count)
+int os_c_zread(int dev_id, char **buf, int count)
 {
 	cab_dev_t *dev;
 	cab_io_t *in;
@@ -1045,7 +1045,7 @@ l_leave:
 }
 
 /**
- * os_read() - the caller waits for the incoming payload.
+ * os_c_read() - the caller waits for the incoming payload.
  *
  * @dev_id:  id of the shared memory device.
  * @buf:     pointer to the received payload.
@@ -1053,7 +1053,7 @@ l_leave:
  *
  * Return:	number of the received bytes.
  **/
-int os_read(int dev_id, char *buf, int count)
+int os_c_read(int dev_id, char *buf, int count)
 {
 	cab_dev_t *dev;
 	cab_io_t *in;
@@ -1120,7 +1120,7 @@ l_leave:
 }
 
 /**
- * os_write() - send the output payload to the other device and suspend the
+ * os_c_write() - send the output payload to the other device and suspend the
  * caller until the payload has been processed.
  *
  * @dev_id:  id of the shared memory device.
@@ -1129,7 +1129,7 @@ l_leave:
  *
  * Return:	the number of the copied bytes.
  **/
-int os_write(int dev_id, char *buf, int count)
+int os_c_write(int dev_id, char *buf, int count)
 {
 	cab_dev_t *dev;
 	cab_io_t *out;
@@ -1194,14 +1194,14 @@ l_leave:
 }
 
 /**
- * os_aio_read() - this async. I/O operation triggers the interrup, to start or
+ * os_c_aread() - this async. I/O operation triggers the interrup, to start or
  * restart the receive actions.
  *
  * @dev_id:  id of the shared memory device.
  *
  * Return:	None.
  **/
-void os_aio_read(int dev_id)
+void os_c_aread(int dev_id)
 {
 	cab_dev_t *dev;
 
@@ -1225,14 +1225,14 @@ void os_aio_read(int dev_id)
 }
 
 /**
- * os_aio_write() - this async. I/O operation triggers the interrupt, to start
+ * os_c_awrite() - this async. I/O operation triggers the interrupt, to start
  * or restart the send actions.
  *
  * @dev_id:  id of the shared memory device.
  *
  * Return:	None.
  **/
-void os_aio_write(int dev_id)
+void os_c_awrite(int dev_id)
 {
 	cab_dev_t *dev;
 
@@ -1256,10 +1256,10 @@ void os_aio_write(int dev_id)
 }
 
 /**
- * os_aio_action() - install the read and write callback for the asynchronous
+ * os_c_action() - install the read and write callback for the asynchronous
  * operations. The reconfiguration of the async. I/O operations is not
  * supported. It is recommended to decide themselves for aio immediately after
- * os_open before data transfer starts, in order to avoid deadlocks in the sync.
+ * os_c_open before data transfer starts, in order to avoid deadlocks in the sync.
  * operations.
  *
  * @dev_id:  id of the shared memory device.
@@ -1267,7 +1267,7 @@ void os_aio_write(int dev_id)
  *
  * Return:	None.
  **/
-void os_aio_action(int dev_id, os_aio_cb_t *cb)
+void os_c_action(int dev_id, os_aio_cb_t *cb)
 {
 	cab_dev_t *dev;
 	
@@ -1295,7 +1295,7 @@ void os_aio_action(int dev_id, os_aio_cb_t *cb)
 }
 
 /**
- * os_open() - the cable user shall call this function to request the resources
+ * os_c_open() - the cable user shall call this function to request the resources
  * for the shared memory transer.
  *
  * @device_name:  name of the shared memory deivce: "/van_tcl" or "/tcl".
@@ -1303,7 +1303,7 @@ void os_aio_action(int dev_id, os_aio_cb_t *cb)
  * 
  * Return:	the device id.
  **/
-int os_open(char *device_name, int mode)
+int os_c_open(char *device_name, int mode)
 {
 	os_queue_elem_t msg;
 	cab_conf_t *conf;
@@ -1348,10 +1348,10 @@ int os_open(char *device_name, int mode)
 	/* Install the py interrupt handler/thread. */
 	dev->thread = os_thread_create(conf->thr_name, PRIO, Q_SIZE);	
 	
-	/* Create the semaphore for os_write(). */
+	/* Create the semaphore for os_c_write(). */
 	os_sem_init(&dev->suspend_writer, 0);
 	
-	/* Create the semaphore for os_zread(). */
+	/* Create the semaphore for os_c_zread(). */
 	os_sem_init(&dev->suspend_reader, 0);
 
 	/* Create the mutex for the critical sections in write. */

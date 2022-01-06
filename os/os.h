@@ -230,21 +230,21 @@ void os_thread_destroy(void *thread);
 /* Message queue. */
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
-/* Shared memory devices. */
-int os_open(char *device_name, int mode);
-void os_close(int dev_id);
+/* Endpoint of a shared memory cable. */
+int os_c_open(char *device_name, int mode);
+void os_c_close(int dev_id);
 
-/* Synchronous I/O operations. */
-int os_write(int dev_id, char *buf, int count);
-int os_zread(int dev_id, char **buf, int count);
-int os_read(int dev_id, char *buf, int count);
-int os_wait_init(int *list, int len);
-void os_wait_release(int id);
-void os_wait(int id);
+/* Synchronous cable I/O operations. */
+int os_c_write(int dev_id, char *buf, int count);
+int os_c_zread(int dev_id, char **buf, int count);
+int os_c_read(int dev_id, char *buf, int count);
+int os_c_wait_init(int *list, int len);
+void os_c_wait_release(int id);
+void os_c_wait(int id);
 
-/* Asynchronous I/O operations. */
-void os_aio_action(int dev_id, os_aio_cb_t *cb);
-void os_aio_write(int dev_id);
-void os_aio_read(int dev_id);
+/* Asynchronous cable I/O operations. */
+void os_c_action(int dev_id, os_aio_cb_t *cb);
+void os_c_awrite(int dev_id);
+void os_c_aread(int dev_id);
 
 #endif /* __os_h__ */
