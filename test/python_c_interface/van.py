@@ -25,7 +25,7 @@ from ctypes import *  # Allow calling C functions in shared libraries.
 # VAN DLL FOR BATTERY DESIGN.
 # ============================================================================
 # Load the van shared library.
-lib_path = os.path.join(os.environ['HOME'],'van_development/van/lib/libvan.so')
+lib_path = os.path.join(os.environ['HOME'],'github/van/lib/libvan.so')
 van = CDLL(lib_path)
 
 # Declarations of the van interfaces.
@@ -33,14 +33,14 @@ van.os_init.argtypes = None
 van.os_init.restype  = None
 van.os_trace_button.argtypes = [c_int]
 van.os_trace_button.restype  = None
-van.os_open.argtypes = [c_char_p, c_int]
-van.os_open.restype  = c_int
-van.os_read.argtypes = [c_int, c_char_p, c_int]
-van.os_read.restype  = c_int
-van.os_write.argtypes = [c_int, c_char_p, c_int]
-van.os_write.restype  = None
-van.os_close.argtypes = [c_int]
-van.os_close.restype  = None
+van.os_c_open.argtypes = [c_char_p, c_int]
+van.os_c_open.restype  = c_int
+van.os_c_read.argtypes = [c_int, c_char_p, c_int]
+van.os_c_read.restype  = c_int
+van.os_c_write.argtypes = [c_int, c_char_p, c_int]
+van.os_c_write.restype  = None
+van.os_c_close.argtypes = [c_int]
+van.os_c_close.restype  = None
 van.os_exit.argtypes = None
 van.os_exit.restype  = None
 
@@ -65,7 +65,7 @@ def van_loop(dev_id):
     i = 0
     while 1:
         # Copy data from the receive channel.
-        n = van.os_read(dev_id, buf, 2048)
+        n = van.os_c_read(dev_id, buf, 2048)
         print ('python> received: [b:{}, s:{}]' . format(buf.value, n))
 
         # End condition for the read loop and calcuate the execution time.
@@ -79,7 +79,7 @@ def van_loop(dev_id):
             raise
             
         # Return the received counter.
-        van.os_write(dev_id, buf, n)
+        van.os_c_write(dev_id, buf, n)
 
         i += 1
         #        
@@ -93,7 +93,7 @@ def van_loop(dev_id):
 # Return:	None.
 #
 def van_exit(dev_id):
-    van.os_close(dev_id)
+    van.os_c_close(dev_id)
     van.os_exit()
     return
 
@@ -106,7 +106,7 @@ def van_init():
     # for the communication with van.
     van.os_init(0)
     van.os_trace_button(0)
-    id = van.os_open(b"/battery", 0)
+    id = van.os_c_open(b"/battery", 0)
     return id;
 #
 
