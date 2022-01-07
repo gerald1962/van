@@ -627,7 +627,6 @@ static void cop_controller_init(struct cop_data_s *c)
 	c->c_wait_id = os_c_wait_init(wait_list, 2);
 
 	/* Start the controller. */
-	/* Start the data transfer. */
 	os_memset(&msg, 0, sizeof(msg));	
 	msg.cb = cop_ctrl_exec;
 	OS_SEND(c->c_thr, &msg, sizeof(msg));	
@@ -913,7 +912,7 @@ int main(int argc, char *argv[])
 	/* Install the platform for the control technology. */
 	cop_init();
 
-	/* Release the platform for the control technology. */
+	/* Release the platform of the control technology. */
 	cop_cleanup();
 
 	printf("\nTest settings:\n");
