@@ -76,4 +76,8 @@ void but_run(void);
 void cob_init(test_stat_t *stat);
 void cob_run(void);
 
+/* Test the controller-battery-display cabling. */
+void tri_init(test_stat_t *stat);
+void tri_run(void);
+
 #endif /* __vote_h__ */

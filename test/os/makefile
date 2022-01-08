@@ -46,8 +46,9 @@ LIBS = -lrt -lpthread -LCLLIB -ltclstub
 ALL_FILES =  \
 	${${BUILD_LIB}_FILES} \
 	vote.c \
+	vote_cob.c \
 	vote_but.c \
-	vote_cob.c
+	vote_triad.c
 
 # List of all includes paths, like VAN OS directory
 ALL_INCS += \

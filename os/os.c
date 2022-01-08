@@ -358,7 +358,7 @@ void os_statistics(os_statistics_t *stat)
 
 	/* Complete the data gathering. */
 	stat->cs_count   = os_stat.cs_count;
-	stat->sem_count  = os_stat.cs_count;
+	stat->sem_count  = os_stat.sem_count;
 	stat->spin_count = os_stat.spin_count;
 }
 

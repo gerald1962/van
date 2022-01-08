@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 3, 3, 0, 2330, 2330, 0 };
+	os_statistics_t expected = { 3, 4, 0, 2341, 2341, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -82,7 +82,7 @@ static int test_case_shutdown(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 3, 3, 0, 0, 0, 0 };
+	os_statistics_t expected = { 3, 4, 0, 0, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
@@ -113,6 +113,9 @@ static void test_run(void)
 	/* Test the controller interworking with the battery endpoind. */
 	cob_run();
 	
+	/* Test the controller-battery-display cabling. */
+	tri_run();
+
 	test_set_process(TEST_ADD(shutdown_system));
 }
 
@@ -292,7 +295,10 @@ int main(int argc, char *argv[])
 	
 	/* Initialize controller-battery test system. */
 	cob_init(&test_stat);
-	
+
+	/* Initialize the controller-battery-display cabling. */
+	tri_init(&test_stat);
+
 	/* Test the argument counter. */
 	switch(argc) {
 	case 1:

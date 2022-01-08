@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Test the van controller interworking with the batter device.
+ * Test the van controller interworking with the battery device.
  *
  * Cobyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -133,7 +133,7 @@ static void cob_wait(void)
  **/
 static int cob_stop(void)
 {
-	os_statistics_t expected = { 3, 3, 0, 2330, 2330, 0 };
+	os_statistics_t expected = { 3, 4, 0, 2330, 2330, 0 };
 	int stat;
 
 	/* Remove the py device. */
@@ -227,7 +227,7 @@ static int cob_van_read_cb(int dev_id, char *buf, int count)
 
 static int cob_aio(void)
 {
-	os_statistics_t expected = { 11, 11, 4, 2330, 2326, 4 };
+	os_statistics_t expected = { 11, 17, 4, 2330, 2326, 4 };
 	os_aio_cb_t cb;
 	int stat;
 
@@ -310,7 +310,7 @@ static void cob_van_zsync_2048b(os_queue_elem_t *m)
 
 static int cob_zsync_2048b(void)
 {
-	os_statistics_t expected = { 11, 11, 4, 2330, 2326, 4 };
+	os_statistics_t expected = { 11, 17, 4, 2330, 2326, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -371,7 +371,7 @@ static void cob_van_sync_1b(os_queue_elem_t *m)
 
 static int cob_sync_1b(void)
 {
-	os_statistics_t expected = { 11, 11, 4, 2328, 2324, 4 };
+	os_statistics_t expected = { 11, 17, 4, 2328, 2324, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -398,7 +398,7 @@ static int cob_sync_1b(void)
  **/
 static int cob_start(void)
 {
-	os_statistics_t expected = { 11, 11, 4, 2326, 2322, 4 };
+	os_statistics_t expected = { 11, 17, 4, 2326, 2322, 4 };
 	int stat;
 
 	/* Create the control semaphore for the main process. */

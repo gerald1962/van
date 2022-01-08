@@ -618,12 +618,12 @@ static void cop_controller_init(struct cop_data_s *c)
 	c->c_thr = os_thread_create("controller", PRIO, Q_SIZE);
 	
 	/* Initialize the cable controller endpoints. */
-	cop_ep_init(&c->c_batt, "c_batt", NULL, "/ctrl_batt", 0);
-	cop_ep_init(&c->c_disp, "c_disp", NULL, "/ctrl_disp", 0);
+	cop_ep_init(batt, "c_batt", NULL, "/ctrl_batt", 0);
+	cop_ep_init(disp, "c_disp", NULL, "/ctrl_disp", 0);
 
 	/* Avoid an endlos loop, if no controller I/O data are available. */
-	wait_list[0] = c->c_batt.dev_id;
-	wait_list[1] = c->c_disp.dev_id;
+	wait_list[0] = batt->dev_id;
+	wait_list[1] = disp->dev_id;
 	c->c_wait_id = os_c_wait_init(wait_list, 2);
 
 	/* Start the controller. */

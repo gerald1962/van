@@ -419,12 +419,12 @@ static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
 	if (count < 1)
 		return;
 
-	/* Change the output state. */
-	atomic_store(&dev->pending_out, 1);
-					
 	/* Save the size of the payload. */
 	atomic_store(&out->p_count, count);
 
+	/* Change the output state. */
+	atomic_store(&dev->pending_out, 1);
+					
 	/* Send the control message to the other device. */
 	cab_aio_q_add(dev, count, 0);
 }
@@ -838,6 +838,9 @@ void os_c_close(int dev_id)
 	/* Destroy the mutex for the critical sections in cab_q_add. */
 	os_cs_destroy(&dev->q_mutex);
 	
+	/* Clear the input queue of the endpoint. */
+	dev->in.queue->tail = dev->in.queue->head;
+
 	/* Free the the shared memory device. */
 	for (i = 0; i < CAB_COUNT; i++) {
 		if (cab_device[i] == dev)
@@ -1345,9 +1348,6 @@ int os_c_open(char *device_name, int mode)
 	dev->other_int = sem_open(conf->other_int_n, O_CREAT);
 	OS_TRAP_IF(dev->other_int == SEM_FAILED);
 
-	/* Install the py interrupt handler/thread. */
-	dev->thread = os_thread_create(conf->thr_name, PRIO, Q_SIZE);	
-	
 	/* Create the semaphore for os_c_write(). */
 	os_sem_init(&dev->suspend_writer, 0);
 	
@@ -1376,6 +1376,9 @@ int os_c_open(char *device_name, int mode)
 	else
 		cab_io_map(addr, &dev->out, &dev->in);
 
+	/* Install the py interrupt handler/thread. */
+	dev->thread = os_thread_create(conf->thr_name, PRIO, Q_SIZE);
+	
 	/* Start with processing of the interrups. */
 	os_memset(&msg, 0, sizeof(msg));
 	msg.param = dev;
