@@ -175,17 +175,18 @@ typedef struct {
 } os_statistics_t;
 
 /**
- * os_tm_barrier_t - current state of the battery control loop.
+ * os_tm_state_t - current timer state.
  *
- * start:         global start time of the timer.
- * end:           global end time of the timer.
- * cycles:        timer expiration count.
- * acc_duration:  accumulated calculation time.
- * sys_ov_count:  current system overrun count of this timer: system load.
- * exp_ov_count:  expiration count without arriving of the realtime barrier: stuck.
- * elapsed_time:  calculation time of the last analysis loop.
- * max_time:      maximum of the processing time of a calculation loop.
- * min_time:      minimum of the processing time of a calculation loop.
+ * @start:         global start time of the timer.
+ * @end:           global end time of the timer.
+ * @interval:      repeating interval in milliseconds.
+ * @cycles:        timer expiration count.
+ * @acc_duration:  accumulated calculation time.
+ * @sys_ov_count:  current system overrun count of this timer: system load.
+ * @exp_ov_count:  expiration count without arriving of the realtime barrier: stuck.
+ * @elapsed_time:  calculation time of the last analysis loop.
+ * @max_time:      maximum of the processing time of a calculation loop.
+ * @min_time:      minimum of the processing time of a calculation loop.
 **/
 typedef struct {
 	struct timeval  start;
@@ -194,8 +195,7 @@ typedef struct {
 	long long       acc_duration;
 	int             sys_ov_count;
 	int             exp_ov_count;
-	int             elapsed_time;
-} os_tm_barrier_t;
+} os_tm_state_t;
 
 /*============================================================================
   GLOBAL DATA
@@ -278,6 +278,7 @@ int os_timer_init(const char *name, int interval);
 void os_timer_delete(int id);
 void os_timer_start(int id);
 void os_timer_stop(int id);
-int os_timer_barrier(int id, os_tm_barrier_t *bs);
+int os_timer_barrier(int id);
+void os_timer_get(int id, os_tm_state_t *ts);
 
 #endif /* __os_h__ */
