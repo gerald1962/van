@@ -9,8 +9,9 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"    /* Operating system: os_sem_create(). */
-#include "vote.h"  /* Van OS test environment. */
+#include <unistd.h>  /* Standard Unix lib: usleep(). */
+#include "os.h"      /* Operating system: os_sem_create(). */
+#include "vote.h"    /* Van OS test environment. */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -435,7 +436,7 @@ static void tri_ctrl_cleanup(struct tri_data_s *c)
  **/
 static int tri_stop(void)
 {
-	os_statistics_t expected = { 3, 4, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 4, 8, 0, 2341, 2341, 0 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -613,7 +614,7 @@ static void tri_conf(struct tri_data_s *c)
  **/
 static int tri_start(void)
 {
-	os_statistics_t expected = { 19, 27, 7, 2341, 2333, 7 };
+	os_statistics_t expected = { 20, 31, 7, 2341, 2333, 7 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -638,6 +639,9 @@ static int tri_start(void)
 	/* The main process shall be suspended, as long as the transfer is in
 	 * progess. */
 	tri_wait();
+
+	/* XXX Delay for os_free(). */
+	usleep(10);
 	
 	/* Verify the OS state. */
 	stat = test_os_stat(&expected);

@@ -8,6 +8,7 @@ ${BUILD_LIB}_FILES +=  \
     os_mem.c \
     os_pthread.c \
     os_string.c \
+    os_timer.c \
     os_trap.c
 
 # Source paths

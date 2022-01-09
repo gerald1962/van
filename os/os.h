@@ -40,6 +40,9 @@
 /* Size of the UL/DL transfer buffer. */
 #define OS_BUF_SIZE  2048
 
+/* Number of the supported timers. */
+#define OS_TIMER_LIMIT  4
+
 /* Neither the os_open() nor any subsequent I/O operations on the device
  * descriptor which is returned will cause the calling process to wait. */
 #define O_NBLOCK  0x1
@@ -171,6 +174,29 @@ typedef struct {
 	int thread_c;
 } os_statistics_t;
 
+/**
+ * os_tm_barrier_t - current state of the battery control loop.
+ *
+ * start:         global start time of the timer.
+ * end:           global end time of the timer.
+ * cycles:        timer expiration count.
+ * acc_duration:  accumulated calculation time.
+ * sys_ov_count:  current system overrun count of this timer: system load.
+ * exp_ov_count:  expiration count without arriving of the realtime barrier: stuck.
+ * elapsed_time:  calculation time of the last analysis loop.
+ * max_time:      maximum of the processing time of a calculation loop.
+ * min_time:      minimum of the processing time of a calculation loop.
+**/
+typedef struct {
+	struct timeval  start;
+	struct timeval  end;
+	long long       cycles;
+	long long       acc_duration;
+	int             sys_ov_count;
+	int             exp_ov_count;
+	int             elapsed_time;
+} os_tm_barrier_t;
+
 /*============================================================================
   GLOBAL DATA
   ============================================================================*/
@@ -246,5 +272,12 @@ void os_c_wait(int id);
 void os_c_action(int dev_id, os_aio_cb_t *cb);
 void os_c_awrite(int dev_id);
 void os_c_aread(int dev_id);
+
+/* Timer. */
+int os_timer_init(const char *name, int interval);
+void os_timer_delete(int id);
+void os_timer_start(int id);
+void os_timer_stop(int id);
+int os_timer_barrier(int id, os_tm_barrier_t *bs);
 
 #endif /* __os_h__ */

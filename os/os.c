@@ -406,6 +406,9 @@ void os_init(int creator)
 	
 	/* Install the shared memory area. */
 	os_cab_init(&os_conf, creator);
+
+	/* Initialize the OS timer list. */
+	os_tm_init();
 }
 
 /**
@@ -426,6 +429,7 @@ void os_exit(void)
 	os_cab_exit();
 	os_thread_exit();
 	os_mem_exit();
+	os_tm_exit();
 
 	/* Test the OS state. */
 	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);

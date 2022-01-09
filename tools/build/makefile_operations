@@ -31,15 +31,10 @@ endif
 CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas -DUSE_TCL_STUBS -ICLINC
 
 # Static linker flags.
-# LD_FLAGS :=  -g -static -lpthread
-# LD_FLAGS :=  -O3 -static -lpthread
-# LD_FLAGS :=  -g -shared -lpthread -LCLLIB -ltclstub
-LD_FLAGS :=  -g -static -lpthread -LCLLIB -ltclstub
+LD_FLAGS := -g -static -pthread -lpthread -lrt -LCLLIB -ltclstub
 
 # Shared library flags.
-# LIB_FLAGS :=  -g -shared -lpthread
-# LIB_FLAGS :=  -O3 -shared -lpthread
-LIB_FLAGS :=  -g -shared -lpthread -LCLLIB -ltclstub
+LIB_FLAGS := -g -shared -pthread -lpthread -lrt -LCLLIB -ltclstub
 
 # Aggregate variables.
 ALL_FILES     :=  ${VAN_FILES}

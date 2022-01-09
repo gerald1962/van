@@ -13,7 +13,7 @@
 #include <sys/stat.h>    /* For mode constants. */
 #include <unistd.h>      /* File operationens: close(). */
 #include <sys/mman.h>    /* Map file into memory. */
-#include "os.h"          /* Operating system: os_sem_create() */
+#include "os.h"          /* Operating system: os_c_open() */
 #include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
 /*============================================================================
@@ -257,7 +257,7 @@ typedef struct {
  *
  * @mutex:     protect the critical section in the wait operations.
  * @id:        id of the wait element.
- * @assigned:  if 1, the element has been addressed.
+ * @assigned:  if 1, the element has been reserved.
  * @suspend:   suspend the wait caller.
  * @probe:     if 1, the caller shall probe all input and output wires.
  **/
@@ -934,7 +934,7 @@ int os_c_wait_init(int *list, int len)
 	/* Entry condition. */
 	OS_TRAP_IF(list == NULL || len < 1);
 
-	/* Get the pointer to the wait state. */
+	/* Get the pointer to the wait list. */
 	w = &cab_wait;
 	
 	/* Enter the critical section. */
@@ -946,6 +946,7 @@ int os_c_wait_init(int *list, int len)
 			break;
 	}
 
+	/* Test the search result. */
 	OS_TRAP_IF(i >= CAB_COUNT);
 	wait_id = i;
 	elem->assigned = 1;
@@ -1461,6 +1462,7 @@ void os_cab_ripcord(int coverage)
  **/
 void os_cab_exit(void)
 {
+	struct cab_wait_elem_s *elem;
 	cab_shell_t *s;
 	cab_wait_t *w;
 	char *name;
@@ -1474,10 +1476,10 @@ void os_cab_exit(void)
 	w = &cab_wait;
 	
 	/* Release the resources for the wait condition. */
-	for (i = 0; i < CAB_COUNT; i++) {
+	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
 		/* Test the state of the wait condition. */
-		OS_TRAP_IF(w->elem[i].assigned);
-		os_sem_delete(&w->elem[i].suspend);
+		OS_TRAP_IF(elem->assigned);
+		os_sem_delete(&elem->suspend);
 	}
 	
 	os_cs_destroy(&w->mutex);
