@@ -3,7 +3,7 @@
 #
 # cop_prototype.sh - controller, battery and display simulation are running as
 # autonomous OS process in their own terminal, which is held as long as the user
-# does not press the x - close button at the top left corner.
+# does not press the x - close button at the top right corner.
 #
 # $1: controller->battery generator cycle number.
 # $2: controller->display generator cycle number.

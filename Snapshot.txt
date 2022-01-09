@@ -4,7 +4,7 @@
 .................
 ~/github/van/os/os_cable.c
 
-2. Download
+2 Download
 -----------
 cd ~
 rm -fr github
@@ -12,14 +12,14 @@ mkdir github
 cd github
 git clone https://github.com/gerald1962/van
 
-3. Overview
+3 Overview
 -----------
 cd  ~/github/van
 tree
 
 
-4. Delivery Tests
-=================
+4 Delivery Tests
+================
 4.1 Test of the Limits
 ---------------------
 cd ~/github/van/test/shared_memory/site
@@ -31,7 +31,7 @@ make all
 4.2.1 Build
 ...........
 cd ~/github/van/test/shared_memory/cop
-make all
+make
 
 4.2.2 Test Possibilities
 ........................
@@ -39,7 +39,7 @@ out/cop -h
 
 4.2.3 Integrated Test
 .....................
-time out/cop -dcc 9999 -cbc 99999 -bcc 9999 -cdc 999
+time out/cop -dcc 999999 -cbc 99999 -bcc 9999 -cdc 999
 
 4.2.4 Distributed Test
 ......................
@@ -47,45 +47,29 @@ sudo apt install xfce4-terminal
 ./cop_prototype.sh 953223 27323 32832 93234 &
 
 
-5. Van Lib
+5 Van Lib
 ----------
 cd ~/github/van/lib
 make lib
 
-6. IPC Test
------------
-Open 2 terminals
 
-6.1.1. Vat Terminal
-...................
-cd ~/github/van/test/shared_memory/vat
-make
-./vat
-
-6.1.2. Pot Terminal
-................
-cd ~/github/van/test/shared_memory/pot
-make
-./pot
-
-
-7. Python Test
+6 Python Test
 --------------
 Open 2 terminals.
 
-7.1.1. Vat Terminal
+7.1.1 Vat Terminal
 ...................
 cd ~/github/van/test/shared_memory/vat
 make
 ./vat
 
-7.3.2. Python Terminal
+7.3.2 Python Terminal
 ......................
 cd ~/github/van/test/python_c_interface
 ./van.py
 
 
-8. Coverage
+7 Coverage
 -----------
 cd ~/github/van/test/os
 make can

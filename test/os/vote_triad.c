@@ -235,8 +235,9 @@ static int tri_write(tri_ep_t *ep, int *wait_cond)
 }
 
 /**
- * tri_neighbour_exec() - the neighbour of the controller sends and receives
- * data with the non blocking synchronous operations.
+ * tri_neighbour_exec() - generic neighbour transition: the neighbour of the
+ * controller sends and receives data with the non blocking synchronous
+ * operations.
  *
  * @msg:  pointer to the generic input message.
  *
@@ -258,7 +259,7 @@ static void tri_neighbour_exec(os_queue_elem_t *msg)
 	no_c_inp = 0;
 	no_c_out = 0;
 
-	/* The battery thread analyzes or generates data from or to the
+	/* The neighbour thread analyzes or generates data from or to the
 	 * controller with the non blocking syncronous triy read or write
 	 * operation. */
 	while (busy_rd || busy_wr) {
@@ -408,6 +409,26 @@ static void tri_ep_cleanup(tri_ep_t *ep)
 }
 
 /**
+ * tri_ctrl_cleanup() - release the resources of the cable controller.
+ *
+ * @c: pointer to the tri state.
+ *
+ * Return:	None.
+ **/
+static void tri_ctrl_cleanup(struct tri_data_s *c)
+{
+	/* Remove the controller threads */
+	os_thread_destroy(c->c_thr);
+
+	/* Release the controller resources. */
+	tri_ep_cleanup(&c->c_batt);
+	tri_ep_cleanup(&c->c_disp);
+
+	/* Release the wait condition of the controller. */
+	os_c_wait_release(c->c_wait_id);
+}
+
+/**
  * tri_stop() - release the platform for the control technology.
  *
  * Return:	None.
@@ -428,16 +449,7 @@ static int tri_stop(void)
 	tri_ep_cleanup(&c->n_disp);
 
 	/* Controller. */
-
-	/* Remove the controller threads */
-	os_thread_destroy(c->c_thr);
-
-	/* Release the controller resources. */
-	tri_ep_cleanup(&c->c_batt);
-	tri_ep_cleanup(&c->c_disp);
-
-	/* Release the wait condition of the controller. */
-	os_c_wait_release(c->c_wait_id);
+	tri_ctrl_cleanup(c);
 	
 	/* Release the control semaphore for the main process. */
 	os_sem_delete(&c->suspend);

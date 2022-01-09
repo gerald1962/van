@@ -543,20 +543,21 @@ static void cab_int_exec(os_queue_elem_t *g_msg)
 				  P, n));
 		}
 	
-		/* Analyze the message from input control queue. */
+		/* Test the mailbox. */
 		while (q->tail != q->head) {
 			msg = &q->ring[q->tail];
 
 			OS_TRACE(("%s %s: msg-rcv: [i=%u, s=%d, c=%d]\n", P, n,
 				  msg->id, msg->size, msg->consumed));
 			
-			/* Test the input payload state. */
+			/* In case a brief is there, inform the adressee. */
 			if (msg->size > 0) {
 				/* Trigger the user actions. */
 				cab_int_read(dev, in, msg->size);
 			}
 
-			/* Test the state of the output playload. */
+			/* Test the progess of the procesing of the output
+			 * payload. */
 			if (msg->consumed) {
 				/* Release the output buffer. */
 				pending_out = atomic_exchange(&dev->pending_out, 0);
@@ -566,7 +567,8 @@ static void cab_int_exec(os_queue_elem_t *g_msg)
 				cab_int_write(dev, out);
 			}
 		
-			/* Increment and test the start of the message list. */
+			/* The current message from the shm input queue was
+			 * processed. We prepare us for the next mailbox entry. */
 			q->tail++;
 			if (q->tail >= CAB_Q_SIZE)
 				q->tail = 0;

@@ -445,6 +445,30 @@ static void cop_ep_cleanup(cop_ep_t *ep)
 }
 
 /**
+ * cop_ctrl_cleanup() - release the controller resources.
+ *
+ * @c: pointer to the cop state.
+ *
+ * Return:	None.
+ **/
+static void cop_ctrl_cleanup(struct cop_data_s *c)
+{
+	/* Test the program configuration. */
+	if (c->distributed && ! c->c_batt.alone && ! c->c_disp.alone)
+		return;
+	
+	/* Remove the controller threads */
+	os_thread_destroy(c->c_thr);
+
+	/* Release the controller resources. */
+	cop_ep_cleanup(&c->c_batt);
+	cop_ep_cleanup(&c->c_disp);
+
+	/* Release the wait condition of the controller. */
+	os_c_wait_release(c->c_wait_id);
+}
+
+/**
  * cop_cleanup() - release the platform for the control technology.
  *
  * Return:	None.
@@ -465,17 +489,7 @@ static void cop_cleanup(void)
 		cop_ep_cleanup(&c->n_disp);
 
 	/* Controller. */
-	if (! c->distributed || c->c_batt.alone || c->c_disp.alone) {
-		/* Remove the controller threads */
-		os_thread_destroy(c->c_thr);
-
-		/* Release the controller resources. */
-		cop_ep_cleanup(&c->c_batt);
-		cop_ep_cleanup(&c->c_disp);
-
-		/* Release the wait condition of the controller. */
-		os_c_wait_release(c->c_wait_id);
-	}
+	cop_ctrl_cleanup(c);
 	
 	/* Release the control semaphore for the main process. */
 	os_sem_delete(&c->suspend);
