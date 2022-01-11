@@ -1,0 +1,162 @@
+        -:    0:Source:/home/gerald/van_development/van/os/os_trap.c
+        -:    1:// SPDX-License-Identifier: GPL-2.0
+        -:    2:
+        -:    3:/*
+        -:    4: * Exception handling
+        -:    5: *
+        -:    6: * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+        -:    7: */
+        -:    8:
+        -:    9:/*============================================================================
+        -:   10:  IMPORTED INCLUDE REFERENCES
+        -:   11:  ============================================================================*/
+        -:   12:#include <signal.h>      /* Signal handling of the OS: signal() */
+        -:   13:#include "os.h"          /* Operating system: os_sem_create() */
+        -:   14:
+        -:   15:/*============================================================================
+        -:   16:  EXPORTED INCLUDE REFERENCES
+        -:   17:  ============================================================================*/
+        -:   18:#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
+        -:   19:
+        -:   20:/*============================================================================
+        -:   21:  LOCAL NAME CONSTANTS DEFINITIONS
+        -:   22:  ============================================================================*/
+        -:   23:/*============================================================================
+        -:   24:  MACROS
+        -:   25:  ============================================================================*/
+        -:   26:/*============================================================================
+        -:   27:  LOCAL TYPE DEFINITIONS
+        -:   28:  ============================================================================*/
+        -:   29:/*============================================================================
+        -:   30:  LOCAL DATA
+        -:   31:  ============================================================================*/
+        -:   32:
+        -:   33:static os_conf_t *os_conf_p;
+        -:   34:
+        -:   35:/*============================================================================
+        -:   36:  LOCAL FUNCTION PROTOTYPES
+        -:   37:  ============================================================================*/
+        -:   38:/*============================================================================
+        -:   39:  LOCAL FUNCTIONS
+        -:   40:  ============================================================================*/
+        -:   41:
+        -:   42:/**
+        -:   43: * os_trap_handler() - catch the signal SIGINT to generate a core dump.
+        -:   44: *
+        -:   45: * @signo:  Signal number like SIGINT.
+        -:   46: *
+        -:   47: * Return:	None.
+        -:   48: **/
+function os_trap_handler called 2 returned 100% blocks executed 40%
+        2:   49:void os_trap_handler(int signo)
+        -:   50:{
+        -:   51:        /* Catch Ctrl-C. */
+        2:   52:        if (signo == SIGINT) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   53:                printf("%s: received SIGINT, generate a core dump.\n", F);
+call    0 never executed
+        -:   54:		
+        -:   55:		/* Release critical shared memory resources. */
+    #####:   56:		os_cab_ripcord(0);
+call    0 never executed
+    #####:   57:                raise(SIGABRT);
+call    0 never executed
+        -:   58:        }
+        2:   59:}
+        -:   60:
+        -:   61:/**
+        -:   62: * trap_signal_catch() - Install the signal handler to generate a core dump, if
+        -:   63: * the programm has been terminated with Ctrl-C.
+        -:   64: *
+        -:   65: * Return:	None.
+        -:   66: **/
+function os_trap_catch called 2 returned 100% blocks executed 75%
+        2:   67:void os_trap_catch(void)
+        -:   68:{
+        -:   69:	__sighandler_t ret;
+        -:   70:	
+        -:   71:        /* Install the signal handler to catch SIGINT. */
+        2:   72:        ret = signal(SIGINT, os_trap_handler);
+call    0 returned 100%
+       2*:   73:	OS_TRAP_IF(ret == SIG_ERR);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        2:   74:}
+        -:   75:
+        -:   76:/*============================================================================
+        -:   77:  EXPORTED FUNCTIONS
+        -:   78:  ============================================================================*/
+        -:   79:
+        -:   80:/**
+        -:   81: * os_trap() - force a core dump.
+        -:   82: *
+        -:   83: * @file:      matches __FILE__.
+        -:   84: * @line:      matches __LINE__.
+        -:   85: * @function:  matches __FUNCTION__.
+        -:   86: *
+        -:   87: * Return:	None.
+        -:   88: **/
+function os_trap called 2 returned 100% blocks executed 71%
+        2:   89:void os_trap(char *file, const char *function, unsigned long line)
+        -:   90:{
+        -:   91:	/* Entry condition. */
+        2:   92:	if (file != NULL && function != NULL) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        2:   93:		if (os_strcmp(function, "*coverage*") == 0) {
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+       2*:   94:			OS_TRACE(("*** coverage test at \"%s\", \"%s\", %lu\n",
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:   95:				  file, function, line));
+        -:   96:
+        -:   97:			/* Test the release of critical shared memory resources. */
+        2:   98:			os_cab_ripcord(1);
+call    0 returned 100%
+        -:   99:
+        -:  100:			/* Test the trap handler. */
+        2:  101:			os_trap_handler(SIGUSR1);
+call    0 returned 100%
+        2:  102:			return;
+        -:  103:		}
+        -:  104:		else {
+    #####:  105:			printf ("*** trigger core dump at \"%s\", \"%s\", %lu\n",
+call    0 never executed
+        -:  106:				file, function, line);
+        -:  107:		}
+        -:  108:	}
+        -:  109:
+        -:  110:	/* Release critical shared memory resources. */
+    #####:  111:	os_cab_ripcord(0);
+call    0 never executed
+        -:  112:
+        -:  113:	/* Force a core dump. */
+    #####:  114:	raise(SIGABRT);
+call    0 never executed
+        -:  115:}
+        -:  116:
+        -:  117:
+        -:  118:/**
+        -:  119: * os_trap_init() - install the signal handler for the core dump.
+        -:  120: *
+        -:  121: * Return:	None.
+        -:  122: **/
+function os_trap_init called 2 returned 100% blocks executed 100%
+        2:  123:void os_trap_init(os_conf_t *conf)
+        -:  124:{
+        -:  125:	/* Save the reference to the OS configuration. */
+        2:  126:	os_conf_p = conf;
+        -:  127:	
+        -:  128:	/* Install the signal handler for the core dump. */
+        2:  129:	os_trap_catch();
+call    0 returned 100%
+        2:  130:}

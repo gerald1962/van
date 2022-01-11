@@ -1,0 +1,1074 @@
+        -:    0:Source:/home/gerald/van_development/van/os/os_pthread.c
+        -:    1:// SPDX-License-Identifier: GPL-2.0
+        -:    2:
+        -:    3:/*
+        -:    4: * Pthread interfaces.
+        -:    5: *
+        -:    6: * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+        -:    7: */
+        -:    8:
+        -:    9:/*============================================================================
+        -:   10:  IMPORTED INCLUDE REFERENCES
+        -:   11:  ============================================================================*/
+        -:   12:#include <string.h>      /* String operations. */
+        -:   13:#include <pthread.h>     /* POSIX thread. */
+        -:   14:#include "os.h"          /* Operating system: os_sem_create() */
+        -:   15:
+        -:   16:/*============================================================================
+        -:   17:  EXPORTED INCLUDE REFERENCES
+        -:   18:  ============================================================================*/
+        -:   19:#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
+        -:   20:
+        -:   21:/*============================================================================
+        -:   22:  LOCAL NAME CONSTANTS DEFINITIONS
+        -:   23:  ============================================================================*/
+        -:   24:/*============================================================================
+        -:   25:  MACROS
+        -:   26:  ============================================================================*/
+        -:   27:/*============================================================================
+        -:   28:  LOCAL TYPE DEFINITIONS
+        -:   29:  ============================================================================*/
+        -:   30:/**
+        -:   31: * os_queue_t - os_thread queue.
+        -:   32: *
+        -:   33: * @protect:     protect the access to the message queue.
+        -:   34: * @suspend_c:   client os_thread control semaphore.
+        -:   35: * @anchor:      first empty queue element.
+        -:   36: * @stopper:     last empty queue element.
+        -:   37: * @limit:       max. number of queue elements.
+        -:   38: * @count:       current number of queue elements.
+        -:   39: * @is_running:  the thread analyzes the message queue.
+        -:   40: * @busy_send:   if 1, a client executes os_queue_send.
+        -:   41: **/
+        -:   42:typedef struct {
+        -:   43:	spinlock_t       protect;
+        -:   44:	sem_t            suspend_c;
+        -:   45:	os_queue_elem_t  anchor;
+        -:   46:	os_queue_elem_t  stopper;
+        -:   47:	int              limit;
+        -:   48:	int              count;
+        -:   49:	volatile int     is_running;
+        -:   50:	atomic_int       busy_send;
+        -:   51:} os_queue_t;
+        -:   52:
+        -:   53:/**
+        -:   54: * os_thread_state_t - states of an os_thread.
+        -:   55: *
+        -:   56: * @OS_THREAD_BOOT:     create the thread and the input queue.
+        -:   57: * @OS_THREAD_READY:    ready to process messages.
+        -:   58: * @OS_THREAD_KILL:     destory the thread and the input queue.
+        -:   59: * @OS_THREAD_INVALID:  undefined.
+        -:   60: **/
+        -:   61:typedef enum {
+        -:   62:	OS_THREAD_BOOT,    /* 0 */
+        -:   63:	OS_THREAD_READY,   /* 1 */
+        -:   64:	OS_THREAD_KILL,    /* 2 */
+        -:   65:	OS_THREAD_INVALID  /* 3 */
+        -:   66:} os_thread_state_t;
+        -:   67:
+        -:   68:/**
+        -:   69: * os_thread_t - data for all thread interfaces. The caller must not modify any
+        -:   70: * data.
+        -:   71: *
+        -:   72: * @idx:        index of the thread list.
+        -:   73: * @name:       name of the thread.
+        -:   74: * @state:      current state of the pthread.
+        -:   75: * @prio:       thread priority.
+        -:   76: * @attr:       thread attribute like SCHED_RR.
+        -:   77: * @pthread:    pthread object.
+        -:   78: * @queue:      input queue of the os_thread.
+        -:   79: * @suspend_p:  parent control semaphore for create and destroy.
+        -:   80: **/
+        -:   81:typedef struct {
+        -:   82:	_Atomic os_thread_state_t  state;
+        -:   83:	int               idx;
+        -:   84:	char              name[OS_MAX_NAME_LEN + 1];
+        -:   85:	os_thread_prio_t  prio;
+        -:   86:	pthread_attr_t    attr;
+        -:   87:	pthread_t         pthread;
+        -:   88:	os_queue_t        queue;
+        -:   89:	sem_t             suspend_p;
+        -:   90:} os_thread_t;
+        -:   91:
+        -:   92:/**
+        -:   93: * os_thread_elem_t - entry of the thread table.
+        -:   94: *
+        -:   95: * @thread:     os_thread definition.
+        -:   96: * @idx:        index of the list element.
+        -:   97: * @is_in_use:  1, if the table entry is used.
+        -:   98: **/
+        -:   99:typedef struct {
+        -:  100:	os_thread_t  thread;
+        -:  101:	int          idx;
+        -:  102:	int          is_in_use;
+        -:  103:} os_thread_elem_t;
+        -:  104:
+        -:  105:/*============================================================================
+        -:  106:  LOCAL DATA
+        -:  107:  ============================================================================*/
+        -:  108:/* Pointer to the OS configuration */
+        -:  109:static os_conf_t *os_conf_p;
+        -:  110:
+        -:  111:/**
+        -:  112: * os_thread_list_s - list of the installed thread.
+        -:  113: *
+        -:  114: * @list:     list of the installed thread.
+        -:  115: * @count:    number of the installed threads.
+        -:  116: * @protect:  protect the access to the thread list.
+        -:  117: * @key:      data key visible to all threads.
+        -:  118: * @once_c:   
+        -:  119: **/
+        -:  120:static struct os_thread_list_s {
+        -:  121:	os_thread_elem_t  elem[OS_THREAD_LIMIT];
+        -:  122:	int               count;
+        -:  123:	pthread_mutex_t   protect;
+        -:  124:	pthread_key_t     key;
+        -:  125:	pthread_once_t    once_c;
+        -:  126:
+        -:  127:} os_thread_list;
+        -:  128:
+        -:  129:/*============================================================================
+        -:  130:  LOCAL FUNCTION PROTOTYPES
+        -:  131:  ============================================================================*/
+        -:  132:/*============================================================================
+        -:  133:  LOCAL FUNCTIONS
+        -:  134:  ============================================================================*/
+        -:  135:
+        -:  136:/**
+        -:  137: * os_queue_loop() - process the received messages.
+        -:  138: *
+        -:  139: * @thread:  reference to os_thread.
+        -:  140: * @count:   fill level of the message queue.
+        -:  141: *
+        -:  142: * Return:	0, if the thread state != OS_THREAD_READY.
+        -:  143: **/
+function os_queue_loop called 79 returned 100% blocks executed 100%
+       79:  144:static int os_queue_loop(os_thread_t *thread, int count)
+        -:  145:{
+        -:  146:	os_thread_state_t state;
+        -:  147:	os_queue_elem_t *elem;
+        -:  148:	os_queue_t *q;
+        -:  149:	
+        -:  150:	/* Get the reference to the thread input queue. */
+       79:  151:	q = &thread->queue;
+        -:  152:
+        -:  153:	/* Loop over the message queue. */
+      632:  154:	while (count > 0) {
+branch  0 taken 90%
+branch  1 taken 10% (fallthrough)
+        -:  155:		/* Enter the critical section. */
+      568:  156:		os_spin_lock(&q->protect);
+call    0 returned 100%
+        -:  157:			
+        -:  158:		/* Decrement the element counter. */
+      568:  159:		q->count--;
+        -:  160:
+        -:  161:		/* Get the first queue element. */
+      568:  162:		elem = q->anchor.next;
+        -:  163:
+        -:  164:		/* Calculate the new queue start. */
+      568:  165:		q->anchor.next = elem->next;
+        -:  166:
+        -:  167:		/* Test the fill level of the input queue. */
+      568:  168:		if (q->anchor.next == &q->stopper) {
+branch  0 taken 16% (fallthrough)
+branch  1 taken 84%
+        -:  169:			/* The input queue is empty. */
+       89:  170:			q->stopper.next = &q->anchor;
+        -:  171:		}
+        -:  172:
+        -:  173:		/* Leave the critical section. */
+      568:  174:		os_spin_unlock(&q->protect);
+call    0 returned 100%
+        -:  175:
+        -:  176:		/* Process the current message. */
+      568:  177:		elem->cb(elem);
+call    0 returned 100%
+        -:  178:
+        -:  179:		/* Free the message buffer. */
+      568:  180:		OS_FREE(elem);
+call    0 returned 100%
+        -:  181:
+        -:  182:		/* Enter the critical section. */
+      568:  183:		os_spin_lock(&q->protect);
+call    0 returned 100%
+        -:  184:
+        -:  185:		/* Copy the filling level of the queue. */
+      568:  186:		count = q->count;
+        -:  187:
+        -:  188:		/* Leave the critical section. */
+      568:  189:		os_spin_unlock(&q->protect);
+call    0 returned 100%
+        -:  190:
+        -:  191:		/* Test the thread state. */
+      568:  192:		state = atomic_load(&thread->state);
+      568:  193:		if (state != OS_THREAD_READY)
+branch  0 taken 3% (fallthrough)
+branch  1 taken 97%
+       15:  194:			return 0;
+        -:  195:	}
+        -:  196:
+       64:  197:	return 1;
+        -:  198:}
+        -:  199:
+        -:  200:/**
+        -:  201: * os_thread_suspend() - suspend the thread, if the message queue is empty.
+        -:  202: *
+        -:  203: * @thread:  reference to os_thread.
+        -:  204: * @count:   pointer to the fill level of the input queue.
+        -:  205: *
+        -:  206: * Return:	0, if the thread state != OS_THREAD_READY.
+        -:  207: **/
+function os_thread_suspend called 158 returned 100% blocks executed 83%
+      158:  208:static int os_thread_suspend(os_thread_t *thread, int *count_p)
+        -:  209:{
+        -:  210:	os_thread_state_t state;
+        -:  211:	os_queue_t *q;
+        -:  212:	int count;
+        -:  213:
+        -:  214:	/* Initialize the return value. */
+      158:  215:	*count_p = 0;
+        -:  216:
+        -:  217:	/* Get the reference to the thread input queue. */
+      158:  218:	q = &thread->queue;
+        -:  219:
+        -:  220:	/* Enter the critical section. */
+      158:  221:	os_spin_lock(&q->protect);
+call    0 returned 100%
+        -:  222:
+        -:  223:	/* If the input queue is empty, suspend the thread. */
+      158:  224:	q->is_running = 0;
+        -:  225:
+        -:  226:	/* Copy the filling level of the queue. */
+      158:  227:	count = q->count;
+        -:  228:
+        -:  229:	/* Leave the critical section. */
+      158:  230:	os_spin_unlock(&q->protect);
+call    0 returned 100%
+        -:  231:
+        -:  232:	/* If the input queue is empty, suspend the thread. */
+      158:  233:	if (count < 1) {
+branch  0 taken 98% (fallthrough)
+branch  1 taken 2%
+        -:  234:		/* Test the thread state. */
+      155:  235:		state = atomic_load(&thread->state);
+      155:  236:		if (state != OS_THREAD_READY)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  237:			return 0;
+        -:  238:
+        -:  239:		/* Print the suspend information. */
+     155*:  240:		OS_TRACE(("%s [t=%s,s=%d,o=suspend]\n", OS, thread->name, state));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  241:
+        -:  242:		/* Suspend the thread. */
+      155:  243:		os_sem_wait (&q->suspend_c);
+call    0 returned 100%
+        -:  244:
+        -:  245:		/* Print the resume information. */
+     155*:  246:		OS_TRACE(("%s [t=%s,s=%d,o=resume]\n", OS, thread->name, state));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  247:	}
+        -:  248:
+        -:  249:	/* Enter the critical section. */
+      158:  250:	os_spin_lock(&q->protect);
+call    0 returned 100%
+        -:  251:
+        -:  252:	/* Change the thread state to running. */
+      158:  253:	q->is_running = 1;
+        -:  254:
+        -:  255:	/* Copy the filling level of the queue. */
+      158:  256:	count = q->count;
+        -:  257:
+        -:  258:	/* Leave the critical section. */
+      158:  259:	os_spin_unlock(&q->protect);
+call    0 returned 100%
+        -:  260:
+        -:  261:	/* Update the fill level of the queue. */
+      158:  262:	*count_p = count;
+        -:  263:
+        -:  264:	/* Test the thread state. */
+      158:  265:	state = atomic_load(&thread->state);
+      158:  266:	if (state != OS_THREAD_READY)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+       79:  267:		return 0;
+        -:  268:		
+       79:  269:	return 1;
+        -:  270:}
+        -:  271:
+        -:  272:/**
+        -:  273: * os_pthread_once_init() - init_routine for pthread_once.
+        -:  274: *
+        -:  275: * Return:	None.
+        -:  276: **/
+function os_pthread_once_init called 2 returned 100% blocks executed 75%
+        2:  277:static void os_pthread_once_init(void)
+        -:  278:{
+        -:  279:	int ret;
+        -:  280:	
+        -:  281:	/* Create a data key visible to all theads in the process. */
+        2:  282:	ret = pthread_key_create(&os_thread_list.key, NULL);
+call    0 returned 100%
+       2*:  283:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        2:  284:}
+        -:  285:
+        -:  286:/**
+        -:  287: * os_thread_save() - save the thread pointer.
+        -:  288: *
+        -:  289: * @thread:  reference to os_thread.
+        -:  290: *
+        -:  291: * Return:	None.
+        -:  292: **/
+function os_thread_save called 94 returned 100% blocks executed 78%
+       94:  293:static void os_thread_save(os_thread_t *thread)
+        -:  294:{
+        -:  295:	pthread_key_t key;
+        -:  296:	int ret;
+        -:  297:	
+        -:  298:	/* Initialze the os_thread_list.key once. */
+       94:  299:	ret = pthread_once(&os_thread_list.once_c, os_pthread_once_init);
+call    0 returned 100%
+      94*:  300:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  301:
+        -:  302:	/* Copy the key. */
+       94:  303:	key = os_thread_list.key;
+        -:  304:
+        -:  305:	/* Get the reference to the os_thread. */
+       94:  306:	if (pthread_getspecific(key) == NULL)
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        -:  307:	{
+        -:  308:		/* Associate the os_thread with key. */
+       94:  309:		ret = pthread_setspecific(key, thread);
+call    0 returned 100%
+      94*:  310:		OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  311:	}
+       94:  312:}
+        -:  313:
+        -:  314:/**
+        -:  315: * os_thread_cb() - callback for the thread context.
+        -:  316: *
+        -:  317: * @arg:  generic reference to os_thread.
+        -:  318: *
+        -:  319: * Return:	NULL.
+        -:  320: **/
+function os_thread_cb called 94 returned 100% blocks executed 88%
+       94:  321:static void *os_thread_cb(void *arg)
+        -:  322:{
+        -:  323:	os_thread_t *thread;
+        -:  324:	int count;
+        -:  325:
+        -:  326:	/* Entry condition. */
+      94*:  327:	OS_TRAP_IF(arg == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  328:	
+        -:  329:	/* Decode the reference to the os_thread. */
+       94:  330:	thread = arg;
+        -:  331:	
+        -:  332:	/* Save the thread pointer. */
+       94:  333:	os_thread_save(thread);
+call    0 returned 100%
+        -:  334:
+        -:  335:	/* Change the os_thread state. */
+      94*:  336:	OS_TRACE(("%s [t=%s,s=ready,o=create]\n", OS, thread->name));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+       94:  337:	atomic_store(&thread->state, OS_THREAD_READY);
+        -:  338:
+        -:  339:	/* Resume the caller of os_thread_create. */
+       94:  340:	os_sem_release(&thread->suspend_p);
+call    0 returned 100%
+        -:  341:
+        -:  342:	/* Loop thru the thread callback. */
+        -:  343:	for (;;)  {
+        -:  344:		/* Suspend the thread, if the message queue is empty. */
+      158:  345:		count = 0;
+      158:  346:		if (! os_thread_suspend(thread, &count))
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+       79:  347:			break;
+        -:  348:
+        -:  349:		/* Loop over the message queue. */
+       79:  350:		if (! os_queue_loop(thread, count))
+call    0 returned 100%
+branch  1 taken 19% (fallthrough)
+branch  2 taken 81%
+       15:  351:			break;
+        -:  352:	}
+        -:  353:	
+        -:  354:	/* Release the parent thread in os_thread_destroy. */
+       94:  355:	os_sem_release(&thread->suspend_p);
+call    0 returned 100%
+        -:  356:	
+       94:  357:	return NULL;
+        -:  358:}
+        -:  359:
+        -:  360:/**
+        -:  361: * os_queue_free() - release the queue resources.
+        -:  362: *
+        -:  363: * @q:  pointer to the OS thread queue.
+        -:  364: *
+        -:  365: * Return:	None.
+        -:  366: **/
+function os_queue_free called 94 returned 100% blocks executed 89%
+       94:  367:static void os_queue_free(os_queue_t *q)
+        -:  368:{
+        -:  369:	os_queue_elem_t *elem, *next;
+        -:  370:	int i;
+        -:  371:
+        -:  372:	/* Get the first queue element. */
+       94:  373:	elem = q->anchor.next;
+        -:  374:
+        -:  375:	/* Free pending messages. */
+       98:  376:	for (i = 0; elem != &q->stopper; i++) {
+branch  0 taken 4%
+branch  1 taken 96% (fallthrough)
+        -:  377:		/* Save the reference to the successor. */
+        4:  378:		next = elem->next;
+        -:  379:		
+        -:  380:		/* Free the message buffer. */
+        4:  381:		OS_FREE(elem);
+call    0 returned 100%
+        -:  382:
+        -:  383:		/* Continue with the next element. */
+        4:  384:		elem = next;
+        -:  385:	}
+        -:  386:
+        -:  387:	/* Test the queue state. */
+      94*:  388:	OS_TRAP_IF(i != q->count);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  389:
+        -:  390:	/* Release the queue OS resources. */
+       94:  391:	os_spin_destroy(&q->protect);
+call    0 returned 100%
+       94:  392:	os_sem_delete(&q->suspend_c);
+call    0 returned 100%
+       94:  393:}
+        -:  394:
+        -:  395:/**
+        -:  396: * os_thread_free() - release the queue and thread resources.
+        -:  397: *
+        -:  398: * @thread:  pointer to the os_thread.
+        -:  399: *
+        -:  400: * Return:	None.
+        -:  401: **/
+function os_thread_free called 94 returned 100% blocks executed 80%
+       94:  402:static void os_thread_free(os_thread_t *thread)
+        -:  403:{
+        -:  404:	struct os_thread_list_s *list;
+        -:  405:	os_thread_elem_t *elem;
+        -:  406:	int ret;
+        -:  407:	
+        -:  408:	/* Release the queue resources. */
+       94:  409:	os_queue_free(&thread->queue);
+call    0 returned 100%
+        -:  410:	
+        -:  411:	/* Free the thread resources. */
+       94:  412:	ret = pthread_attr_destroy(&thread->attr);
+call    0 returned 100%
+      94*:  413:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  414:	
+       94:  415:	os_sem_delete(&thread->suspend_p);
+call    0 returned 100%
+        -:  416:
+        -:  417:	/* Release the thread element. */
+       94:  418:	list = &os_thread_list;
+        -:  419:
+        -:  420:	/* Get the address of the thread list element. */
+       94:  421:	elem = &list->elem[thread->idx];
+        -:  422:
+        -:  423:	/* Enter the critical section. */
+       94:  424:	os_cs_enter(&list->protect);
+call    0 returned 100%
+        -:  425:
+        -:  426:	/* Test the thread state. */
+      94*:  427:	OS_TRAP_IF(! elem->is_in_use);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  428:
+        -:  429:	/* Reset the thread index. */
+       94:  430:	thread->idx = -1;
+        -:  431:	
+        -:  432:	/* Update the list state. */
+       94:  433:	elem->is_in_use = 0;
+       94:  434:	list->count--;
+        -:  435:
+        -:  436:	/* Leave the critical section. */
+       94:  437:	os_cs_leave(&list->protect);
+call    0 returned 100%
+       94:  438:}
+        -:  439:
+        -:  440:/**
+        -:  441: * os_queue_init() - initialize the input queue of the thread.
+        -:  442: *
+        -:  443: * @thread:  pointer to the os_thread.
+        -:  444: * @q_size:  max. number of the input queue messages.
+        -:  445: *
+        -:  446: * Return:	None.
+        -:  447: **/
+function os_queue_init called 94 returned 100% blocks executed 80%
+       94:  448:static void os_queue_init(os_thread_t *thread, int q_size)
+        -:  449:{
+        -:  450:	os_queue_t  *q;
+        -:  451:
+        -:  452:	/* Entry condition. */
+      94*:  453:	OS_TRAP_IF(q_size >= OS_QUEUE_LIMIT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  454:	
+        -:  455:	/* Get the reference to the  os_queue. */
+       94:  456:	q = &thread->queue;
+        -:  457:
+        -:  458:	/* Initialize the spinlock. */
+       94:  459:	os_spin_init(&q->protect);
+call    0 returned 100%
+        -:  460:
+        -:  461:	/* Create the thread control semaphore. */
+       94:  462:	os_sem_init(&q->suspend_c, 0);
+call    0 returned 100%
+        -:  463:
+        -:  464:	/* Initialize the input queue. */
+       94:  465:	q->anchor.next  = &q->stopper;
+       94:  466:	q->stopper.next = &q->anchor;
+        -:  467:
+        -:  468:	/* Initialize the queue element counter. */
+       94:  469:	q->limit = q_size;
+       94:  470:	q->count = 0;
+        -:  471:
+        -:  472:	/* Reset the queue state. */
+       94:  473:	q->is_running = 0;
+       94:  474:	q->busy_send  = 0;
+       94:  475:}
+        -:  476:
+        -:  477:/**
+        -:  478: * os_thread_alloc() - allocate a os_thread.
+        -:  479: *
+        -:  480: * @q_size:  max. number of the input queue messages.
+        -:  481: *
+        -:  482: * Return:	the pointer to the allocated thread.
+        -:  483: **/
+function os_thread_alloc called 94 returned 100% blocks executed 92%
+       94:  484:static os_thread_t *os_thread_alloc(int q_size)
+        -:  485:{
+        -:  486:	struct os_thread_list_s *list;
+        -:  487:	os_thread_elem_t *elem;
+        -:  488:	int i;
+        -:  489:
+        -:  490:	/* Get the address of the thread list. */
+       94:  491:	list = &os_thread_list;
+        -:  492:	
+        -:  493:	/* Get the address of the first list element. */
+       94:  494:	elem = list->elem;
+        -:  495:
+        -:  496:	/* Enter the critical section. */
+       94:  497:	os_cs_enter(&list->protect);
+call    0 returned 100%
+        -:  498:	
+        -:  499:	/* Search for a free table entry. */
+      628:  500:	for (i = 0; i < OS_THREAD_LIMIT && elem->is_in_use; i++, elem++)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 85%
+branch  3 taken 15% (fallthrough)
+        -:  501:		;
+        -:  502:
+        -:  503:	/* Test the table state. */
+      94*:  504:	OS_TRAP_IF(i >= OS_THREAD_LIMIT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  505:
+        -:  506:	/* Reset the thread state. */
+       94:  507:	os_memset(elem, 0, sizeof(os_thread_elem_t));
+call    0 returned 100%
+        -:  508:	
+        -:  509:	/* Allocate a thread list element. */
+       94:  510:	elem->idx       = i;
+       94:  511:	elem->is_in_use = 1;
+        -:  512:	
+        -:  513:	/* Save the index. */
+       94:  514:	elem->thread.idx = i;
+        -:  515:
+       94:  516:	list->count++;
+        -:  517:
+        -:  518:	/* Leave the critical section. */
+       94:  519:	os_cs_leave(&list->protect);
+call    0 returned 100%
+        -:  520:
+        -:  521:	/* Initialize the input queue of the thread. */
+       94:  522:	os_queue_init(&elem->thread, q_size);
+call    0 returned 100%
+        -:  523:	
+       94:  524:	return &elem->thread;
+        -:  525:}
+        -:  526:
+        -:  527:/**
+        -:  528: * os_thread_prio() - calculate the thread priority.
+        -:  529: *
+        -:  530: * @prio:  thread priority.
+        -:  531: *
+        -:  532: * Return:	the updated thread priority.
+        -:  533: **/
+function os_thread_prio called 94 returned 100% blocks executed 100%
+       94:  534:static os_thread_prio_t os_thread_prio(os_thread_prio_t prio)
+        -:  535:{
+        -:  536:	/* Test the thread priority. */
+       94:  537:	switch(prio) {
+branch  0 taken 98%
+branch  1 taken 2%
+       92:  538:	case OS_THREAD_PRIO_HARDRT:
+        -:  539:	case OS_THREAD_PRIO_SOFTRT:
+        -:  540:	case OS_THREAD_PRIO_BACKG:
+        -:  541:	case OS_THREAD_PRIO_FOREG:
+       92:  542:		return prio;
+        2:  543:	default:
+        2:  544:		return OS_THREAD_PRIO_DEFAULT;
+        -:  545:	}
+        -:  546:}
+        -:  547:
+        -:  548:/*============================================================================
+        -:  549:  EXPORTED FUNCTIONS
+        -:  550:  ============================================================================*/
+        -:  551:/**
+        -:  552: * os_thread_create() - create a thread and the input queue.
+        -:  553: *
+        -:  554: * @thread:  address of the pthread data.
+        -:  555: * @name:    name of the thread.
+        -:  556: * @prio:    thread priority.
+        -:  557: * @q_size:  max. number of the input queue messages.
+        -:  558: *
+        -:  559: * Return:     the generic pointer to the os_thread.
+        -:  560: **/
+function os_thread_create called 94 returned 100% blocks executed 74%
+       94:  561:void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
+        -:  562:{
+        -:  563:	struct sched_param p;
+        -:  564:	os_thread_t  *thread;
+        -:  565:	int len, ret, c_type, orig_c;
+        -:  566:
+        -:  567:	/* Entry condition. */
+      94*:  568:	OS_TRAP_IF(name == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  569:
+        -:  570:	/* Allocate the os_thread. */
+       94:  571:	thread = os_thread_alloc(q_size);
+call    0 returned 100%
+        -:  572:	
+        -:  573:	/* Save the thread name. */
+       94:  574:	len = os_strlen(name);
+call    0 returned 100%
+      94*:  575:	OS_TRAP_IF(len >= OS_MAX_NAME_LEN);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+       94:  576:	os_memset(thread->name, 0, OS_MAX_NAME_LEN);
+call    0 returned 100%
+       94:  577:	os_strcpy(thread->name, OS_MAX_NAME_LEN, name);
+call    0 returned 100%
+        -:  578:
+        -:  579:	/* Initialize the thread state. */
+      94*:  580:	OS_TRACE(("%s [t=%s,s=boot,o=create]\n", OS, thread->name));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+       94:  581:	atomic_store(&thread->state, OS_THREAD_BOOT);
+        -:  582:	
+        -:  583:	/* Calculate the thread priority. */
+       94:  584:	prio = os_thread_prio(prio);
+call    0 returned 100%
+        -:  585:	
+        -:  586:	/* Initialize the thread attributes with default values. */
+       94:  587:	ret = pthread_attr_init(&thread->attr);
+call    0 returned 100%
+      94*:  588:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  589:
+        -:  590:	/* Set the scheduling policy attribute. */
+       94:  591:	ret = pthread_attr_setschedpolicy(&thread->attr, SCHED_RR);
+call    0 returned 100%
+      94*:  592:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  593:
+        -:  594:	/* Define the thread priority. */
+       94:  595:	p.sched_priority = prio;
+       94:  596:	ret = pthread_attr_setschedparam(&thread->attr, &p);
+call    0 returned 100%
+      94*:  597:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  598:
+        -:  599:	/* Save the thread prioriiy. */
+       94:  600:	thread->prio  = prio;
+        -:  601:
+        -:  602:	/* Create the control semaphore for os_thread_delete. */
+       94:  603:	os_sem_init(&thread->suspend_p, 0);
+call    0 returned 100%
+        -:  604:	
+        -:  605:	/* Set the cancelability type. */
+       94:  606:	c_type = PTHREAD_CANCEL_ENABLE;
+       94:  607:	ret = pthread_setcancelstate(c_type, &orig_c);
+call    0 returned 100%
+      94*:  608:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  609:
+        -:  610:	/* Create the pthread. */
+       94:  611:	ret = pthread_create(&thread->pthread, NULL, os_thread_cb, thread);
+call    0 returned 100%
+      94*:  612:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  613:
+        -:  614:	/* Wait for the start of the client. os_thread. */
+       94:  615:	os_sem_wait(&thread->suspend_p);
+call    0 returned 100%
+        -:  616:	
+       94:  617:	return thread;
+        -:  618:}
+        -:  619:
+        -:  620:/**
+        -:  621: * os_queue_send() - save the message in the os_thread queue.
+        -:  622: *
+        -:  623: * @g_thread:  generic address of the os_thread.
+        -:  624: * @msg:       reference to the message.
+        -:  625: * @size:      size of the message.
+        -:  626: *
+        -:  627: * Return:	None.
+        -:  628: **/
+function os_queue_send called 572 returned 100% blocks executed 68%
+      572:  629:void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size)
+        -:  630:{
+        -:  631:	os_thread_t        *thread;
+        -:  632:	os_thread_state_t   state;
+        -:  633:	os_queue_elem_t    *elem, *stopper;
+        -:  634:	os_queue_t         *q;
+        -:  635:	int                 is_running;
+        -:  636:	
+        -:  637:	/* Entry condition. */
+     572*:  638:	OS_TRAP_IF(g_thread == NULL || msg == NULL ||
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+        -:  639:		   size < sizeof(os_queue_elem_t) || msg->cb == NULL);
+        -:  640:
+        -:  641:	/* Decode the reference to the os_thread. */
+      572:  642:	thread = g_thread;
+        -:  643:
+        -:  644:	/* Get the reference to the message queue. . */
+      572:  645:	q = &thread->queue;
+        -:  646:
+        -:  647:	/* Change the state of this operation. */
+      572:  648:	atomic_store(&q->busy_send, 1);
+        -:  649:	
+        -:  650:	/* Test the thread state. */
+      572:  651:	state = atomic_load(&thread->state);
+     572*:  652:	OS_TRAP_IF(state != OS_THREAD_READY);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  653:	
+        -:  654:	/* Request memory for the os_message. */
+      572:  655:	elem = OS_MALLOC(size);
+call    0 returned 100%
+        -:  656:
+        -:  657:	/* Copy the user message. */
+      572:  658:	os_memcpy (elem, size, msg, size);
+call    0 returned 100%
+        -:  659:
+        -:  660:	/* Get the reference to the last queue element. */
+      572:  661:	stopper = &q->stopper;
+        -:  662:	
+        -:  663:	/* Enter the critical section. */
+      572:  664:	os_spin_lock(&q->protect);
+call    0 returned 100%
+        -:  665:	
+        -:  666:	/* Increment the number of the queue elements. */
+      572:  667:	q->count++;
+        -:  668:
+        -:  669:	/* Test the state of the message queueu. */
+      572:  670:	if (q->count > q->limit) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  671:		OS_TRACE(("> %s: \"%s\": count=%d, limit=%d", F, thread->name,
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+call    4 never executed
+        -:  672:			  q->count, q->limit));
+    #####:  673:		OS_TRAP();
+call    0 never executed
+        -:  674:	}
+        -:  675:
+        -:  676:	/* Insert the new message at the end of the queue. */
+      572:  677:	stopper->next->next = elem;
+      572:  678:	elem->next = stopper;
+      572:  679:	stopper->next = elem;
+        -:  680:
+        -:  681:	/* Change the thread state. */
+      572:  682:	is_running = q->is_running;
+      572:  683:	q->is_running = 1;
+        -:  684:
+        -:  685:	/* Leave the critical section. */
+      572:  686:	os_spin_unlock (&q->protect);
+call    0 returned 100%
+        -:  687:
+        -:  688:	/* Test the thread state. */
+      572:  689:	if (! is_running) {
+branch  0 taken 13% (fallthrough)
+branch  1 taken 87%
+        -:  690:		/* Resume the os_thread. */
+       76:  691:		os_sem_release (&q->suspend_c);
+call    0 returned 100%
+        -:  692:	}
+        -:  693:	
+        -:  694:	/* Change the state of this operation. */
+      572:  695:	atomic_store(&q->busy_send, 0);	
+      572:  696:}
+        -:  697:
+        -:  698:/**
+        -:  699: * os_thread_destroy() - delete a thread and its input queue. Be carefull when
+        -:  700: * deleting a thread, as it may hold some resources which has not been released.
+        -:  701: *
+        -:  702: * @g_thread:  generic address of the os_thread.
+        -:  703: *
+        -:  704: * Return:	None.
+        -:  705: **/
+function os_thread_destroy called 94 returned 100% blocks executed 68%
+       94:  706:void os_thread_destroy(void *g_thread)
+        -:  707:{
+        -:  708:	os_thread_state_t state;
+        -:  709:	os_thread_t  *thread, *current;
+        -:  710:	os_queue_t   *q;
+        -:  711:	int busy_send, ret;
+        -:  712:	void *status;
+        -:  713:	
+        -:  714:	/* Entry condition. */
+      94*:  715:	OS_TRAP_IF(g_thread == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  716:
+        -:  717:	/* Decode the reference to the thread state. */
+       94:  718:	thread = g_thread;
+        -:  719:	
+        -:  720:	/* Test the list index. */
+      94*:  721:	OS_TRAP_IF(thread->idx < 0 || thread->idx >= OS_THREAD_LIMIT);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  722:
+        -:  723:	/* The current thread may not delete itself. */
+       94:  724:	current = pthread_getspecific(os_thread_list.key);
+call    0 returned 100%
+      94*:  725:	OS_TRAP_IF(thread == current);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  726:
+        -:  727:	/* Get, modify and test the thread state. */
+      94*:  728:	OS_TRACE(("%s [t=%s,s=kill,o=destroy]\n", OS, thread->name));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+       94:  729:	state = atomic_load(&thread->state);
+       94:  730:	atomic_store(&thread->state, OS_THREAD_KILL);
+      94*:  731:	OS_TRAP_IF(state != OS_THREAD_READY);	
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  732:
+        -:  733:	/* Get the reference to the message queue. . */
+       94:  734:	q = &thread->queue;
+        -:  735:	
+        -:  736:	/* Fatal interworking error because of busy os_queue_send. */
+       94:  737:	busy_send = atomic_load(&q->busy_send);
+      94*:  738:	OS_TRAP_IF(busy_send != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  739:
+        -:  740:	/* Resume the os_thread in os_thread_cb. */
+       94:  741:	os_sem_release (&q->suspend_c);
+call    0 returned 100%
+        -:  742:
+        -:  743:	/* Wait for the leave of the thread callback. */
+       94:  744:	os_sem_wait(&thread->suspend_p);
+call    0 returned 100%
+        -:  745:
+        -:  746:	/* Join with the terminated thread. */
+       94:  747:	ret = pthread_join(thread->pthread, &status);
+call    0 returned 100%
+      94*:  748:	OS_TRAP_IF(ret != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  749:
+        -:  750:	/* Release the os_thread and queue resources. */
+       94:  751:	os_thread_free(thread);
+call    0 returned 100%
+       94:  752:}
+        -:  753:
+        -:  754:/**
+        -:  755: * os_thread_name() - return the pointer to the thread name string.
+        -:  756: *
+        -:  757: * @g_thread:  generic address of the os_thread.
+        -:  758: *
+        -:  759: * Return:	start address of the thread name.
+        -:  760: **/
+function os_thread_name called 66 returned 100% blocks executed 71%
+       66:  761:char *os_thread_name(void *g_thread)
+        -:  762:{
+        -:  763:	os_thread_t  *thread;
+        -:  764:	
+        -:  765:	/* Entry condition. */
+      66*:  766:	OS_TRAP_IF(g_thread == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  767:
+        -:  768:	/* Decode the reference to the thread state. */
+       66:  769:	thread = g_thread;
+        -:  770:	
+        -:  771:	/* Test the list index. */
+      66*:  772:	OS_TRAP_IF(thread->idx < 0 || thread->idx >= OS_THREAD_LIMIT);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  773:
+       66:  774:	return thread->name;
+        -:  775:}
+        -:  776:
+        -:  777:/**
+        -:  778: * os_thread_statistics() - provide data on the thread state.
+        -:  779: *
+        -:  780: * @stat:  address of the status information.
+        -:  781: *
+        -:  782: * Return:	None.
+        -:  783: **/
+function os_thread_statistics called 38 returned 100% blocks executed 100%
+       38:  784:void os_thread_statistics(os_statistics_t *stat)
+        -:  785:{
+        -:  786:	struct os_thread_list_s *list;
+        -:  787:
+        -:  788:	/* Get the address of the thread list. */
+       38:  789:	list = &os_thread_list;
+        -:  790:
+        -:  791:	/* Enter the critical section. */
+       38:  792:	os_cs_enter(&list->protect);
+call    0 returned 100%
+        -:  793:
+        -:  794:	/* Provide the number of the installed threads. */
+       38:  795:	stat->thread_c = list->count;
+        -:  796:	
+        -:  797:	/* Leave the critical section. */
+       38:  798:	os_cs_leave(&list->protect);
+call    0 returned 100%
+       38:  799:}
+        -:  800:
+        -:  801:/**
+        -:  802: * os_thread_init() - initialize the thread list.
+        -:  803: *
+        -:  804: * conf:  OS configuration.
+        -:  805: *
+        -:  806: * Return:	None.
+        -:  807: **/
+function os_thread_init called 2 returned 100% blocks executed 100%
+        2:  808:void os_thread_init(os_conf_t *conf)
+        -:  809:{
+        -:  810:	/* Save the reference to the OS configuration. */
+        2:  811:	os_conf_p = conf;
+        -:  812:	
+        -:  813:	/* Create the mutex for the critical section. */
+        2:  814:	os_cs_init(&os_thread_list.protect);
+call    0 returned 100%
+        -:  815:
+        -:  816:	/* Initialize the control for pthread_once. */
+        2:  817:	os_thread_list.once_c = PTHREAD_ONCE_INIT;
+        2:  818:}
+        -:  819:
+        -:  820:/**
+        -:  821: * os_thread_exit() - release the thread list resources.
+        -:  822: *
+        -:  823: * Return:	None.
+        -:  824: **/
+function os_thread_exit called 2 returned 100% blocks executed 83%
+        2:  825:void os_thread_exit(void)
+        -:  826:{
+        -:  827:	struct os_thread_list_s *list;
+        -:  828:
+        -:  829:	/* Release the thread list resources. */
+        2:  830:	list = &os_thread_list;
+        -:  831:
+        -:  832:	/* Enter the critical section. */
+        2:  833:	os_cs_enter(&list->protect);
+call    0 returned 100%
+        -:  834:
+       2*:  835:	OS_TRAP_IF(list->count != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  836:
+        -:  837:	/* Leave the critical section. */
+        2:  838:	os_cs_leave(&list->protect);
+call    0 returned 100%
+        -:  839:
+        -:  840:	/* Create the mutex for the critical section. */
+        2:  841:	os_cs_destroy(&list->protect);
+call    0 returned 100%
+        2:  842:}

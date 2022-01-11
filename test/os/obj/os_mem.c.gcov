@@ -1,0 +1,499 @@
+        -:    0:Source:/home/gerald/van_development/van/os/os_mem.c
+        -:    1:// SPDX-License-Identifier: GPL-2.0
+        -:    2:
+        -:    3:/*
+        -:    4: * Allocate and free dynamic memory.
+        -:    5: *
+        -:    6: * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+        -:    7: */
+        -:    8:
+        -:    9:/*============================================================================
+        -:   10:  IMPORTED INCLUDE REFERENCES
+        -:   11:  ============================================================================*/
+        -:   12:#include "os.h"          /* Operating system: os_sem_create() */
+        -:   13:
+        -:   14:/*============================================================================
+        -:   15:  EXPORTED INCLUDE REFERENCES
+        -:   16:  ============================================================================*/
+        -:   17:#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
+        -:   18:
+        -:   19:/*============================================================================
+        -:   20:  LOCAL NAME CONSTANTS DEFINITIONS
+        -:   21:  ============================================================================*/
+        -:   22:/*============================================================================
+        -:   23:  MACROS
+        -:   24:  ============================================================================*/
+        -:   25:/*============================================================================
+        -:   26:  LOCAL TYPE DEFINITIONS
+        -:   27:  ============================================================================*/
+        -:   28:
+        -:   29:/* State of a single malloc element. */
+        -:   30:
+        -:   31:/**
+        -:   32: * os_mem_t - start addess of the memory allocated with malloc().
+        -:   33: *
+        -:   34: * @elem_idx:   position in the memory list.
+        -:   35: * @file_idx:   position in the file list.
+        -:   36: * @line:       line number of the os_malloc() call.
+        -:   37: * @allocated:  1, if the element is in use.
+        -:   38: * @start:      start address of the allocated memoy for the client.
+        -:   39: **/
+        -:   40:typedef struct {
+        -:   41:        int    elem_idx;
+        -:   42:        int    file_idx;
+        -:   43:        unsigned long line;
+        -:   44:        int    allocated;
+        -:   45:        void  *start;
+        -:   46:} os_mem_elem_t;
+        -:   47:
+        -:   48:/* State of the malloc table. */
+        -:   49:/**
+        -:   50: * os_mem_stat_t - list for the os_malloc calls.
+        -:   51: *
+        -:   52: * @protect:   mutex for the critical section.
+        -:   53: * @file:      file list.
+        -:   54: * @next:      current start index of the element list.
+        -:   55: * @malloc_c:  number of the os_malloc calls.
+        -:   56: * @free_c:    number of the os_free calls.
+        -:   57: * @elem:      os_malloc list.
+        -:   58: **/
+        -:   59:typedef struct {
+        -:   60:        pthread_mutex_t   protect;
+        -:   61:        char             *file[OS_MALLOC_FILE_LIMIT];
+        -:   62:        int               next;
+        -:   63:        unsigned long     malloc_c;
+        -:   64:        unsigned long     free_c;
+        -:   65:        os_mem_elem_t     elem[OS_MALLOC_LIMIT];
+        -:   66:} os_mem_stat_t;
+        -:   67:
+        -:   68:/**
+        -:   69: * os_mem_t - start addess of the memory allocated with malloc().
+        -:   70: *
+        -:   71: * @idx:    position in the memory list.
+        -:   72: * @align:  64 bit alignmen.
+        -:   73: * @start:  start address of the allocated memoy for the client.
+        -:   74: **/
+        -:   75:typedef struct {
+        -:   76:        int list_idx;
+        -:   77:        union {
+        -:   78:                unsigned long long align;
+        -:   79:                void *start;
+        -:   80:        } ptr;
+        -:   81:} os_mem_t;
+        -:   82:
+        -:   83:/*============================================================================
+        -:   84:  LOCAL DATA
+        -:   85:  ============================================================================*/
+        -:   86:
+        -:   87:/* State of the os_malloc list. */
+        -:   88:static os_mem_stat_t os_mem_stat;
+        -:   89:
+        -:   90:/*============================================================================
+        -:   91:  LOCAL FUNCTION PROTOTYPES
+        -:   92:  ============================================================================*/
+        -:   93:/*============================================================================
+        -:   94:  LOCAL FUNCTIONS
+        -:   95:  ============================================================================*/
+        -:   96:
+        -:   97:/**
+        -:   98: * os_mem_elem_put() - free an os_malloc element.
+        -:   99: *
+        -:  100: * @idx:  index of the reserved list element.
+        -:  101: * @ptr:  address of the external os_malloc buffer.
+        -:  102: *
+        -:  103: * Return:     None.
+        -:  104: **/
+function os_mem_elem_put called 4682 returned 100% blocks executed 78%
+     4682:  105:static void os_mem_elem_put(int idx, void *ptr)
+        -:  106:{
+        -:  107:	os_mem_stat_t *p;
+        -:  108:	os_mem_elem_t *elem;
+        -:  109:	
+        -:  110:	/* Get the reference of the os_malloc list. */
+     4682:  111:        p = &os_mem_stat;
+        -:  112:
+        -:  113:        /* Enter the critical section. */
+     4682:  114:        os_cs_enter(&p->protect);
+call    0 returned 100%
+        -:  115:
+        -:  116:        /* Entry condition. */
+    4682*:  117:        OS_TRAP_IF(idx < 0 || idx >= OS_MALLOC_LIMIT);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  118:
+        -:  119:
+        -:  120:        /* Get the reference of the os_malloc element. */
+     4682:  121:        elem = &p->elem[idx];
+        -:  122:
+        -:  123:        /* Test the element state. */
+    4682*:  124:        OS_TRAP_IF((! elem->allocated) || elem->start != ptr);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  125:
+        -:  126:        /* Reset the os_malloc element. */
+     4682:  127:        elem->allocated = 0;
+        -:  128:
+        -:  129:        /* Increment the free counter. */
+     4682:  130:        p->free_c++;
+        -:  131:	
+        -:  132:	/* Leave the critical section. */
+     4682:  133:        os_cs_leave(&p->protect);
+call    0 returned 100%
+     4682:  134:}
+        -:  135:
+        -:  136:/**
+        -:  137: * os_mem_elem_alloc() - get a new os_malloc element.
+        -:  138: *
+        -:  139: * @p:     address of the os_malloc state.
+        -:  140: *
+        -:  141: * Return:     the os_malloc element.
+        -:  142: **/
+function os_mem_elem_alloc called 4682 returned 100% blocks executed 80%
+     4682:  143:static os_mem_elem_t *os_mem_elem_alloc(os_mem_stat_t *p)
+        -:  144:{
+        -:  145:        os_mem_elem_t *elem, *list;
+        -:  146:        int  next, last;
+        -:  147:
+        -:  148:        /* Initialize the local state. */
+     4682:  149:        list = p->elem;
+     4682:  150:        next = p->next;
+     4682:  151:        elem = &list[next];
+        -:  152:
+     4682:  153:        elem->allocated = 1;
+     4682:  154:        elem->start = NULL;
+        -:  155:
+     4682:  156:        last  = next;
+        -:  157:
+        -:  158:        /* Search for the next free element. */
+        -:  159:        for (;;) {
+        -:  160:
+        -:  161:                /* Increment the search index. */
+     4682:  162:                next++;
+     4682:  163:                if (next >= OS_MALLOC_LIMIT)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 100%
+        8:  164:                        next = 0;
+        -:  165:
+        -:  166:                /* Test the list state. */
+    4682*:  167:                OS_TRAP_IF(next == last);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  168:
+        -:  169:                /* Test the state of the list element. */
+     4682:  170:                if (! list[next].allocated) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        -:  171:                        /* Save the index of the next free element. */
+     4682:  172:                        p->next = next;
+     4682:  173:                        break;
+        -:  174:                }
+        -:  175:        }
+        -:  176:
+     4682:  177:        return elem;
+        -:  178:
+        -:  179:}
+        -:  180:
+        -:  181:/**
+        -:  182: * os_mem_file_idx() - map the file name to index.
+        -:  183: *
+        -:  184: * @p:     address of the os_malloc state.
+        -:  185: * @file:  matches __FILE__.
+        -:  186: *
+        -:  187: * Return:	the file index.
+        -:  188: **/
+function os_mem_file_idx called 4682 returned 100% blocks executed 89%
+     4682:  189:static int os_mem_file_idx(os_mem_stat_t *p, char *file)
+        -:  190:{
+        -:  191:        int      i, free;
+        -:  192:        char   **list;
+        -:  193:	size_t   len;
+        -:  194:
+        -:  195:        /* Initialize the file name index. */
+     4682:  196:        free = -1;
+        -:  197:
+        -:  198:        /* Get the reference to the file name list. */
+     4682:  199:        list = p->file;
+        -:  200:
+        -:  201:        /* Loop thru the file name list. */
+     5302:  202:        for (i = 0; i < OS_MALLOC_FILE_LIMIT; i++) {
+branch  0 taken 100%
+branch  1 taken 1% (fallthrough)
+        -:  203:                /* Test the file name element. */
+     5296:  204:                if (list[i] != NULL) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 1%
+        -:  205:                        /* Test the file name. */
+     5272:  206:                        if (os_strcmp(list[i], file) == 0)
+call    0 returned 100%
+branch  1 taken 89% (fallthrough)
+branch  2 taken 11%
+     4676:  207:                                return i; /* Found. */
+        -:  208:			
+        -:  209:                        /* Continue with the search. */
+      596:  210:                        continue;
+        -:  211:                }
+        -:  212:
+        -:  213:                /* Test the free index. */
+       24:  214:                if (free < 0)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+        6:  215:                        free = i;
+        -:  216:        }
+        -:  217:
+        -:  218:        /* Test the free index. */
+       6*:  219:        OS_TRAP_IF(free < 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  220:
+        -:  221:        /* Create a new file name element. */
+        6:  222:        len = os_strlen(file) + 1;
+call    0 returned 100%
+        6:  223:        list[free] = malloc (len);
+       6*:  224:        OS_TRAP_IF (list[free] == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  225:
+        -:  226:        /* Save the file name. */
+        6:  227:        os_strcpy(list[free], len, file);
+call    0 returned 100%
+        -:  228:
+        6:  229:        return free;
+        -:  230:}
+        -:  231:
+        -:  232:/**
+        -:  233: * os_mem_elem_get() - get a os_malloc element.
+        -:  234: *
+        -:  235: * @file:  matches __FILE__.
+        -:  236: * @line:  matches __LINE__.
+        -:  237: *
+        -:  238: * Return:	the pointer to the os_malloc element.
+        -:  239: **/
+function os_mem_elem_get called 4682 returned 100% blocks executed 100%
+     4682:  240:static os_mem_elem_t *os_mem_elem_get(char *file, unsigned long line)
+        -:  241:{
+        -:  242:        os_mem_stat_t *p;
+        -:  243:        os_mem_elem_t *elem;
+        -:  244:        int idx;
+        -:  245:
+        -:  246:        /* Get the reference of the os_malloc list. */
+     4682:  247:        p = &os_mem_stat;
+        -:  248:
+        -:  249:        /* Enter the critical section. */
+     4682:  250:        os_cs_enter(&p->protect);
+call    0 returned 100%
+        -:  251:
+        -:  252:        /* Map the file name to index. */
+     4682:  253:        idx = os_mem_file_idx(p, file);
+call    0 returned 100%
+        -:  254:
+        -:  255:        /* Get os_malloc element. */
+     4682:  256:        elem = os_mem_elem_alloc (p);
+call    0 returned 100%
+        -:  257:
+        -:  258:        /* Increment the os_malloc counter. */
+     4682:  259:        p->malloc_c++;
+        -:  260:
+        -:  261:        /* Save the file index and the line number. */
+     4682:  262:        elem->file_idx = idx;
+     4682:  263:        elem->line     = line;
+        -:  264:
+        -:  265:        /* Leave the critical section. */
+     4682:  266:        os_cs_leave(&p->protect);
+call    0 returned 100%
+        -:  267:
+     4682:  268:        return elem;
+        -:  269:}
+        -:  270:
+        -:  271:/*============================================================================
+        -:  272:  EXPORTED FUNCTIONS
+        -:  273:  ============================================================================*/
+        -:  274:
+        -:  275:/**
+        -:  276: * os_malloc() - allocates size bytes and returns a pointer to the allocated
+        -:  277: * memory, see malloc().
+        -:  278: *
+        -:  279: * @size:  size of the requested memory.
+        -:  280: * @file:  matches __FILE__.
+        -:  281: * @line:  matches __LINE__.
+        -:  282: *
+        -:  283: * Return:	the pointer to the allocated memory.
+        -:  284: **/
+function os_malloc called 4682 returned 100% blocks executed 71%
+     4682:  285:void *os_malloc(size_t size, char *file, unsigned long line)
+        -:  286:{
+        -:  287:        os_mem_elem_t  *elem;
+        -:  288:        os_mem_t  *mem;
+        -:  289:	
+        -:  290:	/* Entry condition. */
+    4682*:  291:	OS_TRAP_IF(size < 1);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  292:
+        -:  293:        /* Request memory from the OS. */
+     4682:  294:        mem = malloc(size + sizeof(os_mem_t));
+    4682*:  295:        OS_TRAP_IF(mem == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  296:
+        -:  297:        /* Save the start address. */
+     4682:  298:        mem->ptr.start = (char *) mem + sizeof(os_mem_t);
+        -:  299:
+        -:  300:        /* Create a os_malloc table element. */
+     4682:  301:        elem = os_mem_elem_get(file, line);
+call    0 returned 100%
+        -:  302:
+        -:  303:        /* Save the start start address of the allocated memory. */
+     4682:  304:        elem->start = mem->ptr.start;
+        -:  305:
+        -:  306:        /* Save the index of the malloc element. */
+     4682:  307:        mem->list_idx = elem->elem_idx;
+        -:  308:
+     4682:  309:        return mem->ptr.start;
+        -:  310:}
+        -:  311:
+        -:  312:/**
+        -:  313: * os_free() - frees the memory space pointed to by ptr, which must have been
+        -:  314: * returned by a previous call to os_malloc().
+        -:  315: *
+        -:  316: * @ptr:  start address of the allocated memory.
+        -:  317: *
+        -:  318: * Return:	None.
+        -:  319: **/
+function os_free called 4682 returned 100% blocks executed 80%
+     4682:  320:void os_free(void **ptr)
+        -:  321:{
+        -:  322:	os_mem_t  *mem;
+        -:  323:	
+        -:  324:	/* Entry condition. */
+    4682*:  325:	OS_TRAP_IF (ptr == NULL || *ptr == NULL);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  326:
+        -:  327:	/* Calculate the start of the allocated memory. */
+     4682:  328:        mem = (os_mem_t *) ((char *) *ptr - sizeof (os_mem_t));
+        -:  329:
+        -:  330:        /* Free the list element. */
+     4682:  331:        os_mem_elem_put(mem->list_idx, mem->ptr.start);
+call    0 returned 100%
+        -:  332:
+        -:  333:        /* Free the allocated buffer. */
+     4682:  334:        free(mem);
+        -:  335:
+        -:  336:	/* Reset the pointer. */
+     4682:  337:	*ptr = NULL;
+     4682:  338:}
+        -:  339:
+        -:  340:/**
+        -:  341: * os_mem_statistics() - provide data on the memory state.
+        -:  342: *
+        -:  343: * @stat:  address of the status information.
+        -:  344: *
+        -:  345: * Return:	None.
+        -:  346: **/
+function os_mem_statistics called 38 returned 100% blocks executed 100%
+       38:  347:void os_mem_statistics(os_statistics_t *stat)
+        -:  348:{
+        -:  349:	os_mem_stat_t *p;
+        -:  350:
+        -:  351:	/* Get the reference of the os_malloc list. */
+       38:  352:        p = &os_mem_stat;
+        -:  353:
+        -:  354:	/* Enter the critical section. */
+       38:  355:        os_cs_enter(&p->protect);
+call    0 returned 100%
+        -:  356:
+        -:  357:	/* Provide the malloc and free counter. */
+       38:  358:	stat->malloc_c = p->malloc_c;
+       38:  359:	stat->free_c   = p->free_c;
+        -:  360:
+        -:  361:	/* Leave the critical section. */
+       38:  362:        os_cs_leave(&p->protect);
+call    0 returned 100%
+       38:  363:}
+        -:  364:
+        -:  365:/**
+        -:  366: * os_mem_init() - initialize the os_malloc list.
+        -:  367: *
+        -:  368: * Return:	None.
+        -:  369: **/
+function os_mem_init called 2 returned 100% blocks executed 100%
+        2:  370:void os_mem_init(void)
+        -:  371:{
+        -:  372:        os_mem_elem_t *elem;
+        -:  373:        int i;
+        -:  374:
+        -:  375:        /* Initialize the mutex for critical section. */
+        2:  376:        os_cs_init(&os_mem_stat.protect);
+call    0 returned 100%
+        -:  377:
+        -:  378:        /* Get the reference to the first element. */
+        2:  379:        elem = os_mem_stat.elem;
+        -:  380:
+        -:  381:        /* Run thru the os_malloc list. */
+     1026:  382:        for (i = 0; i < OS_MALLOC_LIMIT; i++, elem++) {
+branch  0 taken 100%
+branch  1 taken 1% (fallthrough)
+        -:  383:                /* Save the element index. */
+     1024:  384:                elem->elem_idx = i;
+        -:  385:        }
+        2:  386:}
+        -:  387:
+        -:  388:/**
+        -:  389: * os_mem_exit() - release the malloc list resources.
+        -:  390: *
+        -:  391: * Return:	None.
+        -:  392: **/
+function os_mem_exit called 2 returned 100% blocks executed 91%
+        2:  393:void os_mem_exit(void)
+        -:  394:{
+        -:  395:	os_mem_stat_t *p;
+        -:  396:	char **list;
+        -:  397:	int i;
+        -:  398:
+        2:  399:	p = &os_mem_stat;
+        -:  400:
+        -:  401:	/* Enter the critical section. */
+        2:  402:        os_cs_enter(&p->protect);
+call    0 returned 100%
+        -:  403:
+        -:  404:	/* Test the state of the malloc list. */
+       2*:  405:	OS_TRAP_IF(p->malloc_c != p->free_c);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  406:
+        -:  407:	/* Get the reference to the file name list. */
+        2:  408:        list = p->file;
+        -:  409:
+        -:  410:	/* Loop thru the file name list. */
+       12:  411:        for (i = 0; i < OS_MALLOC_FILE_LIMIT; i++) {
+branch  0 taken 83%
+branch  1 taken 17% (fallthrough)
+        -:  412:		/* Release the file names. */
+       10:  413:		if (list[i] != NULL)
+branch  0 taken 60% (fallthrough)
+branch  1 taken 40%
+        6:  414:			free(list[i]);
+        -:  415:	}
+        -:  416:	
+        -:  417:        /* Leave the critical section. */
+        2:  418:        os_cs_leave(&p->protect);
+call    0 returned 100%
+        -:  419:
+        2:  420:	os_cs_destroy(&p->protect);
+call    0 returned 100%
+        2:  421:}

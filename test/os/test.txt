@@ -1,0 +1,48 @@
+V) boot_system: SELECT
+V) boot_system: CALL [1, test_case_boot, 0]
+V) boot_system: DONE
+V) but_system: SELECT
+V) but_system: CALL [2, but_trap, 0]
+V) but_system: CALL [3, but_sync, 0]
+V) but_system: CALL [4, but_mem, 0]
+V) but_system: CALL [5, but_string, 0]
+V) but_system: CALL [6, but_thread, 0]
+V) Thread name: test
+V) but_system: CALL [7, but_thread_limit, 0]
+V) but_system: CALL [8, but_queue, 0]
+V) but_system: CALL [9, but_malloc_limit, 0]
+V) but_system: CALL [10, but_queue_limit, 0]
+V) but_system: CALL [11, but_multi_thread, 0]
+V) [0, test_1]: received mt from [0, test_1]
+V) [1, test_2]: received mt from [0, test_1]
+V) [2, test_3]: received mt from [1, test_2]
+V) [3, test_4]: received mt from [2, test_3]
+V) [4, test_5]: received mt from [3, test_4]
+V) [5, test_6]: received mt from [4, test_5]
+V) [6, test_7]: received mt from [5, test_6]
+V) [7, test_8]: received mt from [6, test_7]
+V) [8, test_9]: received mt from [7, test_8]
+V) [9, test_10]: received mt from [8, test_9]
+V) [10, test_11]: received mt from [9, test_10]
+V) [11, test_12]: received mt from [10, test_11]
+V) [12, test_13]: received mt from [11, test_12]
+V) [13, test_14]: received mt from [12, test_13]
+V) [14, test_15]: received mt from [13, test_14]
+V) [15, test_16]: received mt from [14, test_15]
+V) but_system: DONE
+V) cob_system: SELECT
+V) cob_system: CALL [12, cob_start, 0]
+V) cob_system: CALL [13, cob_sync_1b, 0]
+V) cob_system: CALL [14, cob_zsync_2048b, 0]
+V) cob_system: CALL [15, cob_aio, 0]
+V) cob_system: CALL [16, cob_stop, 0]
+V) cob_system: DONE
+V) tri_system: SELECT
+V) tri_system: CALL [17, tri_start, 0]
+V) tri_system: CALL [18, tri_stop, 0]
+V) tri_system: DONE
+V) shutdown_system: SELECT
+V) shutdown_system: CALL [19, test_case_shutdown, 0]
+V) shutdown_system: DONE
+
+V) TEST: 0 failures in 19 test cases.

@@ -1,0 +1,2008 @@
+        -:    0:Source:/home/gerald/van_development/van/os/os_cable.c
+        -:    1:// SPDX-License-Identifier: GPL-2.0
+        -:    2:
+        -:    3:/*
+        -:    4: * Operating system interfaces.
+        -:    5: *
+        -:    6: * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+        -:    7: */
+        -:    8:
+        -:    9:/*============================================================================
+        -:   10:  IMPORTED INCLUDE REFERENCES
+        -:   11:  ============================================================================*/
+        -:   12:#include <fcntl.h>       /* For O_* constants. */
+        -:   13:#include <sys/stat.h>    /* For mode constants. */
+        -:   14:#include <unistd.h>      /* File operationens: close(). */
+        -:   15:#include <sys/mman.h>    /* Map file into memory. */
+        -:   16:#include "os.h"          /* Operating system: os_c_open() */
+        -:   17:#include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
+        -:   18:
+        -:   19:/*============================================================================
+        -:   20:  EXPORTED INCLUDE REFERENCES
+        -:   21:  ============================================================================*/
+        -:   22:/*============================================================================
+        -:   23:  LOCAL NAME CONSTANTS DEFINITIONS
+        -:   24:  ============================================================================*/
+        -:   25:#define P  "I>"  /* Prompt for the interrup thread. */
+        -:   26:
+        -:   27:#define CAB_SHM_FILE  "/tmp/van.shm"  /* Name of the shared memory file. */
+        -:   28:
+        -:   29:/* Size of the shm file: queue + transfer buffer + alignment */
+        -:   30:#define CAB_SHM_SIZE  \
+        -:   31:	( ( sizeof(cab_queue_t) + (OS_BUF_SIZE) + sizeof(int) ) * CAB_COUNT )
+        -:   32:
+        -:   33:#define CAB_Q_SIZE     4  /* Data transfer queue size about shm. */
+        -:   34:
+        -:   35:/* Configuration of the controll cable endpoints . */
+        -:   36:#define CAB_CB_INT  "van_c_ba_int" /* Ctrl-battery interrupt simulation. */
+        -:   37:#define CAB_CD_INT  "van_c_di_int" /* Ctrl-display interrupt simulation. */
+        -:   38:#define CAB_CB_N    "/ctrl_batt"   /* Name of the battery shm device. */
+        -:   39:#define CAB_CD_N    "/ctrl_disp"   /* Name of the display shm device. */
+        -:   40:#define CAB_CB_T    "c_batt_int"   /* Name of the ctrl-batt int. handler. */
+        -:   41:#define CAB_CD_T    "c_disp_int"   /* Name of the ctrl-disp int. handler. */
+        -:   42:
+        -:   43:/* Configuration of the neighbour endpoints. */
+        -:   44:#define CAB_BA_INT  "van_batt_int"  /* Battery interrupt simulation. */
+        -:   45:#define CAB_DI_INT  "van_disp_int"  /* Display interrupt simulation. */
+        -:   46:#define CAB_BA_N    "/battery"      /* Name of the batter shm device. */
+        -:   47:#define CAB_DI_N    "/display"      /* Name of the display shm device. */
+        -:   48:#define CAB_BA_T    "battery_int"   /* Name of the batery int. handler. */
+        -:   49:#define CAB_DI_T    "display_int"   /* Name of the display int. handler. */
+        -:   50:
+        -:   51:/* Start index of the van-python and van-tcl shared memory resources. */
+        -:   52:#define CAB_CB_OFFS_V  0
+        -:   53:#define CAB_CD_OFFS_V  ( (sizeof(cab_queue_t) * 2) + ((OS_BUF_SIZE) * 2) + sizeof(int) )
+        -:   54:
+        -:   55:/* Aligned start index of the van-python and van-tcl shared memory resources. */
+        -:   56:#define CAB_CB_OFFS_A  CAB_CB_OFFS_V
+        -:   57:#define CAB_CD_OFFS_A  CAB_ALIGN(CAB_CD_OFFS_V, sizeof(int))
+        -:   58:
+        -:   59:#define OS_SHM_Q_SIZE     4  /* Data transfer queue size about shm. */
+        -:   60:#define OS_THREAD_Q_SIZE  8  /* Input queue size of the van/py thread. */
+        -:   61:
+        -:   62:#if defined(USE_OS_RT)
+        -:   63:#define PRIO    OS_THREAD_PRIO_HARDRT
+        -:   64:#else
+        -:   65:#define PRIO    OS_THREAD_PRIO_SOFTRT
+        -:   66:#endif
+        -:   67:
+        -:   68:#define Q_SIZE  OS_THREAD_Q_SIZE
+        -:   69:
+        -:   70:/*============================================================================
+        -:   71:  MACROS
+        -:   72:  ============================================================================*/
+        -:   73:/**
+        -:   74: * CAB_ALIGN - calculation of the alignment value. 
+        -:   75: *
+        -:   76: * @int_:   this integer value shall be aligned.
+        -:   77: * @size_:  alignment value.
+        -:   78: *
+        -:   79: * Return:	the aligned interger value.
+        -:   80: **/
+        -:   81:#define CAB_ALIGN(int_, size_)  ( ((int_) + (size_) - 1) & ~( (size_) - 1) )
+        -:   82:
+        -:   83:/*============================================================================
+        -:   84:  LOCAL TYPE DEFINITIONS
+        -:   85:  ============================================================================*/
+        -:   86:/**
+        -:   87: * cab_type_t - ids of the shared memory devices.
+        -:   88: *
+        -:   89: * CAB_CB:  id of the ctrl-batterry shared memory device.
+        -:   90: * CAB_CD:  id of the ctrl-display shared memory device.
+        -:   91: * CAB_BA:  id of the battery shared memory device.
+        -:   92: * CAB_DI:  id of the display shared memory device.
+        -:   93: * CAB_COUNT:  number of the shared memory devices.
+        -:   94: **/
+        -:   95:typedef enum {
+        -:   96:	CAB_CB,
+        -:   97:	CAB_CD,
+        -:   98:	CAB_BA,
+        -:   99:	CAB_DI,
+        -:  100:	CAB_COUNT
+        -:  101:} cab_type_t;
+        -:  102:
+        -:  103:/**
+        -:  104: * shm_shell_t - shared memory shell for inter process communication.
+        -:  105: *
+        -:  106: * @sem_n:    list of the named semaphores to simulate interrupts.
+        -:  107: * @file_n:   name of the shared memory file.
+        -:  108: * @fd:       file descriptor of the shared memory file.
+        -:  109: * @size:     size of the shared memory area.
+        -:  110: * @start:    start address of the shared memory area.
+        -:  111: * @creator:  if 1, this user has created the shm resources.
+        -:  112: **/
+        -:  113:typedef struct {
+        -:  114:	char  *sem_n[CAB_COUNT];
+        -:  115:	char  *file_n;
+        -:  116:	int    fd;
+        -:  117:	int    size;
+        -:  118:	void  *start;
+        -:  119:	int    creator;
+        -:  120:} cab_shell_t;
+        -:  121:
+        -:  122:/**
+        -:  123: * cab_conf_t - shared memory configuration.
+        -:  124: *
+        -:  125: * @id:           controller/follower device id.
+        -:  126: * @is_ctrl:      1, if the it is a controller device.
+        -:  127: * @dev_name:     device name.
+        -:  128: * @thr_name:     interrupt thread name.
+        -:  129: * @my_int_n:     my named semaphore or interrupt name.
+        -:  130: * @other_int_n:  named semaphore or interrupt name of the other device.
+        -:  131: * @start_idx:    start index of the shared memory area.
+        -:  132: **/
+        -:  133:typedef struct {
+        -:  134:	cab_type_t id;
+        -:  135:	int    is_ctrl;
+        -:  136:	char  *dev_name;
+        -:  137:	char  *thr_name;
+        -:  138:	char  *my_int_n;
+        -:  139:	char  *other_int_n;
+        -:  140:	int    start_idx;
+        -:  141:} cab_conf_t;
+        -:  142:
+        -:  143:/**
+        -:  144: * cab_msg_t - shm input message with payload status information.
+        -:  145: *
+        -:  146: * @id:        message counter.
+        -:  147: * @size:      size of the payload.
+        -:  148: * @consumed:  if 1, the payload has been processed.
+        -:  149: **/
+        -:  150:typedef struct {
+        -:  151:	unsigned char id;
+        -:  152:	int  size;
+        -:  153:	int  consumed;
+        -:  154:} cab_msg_t;
+        -:  155:
+        -:  156:/**
+        -:  157: * cab_queue_t - shm input queue of van or py.
+        -:  158: *
+        -:  159: * @ring:   list of the input messages.
+        -:  160: * @tail:   start of the message list.
+        -:  161: * @head:   end of the message list.
+        -:  162: **/
+        -:  163:typedef struct {
+        -:  164:	cab_msg_t  ring[CAB_Q_SIZE];
+        -:  165:	int  tail;
+        -:  166:	int  head;
+        -:  167:} cab_queue_t;
+        -:  168:
+        -:  169:/** 
+        -:  170: * cab_io_t - element of the input or output channel.
+        -:  171: *
+        -:  172: * @queue:    queue with control information.
+        -:  173: * @p_count:  size of the payload.
+        -:  174: * @b_size:   size of the channel buffer.
+        -:  175: * @b_start:  start address of the channel buffer.
+        -:  176: * @b_end:    end address of the channel buffer.
+        -:  177: **/
+        -:  178:typedef struct {
+        -:  179:	cab_queue_t  *queue;
+        -:  180:	atomic_int    p_count;
+        -:  181:	int    b_size;
+        -:  182:	char  *b_start;
+        -:  183:	char  *b_end;
+        -:  184:} cab_io_t;
+        -:  185:
+        -:  186:/**
+        -:  187: * cab_dev_t - shared memory device state.
+        -:  188: *
+        -:  189: * @id:                device id.
+        -:  190: * @name:              name of the shared memory device.
+        -:  191: * @mode:              devie mode like O_NBLOCK: non blocking I/O operations.
+        -:  192: * @my_int:            points to the my named semaphore.
+        -:  193: * @other_int:         points to the named semaphore of the other device.
+        -:  194: * @thread:            address of the interrup handler/thread.
+        -:  195: *
+        -:  196: * @down:              if 1, ignore the interrupt.
+        -:  197: *
+        -:  198: * @in:                input channel.
+        -:  199: * @pending_in:        if 1, the input buffer is pending.
+        -:  200: * @out:               output channel.
+        -:  201: * @pending_out:       if 1, the ouput buffer is pending.
+        -:  202: * @msg_id;            message counter about shared memory.
+        -:  203: * @q_mutex:           critical section in cab_queue_add.
+        -:  204: *
+        -:  205: * @aio_cb:            aio read and write callbacks.
+        -:  206: * @aio_use:           if 1, the aio actions shall be executed.
+        -:  207: * @aio_wr_trigger:    if 1, the int handler shall invoke the aio write_cb.
+        -:  208: * @aio_rd_trigger:    if 1, the int handler shall invoke the aio read_cb.
+        -:  209: * @aio_mutex:         protect the critical sections in aio_action.
+        -:  210: *
+        -:  211: * @suspend_writer:    suspend the write caller in write.
+        -:  212: * @suspend_reader:    suspend the read caller in read.
+        -:  213: * @sync_write:        if 1, the user has invoked write.
+        -:  214: * @sync_read:         if 1, the user has invoked read.
+        -:  215: * @sync_wait          if 1, update the wait condition.
+        -:  216: * @wait_id;           assignd id, to select the wait element.
+        -:  217: * @write_mutex:       protect the critical sections in write.
+        -:  218: * @read_mutex:        protect the critical sections in read.
+        -:  219: **/
+        -:  220:typedef struct {
+        -:  221:	cab_type_t  id;
+        -:  222:	char   *name;
+        -:  223:	int     mode;
+        -:  224:	sem_t  *my_int;
+        -:  225:	sem_t  *other_int;
+        -:  226:	void   *thread;
+        -:  227:
+        -:  228:	atomic_int       down;
+        -:  229:	
+        -:  230:	cab_io_t         in;
+        -:  231:	atomic_int       pending_in;
+        -:  232:	cab_io_t         out;
+        -:  233:	atomic_int       pending_out;
+        -:  234:	unsigned char    msg_id;
+        -:  235:	pthread_mutex_t  q_mutex;
+        -:  236:	
+        -:  237:	os_aio_cb_t      aio_cb;
+        -:  238:	atomic_int       aio_use;
+        -:  239:	atomic_int       aio_wr_trigger;
+        -:  240:	atomic_int       aio_rd_trigger;
+        -:  241:	pthread_mutex_t  aio_mutex;
+        -:  242:
+        -:  243:	sem_t   suspend_writer;
+        -:  244:	sem_t   suspend_reader;
+        -:  245:	atomic_int       sync_read;
+        -:  246:	atomic_int       sync_write;
+        -:  247:	atomic_int       sync_wait;
+        -:  248:	int              wait_id;
+        -:  249:
+        -:  250:	pthread_mutex_t  write_mutex;
+        -:  251:	pthread_mutex_t  read_mutex;
+        -:  252:} cab_dev_t;
+        -:  253:
+        -:  254:/**
+        -:  255: * cab_wait_t - state of a suspended caller in os_c_wait, who is waiting for a
+        -:  256: * read or write event.
+        -:  257: *
+        -:  258: * @mutex:     protect the critical section in the wait operations.
+        -:  259: * @id:        id of the wait element.
+        -:  260: * @assigned:  if 1, the element has been reserved.
+        -:  261: * @suspend:   suspend the wait caller.
+        -:  262: * @probe:     if 1, the caller shall probe all input and output wires.
+        -:  263: **/
+        -:  264:typedef struct {
+        -:  265:	pthread_mutex_t  mutex;
+        -:  266:
+        -:  267:	struct cab_wait_elem_s {
+        -:  268:		int id;
+        -:  269:		int assigned;
+        -:  270:		sem_t       suspend;
+        -:  271:		atomic_int  probe;
+        -:  272:	} elem[CAB_COUNT];
+        -:  273:} cab_wait_t;
+        -:  274:
+        -:  275:/*============================================================================
+        -:  276:  LOCAL DATA
+        -:  277:  ============================================================================*/
+        -:  278:/* Pointer to the OS configuration */
+        -:  279:static os_conf_t *os_conf_p;
+        -:  280:
+        -:  281:/* Pillars of the shared memory transfer. */
+        -:  282:static cab_shell_t cab_shell = {
+        -:  283:	{ CAB_CB_INT, CAB_CD_INT, CAB_BA_INT, CAB_DI_INT },
+        -:  284:	NULL
+        -:  285:};
+        -:  286:
+        -:  287:/* Configuration of the shared memory devices. */
+        -:  288:static cab_conf_t cab_conf[] = {
+        -:  289:	{ CAB_CB, 1, CAB_CB_N, CAB_CB_T, CAB_CB_INT, CAB_BA_INT, CAB_CB_OFFS_A },
+        -:  290:	{ CAB_CD, 1, CAB_CD_N, CAB_CD_T, CAB_CD_INT, CAB_DI_INT, CAB_CD_OFFS_A },
+        -:  291:	{ CAB_BA, 0, CAB_BA_N, CAB_BA_T, CAB_BA_INT, CAB_CB_INT, CAB_CB_OFFS_A },
+        -:  292:	{ CAB_DI, 0, CAB_DI_N, CAB_DI_T, CAB_DI_INT, CAB_CD_INT, CAB_CD_OFFS_A },
+        -:  293:	{ 0, }
+        -:  294:};
+        -:  295:
+        -:  296:/* List of all shared memory devices. */
+        -:  297:static cab_dev_t *cab_device[CAB_COUNT];
+        -:  298:
+        -:  299:/* State of the suspended caller in the wait operations. */
+        -:  300:static cab_wait_t cab_wait;
+        -:  301:
+        -:  302:/*============================================================================
+        -:  303:  LOCAL FUNCTION PROTOTYPES
+        -:  304:  ============================================================================*/
+        -:  305:/*============================================================================
+        -:  306:  LOCAL FUNCTIONS
+        -:  307:  ============================================================================*/
+        -:  308:/**
+        -:  309: * cab_aio_q_add() - send the control message asynchronously.
+        -:  310: *
+        -:  311: * dev:       pointer to the cable device.
+        -:  312: * count:     size of the ouput payload.
+        -:  313: * consumed:  if 1, the input buffer has been released.
+        -:  314: *
+        -:  315: * Return:	None.
+        -:  316: **/
+function cab_aio_q_add called 16 returned 100% blocks executed 78%
+       16:  317:static void cab_aio_q_add(cab_dev_t *dev, int count, int consumed)
+        -:  318:{
+        -:  319:	cab_queue_t *q;
+        -:  320:	cab_msg_t *msg;
+        -:  321:	int head;
+        -:  322:	
+        -:  323:	/* Get the pointer to the output control queue. */
+       16:  324:	q = dev->out.queue;
+        -:  325:	
+        -:  326:	/* Fill the next free message. */
+       16:  327:	head = q->head;
+       16:  328:	msg = &q->ring[head];
+       16:  329:	msg->id       = dev->msg_id;
+       16:  330:	msg->size     = count;
+       16:  331:	msg->consumed = consumed;
+        -:  332:
+        -:  333:	/* Increment the message counter. */
+       16:  334:	dev->msg_id++;
+        -:  335:	
+        -:  336:	/* Increment and test the end of the message list. */
+       16:  337:	head++;
+       16:  338:	if (head >= CAB_Q_SIZE)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+        4:  339:		head = 0;
+        -:  340:
+      16*:  341:	OS_TRAP_IF(head == q->tail);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+       16:  342:	q->head = head;
+        -:  343:
+      16*:  344:	OS_TRACE(("%s %s: msg-snd: [i=%u, s=%d, c=%d]\n", P, dev->name,
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  345:		  msg->id, msg->size, msg->consumed));
+        -:  346:
+        -:  347:	/* Trigger the interrupt of the other device. */
+       16:  348:	os_sem_release(dev->other_int);
+call    0 returned 100%
+       16:  349:}
+        -:  350:
+        -:  351:/**
+        -:  352: * cab_wait_trigger() - the interrupt handler resumes the suspended os_c_wait
+        -:  353: * caller, if events are available for the input or output wire for all devices,
+        -:  354: * that interest them.
+        -:  355: *
+        -:  356: * @dev:      pointer to the shm device.
+        -:  357: * event:     readable or writeable.
+        -:  358: *
+        -:  359: * Return:	None.
+        -:  360: **/
+function cab_wait_trigger called 632 returned 100% blocks executed 75%
+      632:  361:static void cab_wait_trigger(cab_dev_t *dev, char *event)
+        -:  362:{
+        -:  363:	struct cab_wait_elem_s *elem;
+        -:  364:	int probe;
+        -:  365:	
+        -:  366:	/* Get the pointer to the wait state. */
+      632:  367:	elem = &cab_wait.elem[dev->wait_id];
+     632*:  368:	OS_TRAP_IF(! elem->assigned);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  369:	
+        -:  370:	/* Update the wait condition. */
+      632:  371:	probe = atomic_exchange(&elem->probe, 1);
+      632:  372:	if (! probe) {
+branch  0 taken 26% (fallthrough)
+branch  1 taken 74%
+     163*:  373:		OS_TRACE(("%s %s: wakeup: [i=%d, e=%s]\n",
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  374:			  P, dev->name, dev->wait_id, event));
+      163:  375:		os_sem_release(&elem->suspend);
+call    0 returned 100%
+        -:  376:	}
+      632:  377:}
+        -:  378:
+        -:  379:/**
+        -:  380: * cab_int_write() - resume the suspend caller in os_c_write, os_c_wait or request
+        -:  381: * output data from the aio user.
+        -:  382: *
+        -:  383: * @dev:  pointer to the device state.
+        -:  384: * @out:  pointer to the output channel.
+        -:  385: *
+        -:  386: * Return:	None.
+        -:  387: **/
+function cab_int_write called 335 returned 100% blocks executed 92%
+      335:  388:static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
+        -:  389:{
+        -:  390:	int aio_use, sync_write, sync_wait, pending_out, count;
+        -:  391:
+        -:  392:	/* Test the aio status request. */
+      335:  393:	aio_use = atomic_load(&dev->aio_use);
+      335:  394:	if (! aio_use) {
+branch  0 taken 97% (fallthrough)
+branch  1 taken 3%
+        -:  395:		/* Test the write method. */
+      324:  396:		sync_write = atomic_exchange(&dev->sync_write, 0);
+      324:  397:		if (sync_write) {
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+        8:  398:			os_sem_release(&dev->suspend_writer);
+call    0 returned 100%
+        -:  399:		}
+        -:  400:		else {
+        -:  401:			/* Test the wait condition. */
+      316:  402:			sync_wait = atomic_load(&dev->sync_wait);
+      316:  403:			if (sync_wait)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+      316:  404:				cab_wait_trigger(dev, "writeable");
+call    0 returned 100%
+        -:  405:		}
+      324:  406:		return;
+        -:  407:	}
+        -:  408:
+        -:  409:	/* Reset the write trigger. */
+       11:  410:	atomic_store(&dev->aio_wr_trigger, 0);
+        -:  411:
+        -:  412:	/* Test the release status of the output buffer. */
+       11:  413:	pending_out = atomic_load(&dev->pending_out);
+       11:  414:	if (pending_out)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  415:		return;
+        -:  416:	
+        -:  417:	/* Request output data from the aio user. */
+       11:  418:	count = dev->aio_cb.write_cb(dev->id, out->b_start, out->b_size);
+call    0 returned 100%
+       11:  419:	if (count < 1)
+branch  0 taken 27% (fallthrough)
+branch  1 taken 73%
+        3:  420:		return;
+        -:  421:
+        -:  422:	/* Save the size of the payload. */
+        8:  423:	atomic_store(&out->p_count, count);
+        -:  424:
+        -:  425:	/* Change the output state. */
+        8:  426:	atomic_store(&dev->pending_out, 1);
+        -:  427:					
+        -:  428:	/* Send the control message to the other device. */
+        8:  429:	cab_aio_q_add(dev, count, 0);
+call    0 returned 100%
+        -:  430:}
+        -:  431:
+        -:  432:/**
+        -:  433: * cab_int_read() - pass the input payload to the async. caller or resume the
+        -:  434: * suspended caller in os_c_read, os_c_zread or os_c_wait.
+        -:  435: *
+        -:  436: * @dev:    pointer to the device state.
+        -:  437: * @in:     pointer to the input channel.
+        -:  438: * @count:  number of the pending input characters.
+        -:  439: *
+        -:  440: * Return:	None.
+        -:  441: **/
+function cab_int_read called 334 returned 100% blocks executed 87%
+      334:  442:static void cab_int_read(cab_dev_t *dev, cab_io_t *in, int count)
+        -:  443:{
+        -:  444:	int aio_use, sync_read, consumed, sync_wait;
+        -:  445:
+        -:  446:	/* Test the aio status. */
+      334:  447:	aio_use = atomic_load(&dev->aio_use);
+      334:  448:	if (aio_use) {
+branch  0 taken 3% (fallthrough)
+branch  1 taken 97%
+        -:  449:		/* Reset the read trigger. */
+       10:  450:		atomic_store(&dev->aio_rd_trigger, 0);
+        -:  451:
+        -:  452:		/* Test the number of the pending input characters. */
+       10:  453:		if (count < 1)
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        2:  454:			return;
+        -:  455:		
+        -:  456:		/* Pass the input payload to the aio user. */
+        8:  457:		consumed = dev->aio_cb.read_cb(dev->id, in->b_start, count);
+call    0 returned 100%
+        -:  458:
+        -:  459:		/* Update the input state. */
+       8*:  460:		OS_TRAP_IF(consumed > count || consumed < 0);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        8:  461:		if (consumed != count) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  462:			atomic_store(&in->p_count, count - consumed);
+    #####:  463:			return;
+        -:  464:		}
+        -:  465:
+        -:  466:		/* Reset the input state. */
+        8:  467:		atomic_store(&in->p_count, 0);
+        -:  468:		
+        -:  469:		/* Release the pending input buffer. */
+        8:  470:		cab_aio_q_add(dev, 0, 1);
+call    0 returned 100%
+        -:  471:	}
+        -:  472:	else {
+        -:  473:		/* Save the number of the received bytes. */
+      324:  474:		atomic_store(&in->p_count, count);
+        -:  475:			
+        -:  476:		/* Test the read method. */
+      324:  477:		sync_read = atomic_exchange(&dev->sync_read, 0);
+      324:  478:		if (sync_read) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        4:  479:			os_sem_release(&dev->suspend_reader);
+call    0 returned 100%
+        -:  480:		}
+        -:  481:		else {
+        -:  482:			/* Test the wait condition. */
+      320:  483:			sync_wait = atomic_load(&dev->sync_wait);
+      320:  484:			if (sync_wait)
+branch  0 taken 99% (fallthrough)
+branch  1 taken 1%
+      316:  485:				cab_wait_trigger(dev, "readable");
+call    0 returned 100%
+        -:  486:		}
+        -:  487:	}
+        -:  488:}
+        -:  489:
+        -:  490:/**
+        -:  491: * cab_int_exec() - the int thread waits for the int triggered by the involved
+        -:  492: * devices.
+        -:  493: *
+        -:  494: * @msg:  generic input message.
+        -:  495: *
+        -:  496: * Return:	None.
+        -:  497: **/
+function cab_int_exec called 12 returned 100% blocks executed 85%
+       12:  498:static void cab_int_exec(os_queue_elem_t *g_msg)
+        -:  499:{
+        -:  500:	cab_queue_t *q;
+        -:  501:	cab_msg_t *msg;
+        -:  502:	cab_dev_t *dev;
+        -:  503:	cab_io_t *in, *out;
+        -:  504:	char *n;
+        -:  505:	int down, pending_out;
+        -:  506:
+        -:  507:	/* Get the address of the device state. */
+       12:  508:	dev = g_msg->param;
+        -:  509:
+        -:  510:	/* Get the pointer of the input control queue. */
+       12:  511:	in  = &dev->in;
+       12:  512:	out = &dev->out;
+       12:  513:	q   = in->queue;
+       12:  514:	n   = dev->name;
+        -:  515:
+        -:  516:	/* Loop thru the interrupts triggered by the involved devices. */
+        -:  517:	for(;;) {
+        -:  518:		/* Test the access method to the device. */
+      681:  519:		if (dev->aio_use) {
+branch  0 taken 3% (fallthrough)
+branch  1 taken 97%
+        -:  520:			/* Test the input payload state. */
+       23:  521:			if (dev->aio_rd_trigger)
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        2:  522:				cab_int_read(dev, in, in->p_count);
+call    0 returned 100%
+        -:  523:			
+        -:  524:			/* Test the aio status, request data from the user and
+        -:  525:			 *  inform the other device. */
+       23:  526:			if (dev->aio_wr_trigger)
+branch  0 taken 17% (fallthrough)
+branch  1 taken 83%
+        4:  527:				cab_int_write(dev, out);
+call    0 returned 100%
+        -:  528:		}		
+        -:  529:
+     681*:  530:		OS_TRACE(("%s %s:[s:ready, m:int] -> [s:suspended]\n", P, n));
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  531:
+        -:  532:		/* Wait for the int trigger. */
+      681:  533:		os_sem_wait(dev->my_int);
+call    0 returned 100%
+        -:  534:
+        -:  535:		/* Test the thread state. */
+      681:  536:		down = atomic_load(&dev->down);
+      681:  537:		if (down) {
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+      12*:  538:			OS_TRACE(("%s %s:[s:suspended, m:int] -> [s:down]\n",
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  539:				  P, n));
+       12:  540:			return;
+        -:  541:		} else {
+     669*:  542:			OS_TRACE(("%s %s:[s:suspended, m:int] -> [s:ready]\n",
+branch  0 taken 100% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  543:				  P, n));
+        -:  544:		}
+        -:  545:	
+        -:  546:		/* Test the mailbox. */
+     1332:  547:		while (q->tail != q->head) {
+branch  0 taken 50%
+branch  1 taken 50% (fallthrough)
+      663:  548:			msg = &q->ring[q->tail];
+        -:  549:
+     663*:  550:			OS_TRACE(("%s %s: msg-rcv: [i=%u, s=%d, c=%d]\n", P, n,
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  551:				  msg->id, msg->size, msg->consumed));
+        -:  552:			
+        -:  553:			/* In case a brief is there, inform the adressee. */
+      663:  554:			if (msg->size > 0) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  555:				/* Trigger the user actions. */
+      332:  556:				cab_int_read(dev, in, msg->size);
+call    0 returned 100%
+        -:  557:			}
+        -:  558:
+        -:  559:			/* Test the progess of the procesing of the output
+        -:  560:			 * payload. */
+      663:  561:			if (msg->consumed) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        -:  562:				/* Release the output buffer. */
+      331:  563:				pending_out = atomic_exchange(&dev->pending_out, 0);
+     331*:  564:				OS_TRAP_IF(! pending_out);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  565:
+        -:  566:				/* Trigger the user actions. */
+      331:  567:				cab_int_write(dev, out);
+call    0 returned 100%
+        -:  568:			}
+        -:  569:		
+        -:  570:			/* The current message from the shm input queue was
+        -:  571:			 * processed. We prepare us for the next mailbox entry. */
+      664:  572:			q->tail++;
+      664:  573:			if (q->tail >= CAB_Q_SIZE)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+      163:  574:				q->tail = 0;
+        -:  575:		}
+        -:  576:	}
+        -:  577:}
+        -:  578:
+        -:  579:/**
+        -:  580: * cab_dev_get() - map the device id to the device state.
+        -:  581: *
+        -:  582: * @dev_id:  device id.
+        -:  583: *
+        -:  584: * Return:	the pointer to the device.
+        -:  585: **/
+function cab_dev_get called 5379 returned 101% blocks executed 91%
+     5379:  586:static cab_dev_t *cab_dev_get(int dev_id)
+        -:  587:{
+        -:  588:	cab_dev_t **dev;
+        -:  589:	int i;
+        -:  590:
+        -:  591:	/* Loop thru the device list. */
+    13366:  592:	for (i = 0, dev = cab_device; i < CAB_COUNT; i++, dev++) {
+branch  0 taken 100%
+branch  1 taken -0% (fallthrough)
+    13431:  593:		if (*dev == NULL)
+branch  0 taken 1% (fallthrough)
+branch  1 taken 100%
+        4:  594:			continue;
+        -:  595:
+        -:  596:		/* Test the device id. */
+    13427:  597:		if ((*dev)->id == dev_id)
+branch  0 taken 41% (fallthrough)
+branch  1 taken 59%
+     5444:  598:			break;
+        -:  599:	}
+        -:  600:
+        -:  601:	/* Final condition. */
+    5379*:  602:	OS_TRAP_IF(i >= CAB_COUNT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  603:
+     5430:  604:	return *dev;
+        -:  605:}
+        -:  606:
+        -:  607:/**
+        -:  608: * cab_q_add() - send the control message to the other device.
+        -:  609: *
+        -:  610: * dev:       pointer to the shm device.
+        -:  611: * count:     size of the output payload.
+        -:  612: * consumed:  if 1, the input buffer has been released.
+        -:  613: *
+        -:  614: * Return:	None.
+        -:  615: **/
+function cab_q_add called 645 returned 100% blocks executed 82%
+      645:  616:static void cab_q_add(cab_dev_t *dev, int count, int consumed)
+        -:  617:{
+        -:  618:	cab_queue_t *q;
+        -:  619:	cab_msg_t *msg;
+        -:  620:	int head;
+        -:  621:	
+        -:  622:	/* Enter the critical section. */
+      645:  623:	os_cs_enter(&dev->q_mutex);
+call    0 returned 100%
+        -:  624:
+        -:  625:	/* Get the pointer of the output control queue. */
+      647:  626:	q = dev->out.queue;
+        -:  627:	
+        -:  628:	/* Fill the next free message. */
+      647:  629:	head = q->head;
+      647:  630:	msg = &q->ring[head];
+      647:  631:	msg->id       = dev->msg_id;
+      647:  632:	msg->size     = count;
+      647:  633:	msg->consumed = consumed;
+        -:  634:	
+        -:  635:	/* Increment the message counter. */
+      647:  636:	dev->msg_id++;
+        -:  637:
+        -:  638:	/* Increment and test the end of the message list. */
+      647:  639:	head++;
+      647:  640:	if (head >= CAB_Q_SIZE)
+branch  0 taken 25% (fallthrough)
+branch  1 taken 75%
+      160:  641:		head = 0;
+        -:  642:
+     647*:  643:	OS_TRAP_IF(head == q->tail);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+      647:  644:	q->head = head;
+        -:  645:
+     647*:  646:	OS_TRACE(("%s %s: msg-snd: [i=%u, s=%d, c=%d]\n", P, dev->name,
+branch  0 taken 100% (fallthrough)
+branch  1 taken 1%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  647:		  msg->id, msg->size, msg->consumed));
+        -:  648:
+        -:  649:	/* Trigger the interrupt of the other device. */
+      647:  650:	os_sem_release(dev->other_int);
+call    0 returned 100%
+        -:  651:
+        -:  652:	/* Leave the critical section. */
+      644:  653:	os_cs_leave(&dev->q_mutex);	
+call    0 returned 100%
+      646:  654:}
+        -:  655:
+        -:  656:/**
+        -:  657: * cab_io_map() - Get the shared memory addresses for the cable.
+        -:  658: *
+        -:  659: * @addr:   start address of the shared memory area.
+        -:  660: * @first:  pointer to first channel.
+        -:  661: * @second: pointer to second channel.
+        -:  662: *
+        -:  663: * Return:	None.
+        -:  664: **/
+function cab_io_map called 12 returned 100% blocks executed 100%
+       12:  665:static void cab_io_map(void *addr, cab_io_t *first, cab_io_t *second) {
+        -:  666:	
+        -:  667:	/* Get the addresses of the control queues. */
+       12:  668:	first->queue = (cab_queue_t *) addr;
+       12:  669:	addr = addr + sizeof(cab_queue_t);
+        -:  670:	
+       12:  671:	second->queue = (cab_queue_t *) addr;
+       12:  672:	addr = addr + sizeof(cab_queue_t);
+        -:  673:		
+        -:  674:	/* Get the address of the input and output buffer. */
+       12:  675:	first->b_size  = OS_BUF_SIZE;
+       12:  676:	first->b_start = (char *) addr;
+       12:  677:	first->b_end   = (char *) addr + OS_BUF_SIZE - 1;
+       12:  678:	addr = (char *) addr + OS_BUF_SIZE;
+        -:  679:	
+        -:  680:	/* Get the address of the output buffer. */
+       12:  681:	second->b_size  = OS_BUF_SIZE;
+       12:  682:	second->b_start = (char *) addr;
+       12:  683:	second->b_end   = (char *) addr + OS_BUF_SIZE - 1;
+       12:  684:}
+        -:  685:
+        -:  686:/**
+        -:  687: * shm_conf_get() - search for the shared memory device configuration.
+        -:  688: *
+        -:  689: * @conf:  addess of the first shared memory configuration.
+        -:  690: * @name:  pointer to the controller/follower device name.
+        -:  691: *
+        -:  692: * Return:	the address of the found configuration.
+        -:  693: **/
+function cab_conf_get called 12 returned 100% blocks executed 90%
+       12:  694:static cab_conf_t *cab_conf_get(cab_conf_t *conf, char *name)
+        -:  695:{
+        -:  696:	cab_conf_t *c;
+        -:  697:
+        -:  698:	/* Loop thru the list of the shm configurations. */
+       28:  699:	for (c = conf; c->dev_name != NULL; c++) {
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+        -:  700:		/* Test the device name. */
+       28:  701:		if (os_strcmp(c->dev_name, name) == 0)
+call    0 returned 100%
+branch  1 taken 43% (fallthrough)
+branch  2 taken 57%
+       12:  702:			break;
+        -:  703:	}
+        -:  704:
+        -:  705:	/* Final condition. */
+      12*:  706:	OS_TRAP_IF(c->dev_name == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  707:
+       12:  708:	return c;
+        -:  709:}
+        -:  710:
+        -:  711:/**
+        -:  712: * cab_map() - create the clean shared memory area.
+        -:  713: *
+        -:  714: * Return:	None.
+        -:  715: **/
+function cab_map called 2 returned 100% blocks executed 73%
+        2:  716:static void cab_map(void)
+        -:  717:{
+        -:  718:	struct stat statbuf;
+        -:  719:	cab_shell_t *s;
+        -:  720:	int rv, prot;
+        -:  721:
+        -:  722:	/* Get the address of the shm shell. */
+        2:  723:	s = &cab_shell;
+        -:  724:	
+        -:  725:	/* Open the shared memory file. */
+        2:  726:	s->file_n = CAB_SHM_FILE;
+        2:  727:	s->fd = open(CAB_SHM_FILE, O_RDWR);
+call    0 returned 100%
+       2*:  728:	OS_TRAP_IF(s->fd < 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  729:
+        -:  730:	/* Get information about the shared memory file. */
+        2:  731:	rv = fstat(s->fd, &statbuf);
+call    0 returned 100%
+        2:  732:	s->size = statbuf.st_size;
+       2*:  733:	OS_TRAP_IF(rv != 0 || statbuf.st_size != CAB_SHM_SIZE);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  734:
+        -:  735:	/* Define the access to the shared memory. */
+        2:  736:	prot = PROT_READ | PROT_WRITE;
+        -:  737:	
+        -:  738:	/* Define the size of the shm area about the shm file. */
+        2:  739:	s->start = mmap(NULL, s->size, prot, MAP_SHARED, s->fd, 0);
+call    0 returned 100%
+       2*:  740:	OS_TRAP_IF(s->start == MAP_FAILED);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        2:  741:}
+        -:  742:
+        -:  743:/**
+        -:  744: * cab_create() - create the named semaphores for interrupt simulation and the shared
+        -:  745: * memory file.
+        -:  746: *
+        -:  747: * Return:	None.
+        -:  748: **/
+function cab_create called 2 returned 100% blocks executed 73%
+        2:  749:static void cab_create(void)
+        -:  750:{
+        -:  751:	mode_t mode;
+        -:  752:	sem_t *sem;
+        -:  753:	char *name;
+        -:  754:	int i, oflag, rv, fd;
+        -:  755:
+        -:  756:	/* Control flags for the creation of the named semaphored. */
+        2:  757:	oflag = O_CREAT | O_EXCL;
+        2:  758:	mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+        -:  759:
+        -:  760:	/* Loop thru the named semaphore names. */
+       10:  761:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+        8:  762:		name = cab_shell.sem_n[i];
+        -:  763:		
+        -:  764:		/* Create the named semaphore. */
+        8:  765:		sem = sem_open(name, oflag, mode, 0);
+call    0 returned 100%
+       8*:  766:		OS_TRAP_IF(sem == SEM_FAILED);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  767:
+        -:  768:		/* Remove the reference to the named semaphore. */
+        8:  769:		rv = sem_close(sem);
+call    0 returned 100%
+       8*:  770:		OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  771:	}
+        -:  772:
+        -:  773:	/* Control flags for the creation of the shared memory file. */
+        2:  774:	oflag = O_RDWR | O_CREAT | O_EXCL;
+        2:  775:	mode  = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH;
+        -:  776:
+        2:  777:	fd = open(CAB_SHM_FILE, oflag, mode);
+call    0 returned 100%
+       2*:  778:	OS_TRAP_IF(fd == -1);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  779:
+        -:  780:	/* Stretch the file size. */
+        2:  781:	rv = lseek(fd, CAB_SHM_SIZE - 1, SEEK_SET);
+call    0 returned 100%
+       2*:  782:	OS_TRAP_IF(rv == -1);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  783:
+        -:  784:	/* Write just one byte at the end and close the file. */
+        2:  785:	rv = write(fd, "", 1);
+call    0 returned 100%
+       2*:  786:	OS_TRAP_IF(rv == -1);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  787:
+        2:  788:	rv = close(fd);
+call    0 returned 100%
+       2*:  789:	OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        2:  790:}
+        -:  791:
+        -:  792:/*============================================================================
+        -:  793:  EXPORTED FUNCTIONS
+        -:  794:  ============================================================================*/
+        -:  795:/**
+        -:  796: * os_c_close() - the user shall call this function to remove the
+        -:  797: * shared memory ressources.
+        -:  798: *
+        -:  799: * @dev_id:  id of the shared memory device.
+        -:  800: *
+        -:  801: * Return:	None.
+        -:  802: **/
+function os_c_close called 12 returned 100% blocks executed 88%
+       12:  803:void os_c_close(int dev_id)
+        -:  804:{
+        -:  805:	cab_dev_t *dev;
+        -:  806:	int rv, i;
+        -:  807:
+        -:  808:	/* Map the id to the device state. */
+       12:  809:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -:  810:	
+        -:  811:	/* Resume the interrupt thread, to terminate it. */
+       12:  812:	atomic_store(&dev->down, 1);
+       12:  813:	os_sem_release(dev->my_int);
+call    0 returned 100%
+        -:  814:	
+        -:  815:	/* Delete the interrupt handler. */
+       12:  816:	os_thread_destroy(dev->thread);
+call    0 returned 100%
+        -:  817:
+        -:  818:	/* Remove the reference to the named semaphores. */
+       12:  819:	rv = sem_close(dev->my_int);
+call    0 returned 100%
+      12*:  820:	OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  821:	
+       12:  822:	rv = sem_close(dev->other_int);
+call    0 returned 100%
+      12*:  823:	OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  824:
+        -:  825:	/* Destroy the semaphore for os_c_write(). */
+       12:  826:	os_sem_delete(&dev->suspend_writer);
+call    0 returned 100%
+        -:  827:	
+        -:  828:	/* Destroy the semaphore for os_c_read(). */
+       12:  829:	os_sem_delete(&dev->suspend_reader);
+call    0 returned 100%
+        -:  830:	
+        -:  831:	/* Delete the mutex for the critical sections in os_c_write. */
+       12:  832:	os_cs_destroy(&dev->write_mutex);
+call    0 returned 100%
+        -:  833:
+        -:  834:	/* Delete the mutex for the critical sections in os_c_zread. */
+       12:  835:	os_cs_destroy(&dev->read_mutex);
+call    0 returned 100%
+        -:  836:
+        -:  837:	/* Delete the mutex for the critical sections in aio_action and in aio_write. */
+       12:  838:	os_cs_destroy(&dev->aio_mutex);
+call    0 returned 100%
+        -:  839:	
+        -:  840:	/* Destroy the mutex for the critical sections in cab_q_add. */
+       12:  841:	os_cs_destroy(&dev->q_mutex);
+call    0 returned 100%
+        -:  842:	
+        -:  843:	/* Clear the input queue of the endpoint. */
+       12:  844:	dev->in.queue->tail = dev->in.queue->head;
+        -:  845:
+        -:  846:	/* Free the the shared memory device. */
+       26:  847:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+       26:  848:		if (cab_device[i] == dev)
+branch  0 taken 46% (fallthrough)
+branch  1 taken 54%
+       12:  849:			break;
+        -:  850:	}
+        -:  851:	
+        -:  852:	/* Test the release conditon. */
+      12*:  853:	OS_TRAP_IF(i >= CAB_COUNT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+       12:  854:	cab_device[i] = NULL;
+        -:  855:	
+       12:  856:	OS_FREE(dev);
+call    0 returned 100%
+       12:  857:}
+        -:  858:
+        -:  859:/** 
+        -:  860: * os_c_wait() - the caller shall be suspended, until a read or write event is
+        -:  861: * available for the wires of a cable.
+        -:  862: *
+        -:  863: * @wait_id:  id of the wait element.
+        -:  864: *
+        -:  865: * Return:	None.
+        -:  866: **/
+function os_c_wait called 320 returned 100% blocks executed 75%
+      320:  867:void os_c_wait(int id)
+        -:  868:{
+        -:  869:	struct cab_wait_elem_s *elem;
+        -:  870:	int probe;
+        -:  871:
+        -:  872:	/* Entry condition. */
+     320*:  873:	OS_TRAP_IF(id < 0 || id >= CAB_COUNT);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  874:	
+        -:  875:	/* Get the pointer to the wait state. */
+      320:  876:	elem = &cab_wait.elem[id];
+     320*:  877:	OS_TRAP_IF(! elem->assigned);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  878:	
+        -:  879:	/* Test the state of the merged state of all input and output wires. */
+      320:  880:	probe = atomic_exchange(&elem->probe, 0);
+      320:  881:	if (! probe)
+branch  0 taken 51% (fallthrough)
+branch  1 taken 49%
+      163:  882:		os_sem_wait(&elem->suspend);
+call    0 returned 100%
+      320:  883:}
+        -:  884:
+        -:  885:/** 
+        -:  886: * os_c_wait_release() - free the wait element.
+        -:  887: *
+        -:  888: * @id:  id of the assigned element.
+        -:  889: *
+        -:  890: * Return:	None.
+        -:  891: **/
+function os_c_wait_release called 6 returned 100% blocks executed 75%
+        6:  892:void os_c_wait_release(int id)
+        -:  893:{
+        -:  894:	struct cab_wait_elem_s *elem;
+        -:  895:	cab_wait_t *w;
+        -:  896:	
+        -:  897:	/* Get the pointer to the wait state. */
+        6:  898:	w = &cab_wait;
+        -:  899:	
+        -:  900:	/* Enter the critical section. */
+        6:  901:	os_cs_enter(&w->mutex);
+call    0 returned 100%
+        -:  902:	
+        -:  903:	/* Entry condition. */
+       6*:  904:	OS_TRAP_IF(id < 0 || id >= CAB_COUNT);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  905:
+        -:  906:	/* Get the pointer to the wait element. */
+        6:  907:	elem = &w->elem[id];
+       6*:  908:	OS_TRAP_IF(! elem->assigned);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  909:	
+        -:  910:	/* Free the wait element. */
+        6:  911:	elem->assigned = 0;
+        -:  912:		
+        -:  913:	/* Leave the critical section. */
+        6:  914:	os_cs_leave(&w->mutex);
+call    0 returned 100%
+        6:  915:}
+        -:  916:
+        -:  917:/** 
+        -:  918: * os_c_wait_init() - if a device has been opened with O_NBLOCK - non blocking mode, it is allowed to suspend the
+        -:  919: * caller. He wants be resumed if reading or writing is possible again, i.e. if
+        -:  920: * one or the other wire of a cable can be used. 
+        -:  921: *
+        -:  922: * @list:  list of device ids.
+        -:  923: * @len:   number of the list elements.
+        -:  924: *
+        -:  925: * Return:	the id of the assigned wait element.
+        -:  926: **/
+function os_c_wait_init called 6 returned 100% blocks executed 85%
+        6:  927:int os_c_wait_init(int *list, int len)
+        -:  928:{
+        -:  929:	struct cab_wait_elem_s *elem;
+        -:  930:	cab_wait_t *w;
+        -:  931:	cab_dev_t *dev;
+        -:  932:	int i, wait_id;
+        -:  933:	
+        -:  934:	/* Entry condition. */
+       6*:  935:	OS_TRAP_IF(list == NULL || len < 1);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -:  936:
+        -:  937:	/* Get the pointer to the wait list. */
+        6:  938:	w = &cab_wait;
+        -:  939:	
+        -:  940:	/* Enter the critical section. */
+        6:  941:	os_cs_enter(&w->mutex);
+call    0 returned 100%
+        -:  942:
+        -:  943:	/* Search for a free wait element. */
+       12:  944:	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+       12:  945:		if (! elem->assigned)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        6:  946:			break;
+        -:  947:	}
+        -:  948:
+        -:  949:	/* Test the search result. */
+       6*:  950:	OS_TRAP_IF(i >= CAB_COUNT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        6:  951:	wait_id = i;
+        6:  952:	elem->assigned = 1;
+        -:  953:
+        -:  954:	/* Run thru the device id list. */
+       14:  955:	for (i = 0; i < len; i++) {
+branch  0 taken 57%
+branch  1 taken 43% (fallthrough)
+        -:  956:		/* Request the pointer to the device state. */
+        8:  957:		dev = cab_dev_get(list[i]);
+call    0 returned 100%
+        -:  958:
+        -:  959:		/* Test the device mode. */
+       8*:  960:		OS_TRAP_IF(dev->mode != O_NBLOCK);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -:  961:
+        -:  962:		/* Propagate the wait condition to the device state. */
+        8:  963:		dev->wait_id = wait_id;
+        8:  964:		atomic_store(&dev->sync_wait, 1);
+        -:  965:	}
+        -:  966:
+        -:  967:	/* Leave the critical section. */
+        6:  968:	os_cs_leave(&w->mutex);
+call    0 returned 100%
+        -:  969:
+        6:  970:	return wait_id;
+        -:  971:}
+        -:  972:
+        -:  973:/**
+        -:  974: * os_c_zread() - the caller for incoming payload. With each successiv call, the
+        -:  975: * reference to the previous call is released automatically.
+        -:  976: *
+        -:  977: * @dev_id:  id of the shared memory device.
+        -:  978: * @buf:     pointer to the received payload.
+        -:  979: * @count:   size of the destination buffer.
+        -:  980: *
+        -:  981: * Return:	number of the received bytes.
+        -:  982: **/
+function os_c_zread called 8 returned 100% blocks executed 86%
+        8:  983:int os_c_zread(int dev_id, char **buf, int count)
+        -:  984:{
+        -:  985:	cab_dev_t *dev;
+        -:  986:	cab_io_t *in;
+        -:  987:	int pending_in, n;
+        -:  988:	
+        -:  989:	/* Map the id to the device state. */
+        8:  990:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -:  991:	
+        -:  992:	/* Get the pointer to the input channel. */
+        8:  993:	in = &dev->in;
+        -:  994:	
+        -:  995:	/* Enter the critical section. */
+        8:  996:	os_cs_enter(&dev->read_mutex);
+call    0 returned 100%
+        -:  997:
+        -:  998:	/* If the input payload is pending, send the control message. */
+        8:  999:	pending_in = atomic_exchange(&dev->pending_in, 0);
+        8: 1000:	if (pending_in)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        4: 1001:		cab_q_add(dev, 0, 1);
+call    0 returned 100%
+        -: 1002:	
+        -: 1003:	/* Test the buffer state. */
+        8: 1004:	if (buf == NULL || count < 1) {
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+        -: 1005:		/* Leave the critical section. */
+        4: 1006:		os_cs_leave(&dev->read_mutex);	
+call    0 returned 100%
+        4: 1007:		return 0;
+        -: 1008:	}
+        -: 1009:
+        -: 1010:	/* Test the device mode. */
+        4: 1011:	if (dev->mode == O_NBLOCK) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -: 1012:		/* Get the number of the received bytes. */
+    #####: 1013:		n = atomic_exchange(&in->p_count, 0);
+    #####: 1014:		if (n > 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1015:			goto l_zcopy;
+        -: 1016:		else
+    #####: 1017:			goto l_leave;
+        -: 1018:	}
+        -: 1019:
+        -: 1020:	/* Update the sync. read flag. */
+        4: 1021:	atomic_store(&dev->sync_read, 1);
+        -: 1022:	
+        -: 1023:	/* Wait for the input payload. */
+        -: 1024:	for(;;) {
+        -: 1025:		/* Get the number of the received bytes. */
+        6: 1026:		n = atomic_exchange(&in->p_count, 0);
+        -: 1027:
+        -: 1028:		/* Test the number of the received bytes. */
+        6: 1029:		if (n < 1) { 
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -: 1030:			/* Suspend the read user. */
+        2: 1031:			os_sem_wait(&dev->suspend_reader);
+call    0 returned 100%
+        2: 1032:			continue;
+        -: 1033:		}
+        -: 1034:
+        4: 1035:		break;
+        -: 1036:	}
+        -: 1037:
+        -: 1038:	/* Release the sync. read operation. */
+        4: 1039:	atomic_store(&dev->sync_read, 0);
+        -: 1040:
+        4: 1041:l_zcopy:
+        -: 1042:	/* Get the pointer to the received payload. */
+        4: 1043:	atomic_store(&dev->pending_in, 1);
+        4: 1044:	*buf = in->b_start;
+        -: 1045:
+        4: 1046:l_leave:
+        -: 1047:	/* Leave the critical section. */
+        4: 1048:	os_cs_leave(&dev->read_mutex);	
+call    0 returned 100%
+        -: 1049:
+        4: 1050:	return n;
+        -: 1051:}
+        -: 1052:
+        -: 1053:/**
+        -: 1054: * os_c_read() - the caller waits for the incoming payload.
+        -: 1055: *
+        -: 1056: * @dev_id:  id of the shared memory device.
+        -: 1057: * @buf:     pointer to the received payload.
+        -: 1058: * @count:   size of the destination buffer.
+        -: 1059: *
+        -: 1060: * Return:	number of the received bytes.
+        -: 1061: **/
+function os_c_read called 2689 returned 100% blocks executed 91%
+     2689: 1062:int os_c_read(int dev_id, char *buf, int count)
+        -: 1063:{
+        -: 1064:	cab_dev_t *dev;
+        -: 1065:	cab_io_t *in;
+        -: 1066:	int n;
+        -: 1067:
+        -: 1068:	/* Entry conditon. */
+    2689*: 1069:	OS_TRAP_IF(buf == NULL || count < 1);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 never executed
+        -: 1070:
+        -: 1071:	/* Map the id to the device state. */
+     2689: 1072:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -: 1073:	
+        -: 1074:	/* Get the pointer to the input channel. */
+     2693: 1075:	in = &dev->in;
+        -: 1076:	
+        -: 1077:	/* Enter the critical section. */
+     2693: 1078:	os_cs_enter(&dev->read_mutex);
+call    0 returned 100%
+        -: 1079:
+        -: 1080:	/* Test the device mode. */
+     2702: 1081:	if (dev->mode == O_NBLOCK) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 1%
+        -: 1082:		/* Get the number of the received bytes. */
+     2698: 1083:		n = atomic_exchange(&in->p_count, 0);
+     2698: 1084:		if (n > 0)
+branch  0 taken 12% (fallthrough)
+branch  1 taken 88%
+      316: 1085:			goto l_copy;
+        -: 1086:		else
+     2382: 1087:			goto l_leave;
+        -: 1088:	}
+        -: 1089:	
+        -: 1090:	/* Define the read method. */
+        4: 1091:	atomic_store(&dev->sync_read, 1);
+        -: 1092:
+        -: 1093:	/* Wait for the input payload. */
+        -: 1094:	for(;;) {
+        -: 1095:		/* Get the number of the received bytes. */
+        6: 1096:		n = atomic_exchange(&in->p_count, 0);
+        -: 1097:
+        -: 1098:		/* Test the number of the received bytest. */
+        6: 1099:		if (n < 1) { 
+branch  0 taken 33% (fallthrough)
+branch  1 taken 67%
+        -: 1100:			/* Suspend the read user. */
+        2: 1101:			os_sem_wait(&dev->suspend_reader);
+call    0 returned 100%
+        2: 1102:			continue;
+        -: 1103:		}
+        -: 1104:
+        4: 1105:		break;
+        -: 1106:	}
+        -: 1107:	
+        -: 1108:	/* Release the sync. read operation. */
+        4: 1109:	atomic_store(&dev->sync_read, 0);
+        -: 1110:
+      320: 1111:l_copy:
+        -: 1112:	/* Test the user buffer. */
+     320*: 1113:	OS_TRAP_IF(count < n);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1114:	
+        -: 1115:	/* Copy the received payload. */
+      320: 1116:	os_memcpy(buf, count, in->b_start, n);
+call    0 returned 100%
+        -: 1117:
+        -: 1118:	/* Release the pending input buffer. */
+      320: 1119:	cab_q_add(dev, 0, 1);
+call    0 returned 100%
+        -: 1120:
+     2702: 1121:l_leave:
+        -: 1122:	/* Leave the critical section. */
+     2702: 1123:	os_cs_leave(&dev->read_mutex);	
+call    0 returned 100%
+        -: 1124:
+     2697: 1125:	return n;
+        -: 1126:}
+        -: 1127:
+        -: 1128:/**
+        -: 1129: * os_c_write() - send the output payload to the other device and suspend the
+        -: 1130: * caller until the payload has been processed.
+        -: 1131: *
+        -: 1132: * @dev_id:  id of the shared memory device.
+        -: 1133: * @buf:     pointer to the payload.
+        -: 1134: * @count:   size of the payload.
+        -: 1135: *
+        -: 1136: * Return:	the number of the copied bytes.
+        -: 1137: **/
+function os_c_write called 2838 returned 100% blocks executed 100%
+     2838: 1138:int os_c_write(int dev_id, char *buf, int count)
+        -: 1139:{
+        -: 1140:	cab_dev_t *dev;
+        -: 1141:	cab_io_t *out;
+        -: 1142:	int n, pending_out;
+        -: 1143:	
+        -: 1144:	/* Initialize the return value. */
+     2838: 1145:	n = 0;
+        -: 1146:			
+        -: 1147:	/* Entry conditon. */
+     2838: 1148:	OS_TRAP_IF(buf == NULL || count < 1);
+branch  0 taken 100% (fallthrough)
+branch  1 taken -0%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 returned -0%
+        -: 1149:
+        -: 1150:	/* Map the id to the device state. */
+     2839: 1151:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -: 1152:	
+        -: 1153:	/* Get the pointer to the output channel. */
+     2830: 1154:	out = &dev->out;
+        -: 1155:	
+        -: 1156:	/* Enter the critical section. */
+     2830: 1157:	os_cs_enter(&dev->write_mutex);
+call    0 returned 101%
+        -: 1158:
+        -: 1159:	/* Copy the state of the output buffer. */
+     2845: 1160:	pending_out = atomic_load(&dev->pending_out);
+        -: 1161:
+        -: 1162:	/* Test the device mode. */
+     2845: 1163:	if (dev->mode != O_NBLOCK) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 100%
+        -: 1164:		/* Change the output state. */
+        8: 1165:		atomic_store(&dev->sync_write, 1);
+        -: 1166:	}
+        -: 1167:	else {
+        -: 1168:		/* Test the state of the output buffer. */
+     2837: 1169:		if (pending_out)
+branch  0 taken 89% (fallthrough)
+branch  1 taken 11%
+     2532: 1170:			goto l_leave;
+        -: 1171:	}
+        -: 1172:	
+        -: 1173:	/* Test the state of the output buffer. */
+      313: 1174:	OS_TRAP_IF(out->b_size < count || pending_out);
+branch  0 taken 104% (fallthrough)
+branch  1 taken -4%
+branch  2 taken 0% (fallthrough)
+branch  3 taken 100%
+call    4 returned -0%
+        -: 1175:
+        -: 1176:	/* Fill the output buffer. */
+      324: 1177:	os_memcpy(out->b_start, out->b_size, buf, count);
+call    0 returned 100%
+        -: 1178:
+        -: 1179:	/* Save the size of the payload. */
+      324: 1180:	atomic_store(&out->p_count, count);
+        -: 1181:		
+        -: 1182:	/* Change the output state. */
+      324: 1183:	atomic_store(&dev->pending_out, 1);
+        -: 1184:		
+        -: 1185:	/* Send the control message to the other device. */
+      324: 1186:	cab_q_add(dev, count, 0);
+call    0 returned 99%
+        -: 1187:
+        -: 1188:	/* Suspend the caller until the action is executed. */
+      322: 1189:	if (dev->mode != O_NBLOCK)
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+        8: 1190:		os_sem_wait(&dev->suspend_writer);
+call    0 returned 75%
+        -: 1191:
+        -: 1192:	/* Update the return value. */
+      320: 1193:	n = count;
+        -: 1194:
+     2852: 1195:l_leave:
+        -: 1196:	/* Leave the critical section. */
+     2852: 1197:	os_cs_leave(&dev->write_mutex);
+call    0 returned 100%
+        -: 1198:		
+     2845: 1199:	return n;
+        -: 1200:}
+        -: 1201:
+        -: 1202:/**
+        -: 1203: * os_c_aread() - this async. I/O operation triggers the interrup, to start or
+        -: 1204: * restart the receive actions.
+        -: 1205: *
+        -: 1206: * @dev_id:  id of the shared memory device.
+        -: 1207: *
+        -: 1208: * Return:	None.
+        -: 1209: **/
+function os_c_aread called 4 returned 100% blocks executed 86%
+        4: 1210:void os_c_aread(int dev_id)
+        -: 1211:{
+        -: 1212:	cab_dev_t *dev;
+        -: 1213:
+        -: 1214:	/* Map the id to the device state. */
+        4: 1215:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -: 1216:	
+        -: 1217:	/* Enter the critical section. */
+        4: 1218:	os_cs_enter(&dev->aio_mutex);
+call    0 returned 100%
+        -: 1219:
+        -: 1220:	/* Extended entry conditon. */
+       4*: 1221:	OS_TRAP_IF(! dev->aio_use);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1222:
+        -: 1223:	/* Update the read trigger. */
+        4: 1224:	atomic_store(&dev->aio_rd_trigger, 1);
+        -: 1225:
+        -: 1226:	/* Resume the interrupt handler. */
+        4: 1227:	os_sem_release(dev->my_int);
+call    0 returned 100%
+        -: 1228:
+        -: 1229:	/* Leave the critical section. */
+        4: 1230:	os_cs_leave(&dev->aio_mutex);	
+call    0 returned 100%
+        4: 1231:}
+        -: 1232:
+        -: 1233:/**
+        -: 1234: * os_c_awrite() - this async. I/O operation triggers the interrupt, to start
+        -: 1235: * or restart the send actions.
+        -: 1236: *
+        -: 1237: * @dev_id:  id of the shared memory device.
+        -: 1238: *
+        -: 1239: * Return:	None.
+        -: 1240: **/
+function os_c_awrite called 4 returned 100% blocks executed 86%
+        4: 1241:void os_c_awrite(int dev_id)
+        -: 1242:{
+        -: 1243:	cab_dev_t *dev;
+        -: 1244:
+        -: 1245:	/* Map the id to the device state. */
+        4: 1246:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -: 1247:	
+        -: 1248:	/* Enter the critical section. */
+        4: 1249:	os_cs_enter(&dev->aio_mutex);
+call    0 returned 100%
+        -: 1250:
+        -: 1251:	/* Extended entry conditon. */
+       4*: 1252:	OS_TRAP_IF(! dev->aio_use);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1253:
+        -: 1254:	/* Update the write trigger. */
+        4: 1255:	atomic_store(&dev->aio_wr_trigger, 1);
+        -: 1256:
+        -: 1257:	/* Resume the interrupt handler. */
+        4: 1258:	os_sem_release(dev->my_int);
+call    0 returned 100%
+        -: 1259:
+        -: 1260:	/* Leave the critical section. */
+        4: 1261:	os_cs_leave(&dev->aio_mutex);	
+call    0 returned 100%
+        4: 1262:}
+        -: 1263:
+        -: 1264:/**
+        -: 1265: * os_c_action() - install the read and write callback for the asynchronous
+        -: 1266: * operations. The reconfiguration of the async. I/O operations is not
+        -: 1267: * supported. It is recommended to decide themselves for aio immediately after
+        -: 1268: * os_c_open before data transfer starts, in order to avoid deadlocks in the sync.
+        -: 1269: * operations.
+        -: 1270: *
+        -: 1271: * @dev_id:  id of the shared memory device.
+        -: 1272: * @cb:      pointer to the async. I/O callbacks.
+        -: 1273: *
+        -: 1274: * Return:	None.
+        -: 1275: **/
+function os_c_action called 4 returned 100% blocks executed 85%
+        4: 1276:void os_c_action(int dev_id, os_aio_cb_t *cb)
+        -: 1277:{
+        -: 1278:	cab_dev_t *dev;
+        -: 1279:	
+        -: 1280:	/* Entry conditon. */
+       4*: 1281:	OS_TRAP_IF(cb == NULL || cb->read_cb == NULL || cb->write_cb == NULL);
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 0% (fallthrough)
+branch  5 taken 100%
+call    6 never executed
+        -: 1282:
+        -: 1283:	/* Map the id to the device state. */
+        4: 1284:	dev = cab_dev_get(dev_id);
+call    0 returned 100%
+        -: 1285:
+        -: 1286:	/* Enter the critical section. */
+        4: 1287:	os_cs_enter(&dev->aio_mutex);
+call    0 returned 100%
+        -: 1288:
+        -: 1289:	/* Extended entry conditon. */
+       4*: 1290:	OS_TRAP_IF(dev->aio_use ||
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+branch  4 taken 100% (fallthrough)
+branch  5 taken 0%
+branch  6 taken 0% (fallthrough)
+branch  7 taken 100%
+call    8 never executed
+        -: 1291:		   dev->pending_out || dev->sync_read || dev->sync_write);
+        -: 1292:
+        -: 1293:	/* Copy the async. I/O operations. */
+        4: 1294:	dev->aio_cb = *cb;
+        -: 1295:
+        -: 1296:	/* Activate the async. I/O transfer. */
+        4: 1297:	atomic_store(&dev->aio_use, 1);
+        -: 1298:
+        -: 1299:	/* Leave the critical section. */
+        4: 1300:	os_cs_leave(&dev->aio_mutex);
+call    0 returned 100%
+        4: 1301:}
+        -: 1302:
+        -: 1303:/**
+        -: 1304: * os_c_open() - the cable user shall call this function to request the resources
+        -: 1305: * for the shared memory transer.
+        -: 1306: *
+        -: 1307: * @device_name:  name of the shared memory deivce: "/van_tcl" or "/tcl".
+        -: 1308: * @mode:         0: blocking I/O, O_NBLOCK: non blocking I/O.
+        -: 1309: * 
+        -: 1310: * Return:	the device id.
+        -: 1311: **/
+function os_c_open called 12 returned 100% blocks executed 88%
+       12: 1312:int os_c_open(char *device_name, int mode)
+        -: 1313:{
+        -: 1314:	os_queue_elem_t msg;
+        -: 1315:	cab_conf_t *conf;
+        -: 1316:	cab_dev_t *dev;
+        -: 1317:	void *addr;
+        -: 1318:	int i;
+        -: 1319:
+        -: 1320:	/* Entry condition. */
+      12*: 1321:	OS_TRAP_IF(device_name == NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1322:
+        -: 1323:	/* Search for the shm device configuration. */
+       12: 1324:	conf = cab_conf_get(cab_conf, device_name);
+call    0 returned 100%
+        -: 1325:
+        -: 1326:	/* Allocate the shm device data. */
+       26: 1327:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+       26: 1328:		if (cab_device[i] == NULL)
+branch  0 taken 46% (fallthrough)
+branch  1 taken 54%
+       12: 1329:			break;
+        -: 1330:	}
+        -: 1331:		
+        -: 1332:	/* Test the allocation conditon. */
+      12*: 1333:	OS_TRAP_IF(i >= CAB_COUNT);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1334:
+       12: 1335:	dev = cab_device[i] = OS_MALLOC(sizeof(cab_dev_t));
+call    0 returned 100%
+       12: 1336:	os_memset(dev, 0, sizeof(cab_dev_t));
+call    0 returned 100%
+        -: 1337:
+        -: 1338:	/* Save the device identificaton. */
+       12: 1339:	dev->id = conf->id;
+       12: 1340:	dev->name = conf->dev_name;
+        -: 1341:
+        -: 1342:	/* Test the device mode. */
+       12: 1343:	if (mode == O_NBLOCK)
+branch  0 taken 67% (fallthrough)
+branch  1 taken 33%
+        8: 1344:		dev->mode = O_NBLOCK;
+        -: 1345:	
+        -: 1346:	/* Get the reference to my named semaphore. */
+       12: 1347:	dev->my_int = sem_open(conf->my_int_n, O_CREAT);
+call    0 returned 100%
+      12*: 1348:	OS_TRAP_IF(dev->my_int == SEM_FAILED);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1349:	
+        -: 1350:	/* Get the reference to named semaphore of the other device. */
+       12: 1351:	dev->other_int = sem_open(conf->other_int_n, O_CREAT);
+call    0 returned 100%
+      12*: 1352:	OS_TRAP_IF(dev->other_int == SEM_FAILED);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1353:
+        -: 1354:	/* Create the semaphore for os_c_write(). */
+       12: 1355:	os_sem_init(&dev->suspend_writer, 0);
+call    0 returned 100%
+        -: 1356:	
+        -: 1357:	/* Create the semaphore for os_c_zread(). */
+       12: 1358:	os_sem_init(&dev->suspend_reader, 0);
+call    0 returned 100%
+        -: 1359:
+        -: 1360:	/* Create the mutex for the critical sections in write. */
+       12: 1361:	os_cs_init(&dev->write_mutex);
+call    0 returned 100%
+        -: 1362:	
+        -: 1363:	/* Create the mutex for the critical sections in read. */
+       12: 1364:	os_cs_init(&dev->read_mutex);
+call    0 returned 100%
+        -: 1365:
+        -: 1366:	/* Create the mutex for the critical sections in aio_action and 
+        -: 1367:	 * aio_write. */	
+       12: 1368:	os_cs_init(&dev->aio_mutex);
+call    0 returned 100%
+        -: 1369:
+        -: 1370:	/* Create the mutex for the critical sections in cab_queue_add. */
+       12: 1371:	os_cs_init(&dev->q_mutex);
+call    0 returned 100%
+        -: 1372:
+        -: 1373:	/* Get the start addres of the shm area. */
+       12: 1374:	addr = (char *) cab_shell.start + conf->start_idx;
+        -: 1375:
+        -: 1376:	/* Get the shared memory addresses for the cable. */
+       12: 1377:	if (conf->is_ctrl)
+branch  0 taken 50% (fallthrough)
+branch  1 taken 50%
+        6: 1378:		cab_io_map(addr, &dev->in, &dev->out);
+call    0 returned 100%
+        -: 1379:	else
+        6: 1380:		cab_io_map(addr, &dev->out, &dev->in);
+call    0 returned 100%
+        -: 1381:
+        -: 1382:	/* Install the py interrupt handler/thread. */
+       12: 1383:	dev->thread = os_thread_create(conf->thr_name, PRIO, Q_SIZE);
+call    0 returned 100%
+        -: 1384:	
+        -: 1385:	/* Start with processing of the interrups. */
+       12: 1386:	os_memset(&msg, 0, sizeof(msg));
+call    0 returned 100%
+       12: 1387:	msg.param = dev;
+       12: 1388:	msg.cb    = cab_int_exec;
+       12: 1389:	OS_SEND(dev->thread, &msg, sizeof(msg));
+call    0 returned 100%
+        -: 1390:
+       12: 1391:	return dev->id;
+        -: 1392:}
+        -: 1393:
+        -: 1394:/**
+        -: 1395: * os_cab_ripcord() - release critical device resources.
+        -: 1396: *
+        -: 1397: * @coverage:  if 0, release critical device resoures.
+        -: 1398: *
+        -: 1399: * Return:	None.
+        -: 1400: **/
+function os_cab_ripcord called 2 returned 100% blocks executed 13%
+        2: 1401:void os_cab_ripcord(int coverage)
+        -: 1402:{
+        -: 1403:	cab_shell_t *s;
+        -: 1404:	cab_dev_t *dev;
+        -: 1405:	char *name;
+        -: 1406:	int i;
+        -: 1407:	
+        -: 1408:	/* Entry conditon. */
+        2: 1409:	if (coverage)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        2: 1410:		return;
+        -: 1411:
+        -: 1412:	/* Loop thru the device list. */
+    #####: 1413:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1414:		if (cab_device[i] == NULL)
+branch  0 never executed
+branch  1 never executed
+    #####: 1415:			continue;
+        -: 1416:
+        -: 1417:		/* Get the pointer to the device. */
+    #####: 1418:		dev = cab_device[i];
+        -: 1419:	
+        -: 1420:		/* Release my named semaphore. */
+    #####: 1421:		if (dev->my_int)
+branch  0 never executed
+branch  1 never executed
+    #####: 1422:			sem_close(dev->my_int);
+call    0 never executed
+        -: 1423:
+        -: 1424:		/* Release the named semaphore of the other device. */
+    #####: 1425:		if (dev->other_int)
+branch  0 never executed
+branch  1 never executed
+    #####: 1426:			sem_close(dev->other_int);
+call    0 never executed
+        -: 1427:	}
+        -: 1428:
+        -: 1429:	/* Get the address of the shm shell. */
+    #####: 1430:	s = &cab_shell;
+        -: 1431:	
+        -: 1432:	/* Test the file descriptor of the shared memory file. */
+    #####: 1433:	if (s->fd == 0) {
+branch  0 never executed
+branch  1 never executed
+        -: 1434:		/* Remove the mapping of the shared memory area. */
+    #####: 1435:		if (s->start != 0)
+branch  0 never executed
+branch  1 never executed
+    #####: 1436:			munmap(s->start, s->size);
+call    0 never executed
+        -: 1437:
+        -: 1438:		/* Close the shared memory file. */
+    #####: 1439:		close(s->fd);
+call    0 never executed
+        -: 1440:	}
+        -: 1441:	
+        -: 1442:	/* Test the creator information. */
+    #####: 1443:	if (! cab_shell.creator)
+branch  0 never executed
+branch  1 never executed
+    #####: 1444:		return;
+        -: 1445:	
+        -: 1446:	/* Remove the shared memory file. */
+    #####: 1447:	remove(CAB_SHM_FILE);
+call    0 never executed
+        -: 1448:
+        -: 1449:	/* Loop thru the named semaphore names. */
+    #####: 1450:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 never executed
+branch  1 never executed
+    #####: 1451:		name = cab_shell.sem_n[i];
+        -: 1452:		
+        -: 1453:		/* Delete the named semaphore. */
+    #####: 1454:		sem_unlink(name);
+call    0 never executed
+        -: 1455:	}
+        -: 1456:}
+        -: 1457:
+        -: 1458:/**
+        -: 1459: * os_cab_exit() - test the state of the shared memory devices.
+        -: 1460: *
+        -: 1461: * Return:	None.
+        -: 1462: **/
+function os_cab_exit called 2 returned 100% blocks executed 77%
+        2: 1463:void os_cab_exit(void)
+        -: 1464:{
+        -: 1465:	struct cab_wait_elem_s *elem;
+        -: 1466:	cab_shell_t *s;
+        -: 1467:	cab_wait_t *w;
+        -: 1468:	char *name;
+        -: 1469:	int i, rv;
+        -: 1470:	
+        -: 1471:	/* Test the state of all shared memory devices. */
+       10: 1472:	for (i = 0; i < CAB_COUNT; i++)
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+       8*: 1473:		OS_TRAP_IF(cab_device[i] != NULL);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1474:
+        -: 1475:	/* Get the pointer to the wait state. */
+        2: 1476:	w = &cab_wait;
+        -: 1477:	
+        -: 1478:	/* Release the resources for the wait condition. */
+       10: 1479:	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+        -: 1480:		/* Test the state of the wait condition. */
+       8*: 1481:		OS_TRAP_IF(elem->assigned);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        8: 1482:		os_sem_delete(&elem->suspend);
+call    0 returned 100%
+        -: 1483:	}
+        -: 1484:	
+        2: 1485:	os_cs_destroy(&w->mutex);
+call    0 returned 100%
+        -: 1486:
+        -: 1487:	/* Get the address of the shm shell. */
+        2: 1488:	s = &cab_shell;
+        -: 1489:	
+        -: 1490:	/* Delete the mapping of the shared memory area. */
+        2: 1491:	rv = munmap(s->start, s->size);
+call    0 returned 100%
+       2*: 1492:	OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1493:	
+        -: 1494:	/* Close the shared memory file. */
+        2: 1495:	rv = close(s->fd);
+call    0 returned 100%
+       2*: 1496:	OS_TRAP_IF(rv < 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1497:
+        -: 1498:	/* Test the creator information. */
+        2: 1499:	if (! cab_shell.creator)
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####: 1500:		return;
+        -: 1501:	
+        -: 1502:	/* Remove the shared memory file. */
+        2: 1503:	rv = remove(CAB_SHM_FILE);
+call    0 returned 100%
+       2*: 1504:	OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1505:
+        -: 1506:	/* Loop thru the named semaphore names. */
+       10: 1507:	for (i = 0; i < CAB_COUNT; i++) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+        8: 1508:		name = cab_shell.sem_n[i];
+        -: 1509:		
+        -: 1510:		/* Delete the named semaphore. */
+        8: 1511:		rv = sem_unlink(name);
+call    0 returned 100%
+       8*: 1512:		OS_TRAP_IF(rv != 0);
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+call    2 never executed
+        -: 1513:	}
+        -: 1514:}
+        -: 1515:
+        -: 1516:/**
+        -: 1517: * os_cab_init() - trigger the installation of the shared memory devices.
+        -: 1518: *
+        -: 1519: * @conf:     pointer to the trace configuration.
+        -: 1520: * @creater:  if 1, create the shared memory objects.
+        -: 1521: *
+        -: 1522: * Return:	None.
+        -: 1523: **/
+function os_cab_init called 2 returned 100% blocks executed 100%
+        2: 1524:void os_cab_init(os_conf_t *conf, int creator)
+        -: 1525:{
+        -: 1526:	struct cab_wait_elem_s *elem;
+        -: 1527:	cab_wait_t *w;
+        -: 1528:	int i;
+        -: 1529:
+        -: 1530:	/* Save the reference to the OS configuration. */
+        2: 1531:	os_conf_p = conf;
+        -: 1532:
+        -: 1533:	/* Save the creator information. */
+        2: 1534:	cab_shell.creator = creator;
+        -: 1535:	
+        -: 1536:	/* Create the named semaphores for interrupt simulation and the shared
+        -: 1537:	 * memory file. */
+        2: 1538:	if (creator)
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        2: 1539:		cab_create();
+call    0 returned 100%
+        -: 1540:
+        -: 1541:	/* Create the clean shared memory area. */
+        2: 1542:	cab_map();
+call    0 returned 100%
+        -: 1543:
+        -: 1544:	/* Get the pointer to the wait state. */
+        2: 1545:	w = &cab_wait;
+        -: 1546:	
+        -: 1547:	/* Creaate the resources for the wait condition. */
+        2: 1548:	os_cs_init(&w->mutex);
+call    0 returned 100%
+        -: 1549:	
+       10: 1550:	for (i = 0, elem = w->elem; i < CAB_COUNT; i++, elem++) {
+branch  0 taken 80%
+branch  1 taken 20% (fallthrough)
+        8: 1551:		elem->id = i;
+        8: 1552:		os_sem_init(&elem->suspend, 0);
+call    0 returned 100%
+        -: 1553:	}
+        2: 1554:}
