@@ -308,6 +308,12 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 	/* Test the wait condition. */
 	use_wait = batt->use_wait || disp->use_wait;
 	
+		/* XXX */
+#if 0
+	/* Power up the controller clock. */
+	cop_clock_up(c->c_clock);
+#endif
+	
 	/* The control thread analyzes or generates data from or to the
 	 * neighbour endpoints with the non blocking syncronous copy read or
 	 * write operation. */
@@ -323,12 +329,28 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 		
 		/* Generate output for the display. */
 		d_busy_wr = cop_write(disp, &no_d_out);
-		
-		/* Avoid an endles loop, if no data from neighbour endpoints are
-		 * available. */
-		if (use_wait && no_d_inp && no_b_inp && no_b_out && no_d_out)
+
+		/* Test the status of the I/O transfer. */
+		if (use_wait && no_d_inp && no_b_inp && no_b_out && no_d_out) {
+			/* Suspend the controller as long as no I/O data are
+			 * available. */
 			os_c_wait(c->c_wait_id);
+		}
+		/* XXX */
+#if 0
+		else {
+			/* Dive into the requirements of the controller clock. */
+			cop_clock_in_time(c->c_clock);
+				
+		}
+#endif
 	}
+	
+		/* XXX */
+#if 0
+	/* Power down the controller clock. */
+	cop_clock_down(c->c_clock);
+#endif
 	
 	TRACE(("%s nops: [e:%s/%s, s:done]\n", P, batt->name, disp->name));
 }

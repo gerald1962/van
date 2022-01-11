@@ -1,76 +1,72 @@
-1. Abstract
------------
-1.1 Cable Therory
-.................
-~/github/van/os/os_cable.c
-
-2 Download
------------
-cd ~
-rm -fr github
+1. First
+========
+cd
 mkdir github
 cd github
 git clone https://github.com/gerald1962/van
-
-3 Overview
------------
-cd  ~/github/van
-tree
+cd van
+...
 
 
-4 Delivery Tests
+2 Delivery Tests
 ================
-4.1 Test of the Limits
----------------------
+4.1 Coverage
+------------
+cd ~/github/van/test/os
+make can
+./vote
+
+2.1 Clock Test
+--------------
+cd ~/github/van/test/clock
+make all
+./out/clock -h
+time ./out/clock -i 10 -c 1000
+
+2.2 Test of the Limits
+----------------------
 cd ~/github/van/test/shared_memory/site
 make all
 ./site_test.sh 11
 
-4.2 Design Test
+2.3 Design Test
 ---------------
-4.2.1 Build
+2.3.1 Build
 ...........
 cd ~/github/van/test/shared_memory/cop
-make
+make all
 
-4.2.2 Test Possibilities
+2.3.2 Test Possibilities
 ........................
 out/cop -h
 
-4.2.3 Integrated Test
+2.3.3 Integration Test
 .....................
 time out/cop -dcc 999999 -cbc 99999 -bcc 9999 -cdc 999
 
-4.2.4 Distributed Test
+2.3.4 Distributed Test
 ......................
 sudo apt install xfce4-terminal
 ./cop_prototype.sh 953223 27323 32832 93234 &
 
 
-5 Van Lib
-----------
+3 Van Lib
+=========
 cd ~/github/van/lib
 make lib
 
 
-6 Python Test
---------------
+4 Python Test
+=============
 Open 2 terminals.
 
-7.1.1 Vat Terminal
+4.1 Vat Terminal
 ...................
 cd ~/github/van/test/shared_memory/vat
 make
 ./vat
 
-7.3.2 Python Terminal
-......................
+4.2 Python Terminal
+===================
 cd ~/github/van/test/python_c_interface
 ./van.py
-
-
-7 Coverage
------------
-cd ~/github/van/test/os
-make can
-./vote

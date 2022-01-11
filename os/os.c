@@ -408,7 +408,7 @@ void os_init(int creator)
 	os_cab_init(&os_conf, creator);
 
 	/* Initialize the OS timer list. */
-	os_tm_init();
+	os_clock_init_();
 }
 
 /**
@@ -429,7 +429,7 @@ void os_exit(void)
 	os_cab_exit();
 	os_thread_exit();
 	os_mem_exit();
-	os_tm_exit();
+	os_clock_exit_();
 
 	/* Test the OS state. */
 	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);

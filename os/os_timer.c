@@ -12,6 +12,7 @@
 #include <pthread.h>     /* POSIX thread. */
 #include <signal.h>      /* for struct sigevent and SIGEV_THREAD */
 #include <sys/time.h>    /* Get / set time: gettimeofday(). */
+#include <errno.h>       /* Linux error codes: EINTR. */
 #include "os.h"          /* Operating system: os_timer_init() */
 #include "os_private.h"  /* Local interfaces of the OS: os_tm_init() */
 
@@ -36,12 +37,13 @@
  * @assigned:      if 1, the element has been reserved.
  * @interval:      repeating interval in milliseconds.
  * @suspend:       suspend the wait caller.
- * @attr:          thread attibutes objct.
  * @suspended:     if 1, the caller has been suspend in os_timer_barrier().
+ * @overrun:       if 1, the caller has not reached os_timer_barrier().
  *
- * @s_start:       system start time of the timer.
- * @c_start:       current start time of the periodic timer.
- * @l_elapsed:     execution time of the last cycle. 
+ * @s_start:       system start time.
+ * @s_end:         system end time.
+ * @c_start:       current start time of the transition.
+ * @busy:          execution time of the last cycle.
  * @min:           minimum of the processing time.
  * @max:           maximum of the processing time.
  * @cycles:        timer expiration counter.
@@ -52,21 +54,22 @@ typedef struct {
 	pthread_mutex_t  mutex;
 	
 	struct tm_elem_s {
-		int      id;
-		char     name[OS_MAX_NAME_LEN + 1];
-		int      assigned;
-		int      interval;
-		timer_t  timer_id;
-		sem_t    suspend;
-		pthread_attr_t  attr;
-		atomic_int      suspended;
+		int         id;
+		char        name[OS_MAX_NAME_LEN + 1];
+		int         assigned;
+		int         interval;
+		timer_t     timer_id;
+		sem_t       suspend;
+		atomic_int  suspended;
+		atomic_int  overrun;
 		
 		struct timeval  s_start;
+		struct timeval  s_end;
 		struct timeval  c_start;
-		struct timeval  l_elapsed;
+		struct timeval  busy;
 		struct timeval  min;
 		struct timeval  max;
-		long long       cycles;
+		int             cycles;
 		int             sys_ov_count;
 		int             exp_ov_count;
 	} elem[OS_TIMER_LIMIT];
@@ -94,8 +97,8 @@ static tm_t tm;
  **/
 static void tm_handler(union sigval sv)
 {
+	struct itimerspec in;
 	struct tm_elem_s *t;
-	struct timeval tv;
 	int rv, suspended;
 	
 	/* Get the pointer to the timer descripton. */
@@ -107,50 +110,24 @@ static void tm_handler(union sigval sv)
 	/* Update the expiration counter. */
 	t->cycles++;
 	
-	/* Get the system overrun count for a POSIX per-process timer. */
-	rv = timer_getoverrun(t->timer_id);
-	OS_TRAP_IF(rv == -1);
-
-	/* Save the overrun count caused by system load. */
-	t->sys_ov_count = rv;
-	
 	/* Test the state of the timer owner. */
 	suspended = atomic_exchange(&t->suspended, 0);
-	if (! suspended) {
-		/* Update the timer expiration counter. */
-		t->exp_ov_count++;
-
-		/* XXX Trace. */
-		printf("%s: n:%s [i=%d, s-o=%d, e-o=%d]\n", F, t->name,
-		       t->id, rv, t->exp_ov_count);
-		
+	if (suspended) {
+		/* Resume the suspended caller. */
+		os_sem_release(&t->suspend);
 		return;
 	}
 
-	/* Get the current time. */
-	rv = gettimeofday(&tv, NULL);
+	/* Stop the timer. */
+	os_memset(&in, 0, sizeof(struct itimerspec));
+	rv = timer_settime(t->timer_id, 0, &in, NULL);
 	OS_TRAP_IF(rv != 0);
 
-	/* Calculate the runtime of the transition. */
-	timersub (&tv, &t->c_start, &t->l_elapsed);
+	/* Update the timer expiration counter. */
+	t->exp_ov_count++;
 
-	/* XXX Trace. */
-	printf("%s: n:%s [i=%d, s-o=%d, e-o=%d]\n", F, t->name,
-	       t->id, rv, t->exp_ov_count);
-
-	/* Calculate the minimum of the processing time. */
-	if (! timercmp(&t->min, &tv, >))
-		t->min = tv;
-
-	/* Calculate the maximum of the processing time. */
-	if (! timercmp(&t->max, &tv, <))
-		t->max = tv;
-	
-	/* Update the start time of the transition. */
-	t->c_start = tv;
-
-	/* Resume the suspended caller. */
-	os_sem_release(&t->suspend);
+	/* Inform the caller. */
+	atomic_store(&t->overrun, 1);
 }
 
 /**
@@ -162,19 +139,8 @@ static void tm_handler(union sigval sv)
  **/
 static void tm_create(struct tm_elem_s *t)
 {
-	struct sched_param parm;
 	struct sigevent sev;
-	pthread_attr_t attr;
 	int rv;
-
-	/* Initialize the thread attributes object. */
-	rv = pthread_attr_init(&attr);
-	OS_TRAP_IF(rv != 0);
-
-	/* Set the value of the scheduling priority to real time. */
-	parm.sched_priority = 255;
-	rv = pthread_attr_setschedparam(&attr, &parm);
-	OS_TRAP_IF(rv != 0);
 
 	/* Set the notification method as SIGEV_THREAD: upon timer expiration,
 	 * tm_handler(), will be invoked as if it were the start function of a
@@ -182,48 +148,120 @@ static void tm_create(struct tm_elem_s *t)
 	os_memset(&sev, 0, sizeof(struct sigevent));
 	sev.sigev_notify = SIGEV_THREAD;
 	sev.sigev_notify_function = tm_handler;
-	sev.sigev_value.sival_int = 20;
-	sev.sigev_value.sival_ptr = &t;
-	sev.sigev_notify_attributes = &attr;
+	sev.sigev_value.sival_ptr = t;
 
 	/* Create a new timer. */
 	rv = timer_create(CLOCK_REALTIME, &sev, &t->timer_id);
 	OS_TRAP_IF(rv != 0);
 }
 
+/**
+ * tm_ms() - calculate millliseconds.
+ *
+ * @tv:  pointer to the time description.
+ * 
+ * Return:	milliseconds.
+ **/
+static long long tm_ms(struct timeval *t)
+{
+	long long ms;
+
+	/* Calculate milliseconds */
+	ms = t->tv_sec * 1000LL + t->tv_usec / 1000;
+
+	return ms;
+}
+
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * os_timer_get() - provide all timer information.
+ * os_timer_trace() - print timer information.
  *
- * @id:  assigned timer id by os_timer_init().
- * @ts:  pointer to the timer state.
+ * @id:    assigned timer id by os_timer_init().
+ * @mode:  configuration of the trace output.
  * 
  * Return:	None.
  **/
-void os_timer_get(int id, os_tm_state_t *ts)
+void os_timer_trace(int id, int mode)
 {
 	struct tm_elem_s *t;
+	struct timeval res;
+	struct tm *l;
+	char *n;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&tm.mutex);
 	
 	/* Entry condition. */
-	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT || ts == NULL);
+	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT);
 
-	/* Get the pointer to the timer element. */
+	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
 
-	/* XXX Copy all available timer information. */
+	/* Get the pointer to the timer name. */
+	n = t->name;
 
-	/* Update the barrier state. */
-	ts->sys_ov_count = t->sys_ov_count;
-	ts->exp_ov_count = t->exp_ov_count;
+	/* Print the system start and end time. */
+
+	/* System start time. */
+	if(mode == OS_TT_FIRST || mode == OS_TT_LAST) {
+		l = localtime(&t->s_start.tv_sec);
+		printf("%s: sys-start: %d:%0d:%0d.%ld\n", n, 
+		       l->tm_hour, l->tm_min, l->tm_sec, t->s_start.tv_usec);
+	}
+	
+	/* System end time. */
+	if(mode == OS_TT_LAST) {
+		l = localtime(&t->s_end.tv_sec);
+		printf("%s: sys-end:   %d:%0d:%0d.%ld\n", n, 
+		       l->tm_hour, l->tm_min, l->tm_sec, t->s_end.tv_usec);
+		
+		/* Calculate the runtime of the cycles. */
+		timersub (&t->s_end, &t->s_start, &res);
+		printf("%s: runtime:   %lld ms\n", n, tm_ms(&res));
+	}
+	
+	/* System start time. */
+	if(mode == OS_TT_FIRST || mode == OS_TT_LAST)
+		printf("%s: interval:  %d ms\n",   n, t->interval);
+	
+	/* Print timer information. */
+	printf("%s: cycles:    %d\n",      n, t->cycles);
+	printf("%s: busy:      %lld ms\n", n, tm_ms(&t->busy));
+	printf("%s: min:       %lld ms\n", n, tm_ms(&t->min));
+	printf("%s: max:       %lld ms\n", n, tm_ms(&t->max));
+	printf("%s: sys-ov:    %d\n",      n, t->sys_ov_count);
+	printf("%s: exp-ov:    %d\n\n",    n, t->exp_ov_count);
 	
 	/* Leave the critical section. */
 	os_cs_leave(&tm.mutex);
+}
+
+/**
+ * os_timer_msleep() - sleep for the requested number of milliseconds.
+ *
+ * @msec:  millisecond value.
+ *
+ * Return:	None.
+ **/
+void os_timer_msleep(long msec)
+{
+	struct timespec ts;
+	int rv;
+
+	/* Entry condition. */
+	OS_TRAP_IF(msec < 0);
+
+	/* Map the millisecond value. */
+	ts.tv_sec = msec / 1000;
+	ts.tv_nsec = (msec % 1000) * 1000000;
+
+	do {
+		/* Execute the high-resoluton sleep. */
+		rv = nanosleep(&ts, &ts);
+	} while (rv && errno == EINTR);
 }
 
 /**
@@ -236,29 +274,70 @@ void os_timer_get(int id, os_tm_state_t *ts)
  **/
 int os_timer_barrier(int id)
 {
+        struct itimerspec in;
 	struct tm_elem_s *t;
-	
+	struct timeval now, res;
+	int rv, overrun;
+
 	/* Enter the critical section. */
 	os_cs_enter(&tm.mutex);
 	
 	/* Entry condition. */
 	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT);
 
-	/* Get the pointer to the timer element. */
+	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
 
-	/* Indicate the entering of the barrier. */
-	atomic_store(&t->suspended, 1);
+	/* Get the current time. */
+	rv = gettimeofday(&now, NULL);
+	OS_TRAP_IF(rv != 0);
+
+	/* Calculate the runtime of the transition. */
+	timersub (&now, &t->c_start, &res);
+	t->busy = res;
+
+	/* Calculate the minimum of the processing time. */
+	if (timercmp(&t->min, &res, >))
+		t->min = res;
+
+	/* Calculate the maximum of the processing time. */
+	if (timercmp(&t->max, &res, <))
+		t->max = res;
 	
-	/* Suspend the timer owner. */
-	os_sem_wait (&t->suspend);
+	/* Get the system overrun count for a POSIX per-process timer. */
+	rv = timer_getoverrun(t->timer_id);
+	OS_TRAP_IF(rv == -1);
+
+	/* Save the overrun count caused by system load. */
+	t->sys_ov_count = rv;
 	
+	/* Test the overrun condition. */
+	overrun = atomic_exchange(&t->overrun, 0);
+	if (overrun) {
+		/* Restart the clock. */
+		os_memset(&in, 0, sizeof(struct itimerspec));
+		in.it_value.tv_nsec    = 1000000 * t->interval;
+		in.it_interval.tv_nsec = 1000000 * t->interval;
+		rv = timer_settime(t->timer_id, 0, &in, NULL);
+		OS_TRAP_IF(rv != 0);
+	}
+	else {
+		/* Indicate the entering of the barrier. */
+		atomic_store(&t->suspended, 1);
+	
+		/* Suspend the timer owner. */
+		os_sem_wait (&t->suspend);
+	}
+
+	/* Update the current start time of the transition. */
+	rv = gettimeofday(&t->c_start, NULL);
+
 	/* Leave the critical section. */
 	os_cs_leave(&tm.mutex);
 
 	/* Calculate the return value. */
-	if (t->sys_ov_count || t->exp_ov_count)
+	if (overrun)
 		return -1;
 
 	return 0;
@@ -273,7 +352,7 @@ int os_timer_barrier(int id)
  **/
 void os_timer_stop(int id)
 {
-        struct itimerspec trigger;
+        struct itimerspec in;
 	struct tm_elem_s *t;
 	int rv;
 	
@@ -283,12 +362,16 @@ void os_timer_stop(int id)
 	/* Entry condition. */
 	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT);
 
-	/* Get the pointer to the timer element. */
+	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
 
+	/* Remember the system end time. */
+	rv = gettimeofday(&t->s_end, NULL);
+	OS_TRAP_IF(rv != 0);
+
 	/* Initialize the timer trigger. */
-	os_memset(&trigger, 0, sizeof(struct itimerspec));
+	os_memset(&in, 0, sizeof(struct itimerspec));
 
 	/* If the timer was already armed, then the previous settings are
 	 * overwritten. If the new values specifies a zero value (i.e., both
@@ -296,7 +379,7 @@ void os_timer_stop(int id)
 
         /* Disarm the timer. No flags are set and no old values will be
 	 * retrieved. */
-        rv = timer_settime(t->timer_id, 0, &trigger, NULL);
+        rv = timer_settime(t->timer_id, 0, &in, NULL);
 	OS_TRAP_IF(rv != 0);
 
 	/* Leave the critical section. */
@@ -312,7 +395,7 @@ void os_timer_stop(int id)
  **/
 void os_timer_start(int id)
 {
-        struct itimerspec trigger;
+        struct itimerspec in;
 	struct tm_elem_s *t;
 	int rv;
 	
@@ -322,26 +405,31 @@ void os_timer_start(int id)
 	/* Entry condition. */
 	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT);
 
-	/* Get the pointer to the timer element. */
+	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
 
 	/* Initialize the timer trigger. */
-	os_memset(&trigger, 0, sizeof(struct itimerspec));
-
+	os_memset(&in, 0, sizeof(struct itimerspec));
+	
+        /* Timer expiration will occur withing n millisecons after being armed
+         * by timer_settime(). */
+        in.it_value.tv_nsec = 1000000 * t->interval;
+	
 	/* Defines the input values for timer_settime(). The key input values is
 	 * the interval with the base value 1 ms: 10000000. 
 	 * The substructures it_interval of the itimerspec structure allows a
 	 * time value to be specified in seconds and nanoseconds. */
-	trigger.it_interval.tv_nsec = 10000000 * t->interval;
+	in.it_interval.tv_nsec = 1000000 * t->interval;
 
-	/* Save the current start time. */
+	/* Initialize the timer start. */
 	rv = gettimeofday(&t->c_start, NULL);
 	OS_TRAP_IF(rv != 0);
+	t->min = t->c_start;
 	
         /* Arm the timer. No flags are set and no old_value will be
 	 * retrieved. */
-        rv = timer_settime(t->timer_id, 0, &trigger, NULL);
+        rv = timer_settime(t->timer_id, 0, &in, NULL);
 	OS_TRAP_IF(rv != 0);
 
 	/* Leave the critical section. */
@@ -366,17 +454,16 @@ void os_timer_delete(int id)
 	/* Entry condition. */
 	OS_TRAP_IF(id < 0 || id >= OS_TIMER_LIMIT);
 
-	/* Get the pointer to the timer element. */
+	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
 	
-	/* Release the thread attibutes object with the realtime setting. */
-	rv = pthread_attr_destroy(&t->attr);
-	OS_TRAP_IF(rv != 0);
-
 	/* Disarm and delete the timer. */
 	rv = timer_delete(t->timer_id);
 	OS_TRAP_IF(rv != 0);
+
+	/* Release the control semaphore. */
+	os_sem_delete(&t->suspend);
 	
 	/* Release this timer. */
 	t->assigned = 0;
@@ -397,7 +484,7 @@ void os_timer_delete(int id)
 int os_timer_init(const char *name, int interval)
 {
 	struct tm_elem_s *t;
-	int i, tm_id, len, rv;
+	int i, len, rv;
 	
 	/* Entry condition. */
 	OS_TRAP_IF(name == NULL || interval < 1);
@@ -414,12 +501,14 @@ int os_timer_init(const char *name, int interval)
 	/* Test the search result. */
 	OS_TRAP_IF(i >= OS_TIMER_LIMIT);
 
-	/* Reset the timer state. */
+	/* This timer is yours. */
 	os_memset(t, 0, sizeof(struct tm_elem_s));
 
-	/* This timer is yours. */
-	tm_id = i;
+	/* Update the timer state. */
+	t->id = i;
 	t->assigned = 1;
+	t->interval = interval;
+	os_sem_init(&t->suspend, 0);
 	
 	/* Save the timer name. */
 	len = os_strlen(name);
@@ -430,14 +519,14 @@ int os_timer_init(const char *name, int interval)
 	/* Install a periodic timer. */
 	tm_create(t);
 	
-	/* Remember the birthdate. */
+	/* Remember the system start time. */
 	rv = gettimeofday(&t->s_start, NULL);
 	OS_TRAP_IF(rv != 0);
 
 	/* Leave the critical section. */
 	os_cs_leave(&tm.mutex);
 
-	return tm_id;
+	return t->id;
 }
 
 /**
@@ -453,11 +542,10 @@ void os_tm_exit(void)
 	/* Enter the critical section. */
 	os_cs_enter(&tm.mutex);
 	
-	/* Test and release the timer resources. */
+	/* Test the state of all timer. */
 	for (i = 0, t = tm.elem; i < OS_TIMER_LIMIT; i++, t++) {
 		/* Test the timer state. */
 		OS_TRAP_IF(t->assigned);
-		os_sem_delete(&t->suspend);
 	}
 
 	/* Leave the critical section. */
@@ -474,15 +562,6 @@ void os_tm_exit(void)
  **/
 void os_tm_init(void)
 {
-	struct tm_elem_s *t;
-	int i;
-	
 	/* Create the mutex for the critical section in the timer operations. */
 	os_cs_init(&tm.mutex);
-
-	/* Define the timer id. */
-	for (i = 0, t = tm.elem; i < OS_TIMER_LIMIT; i++, t++) {
-		t->id = i;
-		os_sem_init(&t->suspend, 0);
-	}
 }

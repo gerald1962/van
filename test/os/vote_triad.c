@@ -9,7 +9,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <unistd.h>  /* Standard Unix lib: usleep(). */
 #include "os.h"      /* Operating system: os_sem_create(). */
 #include "vote.h"    /* Van OS test environment. */
 
@@ -436,7 +435,7 @@ static void tri_ctrl_cleanup(struct tri_data_s *c)
  **/
 static int tri_stop(void)
 {
-	os_statistics_t expected = { 4, 8, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 4, 4, 0, 2341, 2341, 0 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -614,7 +613,7 @@ static void tri_conf(struct tri_data_s *c)
  **/
 static int tri_start(void)
 {
-	os_statistics_t expected = { 20, 31, 7, 2341, 2333, 7 };
+	os_statistics_t expected = { 20, 27, 7, 2341, 2333, 7 };
 	struct tri_data_s *c;
 	int stat;
 	

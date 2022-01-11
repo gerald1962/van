@@ -10,7 +10,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <unistd.h>  /* Common Unix interfaces: getopt().*/
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -1432,7 +1431,7 @@ static char *ct_to_string(void)
 }
 
 /**
- * site_usage() - provide information aboute the site configuration.
+ * site_usage() - provide information about the site usage.
  *
  * Return:	None.
  **/
