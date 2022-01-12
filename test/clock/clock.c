@@ -156,6 +156,8 @@ int main(int argc, char *argv[])
 	for(i = 0; i < clk.cycles; i++) {
 		/* Simulate the current execute time. */
 		exec_time = random() % limit;
+		if (exec_time < 1)
+			exec_time = 1;
 		
 		/* Sleep n milliseconds. */
 		os_clock_msleep(exec_time);

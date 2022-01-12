@@ -41,7 +41,6 @@
  * @interval:    repeating interval in milliseconds.
  * @suspend:     suspend the wait caller.
  * @suspended:   if 1, the caller has been suspend in os_timer_barrier().
- * @overrun:     if 1, the caller has not reached os_timer_barrier().
  *
  * @s_start:     system start time.
  * @s_end:       system end time.
@@ -64,7 +63,6 @@ typedef struct {
 		timer_t     timer_id;
 		sem_t       suspend;
 		atomic_int  suspended;
-		atomic_int  overrun;
 		
 		struct timeval  s_start;
 		struct timeval  s_end;
@@ -111,14 +109,11 @@ static void tm_handler(union sigval sv)
 
 	/* Test the state of the timer owner. */
 	suspended = atomic_exchange(&t->suspended, 0);
-	if (suspended) {
-		/* Resume the suspended caller. */
-		os_sem_release(&t->suspend);
+	if (suspended)
 		return;
-	}
-
-	/* Inform the caller because of barrier violation. */
-	atomic_store(&t->overrun, 1);
+	
+	/* Resume the suspended caller. */
+	os_sem_release(&t->suspend);
 }
 
 /**
@@ -240,7 +235,8 @@ void os_clock_msleep(long msec)
 	int rv;
 
 	/* Entry condition. */
-	OS_TRAP_IF(msec < 0);
+	if (msec < 1)
+		return;
 
 	/* Map the millisecond value. */
 	ts.tv_sec = msec / 1000;
@@ -265,6 +261,7 @@ int os_clock_barrier(int id)
         struct itimerspec in;
 	struct tm_elem_s *t;
 	struct timeval now, res;
+	long long busy;
 	int rv, overrun;
 
 	/* Enter the critical section. */
@@ -295,6 +292,10 @@ int os_clock_barrier(int id)
 	timersub (&now, &t->c_start, &res);
 	t->busy = res;
 
+	/* Calculate the overrun value. */
+	busy = tm_ms(&t->busy);
+	overrun =  (busy > t->interval);
+	
 	/* Calculate the minimum of the processing time. */
 	if (timercmp(&t->min, &res, >))
 		t->min = res;
@@ -304,12 +305,11 @@ int os_clock_barrier(int id)
 		t->max = res;
 	
 	/* Test the overrun condition. */
-	overrun = atomic_exchange(&t->overrun, 0);
 	if (overrun) {
 		/* Update the overrun counter. */
 		t->u_ov_count++;
 
-		/* Restart the clock timer because of overrun. */
+		/* Restart the clock timer. */
 		
 		/* Stop the timer. */
 		os_memset(&in, 0, sizeof(struct itimerspec));
@@ -317,7 +317,6 @@ int os_clock_barrier(int id)
 		OS_TRAP_IF(rv != 0);
 
 		/* Start the timer again. */
-		os_memset(&in, 0, sizeof(struct itimerspec));
 		in.it_value.tv_nsec    = CLOCK_NSEC_M * t->interval;
 		in.it_interval.tv_nsec = CLOCK_NSEC_M * t->interval;
 		rv = timer_settime(t->timer_id, 0, &in, NULL);
@@ -333,15 +332,13 @@ int os_clock_barrier(int id)
 
 	/* Update the current start time of the transition. */
 	rv = gettimeofday(&t->c_start, NULL);
+	OS_TRAP_IF(rv != 0);
 
 	/* Leave the critical section. */
 	os_cs_leave(&tm.mutex);
 
 	/* Calculate the return value. */
-	if (overrun)
-		return -1;
-
-	return 0;
+	return (overrun ? -1 : 0);
 }
 
 /**

@@ -69,6 +69,9 @@ static int tri_stop(void);
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/* Define vot_p for TEST_ASSERT_EQ. */
+static test_stat_t *vote_p;
+
 /**
  * tri_data - state of the control technology platform. 
  *
@@ -97,9 +100,6 @@ static struct tri_data_s {
 	tri_ep_t  n_batt;
 	tri_ep_t  n_disp;
 } tri_data;
-
-/* Define vot_p for TEST_ASSERT_EQ. */
-static test_stat_t *vote_p;
 
 /* List of the of the cable interworking test cases. */
 static test_elem_t tri_system[] = {
@@ -609,7 +609,7 @@ static void tri_conf(struct tri_data_s *c)
 /**
  * tri_start() - install the platform for the control technology.
  *
- * Return:	None.
+ * Return:	the test status.
  **/
 static int tri_start(void)
 {
@@ -653,6 +653,8 @@ static int tri_start(void)
   ============================================================================*/
 /**
  * tri_init() - define vot_p for TEST_ASSERT_EQ.
+ *
+ * @stat:  pointer to the test configuration.
  *
  * Return:	None.
  **/

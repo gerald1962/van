@@ -10,6 +10,7 @@
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
 #include <getopt.h>  /* Common Unix interfaces: getopt_long_only().*/
+#include <time.h>    /* Get time in seconds: time(). */
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -22,6 +23,9 @@
 
 #define PRIO    OS_THREAD_PRIO_FOREG  /* Thread foreground priority. */
 #define Q_SIZE  4                     /* Size of the thread input queue. */
+
+/* Default value for the clock interval in milliseconds. */
+#define CLOCK_INTERVAL  20
 
 /*============================================================================
   MACROS
@@ -42,6 +46,8 @@
  * @name:      name of the cable endpoint.
  * @tread:     pointer to the device thread.
  * @dev_id:    device id.
+ * @t_id:      timer id for the clock.
+ * @interval:  repeating clock interval in milliseconds.
  * @use_wait:  if 1, execute the test with os_c_wait().
  * @wait_id:   wait conditions of the cable endpoint.
  * @cycles:    number of the output cycles.
@@ -55,6 +61,8 @@ typedef struct {
 	char  *name;
 	void  *thread;
 	int    dev_id;
+	int    t_id;
+	int    interval;
 	int    use_wait;
 	int    wait_id;
 	int    cycles;
@@ -72,10 +80,10 @@ typedef struct {
  *
  * @distributed:  if 0, this program includes all endpoints.
  * @my_trace:     if 1, activate the cop trace.
+ * @clock_trace:  if 1, activate the clock trace.
  * @suspend:      suspend the main process while the test is running.
  *
  * @c_thr:        pointer to the controller thread.
- * @c_wait_id:    controller wait conditions for the cables.
  *
  * @c_batt:       state of the cable controller endpoint towards battery.
  * @c_disp:       state of the cable controller endpoint towards display.
@@ -86,10 +94,10 @@ typedef struct {
 static struct cop_data_s {
 	int    distributed;
 	int    my_trace;
+	int    clock_trace;
 	sem_t  suspend;
 	
 	void  *c_thr;
-	int    c_wait_id;
 	
 	cop_ep_t  c_batt;
 	cop_ep_t  c_disp;
@@ -136,7 +144,8 @@ static int cop_read(cop_ep_t *ep, int *wait_cond)
 	int done, n;
 	
 	/* Initialize the return value. */
-	*wait_cond = 0;
+	if (wait_cond != NULL)
+		*wait_cond = 0;
 
 	/* Test the final condition of the consumer. */
 	done = atomic_load(&ep->rd_done);
@@ -146,7 +155,8 @@ static int cop_read(cop_ep_t *ep, int *wait_cond)
 	/* Wait for data from the producer. */
 	n = os_c_read(ep->dev_id, buf, OS_BUF_SIZE);
 	if (n < 1) {
-		*wait_cond = 1;
+		if (wait_cond != NULL)
+			*wait_cond = 1;
 		return 1;
 	}
 		
@@ -184,7 +194,8 @@ static int cop_write(cop_ep_t *ep, int *wait_cond)
 	int done, n, rv;
 	
 	/* Initialize the return value. */
-	*wait_cond = 0;
+	if (wait_cond != NULL)
+		*wait_cond = 0;
 	
 	/* Test the final condition of the producer. */
 	done = atomic_load(&ep->wr_done);
@@ -217,7 +228,8 @@ static int cop_write(cop_ep_t *ep, int *wait_cond)
 
 	/* Test the success of the transmission. */
 	if (rv == 0) {
-		*wait_cond = 1;
+		if (wait_cond != NULL)
+			*wait_cond = 1;
 		return 1;
 	}
 
@@ -272,6 +284,80 @@ static void cop_batt_exec(os_queue_elem_t *msg)
 }
 
 /**
+ * cop_clock_up() - power down the controller clock.
+ *
+ * @ep:     pointer to the endpoint state.
+ * @trace:  if 1, print the clock trace information.
+ *
+ * Return:	None.
+ **/
+static void cop_clock_down(cop_ep_t *ep, int trace)
+{
+	/* Stop the periodic timer. */
+	os_clock_stop(ep->t_id);
+	
+	/* Print the test cycle information. */
+	os_clock_trace(ep->t_id, OS_CT_LAST);
+		
+	/* Destroy the  interval timer. */
+	if (trace)
+		os_clock_delete(ep->t_id);
+}
+
+/**
+ * cop_clock_in_time() - wait for the controller clock tick.
+ *
+ * @ep:     pointer to the endpoint state.
+ * @trace:  if 1, print the clock trace information.
+ *
+ * Return:	None.
+ **/
+static void cop_clock_in_time(cop_ep_t *ep, int trace)
+{
+	long exec_time;
+	
+	/* Simulate the current execute time. */
+	exec_time = random() % ep->interval - 1;
+	if (exec_time < 1)
+		exec_time = 1;
+
+	/* Sleep n milliseconds. */
+	os_clock_msleep(exec_time);
+
+	/* Wait for the timer expiration. */
+	os_clock_barrier(ep->t_id);
+		
+	/* Print the test cycle information. */
+	if (trace)
+		os_clock_trace(ep->t_id, OS_CT_MIDDLE);
+}
+				
+/**
+ * cop_clock_up() - power up the controller clock.
+ *
+ * @ep:     pointer to the endpoint state.
+ * @trace:  if 1, print the clock trace information.
+ *
+ * Return:	None.
+ **/
+static void cop_clock_up(cop_ep_t *ep, int trace)
+{
+	/* Create the interval timer. */
+	ep->t_id = os_clock_init("ctrl", ep->interval);
+
+	/* Start the periodic timer. */
+	os_clock_start(ep->t_id);
+	
+	/* Print the first clock trace. */
+	if (trace)
+		os_clock_trace(ep->t_id, OS_CT_FIRST);
+
+	/* Take the second value of the current time as random start value for the
+	 * random number generator. */
+	srand(time(NULL));
+}
+	
+/**
  * cop_ctrl_exec() - the controller sends and receives data with the non blocking
  * synchronous operations either to the battery or to the display.
  *
@@ -283,21 +369,8 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 {
 	struct cop_data_s *c;
 	cop_ep_t *batt, *disp;
-	int d_busy_rd, b_busy_rd, b_busy_wr, d_busy_wr,
-		no_d_inp, no_b_inp, no_b_out, no_d_out, use_wait;
+	int busy, rv;
 		
-	/* Initialize the return values. */
-	d_busy_rd = 1;
-	b_busy_rd = 1;
-	b_busy_wr = 1;
-	d_busy_wr = 1;
-	
-	/* Initialize the wait conditions for cable endpoint operations. */
-	no_d_inp = 0;
-	no_b_inp = 0;
-	no_b_out = 0;
-	no_d_out = 0;
-	
 	/* Get the pointer to the cop state. */
 	c = &cop_data;
 
@@ -305,52 +378,40 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 	batt = &c->c_batt;
 	disp = &c->c_disp;
 
-	/* Test the wait condition. */
-	use_wait = batt->use_wait || disp->use_wait;
-	
-		/* XXX */
-#if 0
 	/* Power up the controller clock. */
-	cop_clock_up(c->c_clock);
-#endif
+	cop_clock_up(batt, c->clock_trace);
+	
+	/* Initialize the I/O loop condition. */
+	busy = 1;
 	
 	/* The control thread analyzes or generates data from or to the
 	 * neighbour endpoints with the non blocking syncronous copy read or
 	 * write operation. */
-	while (d_busy_rd || b_busy_rd || b_busy_wr || d_busy_wr) {
+	for (busy = 1; busy;) {
+		busy = 0;
+		
 		/* Read the input from the display. */
-		d_busy_rd = cop_read(disp, &no_d_inp);
+		rv = cop_read(disp, NULL);
+		busy = busy || rv;
 
 		/* Read the input from the battery. */
-		b_busy_rd = cop_read(batt, &no_b_inp);
+		rv = cop_read(batt, NULL);
+		busy = busy || rv;
 		
 		/* Generate output for the battery. */
-		b_busy_wr = cop_write(batt, &no_b_out);
+		rv = cop_write(batt, NULL);
+		busy = busy || rv;
 		
 		/* Generate output for the display. */
-		d_busy_wr = cop_write(disp, &no_d_out);
+		rv = cop_write(disp, NULL);
+		busy = busy || rv;
 
-		/* Test the status of the I/O transfer. */
-		if (use_wait && no_d_inp && no_b_inp && no_b_out && no_d_out) {
-			/* Suspend the controller as long as no I/O data are
-			 * available. */
-			os_c_wait(c->c_wait_id);
-		}
-		/* XXX */
-#if 0
-		else {
-			/* Dive into the requirements of the controller clock. */
-			cop_clock_in_time(c->c_clock);
-				
-		}
-#endif
+		/* Wait for the controller clock tick. */
+		cop_clock_in_time(batt, c->clock_trace);				
 	}
 	
-		/* XXX */
-#if 0
 	/* Power down the controller clock. */
-	cop_clock_down(c->c_clock);
-#endif
+	cop_clock_down(batt, c->clock_trace);
 	
 	TRACE(("%s nops: [e:%s/%s, s:done]\n", P, batt->name, disp->name));
 }
@@ -485,9 +546,6 @@ static void cop_ctrl_cleanup(struct cop_data_s *c)
 	/* Release the controller resources. */
 	cop_ep_cleanup(&c->c_batt);
 	cop_ep_cleanup(&c->c_disp);
-
-	/* Release the wait condition of the controller. */
-	os_c_wait_release(c->c_wait_id);
 }
 
 /**
@@ -548,6 +606,10 @@ static void cop_ep_init(cop_ep_t *ep, char *ep_n, char *thr_n, char *dev_n,
 	/* Create the endpoint device of a cable. */
 	ep->dev_id = os_c_open(dev_n, O_NBLOCK);
 
+	/* Default value for the clock intervall. */
+	if (ep->interval < 1)
+		ep->interval = CLOCK_INTERVAL;
+	
 	/* Initialize the wait condition. */
 	if (wait) {
 		wait_list[0] = ep->dev_id;
@@ -634,7 +696,6 @@ static void cop_controller_init(struct cop_data_s *c)
 {
 	os_queue_elem_t msg;
 	cop_ep_t *batt, *disp;
-	int wait_list[2];
 
 	/* Get the pointer to the controller state. */
 	batt = &c->c_batt;
@@ -656,11 +717,6 @@ static void cop_controller_init(struct cop_data_s *c)
 	/* Initialize the cable controller endpoints. */
 	cop_ep_init(batt, "c_batt", NULL, "/ctrl_batt", 0);
 	cop_ep_init(disp, "c_disp", NULL, "/ctrl_disp", 0);
-
-	/* Avoid an endlos loop, if no controller I/O data are available. */
-	wait_list[0] = batt->dev_id;
-	wait_list[1] = disp->dev_id;
-	c->c_wait_id = os_c_wait_init(wait_list, 2);
 
 	/* Start the controller. */
 	os_memset(&msg, 0, sizeof(msg));	
@@ -790,6 +846,8 @@ static void cop_standalone_conf(struct cop_data_s *c, char *string)
 	}
 }
 
+
+
 /**
  * cop_usage() - provide information aboute the cop configuration.
  *
@@ -812,6 +870,10 @@ static void cop_usage(void)
 	printf("cop - control technology platform\n");
 	printf("  -h      show this usage\n");
 	printf("  -t      print the cop trace information\n");
+	printf("  -c      print the clock trace information\n");
+	
+	printf("Clock settings:\n");
+	printf("  -cc n   controller clock in milliseconds\n");
 	
 	printf("Test cycle settings:\n");
 	printf("  -dcc n  display generator cycles towards controller\n");
@@ -821,7 +883,6 @@ static void cop_usage(void)
 	
 	printf("Setting of the wait conditions:\n");
 	printf("  -dw     display cycles with wait condition\n");
-	printf("  -cw     controller cycles with wait condition\n");
 	printf("  -bw     battery cycles with wait condition\n");
 
 	printf("\nProgramm configuration:\n");
@@ -832,16 +893,17 @@ static void cop_usage(void)
 	
 	printf("\nDefault settings:\n");
 	printf("  Distributed:              %s\n", c->distributed ? "yes" : "no");
-	printf("  Cop trace:                %s\n", c->my_trace ? "on" : "off");
-	printf("  Display cycles:           %d\n", nd->cycles);
+	printf("  Cop trace:                %s\n", c->my_trace    ? "on" : "off");
+	printf("  Clock trace:              %s\n", c->clock_trace ? "on" : "off");
+	printf("  Ctrl clock interval:      %d\n", CLOCK_INTERVAL);	
 	printf("  Ctrl->battery cycles:     %d\n", cb->cycles);
-	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Ctrl->display cycles:     %d\n", cd->cycles);
+	printf("  Display cycles:           %d\n", nd->cycles);
+	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
-	printf("  Ctrl wait conditions:     %s\n", cb->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
 	printf("  Stand-alone disp program: %s\n", nd->alone ? "yes" : "no");
-	printf("  Stand-alone ctrl program: %s\n", cd->alone ? "yes" : "no");
+	printf("  Stand-alone ctrl program: %s\n", cb->alone ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone ? "yes" : "no");
 }
 
@@ -864,22 +926,25 @@ int main(int argc, char *argv[])
 
 	/* An array describing valid long options for getopt_long_only().  */
 	const struct option opts[] = {
+		{ "clock",  0, NULL, 'c' },
 		{ "help",   0, NULL, 'h' },
 		{ "trace",  0, NULL, 't' },
 		
+		/* Clock settings: */
+		{ "cc",     1, NULL, 4  },
+		
 		/* Test cycle settings: */
-		{ "dcc",    1, NULL, 3 },
-		{ "cbc",    1, NULL, 4 },
-		{ "bcc",    1, NULL, 5 },
-		{ "cdc",    1, NULL, 6 },
+		{ "dcc",    1, NULL, 5  },
+		{ "cbc",    1, NULL, 6  },
+		{ "bcc",    1, NULL, 7  },
+		{ "cdc",    1, NULL, 8  },
 
 		/* Setting of the wait conditions: */
-		{ "dw",     0, NULL, 7 },
-		{ "cw",     0, NULL, 8 },
-		{ "bw",     0, NULL, 9 },
+		{ "dw",     0, NULL, 9  },
+		{ "bw",     0, NULL, 10 },
 
 		/* Required at end of array: */
-		{ NULL,       0, NULL, 0   }
+		{ NULL,     0, NULL, 0  }
 	};
 		
 	/* Get the pointer to the cop state. */
@@ -892,9 +957,13 @@ int main(int argc, char *argv[])
 	nd = &c->n_disp;
 	
 	/* Analyze the paramer, by which the cop has been invoked. */
-	while ((opt = getopt_long_only(argc, argv, "hs:t", opts, NULL)) != -1) {
+	while ((opt = getopt_long_only(argc, argv, "chs:t", opts, NULL)) != -1) {
 		/* Analyze the current string arguments. */
 		switch (opt) {
+		case 'c':
+			/* Switch on the clock trace. */
+			c->clock_trace = 1;
+			break;
 		case 'h':
 			/* Support the user. */
 			cop_usage();
@@ -909,32 +978,33 @@ int main(int argc, char *argv[])
 			/* Switch on the cop trace. */
 			c->my_trace = 1;
 			break;
-		case 3:
+		case 4:
+			/* Test the controller clock. */
+			cop_str_to_int(optarg, &cb->interval);
+			cd->interval = cb->interval;
+			break;
+
+		case 5:
 			/* Test the wire between display and controller. */
 			cop_str_to_int(optarg, &nd->cycles);
 			break;
-		case 4:
+		case 6:
 			/* Test the wire between controller and battery. */
 			cop_str_to_int(optarg, &cb->cycles);
 			break;
-		case 5:
+		case 7:
 			/* Test the wire between battery and controller. */
 			cop_str_to_int(optarg, &nb->cycles);
 			break;
-		case 6:
+		case 8:
 			/* Test the wire between controller and display. */
 			cop_str_to_int(optarg, &cd->cycles);
 			break;
-		case 7:
+		case 9:
 			/* Switch on the display wait condition. */
 			nd->use_wait = 1;
 			break;
-		case 8:
-			/* Switch on the controller wait conditions. */
-			cb->use_wait = 1;
-			cd->use_wait = 1;
-			break;
-		case 9:
+		case 10:
 			/* Switch on the battery wait condition. */
 			nb->use_wait = 1;
 			break;
@@ -953,16 +1023,17 @@ int main(int argc, char *argv[])
 
 	printf("\nTest settings:\n");
 	printf("  Distributed:              %s\n", c->distributed ? "yes" : "no");
-	printf("  Cop trace:                %s\n", c->my_trace ? "on" : "off");
-	printf("  Display cycles:           %d\n", nd->cycles);
+	printf("  Cop trace:                %s\n", c->my_trace    ? "on" : "off");
+	printf("  Clock trace:              %s\n", c->clock_trace ? "on" : "off");
+	printf("  Ctrl clock interval:      %d\n", cb->interval);	
 	printf("  Ctrl->battery cycles:     %d\n", cb->cycles);
-	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Ctrl->display cycles:     %d\n", cd->cycles);
+	printf("  Display cycles:           %d\n", nd->cycles);
+	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
-	printf("  Ctrl wait conditions:     %s\n", cb->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
 	printf("  Stand-alone disp program: %s\n", nd->alone ? "yes" : "no");
-	printf("  Stand-alone ctrl program: %s\n", cd->alone ? "yes" : "no");
+	printf("  Stand-alone ctrl program: %s\n", cb->alone ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone ? "yes" : "no");
 
 	return (0);

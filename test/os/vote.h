@@ -80,4 +80,8 @@ void cob_run(void);
 void tri_init(test_stat_t *stat);
 void tri_run(void);
 
+/* Test the van OS clock operations. */
+void clk_init(test_stat_t *stat);
+void clk_run(void);
+
 #endif /* __vote_h__ */

@@ -433,6 +433,8 @@ static int cob_start(void)
 /**
  * cob_init() - define vot_p for TEST_ASSERT_EQ.
  *
+ * @stat:  pointer to the test configuration.
+ *
  * Return:	None.
  **/
 void cob_init(test_stat_t *stat)

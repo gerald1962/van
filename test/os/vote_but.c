@@ -582,6 +582,8 @@ static int but_trap(void)
 /**
  * but_init() - define vot_p for TEST_ASSERT_EQ.
  *
+ * @stat:  pointer to the test configuration.
+ *
  * Return:	None.
  **/
 void but_init(test_stat_t *stat)

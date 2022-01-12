@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 4, 4, 0, 2345, 2345, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -98,11 +98,11 @@ static int test_case_boot(void)
 }
 
 /**
- * test_run() - execute the specific list of test cases.
+ * vote_run() - run through all test system.
  *
  * Return:	None.
  **/
-static void test_run(void)
+static void vote_run(void)
 {
 	/* Execute the list of the test cases. */
 	test_set_process(TEST_ADD(boot_system));
@@ -116,79 +116,10 @@ static void test_run(void)
 	/* Test the controller-battery-display cabling. */
 	tri_run();
 
+	/* Test the van OS clock system. */
+	clk_run();
+
 	test_set_process(TEST_ADD(shutdown_system));
-}
-
-/**
- * test_usage() - provide information aboute the vote configuration.
- *
- * Return:	None.
- **/
-static void test_usage(void)
-{
-	printf("VOTE - VAN OS Test Environment\n");
-	printf("  no arg - execute the complete test set with n cases\n");
-	printf("  n      - start the nth test case, except n<=1 or n>=limit \n");
-	printf("  other  - print the usage information.\n");
-	exit (1);
-}
-
-/**
- * test_single_case() - execute a single test case.
- *
- * Return:	None.
- **/
-static void test_single_case(int n)
-{
-	/* XXX */
-#if 0
-	test_elem_t *elem;
-	int i;
-
-	/* Test the limits of the case list: boot process shall be done once. */
-	if (n < 1)
-		test_usage();
-		
-	/* Get the address of the first test case. */
-	elem = test_system;
-
-	/* Count the number of the  test cases. */
-	for (i = 0; elem->routine; i++, elem++) 
-		;
-
-	/* Test the search result. */
-	if (n <= 1 || n >= i) {
-		printf("vote: invalid test case number %d.\n", n);
-		test_usage();
-	}
-
-	/* Get the address of the first test case. */
-	elem = test_system;
-
-	/* Search for the test case. */
-	for (i = 1; i < n && elem->routine; i++, elem++) 
-		;
-
-	/* Initialize the test counter. */
-	test_stat.test_n = 1;
-	
-	printf("%s SELECT\n", P);
-
-	/* Initialize the OS. */
-	test_case_boot();
-
-	/* Switch on the OS trace. */
-	os_trace_button(1);
-
-	/* Execute the test case. */
-	printf("%s CALL [%d, %s, %d]\n", P, n, elem->label, elem->place);
-	elem->routine();
-
-	/* Switch off the OS. */
-	test_case_shutdown();
-	
-	printf("%s DONE\n", P);
-#endif
 }
 
 /*============================================================================
@@ -282,10 +213,9 @@ void test_set_process(char *label, test_elem_t *elem)
  *
  * Return:	0 or force a software trap.
  **/
-int main(int argc, char *argv[])
+int main(void)
 {
 	test_stat_t *s;
-	int n;
 
 	/* Initialize the local pointer for TEST_ASSERT_EQ */
 	vote_p = &test_stat;
@@ -299,21 +229,11 @@ int main(int argc, char *argv[])
 	/* Initialize the controller-battery-display cabling. */
 	tri_init(&test_stat);
 
-	/* Test the argument counter. */
-	switch(argc) {
-	case 1:
-		/* Execute all test cases. */
-		test_run();
-		break;
-	case 2:
-		/* Decode the test number and execute the nth test case. */
-		n = atoi(argv[1]);
-		test_single_case(n);
-		break;
-	default:
-		test_usage();
-		break;
-	}
+	/* Initialize the van OS clock system. */
+	clk_init(&test_stat);
+
+	/* Run through all test system. */
+	vote_run();
 	
 	/* Display the test status. */
 	s = &test_stat;

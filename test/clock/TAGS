@@ -1,58 +1,64 @@
 
-/home/gerald/van_development/van/test/shared_memory/cop/cop.c,2263
-#define P P21,859
-#define PRIO PRIO23,911
-#define Q_SIZE Q_SIZE24,983
-#define TRACE(TRACE30,1258
-	int    alone;alone54,2143
-	char  *name;name55,2158
-	void  *thread;thread56,2172
-	int    dev_id;dev_id57,2188
-	int    use_wait;use_wait58,2204
-	int    wait_id;wait_id59,2222
-	int    cycles;cycles60,2239
-	int    wr_count;wr_count61,2255
-	int    rd_count;rd_count62,2273
-	atomic_int  wr_done;wr_done63,2291
-	atomic_int  rd_done;rd_done64,2313
-} cop_ep_t;cop_ep_t65,2335
-static struct cop_data_s {cop_data_s86,3187
-	int    distributed;distributed87,3214
-	int    my_trace;my_trace88,3235
-	sem_t  suspend;suspend89,3253
-	void  *c_thr;c_thr91,3272
-	int    c_wait_id;c_wait_id92,3287
-	cop_ep_t  c_batt;c_batt94,3308
-	cop_ep_t  c_disp;c_disp95,3327
-	cop_ep_t  n_batt;n_batt97,3347
-	cop_ep_t  n_disp;n_disp98,3366
-} cop_data;cop_data99,3385
-static void cop_resume(atomic_int *done)cop_resume116,3949
-static int cop_read(cop_ep_t *ep, int *wait_cond)cop_read133,4461
-static int cop_write(cop_ep_t *ep, int *wait_cond)cop_write181,5595
-static void cop_batt_exec(os_queue_elem_t *msg)cop_batt_exec240,6883
-static void cop_ctrl_exec(os_queue_elem_t *msg)cop_ctrl_exec282,7996
-static void cop_disp_exec(os_queue_elem_t *msg)cop_disp_exec344,9685
-static void cop_wait(void)cop_wait383,10678
-static void cop_ep_cleanup(cop_ep_t *ep)cop_ep_cleanup433,11932
-static void cop_ctrl_cleanup(struct cop_data_s *c)cop_ctrl_cleanup454,12347
-static void cop_cleanup(void)cop_cleanup476,12869
-static void cop_ep_init(cop_ep_t *ep, char *ep_n, char *thr_n, char *dev_n,cop_ep_init512,13654
-static void cop_display_init(struct cop_data_s *c)cop_display_init547,14376
-static void cop_battery_init(struct cop_data_s *c)cop_battery_init579,15075
-static void cop_controller_init(struct cop_data_s *c)cop_controller_init611,15780
-static void cop_os_init(struct cop_data_s *c)cop_os_init656,16936
-static void cop_init(void)cop_init670,17215
-static void cop_str_to_int(char *string, int *integer)cop_str_to_int708,18036
-static void cop_standalone_conf(struct cop_data_s *c, char *string)cop_standalone_conf729,18500
-static void cop_usage(void)cop_usage776,19313
-int main(int argc, char *argv[])main837,21689
+/home/gerald/github/van/test/shared_memory/cop/cop.c,2615
+#define P P22,915
+#define PRIO PRIO24,967
+#define Q_SIZE Q_SIZE25,1039
+#define CLOCK_INTERVAL CLOCK_INTERVAL28,1176
+#define TRACE(TRACE34,1402
+	int    alone;alone60,2383
+	char  *name;name61,2398
+	void  *thread;thread62,2412
+	int    dev_id;dev_id63,2428
+	int    t_id;t_id64,2444
+	int    interval;interval65,2458
+	int    use_wait;use_wait66,2476
+	int    wait_id;wait_id67,2494
+	int    cycles;cycles68,2511
+	int    wr_count;wr_count69,2527
+	int    rd_count;rd_count70,2545
+	atomic_int  wr_done;wr_done71,2563
+	atomic_int  rd_done;rd_done72,2585
+} cop_ep_t;cop_ep_t73,2607
+static struct cop_data_s {cop_data_s94,3448
+	int    distributed;distributed95,3475
+	int    my_trace;my_trace96,3496
+	int    clock_trace;clock_trace97,3514
+	sem_t  suspend;suspend98,3535
+	void  *c_thr;c_thr100,3554
+	cop_ep_t  c_batt;c_batt102,3571
+	cop_ep_t  c_disp;c_disp103,3590
+	cop_ep_t  n_batt;n_batt105,3610
+	cop_ep_t  n_disp;n_disp106,3629
+} cop_data;cop_data107,3648
+static void cop_resume(atomic_int *done)cop_resume124,4212
+static int cop_read(cop_ep_t *ep, int *wait_cond)cop_read141,4724
+static int cop_write(cop_ep_t *ep, int *wait_cond)cop_write191,5909
+static void cop_batt_exec(os_queue_elem_t *msg)cop_batt_exec252,7248
+static void cop_clock_down(cop_ep_t *ep, int trace)cop_clock_down294,8313
+static void cop_clock_in_time(cop_ep_t *ep, int trace)cop_clock_in_time315,8779
+static void cop_clock_up(cop_ep_t *ep, int trace)cop_clock_up343,9387
+static void cop_ctrl_exec(os_queue_elem_t *msg)cop_ctrl_exec368,10036
+static void cop_disp_exec(os_queue_elem_t *msg)cop_disp_exec427,11465
+static void cop_wait(void)cop_wait466,12458
+static void cop_ep_cleanup(cop_ep_t *ep)cop_ep_cleanup516,13712
+static void cop_ctrl_cleanup(struct cop_data_s *c)cop_ctrl_cleanup537,14127
+static void cop_cleanup(void)cop_cleanup556,14561
+static void cop_ep_init(cop_ep_t *ep, char *ep_n, char *thr_n, char *dev_n,cop_ep_init592,15346
+static void cop_display_init(struct cop_data_s *c)cop_display_init631,16172
+static void cop_battery_init(struct cop_data_s *c)cop_battery_init663,16871
+static void cop_controller_init(struct cop_data_s *c)cop_controller_init695,17576
+static void cop_os_init(struct cop_data_s *c)cop_os_init734,18536
+static void cop_init(void)cop_init748,18815
+static void cop_str_to_int(char *string, int *integer)cop_str_to_int786,19636
+static void cop_standalone_conf(struct cop_data_s *c, char *string)cop_standalone_conf807,20100
+static void cop_usage(void)cop_usage856,20915
+int main(int argc, char *argv[])main921,23443
 
-/home/gerald/van_development/van/test/shared_memory/pot/pot.c,43
+/home/gerald/github/van/test/shared_memory/pot/pot.c,43
 #define P P3,17
 int main(void)main5,37
 
-/home/gerald/van_development/van/test/shared_memory/site/site.c,4507
+/home/gerald/github/van/test/shared_memory/site/site.c,4507
 #define P P22,893
 #define PRIO PRIO24,910
 #define Q_SIZE Q_SIZE25,985
@@ -146,7 +152,7 @@ static void site_cable_conf(char *arg, cc_t *cc)site_cable_conf1606,40926
 static void site_default(void)site_default1646,41524
 int main(int argc, char *argv[])main1679,42376
 
-/home/gerald/van_development/van/test/shared_memory/vat/vat.c,520
+/home/gerald/github/van/test/shared_memory/vat/vat.c,520
 #define P P3,17
 	int    dev_id;   /* Van dvice id. */dev_id6,52
 	int    cycles;   /* Number of the test cycles. */cycles7,90
@@ -158,52 +164,52 @@ static int aio_read_cb(int dev_id, char *buf, int count)aio_read_cb14,323
 static int aio_write_cb(int dev_id, char *buf, int count)aio_write_cb40,847
 int main(void)main72,1541
 
-/home/gerald/van_development/van/test/os/vote_triad.c,2015
-#define PRIO PRIO22,915
-#define Q_SIZE Q_SIZE23,987
-#define TRACE(TRACE29,1262
-	char  *name;name52,2085
-	void  *thread;thread53,2099
-	int    dev_id;dev_id54,2115
-	int    use_wait;use_wait55,2131
-	int    wait_id;wait_id56,2149
-	int    cycles;cycles57,2166
-	int    wr_count;wr_count58,2182
-	int    rd_count;rd_count59,2200
-	atomic_int  wr_done;wr_done60,2218
-	atomic_int  rd_done;rd_done61,2240
-} tri_ep_t;tri_ep_t62,2262
-static struct tri_data_s {tri_data_s88,3297
-	int    my_trace;my_trace89,3324
-	sem_t  suspend;suspend90,3342
-	void  *c_thr;c_thr92,3361
-	int    c_wait_id;c_wait_id93,3376
-	tri_ep_t  c_batt;c_batt95,3397
-	tri_ep_t  c_disp;c_disp96,3416
-	tri_ep_t  n_batt;n_batt98,3436
-	tri_ep_t  n_disp;n_disp99,3455
-} tri_data;tri_data100,3474
-static test_stat_t *vote_p;vote_p103,3526
-static test_elem_t tri_system[] = {tri_system106,3611
-static void tri_resume(atomic_int *done)tri_resume122,4060
-static int tri_read(tri_ep_t *ep, int *wait_cond)tri_read139,4572
-static int tri_write(tri_ep_t *ep, int *wait_cond)tri_write187,5706
-static void tri_neighbour_exec(os_queue_elem_t *msg)tri_neighbour_exec247,7024
-static void tri_ctrl_exec(os_queue_elem_t *msg)tri_ctrl_exec289,8138
-static void tri_wait(void)tri_wait348,9720
-static void tri_ep_cleanup(tri_ep_t *ep)tri_ep_cleanup398,10974
-static void tri_ctrl_cleanup(struct tri_data_s *c)tri_ctrl_cleanup419,11402
-static int tri_stop(void)tri_stop437,11807
-static void tri_ep_init(tri_ep_t *ep, char *ep_n, char *thr_n, char *dev_n,tri_ep_init475,12600
-static void tri_display_init(struct tri_data_s *c)tri_display_init510,13322
-static void tri_battery_init(struct tri_data_s *c)tri_battery_init535,13863
-static void tri_controller_init(struct tri_data_s *c)tri_controller_init560,14411
-static void tri_conf(struct tri_data_s *c)tri_conf595,15296
-static int tri_start(void)tri_start615,15744
-void tri_init(test_stat_t *stat)tri_init660,16725
-void tri_run(void)tri_run670,16880
+/home/gerald/github/van/test/os/vote_triad.c,2016
+#define PRIO PRIO21,859
+#define Q_SIZE Q_SIZE22,931
+#define TRACE(TRACE28,1206
+	char  *name;name51,2029
+	void  *thread;thread52,2043
+	int    dev_id;dev_id53,2059
+	int    use_wait;use_wait54,2075
+	int    wait_id;wait_id55,2093
+	int    cycles;cycles56,2110
+	int    wr_count;wr_count57,2126
+	int    rd_count;rd_count58,2144
+	atomic_int  wr_done;wr_done59,2162
+	atomic_int  rd_done;rd_done60,2184
+} tri_ep_t;tri_ep_t61,2206
+static test_stat_t *vote_p;vote_p73,2675
+static struct tri_data_s {tri_data_s90,3309
+	int    my_trace;my_trace91,3336
+	sem_t  suspend;suspend92,3354
+	void  *c_thr;c_thr94,3373
+	int    c_wait_id;c_wait_id95,3388
+	tri_ep_t  c_batt;c_batt97,3409
+	tri_ep_t  c_disp;c_disp98,3428
+	tri_ep_t  n_batt;n_batt100,3448
+	tri_ep_t  n_disp;n_disp101,3467
+} tri_data;tri_data102,3486
+static test_elem_t tri_system[] = {tri_system105,3555
+static void tri_resume(atomic_int *done)tri_resume121,4004
+static int tri_read(tri_ep_t *ep, int *wait_cond)tri_read138,4516
+static int tri_write(tri_ep_t *ep, int *wait_cond)tri_write186,5650
+static void tri_neighbour_exec(os_queue_elem_t *msg)tri_neighbour_exec246,6968
+static void tri_ctrl_exec(os_queue_elem_t *msg)tri_ctrl_exec288,8082
+static void tri_wait(void)tri_wait347,9664
+static void tri_ep_cleanup(tri_ep_t *ep)tri_ep_cleanup397,10918
+static void tri_ctrl_cleanup(struct tri_data_s *c)tri_ctrl_cleanup418,11346
+static int tri_stop(void)tri_stop436,11751
+static void tri_ep_init(tri_ep_t *ep, char *ep_n, char *thr_n, char *dev_n,tri_ep_init474,12544
+static void tri_display_init(struct tri_data_s *c)tri_display_init509,13266
+static void tri_battery_init(struct tri_data_s *c)tri_battery_init534,13807
+static void tri_controller_init(struct tri_data_s *c)tri_controller_init559,14355
+static void tri_conf(struct tri_data_s *c)tri_conf594,15240
+static int tri_start(void)tri_start614,15699
+void tri_init(test_stat_t *stat)tri_init661,16729
+void tri_run(void)tri_run671,16884
 
-/home/gerald/van_development/van/test/os/vote_but.c,1520
+/home/gerald/github/van/test/os/vote_but.c,1520
 #define BUT_LEN BUT_LEN21,870
 	char  *msg_info;msg_info37,1467
 	void  *thread[OS_THREAD_LIMIT];thread38,1485
@@ -234,24 +240,35 @@ static int but_string(void)but_string464,11538
 static int but_mem(void)but_mem507,12397
 static int but_sync(void)but_sync528,12738
 static int but_trap(void)but_trap565,13420
-void but_init(test_stat_t *stat)but_init587,13925
-void but_run(void)but_run597,14060
+void but_init(test_stat_t *stat)but_init589,13974
+void but_run(void)but_run599,14109
 
-/home/gerald/van_development/van/test/os/vote.c,680
+/home/gerald/github/van/test/os/vote.c,551
 static test_stat_t test_stat;test_stat39,1694
 static test_stat_t *vote_p;vote_p42,1765
 static test_elem_t boot_system[] = {boot_system45,1829
 static test_elem_t shutdown_system[] = {shutdown_system51,1962
 static int test_case_shutdown(void)test_case_shutdown64,2336
 static int test_case_boot(void)test_case_boot83,2676
-static void test_run(void)test_run105,3040
-static void test_usage(void)test_usage127,3505
-static void test_single_case(int n)test_single_case141,3873
-int test_os_stat(os_statistics_t *expected)test_os_stat204,5235
-void test_set_process(char *label, test_elem_t *elem)test_set_process244,6239
-int main(int argc, char *argv[])main285,7190
+static void vote_run(void)vote_run105,3028
+int test_os_stat(os_statistics_t *expected)test_os_stat135,3781
+void test_set_process(char *label, test_elem_t *elem)test_set_process175,4785
+int main(void)main216,5736
 
-/home/gerald/van_development/van/test/os/vote_cob.c,1656
+/home/gerald/github/van/test/os/vote_clock.c,502
+#define PRIO PRIO21,881
+#define Q_S Q_S22,951
+static test_stat_t *vote_p;vote_p42,1901
+static test_elem_t clk_system[] = {clk_system45,1973
+static void clk_thr_exec(os_queue_elem_t *msg)clk_thr_exec63,2489
+static int clk_all_clocks(void)clk_all_clocks88,2962
+static int clk_1st_clock(void)clk_1st_clock133,4074
+static int clk_stop(void)clk_stop170,4767
+static int clk_start(void)clk_start186,5003
+void clk_init(test_stat_t *stat)clk_init207,5487
+void clk_run(void)clk_run217,5612
+
+/home/gerald/github/van/test/os/vote_cob.c,1656
 #define COB_PRIO COB_PRIO22,959
 #define COB_QSIZE COB_QSIZE23,1035
 	void   *van;van46,1895
@@ -283,10 +300,10 @@ static void cob_py_sync_1b(os_queue_elem_t *m)cob_py_sync_1b343,8168
 static void cob_van_sync_1b(os_queue_elem_t *m)cob_van_sync_1b360,8476
 static int cob_sync_1b(void)cob_sync_1b376,8764
 static int cob_start(void)cob_start406,9335
-void cob_init(test_stat_t *stat)cob_init438,10174
-void cob_run(void)cob_run448,10329
+void cob_init(test_stat_t *stat)cob_init440,10223
+void cob_run(void)cob_run450,10378
 
-/home/gerald/van_development/van/test/os/vote.h,430
+/home/gerald/github/van/test/os/vote.h,430
 #define __vote_h____vote_h__3,58
 #define P P12,477
 #define TEST_ADD(TEST_ADD18,690
@@ -301,7 +318,7 @@ void cob_run(void)cob_run448,10329
 	int   expected;expected58,1716
 } test_elem_t;test_elem_t59,1733
 
-/home/gerald/van_development/van/test/clock/clock.c,231
+/home/gerald/github/van/test/clock/clock.c,231
 	int interval;interval37,1493
 	int cycles;cycles38,1508
 } clk;clk39,1521
@@ -309,7 +326,7 @@ static int clock_atoi(char *string)clock_atoi56,2053
 static void clock_usage(void)clock_usage83,2448
 int main(int argc, char *argv[])main105,3124
 
-/home/gerald/van_development/van/os/os_mem.c,1478
+/home/gerald/github/van/os/os_mem.c,1478
         int    elem_idx;elem_idx41,1612
         int    file_idx;file_idx42,1637
         unsigned long line;line43,1662
@@ -339,7 +356,7 @@ void os_mem_statistics(os_statistics_t *stat)os_mem_statistics347,9546
 void os_mem_init(void)os_mem_init370,10015
 void os_mem_exit(void)os_mem_exit393,10550
 
-/home/gerald/van_development/van/os/os_string.c,558
+/home/gerald/github/van/os/os_string.c,558
 void *os_memset(void *s, int c, size_t n)os_memset45,1986
 void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)os_memcpy57,2184
 int os_memcmp(const void *s1, const void *s2, size_t n)os_memcmp69,2473
@@ -349,7 +366,7 @@ char *os_strcpy(char *dest, int dest_n, const char *src)os_strcpy113,3225
 int os_strncmp(const char *s1, const char *s2, int n)os_strncmp136,3651
 int os_strcmp(const char *s1, const char *s2)os_strcmp149,3905
 
-/home/gerald/van_development/van/os/os_pthread.c,2822
+/home/gerald/github/van/os/os_pthread.c,2822
 	spinlock_t       protect;protect43,1772
 	sem_t            suspend_c;suspend_c44,1799
 	os_queue_elem_t  anchor;anchor45,1828
@@ -403,12 +420,12 @@ void os_thread_statistics(os_statistics_t *stat)os_thread_statistics784,19458
 void os_thread_init(os_conf_t *conf)os_thread_init808,19940
 void os_thread_exit(void)os_thread_exit825,20321
 
-/home/gerald/van_development/van/os/os_tcl.c,246
+/home/gerald/github/van/os/os_tcl.c,246
 static int van_exit_cmd(ClientData cdata, Tcl_Interp *interp, int objc,van_exit_cmd47,2076
 static int van_init_cmd(ClientData cdata, Tcl_Interp *interp, int objc,van_init_cmd71,2672
 int DLLEXPORT Van_Init(Tcl_Interp *interp)Van_Init97,3343
 
-/home/gerald/van_development/van/os/os.c,1211
+/home/gerald/github/van/os/os.c,1211
 static os_conf_t os_conf;os_conf34,1456
 static struct os_stat_s {os_stat_s44,1723
 	atomic_int is_init;is_init45,1749
@@ -433,7 +450,7 @@ void os_trace_button(int n)os_trace_button372,7776
 void os_init(int creator)os_init385,8018
 void os_exit(void)os_exit419,8757
 
-/home/gerald/van_development/van/os/os_timer.c,1539
+/home/gerald/github/van/os/os_timer.c,1539
 	pthread_mutex_t  mutex;mutex54,2404
 	struct tm_elem_s {tm_elem_s56,2431
 		int         id;id57,2451
@@ -469,7 +486,7 @@ int os_timer_init(const char *name, int interval)os_timer_init484,13032
 void os_tm_exit(void)os_tm_exit537,14126
 void os_tm_init(void)os_tm_init563,14620
 
-/home/gerald/van_development/van/os/os.h,2097
+/home/gerald/github/van/os/os.h,2097
 #define __os_h____os_h__3,56
 #define F F21,929
 #define OS_MAX_STRING_LEN OS_MAX_STRING_LEN24,1009
@@ -515,7 +532,7 @@ struct os_queue_elem_s {os_queue_elem_s164,5219
 	int thread_c;thread_c184,5712
 } os_statistics_t;os_statistics_t185,5727
 
-/home/gerald/van_development/van/os/os_cable.c,5491
+/home/gerald/github/van/os/os_cable.c,5491
 #define P P25,1069
 #define CAB_SHM_FILE CAB_SHM_FILE27,1125
 #define CAB_SHM_SIZE CAB_SHM_SIZE30,1266
@@ -643,58 +660,57 @@ void os_cab_ripcord(int coverage)os_cab_ripcord1401,36319
 void os_cab_exit(void)os_cab_exit1463,37539
 void os_cab_init(os_conf_t *conf, int creator)os_cab_init1524,38916
 
-/home/gerald/van_development/van/os/os_clock.c,1591
+/home/gerald/github/van/os/os_clock.c,1551
 #define CLOCK_NSEC_M CLOCK_NSEC_M26,1157
-	pthread_mutex_t  mutex;mutex57,2434
-	struct tm_elem_s {tm_elem_s59,2461
-		int         id;id60,2481
-		char        name[OS_MAX_NAME_LEN + 1];name61,2499
-		int         assigned;assigned62,2540
-		int         interval;interval63,2564
-		timer_t     timer_id;timer_id64,2588
-		sem_t       suspend;suspend65,2612
-		atomic_int  suspended;suspended66,2635
-		atomic_int  overrun;overrun67,2660
-		struct timeval  s_start;s_start69,2686
-		struct timeval  s_end;s_end70,2713
-		struct timeval  c_start;c_start71,2738
-		struct timeval  busy;busy72,2765
-		struct timeval  min;min73,2789
-		struct timeval  max;max74,2812
-		int             cycles;cycles75,2835
-		int             k_ov_count;k_ov_count76,2861
-		int             u_ov_count;u_ov_count77,2891
-	} elem[OS_CLOCK_LIMIT];elem78,2921
-} tm_t;tm_t79,2946
-static tm_t tm;tm85,3168
-static void tm_handler(union sigval sv)tm_handler101,3748
-static void tm_create(struct tm_elem_s *t)tm_create131,4359
-static long long tm_ms(struct timeval *t)tm_ms156,4982
-void os_clock_trace(int id, int mode)os_clock_trace177,5490
-void os_clock_msleep(long msec)os_clock_msleep237,7128
-int os_clock_barrier(int id)os_clock_barrier263,7733
-void os_clock_stop(int id)os_clock_stop354,9854
-void os_clock_start(int id)os_clock_start397,10906
-void os_clock_delete(int id)os_clock_delete447,12282
-int os_clock_init(const char *name, int interval)os_clock_init485,13057
-void os_clock_exit_(void)os_clock_exit_538,14154
-void os_clock_init_(void)os_clock_init_564,14655
+	pthread_mutex_t  mutex;mutex56,2364
+	struct tm_elem_s {tm_elem_s58,2391
+		int         id;id59,2411
+		char        name[OS_MAX_NAME_LEN + 1];name60,2429
+		int         assigned;assigned61,2470
+		int         interval;interval62,2494
+		timer_t     timer_id;timer_id63,2518
+		sem_t       suspend;suspend64,2542
+		atomic_int  suspended;suspended65,2565
+		struct timeval  s_start;s_start67,2593
+		struct timeval  s_end;s_end68,2620
+		struct timeval  c_start;c_start69,2645
+		struct timeval  busy;busy70,2672
+		struct timeval  min;min71,2696
+		struct timeval  max;max72,2719
+		int             cycles;cycles73,2742
+		int             k_ov_count;k_ov_count74,2768
+		int             u_ov_count;u_ov_count75,2798
+	} elem[OS_CLOCK_LIMIT];elem76,2828
+} tm_t;tm_t77,2853
+static tm_t tm;tm83,3075
+static void tm_handler(union sigval sv)tm_handler99,3655
+static void tm_create(struct tm_elem_s *t)tm_create126,4174
+static long long tm_ms(struct timeval *t)tm_ms151,4797
+void os_clock_trace(int id, int mode)os_clock_trace172,5305
+void os_clock_msleep(long msec)os_clock_msleep232,6943
+int os_clock_barrier(int id)os_clock_barrier259,7550
+void os_clock_stop(int id)os_clock_stop351,9685
+void os_clock_start(int id)os_clock_start394,10737
+void os_clock_delete(int id)os_clock_delete444,12113
+int os_clock_init(const char *name, int interval)os_clock_init482,12888
+void os_clock_exit_(void)os_clock_exit_535,13985
+void os_clock_init_(void)os_clock_init_561,14486
 
-/home/gerald/van_development/van/os/os_trap.c,290
+/home/gerald/github/van/os/os_trap.c,290
 static os_conf_t *os_conf_p;os_conf_p33,1446
 void os_trap_handler(int signo)os_trap_handler49,1986
 void os_trap_catch(void)os_trap_catch67,2431
 void os_trap(char *file, const char *function, unsigned long line)os_trap89,2969
 void os_trap_init(os_conf_t *conf)os_trap_init123,3720
 
-/home/gerald/van_development/van/os/os_private.h,170
+/home/gerald/github/van/os/os_private.h,170
 #define __os_private_h____os_private_h__3,64
 #define OS OS13,487
 #define OS_TRACE(OS_TRACE20,699
 	int trace_stat;trace_stat34,1093
 } os_conf_t;os_conf_t35,1110
 
-/home/gerald/van_development/van/battery/zinc_copper_battery/test/zinc.c,463
+/home/gerald/github/van/battery/zinc_copper_battery/test/zinc.c,463
 #define P P22,781
 static struct zinc_stat_s {zinc_stat_s40,1503
 	sem_t   suspend;suspend41,1531
@@ -707,7 +723,7 @@ static void zinc_exit_send(void)zinc_exit_send113,3123
 static void zinc_init(void)zinc_init129,3434
 int main(void)main159,4175
 
-/home/gerald/van_development/van/samples/client_server_design/csd_cli.c,1253
+/home/gerald/github/van/samples/client_server_design/csd_cli.c,1253
 #define P P22,800
 	CLI_S_SELF_DOWN,CLI_S_SELF_DOWN41,1589
 	CLI_S_SELF_INIT,CLI_S_SELF_INIT42,1607
@@ -737,7 +753,7 @@ void cli_send(cli_msg_t id, os_queue_elem_t *msg, int size)cli_send175,5041
 void cli_op_exit(void)cli_op_exit190,5399
 void cli_op_init(void)cli_op_init218,5929
 
-/home/gerald/van_development/van/samples/client_server_design/csd_main.c,407
+/home/gerald/github/van/samples/client_server_design/csd_main.c,407
 #define P P22,800
 static struct csd_stat_s {csd_stat_s39,1469
 	sem_t   suspend;suspend40,1496
@@ -749,7 +765,7 @@ static void csd_init(void)csd_init105,2907
 void op_resume(void)op_resume139,3681
 int main(void)main152,3932
 
-/home/gerald/van_development/van/samples/client_server_design/csd_serv.c,1328
+/home/gerald/github/van/samples/client_server_design/csd_serv.c,1328
 #define P P22,800
 	SERV_S_SELF_DOWN,SERV_S_SELF_DOWN40,1518
 	SERV_S_SELF_READY,SERV_S_SELF_READY41,1537
@@ -779,7 +795,7 @@ void serv_send(serv_msg_t id, os_queue_elem_t *msg, int size)serv_send196,5495
 void serv_op_exit(void)serv_op_exit211,5859
 void serv_op_init(void)serv_op_init239,6395
 
-/home/gerald/van_development/van/samples/client_server_design/csd_chart.h,393
+/home/gerald/github/van/samples/client_server_design/csd_chart.h,393
 #define __csd_chart_h____csd_chart_h__10,155
 	SERV_OP_INIT_IND_M,SERV_OP_INIT_IND_M33,1163
 	SERV_CLI_DOWN_IND_M,SERV_CLI_DOWN_IND_M34,1184
@@ -791,7 +807,7 @@ void serv_op_init(void)serv_op_init239,6395
 #define SRV_SEND(SRV_SEND62,1992
 #define CLI_SEND(CLI_SEND72,2324
 
-/home/gerald/van_development/van/samples/hello_1/hello_1.c,752
+/home/gerald/github/van/samples/hello_1/hello_1.c,752
 #define BUF_LEN BUF_LEN3,75
         OS_QUEUE_MSG_HEAD;                                         // (3)OS_QUEUE_MSG_HEAD5,169
         char buf[BUF_LEN];                                         // (4)buf6,243
