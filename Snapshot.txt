@@ -41,13 +41,13 @@ make all
 out/cop -h
 
 2.3.3 Integration Test
-.....................
+.....................-
 time out/cop -dcc 999999 -cbc 99999 -bcc 9999 -cdc 999
 
 2.3.4 Distributed Test
 ......................
 sudo apt install xfce4-terminal
-./cop_prototype.sh 953223 27323 32832 93234 &
+./cop_prototype.sh 987 789 1341 1432 &
 
 
 3 Van Lib

@@ -9,8 +9,9 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"      /* Van Operating system: os_clock_init(). */
-#include "vote.h"    /* Van OS test environment. */
+#include "os.h"    /* Van Operating system: os_clock_init(). */
+#include "vote.h"  /* Van OS test environment. */
+#include <time.h>  /* Get time in seconds: time(). */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -50,6 +51,17 @@ static test_elem_t clk_system[] = {
 	{ NULL, NULL, 0 }
 };
 
+/**
+ * clk - clock test control. 
+ *
+ * done:     test termination condition in clk_all_clocks().
+ * suspend:  test control in clk_all_clocks().
+ **/
+static struct {
+	atomic_int done[OS_CLOCK_LIMIT];
+	sem_t suspend;
+} clk;
+
 /*============================================================================
   LOCAL FUNCTIONS
   ============================================================================*/
@@ -62,22 +74,52 @@ static test_elem_t clk_system[] = {
  **/
 static void clk_thr_exec(os_queue_elem_t *msg)
 {
-	int t_id;
+	long exec_time, limit;
+	int interval, t_id, i;
+
+	/* Define the clock interval in millisecons. */
+	interval = 25;
 	
 	/* Create the interval timer. */
-	t_id = os_clock_init("vote_clk_x", 25);
+	t_id = os_clock_init("vote_clk_x", interval);
 
 	/* Start the periodic timer. */
 	os_clock_start(t_id);
-	
-	/* Wait for the timer expiration. */
-	os_clock_barrier(t_id);
+
+	/* Take the second value of the current time as random start value for the
+	 * random number generator. */
+	srand(time(NULL));
+
+	/* Calculate the max. execution time with the intended violation of the
+	 * adjusted clock. */
+	limit = interval / 2;
+
+	/* Test the periodic timer. */
+	for(i = 0; i < 7; i++) {
+		/* Simulate the current execute time. */
+		exec_time = random() % limit;
+		if (exec_time < 1)
+			exec_time = 1;
 		
+		/* Sleep n milliseconds. */
+		os_clock_msleep(exec_time);
+		
+		/* Wait for the timer expiration. */
+		os_clock_barrier(t_id);		
+	}
+
 	/* Stop the periodic timer. */
 	os_clock_stop(t_id);
 
+	/* Print the test cycle information. */
+	os_clock_trace(t_id, OS_CT_LAST);
+
 	/* Destroy the  interval timer. */
 	os_clock_delete(t_id);
+
+	/* Update the test status. */
+	atomic_store(&clk.done[t_id], 1);
+	os_sem_release(&clk.suspend);
 }
 
 /**
@@ -91,10 +133,13 @@ static int clk_all_clocks(void)
 	os_queue_elem_t msg;
 	void *thr[OS_CLOCK_LIMIT];
 	char n[OS_MAX_NAME_LEN];
-	int i, stat;
+	int i, stat, busy;
+
+	/* Initialize the test control. */
+	os_sem_init(&clk.suspend, 0);
 	
 	/* Hire test threads for all clocks. */
-	for (i = 0; i < OS_CLOCK_LIMIT; i++) {
+	for (i = 0; i < OS_CLOCK_LIMIT; i++) {		
 		/* Build a unique thread name because, perhaps we have to 
 		 * troubleshoot. */
 		snprintf(n, OS_MAX_NAME_LEN, "vote_clk_%d", i);
@@ -113,12 +158,27 @@ static int clk_all_clocks(void)
 		OS_SEND(thr[i], &msg, sizeof(msg));	
 	}
 	
+	/* Wait for the end of the test threads. */
+	for (busy = 1; busy; ) {
+		/* Wait for the end of the test threads. */
+		os_sem_wait(&clk.suspend);
+		
+		/* Test the run state of the thread. */
+		for(i = 0;  i < OS_CLOCK_LIMIT; i++) {
+			stat = atomic_load(&clk.done[i]);
+			busy = busy && stat;
+		}		
+	}
+	
+	/* Release  the test control. */
+	os_sem_delete(&clk.suspend);
+
 	/* Release the test threads. */
 	for (i = 0 ; i < OS_CLOCK_LIMIT; i++) {
 		/* Lock, power down and remove the thread. */
 		os_thread_destroy(thr[i]);
 	}
-	
+
 	/* Verify the OS state. */
 	stat = test_os_stat(&expected);
 

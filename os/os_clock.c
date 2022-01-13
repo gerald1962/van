@@ -210,6 +210,7 @@ void os_clock_trace(int id, int mode)
 	}
 	
 	/* Print timer information. */
+	printf("%s: timer id:   %d\n",      n, t->id);
 	printf("%s: cycles:     %d\n",      n, t->cycles);
 	printf("%s: interval:   %d ms\n",   n, t->interval);
 	printf("%s: busy:       %lld ms\n", n, tm_ms(&t->busy));
