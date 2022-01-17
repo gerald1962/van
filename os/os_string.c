@@ -36,7 +36,6 @@
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
-
 /**
  * os_memset() - memset with additional assertions.
  *
@@ -132,7 +131,6 @@ char *os_strcpy(char *dest, int dest_n, const char *src)
  *
  * see strncmp
  **/
-
 int os_strncmp(const char *s1, const char *s2, int n)
 {
 	/* Entry condition. */
@@ -145,10 +143,22 @@ int os_strncmp(const char *s1, const char *s2, int n)
  *
  * see strcmp
  **/
-
 int os_strcmp(const char *s1, const char *s2)
 {
 	/* Entry condition. */
 	OS_TRAP_IF(s1 == NULL || s2 == NULL);
 	return strcmp(s1, s2);
+}
+
+/**
+ * os_memchr() - memchr with additional assertions.
+ *
+ * see memchr
+ **/
+void *os_memchr(const void *s, const void *end, int c, size_t n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(s == NULL || end == NULL || end < s || n < 1 ||
+		   ((char *) end - (char *) s) != n);
+	return memchr(s, c, n);
 }

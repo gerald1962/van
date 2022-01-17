@@ -51,6 +51,7 @@ void os_mem_init(void);
 void os_thread_init(os_conf_t *conf);
 void os_cab_init(os_conf_t *conf, int creator);
 void os_clock_init_(void);
+void os_buf_init(void);
 
 /* Test and free the OS resources. */
 void os_cab_ripcord(int coverage);
@@ -58,5 +59,6 @@ void os_cab_exit(void);
 void os_thread_exit(void);
 void os_mem_exit(void);
 void os_clock_exit_(void);
+void os_buf_exit(void);
 
 #endif /* __os_private_h__ */

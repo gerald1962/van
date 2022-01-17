@@ -129,7 +129,7 @@ static void clk_thr_exec(os_queue_elem_t *msg)
  **/
 static int clk_all_clocks(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2345, 2345, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2345, 2345, 0 };
 	os_queue_elem_t msg;
 	void *thr[OS_CLOCK_LIMIT];
 	char n[OS_MAX_NAME_LEN];
@@ -192,7 +192,7 @@ static int clk_all_clocks(void)
  **/
 static int clk_1st_clock(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2341, 2341, 0 };
 	int t_id, stat;
 	
 	/* Create the interval timer. */
@@ -229,7 +229,7 @@ static int clk_1st_clock(void)
  **/
 static int clk_stop(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2345, 2345, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2345, 2345, 0 };
 	int stat;
 
 	/* Verify the OS state. */
@@ -245,7 +245,7 @@ static int clk_stop(void)
  **/
 static int clk_start(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2341, 2341, 0 };
 	int stat;
 
 	/* Verify the OS state. */

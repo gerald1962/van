@@ -42,6 +42,7 @@
 /**
  * cop_ep_t - state of a cable endpoint
  *
+ * @exclude:   if 1, do not install this cable endpoint thread.
  * @alone:     if 1, start cop as ctrl, batt or disp program.
  * @name:      name of the cable endpoint.
  * @tread:     pointer to the device thread.
@@ -57,6 +58,7 @@
  * @rd_done:   if 1, everything received, resume the main process.
  **/
 typedef struct {
+	int    exclude;
 	int    alone;
 	char  *name;
 	void  *thread;
@@ -297,11 +299,11 @@ static void cop_clock_down(cop_ep_t *ep, int trace)
 	os_clock_stop(ep->t_id);
 	
 	/* Print the test cycle information. */
-	os_clock_trace(ep->t_id, OS_CT_LAST);
+	if (trace)
+		os_clock_trace(ep->t_id, OS_CT_LAST);
 		
 	/* Destroy the  interval timer. */
-	if (trace)
-		os_clock_delete(ep->t_id);
+	os_clock_delete(ep->t_id);
 }
 
 /**
@@ -394,12 +396,12 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 		rv = cop_read(disp, NULL);
 		busy = busy || rv;
 
-		/* Read the input from the battery. */
-		rv = cop_read(batt, NULL);
-		busy = busy || rv;
-		
 		/* Generate output for the battery. */
 		rv = cop_write(batt, NULL);
+		busy = busy || rv;
+		
+		/* Read the input from the battery. */
+		rv = cop_read(batt, NULL);
 		busy = busy || rv;
 		
 		/* Generate output for the display. */
@@ -565,7 +567,7 @@ static void cop_cleanup(void)
 		cop_ep_cleanup(&c->n_batt);
 
 	/* Display. */
-	if (! c->distributed || c->n_disp.alone)
+	if (! c->n_disp.exclude &&  (! c->distributed || c->n_disp.alone))
 		cop_ep_cleanup(&c->n_disp);
 
 	/* Controller. */
@@ -635,9 +637,9 @@ static void cop_display_init(struct cop_data_s *c)
 
 	/* Get the pointer to the battery state. */
 	disp = &c->n_disp;
-	
+
 	/* Test the program configuration. */
-	if (c->distributed && ! disp->alone) {
+	if (disp->exclude || (c->distributed && ! disp->alone)) {
 		/* Resume the main process. */
 		cop_resume(&disp->rd_done);
 		cop_resume(&disp->wr_done);
@@ -846,7 +848,43 @@ static void cop_standalone_conf(struct cop_data_s *c, char *string)
 	}
 }
 
+/**
+ * cop_exclude() - exclude a controller platform module.
+ *
+ * @c:       pointer to the cop state.
+ * @string:  pointer to the gotten string.
+ *
+ * Return:	None.
+ **/
+static void cop_exclude(struct cop_data_s *c, char *string)
+{
+	int len;
+	
+	/* Entry condition. */
+	if (string == NULL) {
+		cop_usage();
+		exit(1);
+	}
 
+	/* Formal test of the -e option argument. */
+	len = os_strlen(string);
+	if (len != 1) {
+		cop_usage();
+		exit(1);
+	}
+
+	/* Parse the -e argument. */
+	switch (*string) {
+	case 'd':
+		/* Exclude display thread or program. */
+		c->n_disp.exclude = 1;
+		break;
+	default:
+		cop_usage();
+		exit(1);
+		break;
+	}
+}
 
 /**
  * cop_usage() - provide information aboute the cop configuration.
@@ -872,16 +910,16 @@ static void cop_usage(void)
 	printf("  -t      print the cop trace information\n");
 	printf("  -c      print the clock trace information\n");
 	
-	printf("Clock settings:\n");
+	printf("\nClock settings:\n");
 	printf("  -cc n   controller clock in milliseconds\n");
 	
-	printf("Test cycle settings:\n");
+	printf("\nTest cycle settings:\n");
 	printf("  -dcc n  display generator cycles towards controller\n");
 	printf("  -cbc n  controller generator cycles towards battery\n");
 	printf("  -bcc n  battery generator cycles towards controller\n");
 	printf("  -cdc n  controller generator cycles towards display\n");
 	
-	printf("Setting of the wait conditions:\n");
+	printf("\nSetting of the wait conditions:\n");
 	printf("  -dw     display cycles with wait condition\n");
 	printf("  -bw     battery cycles with wait condition\n");
 
@@ -889,6 +927,8 @@ static void cop_usage(void)
 	printf("  -s x    execute cop as stand-alone program: substitue x with:\n");
 	printf("          c  controller\n");
 	printf("          b  battery\n");
+	printf("          d  display\n");
+	printf("  -e x    exclude a controller platform module: substitue x with:\n");
 	printf("          d  display\n");
 	
 	printf("\nDefault settings:\n");
@@ -902,9 +942,12 @@ static void cop_usage(void)
 	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
-	printf("  Stand-alone disp program: %s\n", nd->alone ? "yes" : "no");
-	printf("  Stand-alone ctrl program: %s\n", cb->alone ? "yes" : "no");
-	printf("  Stand-alone batt program: %s\n", nb->alone ? "yes" : "no");
+	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
+	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
+	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
+	printf("  Exclude the ctrl module:  %s\n", cb->exclude ? "yes" : "no");
+	printf("  Exclude the batt module:  %s\n", nb->exclude ? "yes" : "no");
+	printf("  Exclude the disp module:  %s\n", nd->exclude ? "yes" : "no");
 }
 
 /*============================================================================
@@ -926,25 +969,26 @@ int main(int argc, char *argv[])
 
 	/* An array describing valid long options for getopt_long_only().  */
 	const struct option opts[] = {
-		{ "clock",  0, NULL, 'c' },
-		{ "help",   0, NULL, 'h' },
-		{ "trace",  0, NULL, 't' },
+		{ "clock",   0, NULL, 'c' },
+		{ "exclude", 0, NULL, 'e' },
+		{ "help",    0, NULL, 'h' },
+		{ "trace",   0, NULL, 't' },
 		
 		/* Clock settings: */
-		{ "cc",     1, NULL, 4  },
+		{ "cc",      1, NULL, 1  },
 		
 		/* Test cycle settings: */
-		{ "dcc",    1, NULL, 5  },
-		{ "cbc",    1, NULL, 6  },
-		{ "bcc",    1, NULL, 7  },
-		{ "cdc",    1, NULL, 8  },
+		{ "dcc",     1, NULL, 2  },
+		{ "cbc",     1, NULL, 3  },
+		{ "bcc",     1, NULL, 4  },
+		{ "cdc",     1, NULL, 5  },
 
 		/* Setting of the wait conditions: */
-		{ "dw",     0, NULL, 9  },
-		{ "bw",     0, NULL, 10 },
+		{ "dw",      0, NULL, 6  },
+		{ "bw",      0, NULL, 7 },
 
 		/* Required at end of array: */
-		{ NULL,     0, NULL, 0  }
+		{ NULL,      0, NULL, 0  }
 	};
 		
 	/* Get the pointer to the cop state. */
@@ -957,12 +1001,16 @@ int main(int argc, char *argv[])
 	nd = &c->n_disp;
 	
 	/* Analyze the paramer, by which the cop has been invoked. */
-	while ((opt = getopt_long_only(argc, argv, "chs:t", opts, NULL)) != -1) {
+	while ((opt = getopt_long_only(argc, argv, "ce:hs:t", opts, NULL)) != -1) {
 		/* Analyze the current string arguments. */
 		switch (opt) {
 		case 'c':
 			/* Switch on the clock trace. */
 			c->clock_trace = 1;
+			break;
+		case 'e':
+			/* Exclude a controller platform module. */
+			cop_exclude(c, optarg);
 			break;
 		case 'h':
 			/* Support the user. */
@@ -978,33 +1026,33 @@ int main(int argc, char *argv[])
 			/* Switch on the cop trace. */
 			c->my_trace = 1;
 			break;
-		case 4:
+		case 1:
 			/* Test the controller clock. */
 			cop_str_to_int(optarg, &cb->interval);
 			cd->interval = cb->interval;
 			break;
 
-		case 5:
+		case 2:
 			/* Test the wire between display and controller. */
 			cop_str_to_int(optarg, &nd->cycles);
 			break;
-		case 6:
+		case 3:
 			/* Test the wire between controller and battery. */
 			cop_str_to_int(optarg, &cb->cycles);
 			break;
-		case 7:
+		case 4:
 			/* Test the wire between battery and controller. */
 			cop_str_to_int(optarg, &nb->cycles);
 			break;
-		case 8:
+		case 5:
 			/* Test the wire between controller and display. */
 			cop_str_to_int(optarg, &cd->cycles);
 			break;
-		case 9:
+		case 6:
 			/* Switch on the display wait condition. */
 			nd->use_wait = 1;
 			break;
-		case 10:
+		case 7:
 			/* Switch on the battery wait condition. */
 			nb->use_wait = 1;
 			break;
@@ -1032,9 +1080,14 @@ int main(int argc, char *argv[])
 	printf("  Battery cycles:           %d\n", nb->cycles);
 	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
-	printf("  Stand-alone disp program: %s\n", nd->alone ? "yes" : "no");
-	printf("  Stand-alone ctrl program: %s\n", cb->alone ? "yes" : "no");
-	printf("  Stand-alone batt program: %s\n", nb->alone ? "yes" : "no");
+	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
+	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
+	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
+	printf("  Exclude the ctrl module:  %s\n", cb->exclude ? "yes" : "no");
+	printf("  Exclude the batt module:  %s\n", nb->exclude ? "yes" : "no");
+	printf("  Exclude the disp module:  %s\n", nd->exclude ? "yes" : "no");
 
+	printf("\n%s executed successfully\n", P);
+			
 	return (0);
 }

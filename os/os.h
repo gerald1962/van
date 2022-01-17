@@ -216,6 +216,7 @@ size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);
 int os_strncmp(const char *s1, const char *s2, int n);
 int os_strcmp(const char *s1, const char *s2);
+void *os_memchr(const void *s, const void *end, int c, size_t n);
 
 /* Critical section. */
 void os_cs_init(pthread_mutex_t *mutex);
@@ -244,7 +245,7 @@ void os_thread_destroy(void *thread);
 void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size);
 
 /* Endpoint of a shared memory cable. */
-int os_c_open(char *device_name, int mode);
+int os_c_open(const char *device_name, int mode);
 void os_c_close(int dev_id);
 
 /* Synchronous cable I/O operations. */
@@ -268,5 +269,12 @@ void os_clock_stop(int id);
 int os_clock_barrier(int id);
 void os_clock_msleep(long msec);
 void os_clock_trace(int id, int mode);
+
+/* Cable operations about I/O buffering. */
+int os_bopen(const char *ep_name);
+void os_bclose(int ep_id);
+int os_bread(int ep_id, char *buf, int count);
+int os_bwrite(int ep_id, char *buf, int cont);
+int os_buffered(int ep_id, int out);
 
 #endif /* __os_h__ */

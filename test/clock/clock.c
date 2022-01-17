@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * tim - OS timer test.
+ * clock - OS clock test.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */

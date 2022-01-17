@@ -409,10 +409,13 @@ void os_init(int creator)
 
 	/* Initialize the OS timer list. */
 	os_clock_init_();
+	
+	/* Prepare the access to the entry points. */
+	os_buf_init();
 }
 
 /**
- * os_exit() - ensure the one the one time call and test pending resources.
+ * os_exit() - ensure the one time call and test pending resources.
  *
  * Return:	None.
  **/
@@ -430,6 +433,7 @@ void os_exit(void)
 	os_thread_exit();
 	os_mem_exit();
 	os_clock_exit_();
+	os_buf_exit();
 
 	/* Test the OS state. */
 	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);

@@ -4,6 +4,7 @@
 # os_tcl.c 
 ${BUILD_LIB}_FILES +=  \
     os.c \
+    os_buffer.c \
     os_cable.c \
     os_clock.c \
     os_mem.c \

@@ -691,7 +691,7 @@ static void cab_io_map(void *addr, cab_io_t *first, cab_io_t *second) {
  *
  * Return:	the address of the found configuration.
  **/
-static cab_conf_t *cab_conf_get(cab_conf_t *conf, char *name)
+static cab_conf_t *cab_conf_get(cab_conf_t *conf, const char *name)
 {
 	cab_conf_t *c;
 
@@ -792,70 +792,6 @@ static void cab_create(void)
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
-/**
- * os_c_close() - the user shall call this function to remove the
- * shared memory ressources.
- *
- * @dev_id:  id of the shared memory device.
- *
- * Return:	None.
- **/
-void os_c_close(int dev_id)
-{
-	cab_dev_t *dev;
-	int rv, i;
-
-	/* Map the id to the device state. */
-	dev = cab_dev_get(dev_id);
-	
-	/* Resume the interrupt thread, to terminate it. */
-	atomic_store(&dev->down, 1);
-	os_sem_release(dev->my_int);
-	
-	/* Delete the interrupt handler. */
-	os_thread_destroy(dev->thread);
-
-	/* Remove the reference to the named semaphores. */
-	rv = sem_close(dev->my_int);
-	OS_TRAP_IF(rv != 0);
-	
-	rv = sem_close(dev->other_int);
-	OS_TRAP_IF(rv != 0);
-
-	/* Destroy the semaphore for os_c_write(). */
-	os_sem_delete(&dev->suspend_writer);
-	
-	/* Destroy the semaphore for os_c_read(). */
-	os_sem_delete(&dev->suspend_reader);
-	
-	/* Delete the mutex for the critical sections in os_c_write. */
-	os_cs_destroy(&dev->write_mutex);
-
-	/* Delete the mutex for the critical sections in os_c_zread. */
-	os_cs_destroy(&dev->read_mutex);
-
-	/* Delete the mutex for the critical sections in aio_action and in aio_write. */
-	os_cs_destroy(&dev->aio_mutex);
-	
-	/* Destroy the mutex for the critical sections in cab_q_add. */
-	os_cs_destroy(&dev->q_mutex);
-	
-	/* Clear the input queue of the endpoint. */
-	dev->in.queue->tail = dev->in.queue->head;
-
-	/* Free the the shared memory device. */
-	for (i = 0; i < CAB_COUNT; i++) {
-		if (cab_device[i] == dev)
-			break;
-	}
-	
-	/* Test the release conditon. */
-	OS_TRAP_IF(i >= CAB_COUNT);
-	cab_device[i] = NULL;
-	
-	OS_FREE(dev);
-}
-
 /** 
  * os_c_wait() - the caller shall be suspended, until a read or write event is
  * available for the wires of a cable.
@@ -1301,6 +1237,70 @@ void os_c_action(int dev_id, os_aio_cb_t *cb)
 }
 
 /**
+ * os_c_close() - the user shall call this function to remove the
+ * shared memory ressources.
+ *
+ * @dev_id:  id of the shared memory device.
+ *
+ * Return:	None.
+ **/
+void os_c_close(int dev_id)
+{
+	cab_dev_t *dev;
+	int rv, i;
+
+	/* Map the id to the device state. */
+	dev = cab_dev_get(dev_id);
+	
+	/* Resume the interrupt thread, to terminate it. */
+	atomic_store(&dev->down, 1);
+	os_sem_release(dev->my_int);
+	
+	/* Delete the interrupt handler. */
+	os_thread_destroy(dev->thread);
+
+	/* Remove the reference to the named semaphores. */
+	rv = sem_close(dev->my_int);
+	OS_TRAP_IF(rv != 0);
+	
+	rv = sem_close(dev->other_int);
+	OS_TRAP_IF(rv != 0);
+
+	/* Destroy the semaphore for os_c_write(). */
+	os_sem_delete(&dev->suspend_writer);
+	
+	/* Destroy the semaphore for os_c_read(). */
+	os_sem_delete(&dev->suspend_reader);
+	
+	/* Delete the mutex for the critical sections in os_c_write. */
+	os_cs_destroy(&dev->write_mutex);
+
+	/* Delete the mutex for the critical sections in os_c_zread. */
+	os_cs_destroy(&dev->read_mutex);
+
+	/* Delete the mutex for the critical sections in aio_action and in aio_write. */
+	os_cs_destroy(&dev->aio_mutex);
+	
+	/* Destroy the mutex for the critical sections in cab_q_add. */
+	os_cs_destroy(&dev->q_mutex);
+	
+	/* Clear the input queue of the endpoint. */
+	dev->in.queue->tail = dev->in.queue->head;
+
+	/* Free he shared memory device. */
+	for (i = 0; i < CAB_COUNT; i++) {
+		if (cab_device[i] == dev)
+			break;
+	}
+	
+	/* Test the release conditon. */
+	OS_TRAP_IF(i >= CAB_COUNT);
+	cab_device[i] = NULL;
+	
+	OS_FREE(dev);
+}
+
+/**
  * os_c_open() - the cable user shall call this function to request the resources
  * for the shared memory transer.
  *
@@ -1309,7 +1309,7 @@ void os_c_action(int dev_id, os_aio_cb_t *cb)
  * 
  * Return:	the device id.
  **/
-int os_c_open(char *device_name, int mode)
+int os_c_open(const char *device_name, int mode)
 {
 	os_queue_elem_t msg;
 	cab_conf_t *conf;

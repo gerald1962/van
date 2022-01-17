@@ -435,7 +435,7 @@ static void tri_ctrl_cleanup(struct tri_data_s *c)
  **/
 static int tri_stop(void)
 {
-	os_statistics_t expected = { 4, 4, 0, 2341, 2341, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2341, 2341, 0 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -613,7 +613,7 @@ static void tri_conf(struct tri_data_s *c)
  **/
 static int tri_start(void)
 {
-	os_statistics_t expected = { 20, 27, 7, 2341, 2333, 7 };
+	os_statistics_t expected = { 21, 27, 7, 2341, 2333, 7 };
 	struct tri_data_s *c;
 	int stat;
 	

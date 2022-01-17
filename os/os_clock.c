@@ -48,7 +48,7 @@
  * @busy:        execution time of the last cycle.
  * @min:         minimum of the processing time.
  * @max:         maximum of the processing time.
- * @cycles:      timer expiration counter.
+ * @cycles:      transition counter.
  * @k_ov_count:  Linux kernel overrun counter.
  * @u_ov_count:  User overrun counter.
  **/
@@ -107,10 +107,12 @@ static void tm_handler(union sigval sv)
 	/* Entry condition. */
 	OS_TRAP_IF(t == NULL || ! t->assigned);
 
-	/* Test the state of the timer owner. */
+	/* Test the presence of the timer user. */
 	suspended = atomic_exchange(&t->suspended, 0);
-	if (suspended)
+	if (suspended) {
+		/* The timer owner has not yet reached the target time. */
 		return;
+	}
 	
 	/* Resume the suspended caller. */
 	os_sem_release(&t->suspend);
