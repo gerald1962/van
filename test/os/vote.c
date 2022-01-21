@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2345, 2345, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2350, 2350, 0 };
 	int stat;
 	
 	/* Verify the OS state. */

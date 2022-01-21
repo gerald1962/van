@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0
 
 # Source files
-# os_tcl.c 
 ${BUILD_LIB}_FILES +=  \
     os.c \
     os_buffer.c \
@@ -10,6 +9,7 @@ ${BUILD_LIB}_FILES +=  \
     os_mem.c \
     os_pthread.c \
     os_string.c \
+    os_tcl.c \
     os_trap.c
 
 # Source paths

@@ -28,13 +28,20 @@ endif
 # Compile flags.
 # CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas
 # CC_FLAGS := -O3 -Wall -Wno-unknown-pragmas
-CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas -DUSE_TCL_STUBS -ICLINC
+# CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas -DUSE_TCL_STUBS -ICLINC
+CC_FLAGS := -g -O0 -Wall -Wno-unknown-pragmas
 
 # Static linker flags.
-LD_FLAGS := -g -static -pthread -lpthread -lrt -LCLLIB -ltclstub
+# -lrt  - real time
+# -ltck - Tcl interpreter assumes:
+# -ldl  - dynamic link interfaces
+# -lm   - mathematics lib: sin, ..
+# -lz   - zlib for compression
+#
+LD_FLAGS := -g -pthread -lpthread -lrt -ltcl -ldl -lm -lz
 
 # Shared library flags.
-LIB_FLAGS := -g -shared -pthread -lpthread -lrt -LCLLIB -ltclstub
+LIB_FLAGS := -g -shared -pthread -lpthread -lrt -ltcl -ldl -lm -lz
 
 # Aggregate variables.
 ALL_FILES     :=  ${VAN_FILES}

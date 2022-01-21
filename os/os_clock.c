@@ -41,6 +41,8 @@
  * @interval:    repeating interval in milliseconds.
  * @suspend:     suspend the wait caller.
  * @suspended:   if 1, the caller has been suspend in os_timer_barrier().
+ * @h_locked:    if 1, the timer handler has been locked.
+ * @h_activ:     if 1, the timer handler is active.
  *
  * @s_start:     system start time.
  * @s_end:       system end time.
@@ -63,6 +65,8 @@ typedef struct {
 		timer_t     timer_id;
 		sem_t       suspend;
 		atomic_int  suspended;
+		atomic_int  h_locked;
+		atomic_int  h_active;
 		
 		struct timeval  s_start;
 		struct timeval  s_end;
@@ -99,7 +103,7 @@ static tm_t tm;
 static void tm_handler(union sigval sv)
 {
 	struct tm_elem_s *t;
-	int suspended;
+	int locked, suspended;
 	
 	/* Get the pointer to the timer descripton. */
 	t = sv.sival_ptr;
@@ -107,15 +111,29 @@ static void tm_handler(union sigval sv)
 	/* Entry condition. */
 	OS_TRAP_IF(t == NULL || ! t->assigned);
 
+	/* Test the timer state. */
+	locked = atomic_load(&t->h_locked);
+	if (locked)
+		return;
+
+	/* Change the handler state. */
+	atomic_store(&t->h_active, 1);
+	
 	/* Test the presence of the timer user. */
 	suspended = atomic_exchange(&t->suspended, 0);
 	if (suspended) {
+		/* Change the handler state. */
+		atomic_store(&t->h_active, 0);
+	
 		/* The timer owner has not yet reached the target time. */
 		return;
 	}
 	
 	/* Resume the suspended caller. */
 	os_sem_release(&t->suspend);
+	
+	/* Change the handler state. */
+	atomic_store(&t->h_active, 0);
 }
 
 /**
@@ -447,7 +465,7 @@ void os_clock_start(int id)
 void os_clock_delete(int id)
 {
 	struct tm_elem_s *t;
-	int rv;
+	int rv, active;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&tm.mutex);
@@ -458,11 +476,22 @@ void os_clock_delete(int id)
 	/* Get the pointer to the timer description. */
 	t = &tm.elem[id];
 	OS_TRAP_IF(! t->assigned);
-	
+
 	/* Disarm and delete the timer. */
 	rv = timer_delete(t->timer_id);
 	OS_TRAP_IF(rv != 0);
 
+	/* Lock the timer handler. */
+	atomic_store(&t->h_locked, 1);
+
+	/* Test the state of the timer handler. */
+	for(active = 1; active;) {
+		/* Get the state of the timer handler. */
+		active = atomic_load(&t->h_active);
+		if (active)
+			usleep(1);
+	}
+	
 	/* Release the control semaphore. */
 	os_sem_delete(&t->suspend);
 	

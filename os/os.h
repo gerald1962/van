@@ -1,4 +1,11 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+
+/*
+ * Van OS interfaces.
+ *
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+ */
+
 #ifndef __os_h__
 #define __os_h__
 
@@ -275,6 +282,6 @@ int os_bopen(const char *ep_name);
 void os_bclose(int ep_id);
 int os_bread(int ep_id, char *buf, int count);
 int os_bwrite(int ep_id, char *buf, int cont);
-int os_buffered(int ep_id, int out);
+int os_buffered_out(int ep_id);
 
-#endif /* __os_h__ */
+#Endif /* __os_h__ */

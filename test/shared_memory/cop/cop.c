@@ -42,7 +42,6 @@
 /**
  * cop_ep_t - state of a cable endpoint
  *
- * @exclude:   if 1, do not install this cable endpoint thread.
  * @alone:     if 1, start cop as ctrl, batt or disp program.
  * @name:      name of the cable endpoint.
  * @tread:     pointer to the device thread.
@@ -58,7 +57,6 @@
  * @rd_done:   if 1, everything received, resume the main process.
  **/
 typedef struct {
-	int    exclude;
 	int    alone;
 	char  *name;
 	void  *thread;
@@ -131,6 +129,146 @@ static void cop_resume(atomic_int *done)
 }
 
 /**
+ * cop_d_read() -  the display expects data with the non blocking
+ * synchronous buffered read operation from the controller.
+ *
+ * @ep:  pointer to the display state.
+ *
+ * Return:	0, if the write operation is complete.
+ **/
+static int cop_d_read(cop_ep_t *ep)
+{
+	char buf[OS_BUF_SIZE];
+	int done, n;
+	
+	/* Test the final condition of the consumer. */
+	done = atomic_load(&ep->rd_done);
+	if (done)
+		return 0;
+
+	/* Wait for data from the producer. */
+	n = os_bread(ep->dev_id, buf, OS_BUF_SIZE);
+	if (n < 1)
+		return 1;
+		
+	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, n));
+		       
+	/* Test the end condition of the test. */
+	if (os_strcmp(buf, "DONE") == 0) {
+		cop_resume(&ep->rd_done);
+		return 0;
+	}
+
+	/* Convert and test the received counter. */
+	n = strtol(buf, NULL, 10);
+	OS_TRAP_IF(ep->rd_count != n);
+
+	/* Increment the receive counter. */
+	ep->rd_count++;
+	
+	return 1;
+}
+
+/**
+ * cop_d_write() -  the display sends data with the non blocking synchronous
+ * buffered write operation to the controller.
+ *
+ * @ep:  pointer to the display state.
+ *
+ * Return:	0, if the write operation is complete, otherwise 1.
+ **/
+static int cop_d_write(cop_ep_t *ep)
+{
+	char buf[OS_BUF_SIZE];
+	int done, n, rv;
+	
+	/* Test the final condition of the producer. */
+	done = atomic_load(&ep->wr_done);
+	if (done)
+		return 0;
+
+	/* Test the cycle counter. */
+	if (ep->wr_count > ep->cycles) {
+		/* Get the fill level of the output buffer. */
+		n = os_buffered_out(ep->dev_id);
+		if (n > 0)
+			return 1;
+
+		/* Resume the main process. */
+		cop_resume(&ep->wr_done);
+		return 0;
+	}
+	
+	/* Test the write cycle counter. */
+	if (ep->wr_count == ep->cycles) {
+		/* Save the final response. */
+		n = snprintf(buf, OS_BUF_SIZE, "DONE");
+	}
+	else {
+		/* Generate the test message. */
+		n = snprintf(buf, OS_BUF_SIZE, "%d", ep->wr_count);
+	}
+
+	/* Include the message delimiter. */
+	n++;
+	
+	/* Start an attempt of transmission. */
+	rv = os_bwrite(ep->dev_id, buf, n);
+	OS_TRAP_IF(rv != 0 && rv != n);
+
+	/* Test the success of the transmission. */
+	if (rv == 0)
+		return 1;
+
+	/* XXX Replace the message delimiter with EOS. */
+	buf[n -1] = '\0';
+	
+	/* The transmission has worked. */
+	TRACE(("%s sent: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, n));
+	
+	/* Increment the cycle counter. */
+	ep->wr_count++;
+	return 1;
+}
+
+/**
+ * cop_disp_exec() - the display neighbour of the controller sends and receives
+ * data with the non blocking synchronous buffered operations.
+ *
+ * @msg:  pointer to the generic input message.
+ *
+ * Return:	None.
+ **/
+static void cop_disp_exec(os_queue_elem_t *msg)
+{
+	cop_ep_t *ep;
+	int busy_rd, busy_wr;
+
+	/* Initialize the return values. */
+	busy_rd = 1;
+	busy_wr = 1;
+	
+	/* Get the pointer to the endpoint state. */
+	ep = &cop_data.n_disp;
+
+	/* The display thread analyzes or generates data from or to the
+	 * controller with the non blocking syncronous buffered copy read or
+	 * write  operation. */
+	while (busy_rd || busy_wr) {
+		/* Read the input from the controller. */
+		busy_rd = cop_d_read(ep);
+		
+		/* Generate output for the controller. */
+		busy_wr = cop_d_write(ep);
+
+		/* Simulate the display event loop. */
+		os_clock_msleep(ep->interval);		
+	}
+	
+	TRACE(("%s nops: [e:%s, s:done]\n", P, ep->name));
+}
+
+/**
  * cop_read() - generic read operation for all endpoints of any cable: any
  * controller or a neighbour endpoint expects data with the non blocking
  * synchronous read operation from the other endpoint.
@@ -162,6 +300,9 @@ static int cop_read(cop_ep_t *ep, int *wait_cond)
 		return 1;
 	}
 		
+	/* XXX Terminate the message with EOS. */
+	buf[n] = '\0';
+	
 	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, n));
 		       
 	/* Test the end condition of the test. */
@@ -419,48 +560,6 @@ static void cop_ctrl_exec(os_queue_elem_t *msg)
 }
 
 /**
- * cop_disp_exec() - the display neighbour of the controller sends and receives
- * data with the non blocking synchronous operations.
- *
- * @msg:  pointer to the generic input message.
- *
- * Return:	None.
- **/
-static void cop_disp_exec(os_queue_elem_t *msg)
-{
-	cop_ep_t *ep;
-	int busy_rd, busy_wr, no_c_inp, no_c_out;
-
-	/* Initialize the return values. */
-	busy_rd = 1;
-	busy_wr = 1;
-	
-	/* Initialize the wait condition for cable endpoint operations. */
-	no_c_inp = 0;
-	no_c_out = 0;
-
-	/* Get the pointer to the endpoint state. */
-	ep = &cop_data.n_disp;
-
-	/* The display thread analyzes or generates data from or to the
-	 * controller with the non blocking syncronous copy read or write
-	 * operation. */
-	while (busy_rd || busy_wr) {
-		/* Read the input from the controller. */
-		busy_rd = cop_read(ep, &no_c_inp);
-		
-		/* Generate output for the controller. */
-		busy_wr = cop_write(ep, &no_c_out);
-		
-		/* Avoid an endles loop, if no I/O data are available. */
-		if (ep->use_wait && no_c_inp && no_c_out)
-			os_c_wait(ep->wait_id);
-	}
-	
-	TRACE(("%s nops: [e:%s, s:done]\n", P, ep->name));
-}
-
-/**
  * cop_wait() - the main process is waiting for the end of the data transfer.
  *
  * Return:	None.
@@ -551,6 +650,22 @@ static void cop_ctrl_cleanup(struct cop_data_s *c)
 }
 
 /**
+ * cop_disp_cleanup() - release the resources of the display endpooint.
+ *
+ * @ep:  pointer to the endpoint state.
+ *
+ * Return:	None.
+ **/
+static void cop_disp_cleanup(cop_ep_t *ep)
+{
+	/* Remove the display testt thread. */
+	os_thread_destroy(ep->thread);
+
+	/* Delete the display endpoint device. */
+	os_bclose(ep->dev_id);
+}
+
+/**
  * cop_cleanup() - release the platform for the control technology.
  *
  * Return:	None.
@@ -562,13 +677,13 @@ static void cop_cleanup(void)
 	/* Get the pointer to the cop state. */
 	c = &cop_data;
 	
+	/* Display. */
+	if (! c->distributed || c->n_disp.alone)
+		cop_disp_cleanup(&c->n_disp);
+
 	/* Battery. */
 	if (! c->distributed || c->n_batt.alone)
 		cop_ep_cleanup(&c->n_batt);
-
-	/* Display. */
-	if (! c->n_disp.exclude &&  (! c->distributed || c->n_disp.alone))
-		cop_ep_cleanup(&c->n_disp);
 
 	/* Controller. */
 	cop_ctrl_cleanup(c);
@@ -639,15 +754,29 @@ static void cop_display_init(struct cop_data_s *c)
 	disp = &c->n_disp;
 
 	/* Test the program configuration. */
-	if (disp->exclude || (c->distributed && ! disp->alone)) {
+	if (c->distributed && ! disp->alone) {
 		/* Resume the main process. */
 		cop_resume(&disp->rd_done);
 		cop_resume(&disp->wr_done);
 		return;
 	}
 	
-	/* Initialize the battery endpoints. */
-	cop_ep_init(disp, "n_disp", "display", "/display", 1);
+	/* Save the trace name of the cable endpoint. */
+	disp->name = "n_disp";
+
+	/* Install the test thread, */
+	disp->thread = os_thread_create("display", PRIO, Q_SIZE);
+	
+	/* Open the display entry point with I/O buffering of the cable between
+	 * controller and display. */
+	disp->dev_id = os_bopen("/display");
+	
+	/* Default value for the clock intervall. */
+	if (disp->interval < 1)
+		disp->interval = CLOCK_INTERVAL;
+	
+	/* Ignore the wait condition. */
+	disp->wait_id = -1;
 	
 	/* Start the display. */
 	os_memset(&msg, 0, sizeof(msg));	
@@ -849,44 +978,6 @@ static void cop_standalone_conf(struct cop_data_s *c, char *string)
 }
 
 /**
- * cop_exclude() - exclude a controller platform module.
- *
- * @c:       pointer to the cop state.
- * @string:  pointer to the gotten string.
- *
- * Return:	None.
- **/
-static void cop_exclude(struct cop_data_s *c, char *string)
-{
-	int len;
-	
-	/* Entry condition. */
-	if (string == NULL) {
-		cop_usage();
-		exit(1);
-	}
-
-	/* Formal test of the -e option argument. */
-	len = os_strlen(string);
-	if (len != 1) {
-		cop_usage();
-		exit(1);
-	}
-
-	/* Parse the -e argument. */
-	switch (*string) {
-	case 'd':
-		/* Exclude display thread or program. */
-		c->n_disp.exclude = 1;
-		break;
-	default:
-		cop_usage();
-		exit(1);
-		break;
-	}
-}
-
-/**
  * cop_usage() - provide information aboute the cop configuration.
  *
  * Return:	None.
@@ -920,15 +1011,12 @@ static void cop_usage(void)
 	printf("  -cdc n  controller generator cycles towards display\n");
 	
 	printf("\nSetting of the wait conditions:\n");
-	printf("  -dw     display cycles with wait condition\n");
 	printf("  -bw     battery cycles with wait condition\n");
 
 	printf("\nProgramm configuration:\n");
 	printf("  -s x    execute cop as stand-alone program: substitue x with:\n");
 	printf("          c  controller\n");
 	printf("          b  battery\n");
-	printf("          d  display\n");
-	printf("  -e x    exclude a controller platform module: substitue x with:\n");
 	printf("          d  display\n");
 	
 	printf("\nDefault settings:\n");
@@ -940,14 +1028,10 @@ static void cop_usage(void)
 	printf("  Ctrl->display cycles:     %d\n", cd->cycles);
 	printf("  Display cycles:           %d\n", nd->cycles);
 	printf("  Battery cycles:           %d\n", nb->cycles);
-	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
 	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
 	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
-	printf("  Exclude the ctrl module:  %s\n", cb->exclude ? "yes" : "no");
-	printf("  Exclude the batt module:  %s\n", nb->exclude ? "yes" : "no");
-	printf("  Exclude the disp module:  %s\n", nd->exclude ? "yes" : "no");
 }
 
 /*============================================================================
@@ -970,7 +1054,6 @@ int main(int argc, char *argv[])
 	/* An array describing valid long options for getopt_long_only().  */
 	const struct option opts[] = {
 		{ "clock",   0, NULL, 'c' },
-		{ "exclude", 0, NULL, 'e' },
 		{ "help",    0, NULL, 'h' },
 		{ "trace",   0, NULL, 't' },
 		
@@ -984,8 +1067,7 @@ int main(int argc, char *argv[])
 		{ "cdc",     1, NULL, 5  },
 
 		/* Setting of the wait conditions: */
-		{ "dw",      0, NULL, 6  },
-		{ "bw",      0, NULL, 7 },
+		{ "bw",      0, NULL, 6 },
 
 		/* Required at end of array: */
 		{ NULL,      0, NULL, 0  }
@@ -1007,10 +1089,6 @@ int main(int argc, char *argv[])
 		case 'c':
 			/* Switch on the clock trace. */
 			c->clock_trace = 1;
-			break;
-		case 'e':
-			/* Exclude a controller platform module. */
-			cop_exclude(c, optarg);
 			break;
 		case 'h':
 			/* Support the user. */
@@ -1049,10 +1127,6 @@ int main(int argc, char *argv[])
 			cop_str_to_int(optarg, &cd->cycles);
 			break;
 		case 6:
-			/* Switch on the display wait condition. */
-			nd->use_wait = 1;
-			break;
-		case 7:
 			/* Switch on the battery wait condition. */
 			nb->use_wait = 1;
 			break;
@@ -1078,14 +1152,10 @@ int main(int argc, char *argv[])
 	printf("  Ctrl->display cycles:     %d\n", cd->cycles);
 	printf("  Display cycles:           %d\n", nd->cycles);
 	printf("  Battery cycles:           %d\n", nb->cycles);
-	printf("  Display wait condition:   %s\n", nd->use_wait ? "on" : "off");
 	printf("  Battery wait condition:   %s\n", nb->use_wait ? "on" : "off");
 	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
 	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
-	printf("  Exclude the ctrl module:  %s\n", cb->exclude ? "yes" : "no");
-	printf("  Exclude the batt module:  %s\n", nb->exclude ? "yes" : "no");
-	printf("  Exclude the disp module:  %s\n", nd->exclude ? "yes" : "no");
 
 	printf("\n%s executed successfully\n", P);
 			

@@ -76,8 +76,6 @@ static struct buf_list_s {
  * @u_id:      user entry point id.
  * @c_id:      cable driver entry point id.
  * @name:      pointer to the entry point name.
- * @rd_mutex:  protect the critical secion in os_bread().
- * @wr_mutex:  protect the critical secion in os_bwrite().
  * @in:        input queue, written from the cable driver with buf_write_cb().
  * @out:       output queue, read from the cable driver with buf_read_cb().
  **/
@@ -85,8 +83,6 @@ static struct buf_data_s {
 	int    u_id;
 	int    c_id;
 	const char  *name;
-	pthread_mutex_t  rd_mutex;
-	pthread_mutex_t  wr_mutex;
 	buf_q_t  *in;
 	buf_q_t  *out;
 } *buf_data[BUF_EP_COUNT];
@@ -282,12 +278,12 @@ static int buf_q_read(buf_q_t *q, char *buf, int count)
 	char *src, *end;
 	int rv, size;
 
-	/* Initialize the return value. */
-	rv = 0;
-	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
 
+	/* Initialize the return value. */
+	rv = 0;
+	
 	/* Get the pointer to the next message. */
 	size = 0;
 	src = buf_q_get(q, &size);
@@ -340,28 +336,30 @@ static int buf_q_write(buf_q_t *q, char *buf, int count)
 	/* Entry condition. */
 	OS_TRAP_IF(q->size < count);
 
-	/* Initialize the return value. */
-	rv = 0;
-	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
 
+	/* Initialize the return value. */
+	rv = 0;
+	
 	/* Allocate a message buffer. */
 	dest = buf_q_alloc(q, count);
-	if (dest != NULL) {
-		/* Save the message. */
-		os_memcpy(dest, count, buf, count);
-
-		/* XXX Replace end of string with the message delimiter. */
-		dest[count - 1] = '#';
-
-		/* Release the message buffer. */
-		buf_q_add(q, count);
+	if (dest == NULL)
+		goto l_end;
 	
-		/* Update the return value. */
-		rv = 1;
-	}
+	/* XXX Replace end of string with the message delimiter. */
+	buf[count - 1] = '#';
 
+	/* Save the message. */
+	os_memcpy(dest, count, buf, count);
+	
+	/* Release the message buffer. */
+	buf_q_add(q, count);
+	
+	/* Update the return value. */
+	rv = 1;
+
+l_end:
 	/* Leave the critical section. */
 	os_cs_leave(&q->mutex);
 
@@ -522,17 +520,16 @@ static int buf_write_cb(int c_id, char *buf, int count)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * os_buffered() - get the fill level of the queue buffer.
+ * os_buffered_out() - get the fill level of the output queue buffer.
  *
  * @u_id:  id of the entry point.
  * @out:   if 1, take the output queue, otherwise the input queue.
  *
  * Return:	the queue fill level.
  **/
-int os_buffered(int u_id, int out)
+int os_buffered_out(int u_id)
 {
 	struct buf_data_s *b;
-	buf_q_t *q;
 	
 	/* Entry conditon. */
 	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
@@ -543,10 +540,7 @@ int os_buffered(int u_id, int out)
 	/* Test the ep state. */
 	OS_TRAP_IF(b == NULL);
 
-	/* Get the I/O queue. */
-	q = out ? b->out : b->in;
-
-	return buf_q_buffered(q);
+	return buf_q_buffered(b->out);
 }
 
 /**
@@ -588,9 +582,6 @@ int os_bwrite(int u_id, char *buf, int count)
 	/* Test the ep state. */
 	OS_TRAP_IF(b == NULL);
 
-	/* Enter the critical section restricted to this function. */
-	os_cs_enter(&b->wr_mutex);
-
 	/* Write to the output queue. */
 	rv = buf_q_write(b->out, buf, count);
 
@@ -601,9 +592,6 @@ int os_bwrite(int u_id, char *buf, int count)
 		 * callback. */
 		os_c_awrite(b->c_id);
 	}
-	
-	/* Leave the critical section restricted to this function. */
-	os_cs_leave(&b->wr_mutex);
 	
 	/* Inform the user, that the output message has been saved or none. */
 	return rv ? count : 0;
@@ -643,9 +631,6 @@ int os_bread(int u_id, char *buf, int count)
 	/* Test the ep state. */
 	OS_TRAP_IF(b == NULL);
 
-	/* Enter the critical section restricted to this function. */
-	os_cs_enter(&b->rd_mutex);
-
 	/* Copy the next queue element. */
 	size = buf_q_read(b->in, buf, count);
 
@@ -656,9 +641,6 @@ int os_bread(int u_id, char *buf, int count)
 		 * callback. */
 		os_c_aread(b->c_id);
 	}
-
-	/* Leave the critical section restricted to this function. */
-	os_cs_leave(&b->rd_mutex);
 
 	return size;
 }
@@ -694,12 +676,6 @@ void os_bclose(int u_id)
 	
 	/* Free the output queue. */
 	buf_q_delete(b->out);
-	
-	/* Release the mutex for the critical section in os_bread(). */
-	os_cs_destroy(&b->rd_mutex);
-	
-	/* Release the mutex for the critical section in os_bwrite(). */
-	os_cs_destroy(&b->wr_mutex);
 	
 	/* Free the user entry point state. */	
 	OS_FREE(buf_data[u_id]);
@@ -755,12 +731,6 @@ int os_bopen(const char *ep_name)
 	b->u_id = i;
 	b->c_id = c_id;
 	b->name = ep_name;
-
-	/* Prepare the access to os_bread(). */
-	os_cs_init(&b->rd_mutex);
-
-	/* Prepare the access to os_bwrite(). */
-	os_cs_init(&b->wr_mutex);
 
 	/* Create the input queue. */
 	b->in = buf_q_init(BUF_Q_SIZE);
