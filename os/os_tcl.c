@@ -123,7 +123,8 @@ static void tcl_watchProc(ClientData instanceData, int mask)
 static int tcl_getOptionProc(ClientData instanceData, Tcl_Interp *interp,
 			     CONST char *optionName, Tcl_DString *optionValue)
 {
-	struct tcl_cable_s *t;
+	/* XXX */
+//	struct tcl_cable_s *t;
 	/* XXX */
 	int rv = 1;
 	
@@ -132,7 +133,7 @@ static int tcl_getOptionProc(ClientData instanceData, Tcl_Interp *interp,
 		   optionName == NULL || optionValue == NULL);
 	
 	/* Decode the instance data. */
-	t = instanceData;
+//	t = instanceData;
 	
 	/* Test the option name. */
 	if (os_strcmp(optionName, "-writable"))
