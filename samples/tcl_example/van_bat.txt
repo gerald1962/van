@@ -1,0 +1,105 @@
+
+
+             
+          .......[ Rv ].......
+          .                  .
+        S \                  .
+          `                  .
+          .                  .
+        N \                  .
+	  `                  .
+	 (A)                 .
+          . . . (V) .  . . . .
+       ___o__________________o____
+       |  -                  +   |
+       |                         |
+       |         Ri              |
+       |                         |
+       |                         |
+       |_________________________|
+
+
+Einfaches Model:
+
+Die Batterie hat eine Energie von E[Watt-Sekunden]
+Sie liefert eine konstante Spannung U[Volt] solange sie noch eine Ladung hat.
+An die Batterie ist ein Verbraucher Rv[Ohm] angeschlossen.
+Der Notaus-Schalter N[0,1] wird von der Steuerung geregelt - dient dazu die Batterie auszuschalten wenn sie entladen ist.
+
+Der Nutzer bedient die Batterie über den Ein/Aus Schalter S[0,1].
+Der Verbraucher entnimmt der Batterie Energie wenn S = 1.
+Die vebrauchte Energie berechnet sich aus der entnommen Leistung L[Watt] über die Zeit t[Sekunde] mit
+
+L = U*I = U*U/R
+V = U*U/R*t
+
+Simulation der Batterie: Wenn S = 1 und N = 1 wird Energie verbraucht über die Zeit.
+
+Diagramme:
+
+Ladezustand
+
+E[WS]||
+   .....
+      |  .
+      |    ....
+      |         .
+      |___________.________
+                         t[S]  
+
+Messwerte
+
+V[ws] |           .........
+      |         .
+      |    ....
+      |  .    
+   ...|.___________........
+                         t[S]  
+
+I[A]  |        
+      |....    ....  
+      |    
+      |     
+   ...|____....____........
+                         t[S]  
+
+U[V]  |        
+   ................  
+      |     
+      |____________........
+                         t[S]  
+
+Steuerung
+
+N     |        
+     1|............
+      |     
+     0|____________........
+                         t[S]  
+
+Eingabe
+
+S     |        
+     1|....    ............  
+      |     
+     0|____....____________
+                         t[S]  
+
+
+Das wären die Grundkomponenten um die Batterie zu simulieren und das Steuerprogramm zu testen.
+Die Messwerte ergeben sich aus der Simulation der Batterie.
+
+Damit gäbe es drei Softwarekomponenten:
+
+(Batterie-Simulation)
+Notaus - Schalter  - Eingang
+Ein-Aus-Schalter   - Eingang
+Messwerte          - Ausgang
+
+(Test-Simulation)
+Ein-Aus-Schalter   - Ausgang
+
+(Steuerprogramm)
+Ein-Aus-Schalter   - Eingang
+Messwerte          - Eingang
+Notaus - Schalter  - Ausgang

@@ -1,0 +1,4 @@
+#!/usr/bin/tclsh
+# Mein erstes Tcl-Programm
+
+puts "hello World!"

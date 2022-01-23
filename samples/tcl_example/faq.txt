@@ -1,0 +1,5 @@
+# Hilfreiche kurze Einführung:
+https://www-user.tu-chemnitz.de/~hot/tcl_tk/
+
+# Tutorial
+https://wiki.tcl-lang.org/page/Tcl+Tutorial+Lesson+1

@@ -1,0 +1,17 @@
+#!/usr/bin/wish
+# Mein erstes Tcl/Tk-Programm mit Texteditor
+
+button .b -text "hello World!" -font "Verdana 20"
+text .t -bg wheat
+# separater Schritt zum Sichtbarmachen (geometry manager)
+pack .b .t
+
+.t insert end "button drücken verändert Farben..."
+bind .b <Button-1> {.b config -bg orange -activebackground yellow}
+
+.t insert end "button drücken verändert Farben..."
+bind .b <Button-2> {.b config -bg red}
+
+# package require Tk
+# pack [button .b -text "Goodbye World" -command exit]
+

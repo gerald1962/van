@@ -1,0 +1,112 @@
+#!/usr/bin/tclsh
+# Mein erstes Tcl-Programm
+
+#lesson 1
+
+puts "hello World!"
+
+puts "Hello, World - In quotes"    ;# This is a comment after the command.
+# This is a comment at beginning of a line
+
+puts {Hello, World - In Braces}
+
+puts "This is line 1"; puts "this is line 2"
+
+puts "Hello, World; - With  a semicolon inside the quotes"
+
+# Words don't need to be quoted unless they contain white space:
+puts HelloWorld
+
+puts {Bad comment syntax example}  ;# *Error* - there is no semicolon!
+
+#lesson 2
+
+set X "This is a string"
+set Y 1.24
+
+puts $X
+puts $Y
+
+puts "..............................."
+
+set label "The value in Y is: "
+puts "$label $Y"
+
+#lesson 3
+
+set Z Albany
+set Z_LABEL "The Capitol of New York is: "
+
+puts "$Z_LABEL $Z"   ;# Prints the value of Z
+puts "$Z_LABEL \$Z"  ;# Prints a literal $Z instead of the value of Z
+
+puts "\nBen Franklin is on the \$100.00 bill"
+
+set a 100.00
+puts "Washington is not on the $a bill"    ;# This is not what you want
+puts "Lincoln is not on the $$a bill"      ;# This is OK
+puts "Hamilton is not on the \$a bill"     ;# This is not what you want
+puts "Ben Franklin is on the \$$a bill"    ;# But, this is OK
+
+puts "\n................. examples of escape strings"
+puts "Tab\tTab\tTab"
+puts "This string prints out \non two lines"
+puts "This string comes out\
+on a single line"
+
+#lesson 4
+
+set Z Albany
+set Z_LABEL "The Capitol of New York is: "
+
+puts "\n................. examples of differences between  \" and \{"
+puts "$Z_LABEL $Z"
+puts {$Z_LABEL $Z}
+
+puts "\n....... examples of differences in nesting \{ and \" "
+puts "$Z_LABEL {$Z}"
+puts {Who said, "What this country needs is a good $0.05 cigar!"?}
+
+puts "\n................. examples of escape strings"
+puts {There are no substitutions done within braces \n \r \x0a \f \v}
+puts {But, the escaped newline at the end of a\
+string is still evaluated as a space}
+
+#lesson 5
+
+set x abc
+puts "A simple substitution: $x\n"
+
+set y [set x "def"]
+puts "Remember that set returns the new value of the variable: X: $x Y: $y\n"
+
+set z {[set x "This is a string within quotes within braces"]}
+puts "Note the curly braces: $z\n"
+
+set a "[set x {This is a string within braces within quotes}]"
+puts "See how the set is executed: $a"
+puts "\$x is: $x\n"
+
+set b "\[set y {This is a string within braces within quotes}]"
+# Note the \ escapes the bracket, and must be doubled to be a
+# literal character in double quotes
+puts "Note the \\ escapes the bracket:\n \$b is: $b"
+puts "\$y is: $y"
+
+#lesson 6
+
+# In the first example, the code contained in the user-supplied input is evaluated, whereas in the second the braces prevent this potential danger. As a general rule, always surround expressions with braces, whether using expr directly or some other command that takes an expression (such as if or while).
+
+#lesson 7
+
+puts "\n................. examples of escape strings"
+puts "https://www-user.tu-chemnitz.de/~hot/tcl_tk/"
+puts "set a 1\\ 2"
+set a 1\ 2
+puts "\$a"
+puts $a
+
+puts "set a { a { b c } d }"
+puts "puts \$a"
+set a { a { b c } d }
+puts $a
