@@ -41,6 +41,8 @@ xfce4-terminal --hold --title=battery     -e "out/cop -s b -bw -bcc $3 -t" &
 # -s d:     stand-alone display process.
 # -dcc $4:  number of the display->controller generator cycles.
 # -t:       the diplay program prints some status information.
-xfce4-terminal --hold --title=display     -e "out/cop -s d -dcc $4 -t" &
-
+if [ "$4" != "no_display" ]; then
+    xfce4-terminal --hold --title=display -e "out/cop -s d -dcc $4 -t" &
+fi
+   
 # cop_prototype.sh

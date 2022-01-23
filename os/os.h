@@ -283,5 +283,6 @@ void os_bclose(int ep_id);
 int os_bread(int ep_id, char *buf, int count);
 int os_bwrite(int ep_id, char *buf, int cont);
 int os_buffered_out(int ep_id);
+int os_bwritable(int ep_id);
 
 #endif /* __os_h__ */

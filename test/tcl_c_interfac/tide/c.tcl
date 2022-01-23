@@ -1,8 +1,12 @@
 #!/usr/bin/tclsh
 
-# cock - Cable Controller Knob
+# SPDX-License-Identifier: GPL-2.0
 
-# # Load dynmically the van OS into the statically-linked interpreter.
+# cock - Cable Controller Knob
+#
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+
+# Load dynmically the van OS into the statically-linked interpreter.
 # load ../../../lib/libvan[info sharedlibextension]
 
 # Welcoming.
@@ -14,21 +18,51 @@ set c [cable display]
 # Trace the displace entry point name.
 puts "Cable access name: $c"
 
-# Read all controller messages.
-while { 1 } {
-    # Read a message from the display input queue of the display-controller cable.
-    set msg [read $c]
+# Initialize the message counter.
+set i 0
 
-    # Trace the received message.
-    puts $msg
+# Receive or send controller messages.
+set busy 1
+while { $busy == 1 } {
+    # Read a message from the display input queue of the display-controller cable.
+    set n [gets $c msg]
+
+    # Test the message length.
+    if { $n < 1} {
+	continue
+    }
+
+    # Trace the input message.
+    puts "D> rcvd: \[m=\"$msg\", l=$n\]"
 
     # Analyze the message contents.
-    if { $msg == "That's it." } {
-	break
+    if { $msg == "DONE" } {
+	set busy 0
+    } else {
+	# Test the input message.
+	if { $msg != $i } {
+	    error "input error: see trace"
+	}
+    }
+    
+    # Wait for the free message buffer.
+    set free 0
+    while { $n > $free } {
+	# Get the size of the next free message buffer.
+	set free [fconfigure $c -writable]
     }
     
     # Get back the message to the controller.
-#    puts $c $msg
+    puts $c $msg
+
+    # Send the message without buffering.
+    flush $c
+    
+    # Trace the output message.
+    puts "D> sent: \[m=\"$msg\", l=$n, f=$free\]"
+
+    # Increment the message counter.
+    incr i
 }
 
 # Pull out the display plug.

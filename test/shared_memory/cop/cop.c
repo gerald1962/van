@@ -43,6 +43,7 @@
  * cop_ep_t - state of a cable endpoint
  *
  * @alone:     if 1, start cop as ctrl, batt or disp program.
+ * @exclude:   if 1, exclude the cop component.
  * @name:      name of the cable endpoint.
  * @tread:     pointer to the device thread.
  * @dev_id:    device id.
@@ -58,6 +59,7 @@
  **/
 typedef struct {
 	int    alone;
+	int    exclude;
 	char  *name;
 	void  *thread;
 	int    dev_id;
@@ -678,7 +680,7 @@ static void cop_cleanup(void)
 	c = &cop_data;
 	
 	/* Display. */
-	if (! c->distributed || c->n_disp.alone)
+	if (! c->n_disp.exclude && (! c->distributed || c->n_disp.alone))
 		cop_disp_cleanup(&c->n_disp);
 
 	/* Battery. */
@@ -754,7 +756,7 @@ static void cop_display_init(struct cop_data_s *c)
 	disp = &c->n_disp;
 
 	/* Test the program configuration. */
-	if (c->distributed && ! disp->alone) {
+	if (disp->exclude || (c->distributed && ! disp->alone)) {
 		/* Resume the main process. */
 		cop_resume(&disp->rd_done);
 		cop_resume(&disp->wr_done);
@@ -978,6 +980,44 @@ static void cop_standalone_conf(struct cop_data_s *c, char *string)
 }
 
 /**
+ * cop_exclude() - exclude a cop program.
+ *
+ * @c:       pointer to the cop state.
+ * @string:  pointer to the gotten string.
+ *
+ * Return:	None.
+ **/
+static void cop_exclude(struct cop_data_s *c, char *string)
+{
+	int len;
+	
+	/* Entry condition. */
+	if (string == NULL) {
+		cop_usage();
+		exit(1);
+	}
+
+	/* Formal test of the -e option argument. */
+	len = os_strlen(string);
+	if (len != 1) {
+		cop_usage();
+		exit(1);
+	}
+
+	/* Parse the -e argument. */
+	switch (*string) {
+	case 'd':
+		/* Exclude the cop display program. */
+		c->n_disp.exclude = 1;
+		break;
+	default:
+		cop_usage();
+		exit(1);
+		break;
+	}
+}
+
+/**
  * cop_usage() - provide information aboute the cop configuration.
  *
  * Return:	None.
@@ -1018,6 +1058,8 @@ static void cop_usage(void)
 	printf("          c  controller\n");
 	printf("          b  battery\n");
 	printf("          d  display\n");
+	printf("  -e x    exclude a program: substitue x with:\n");
+	printf("          d  display\n");
 	
 	printf("\nDefault settings:\n");
 	printf("  Distributed:              %s\n", c->distributed ? "yes" : "no");
@@ -1032,6 +1074,9 @@ static void cop_usage(void)
 	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
 	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
+	printf("  Exclude the ctrl program: %s\n", cb->exclude ? "yes" : "no");
+	printf("  Exclude the batt program: %s\n", nb->exclude ? "yes" : "no");
+	printf("  Exclude the disp program: %s\n", nd->exclude ? "yes" : "no");
 }
 
 /*============================================================================
@@ -1089,6 +1134,10 @@ int main(int argc, char *argv[])
 		case 'c':
 			/* Switch on the clock trace. */
 			c->clock_trace = 1;
+			break;
+		case 'e':
+			/* Exclude a cop program. */
+			cop_exclude(c, optarg);
 			break;
 		case 'h':
 			/* Support the user. */
@@ -1156,6 +1205,9 @@ int main(int argc, char *argv[])
 	printf("  Stand-alone ctrl program: %s\n", cb->alone   ? "yes" : "no");
 	printf("  Stand-alone batt program: %s\n", nb->alone   ? "yes" : "no");
 	printf("  Stand-alone disp program: %s\n", nd->alone   ? "yes" : "no");
+	printf("  Exclude the ctrl program: %s\n", cb->exclude ? "yes" : "no");
+	printf("  Exclude the batt program: %s\n", nb->exclude ? "yes" : "no");
+	printf("  Exclude the disp program: %s\n", nd->exclude ? "yes" : "no");
 
 	printf("\n%s executed successfully\n", P);
 			

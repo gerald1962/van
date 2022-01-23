@@ -65,42 +65,6 @@ static struct tcl_cable_s {
  **/
 static void tcl_watchProc(ClientData instanceData, int mask)
 {
-#if 0
-	/* XXX */
-	struct tcl_cable_s *t;
-	
-	printf("%s: ...\n", F);
-
-	/* Decode the instance data. */
-	t = instanceData;
-
-	/* Decode the mask. */
-	if (!(mask & TCL_READABLE)) {
-		/* Analyze the state of the input interface... see Tcl:
-		   proc msg_get {chan} {
-		       if {![eof $chan]} {
-		           puts "msg_get ..."
-		       }
-		   }
-		   fileevent $c_id readable [list msg_get $c_id]
-		 */
-		Tcl_NotifyChannel(t->tcl_chn, TCL_READABLE);
-	}
-	else if (!(mask & TCL_WRITABLE)) {
-		/* Analyze the state of the output interface... see Tcl:
-		   proc msg_put {chan} {
-		       if {![eof $chan]} {
-		           gets "msg_put ..."
-		       }
-		   }
-		   fileevent $c_id writable [list msg_put $c_id]
-		*/
-		Tcl_NotifyChannel(t->tcl_chn, TCL_WRITABLE);
-	}
-	else {
-		/* Ignore event TCL_EXCEPTION event. */
-	}
-#endif
 }
 
 /**
@@ -123,29 +87,29 @@ static void tcl_watchProc(ClientData instanceData, int mask)
 static int tcl_getOptionProc(ClientData instanceData, Tcl_Interp *interp,
 			     CONST char *optionName, Tcl_DString *optionValue)
 {
-	/* XXX */
-//	struct tcl_cable_s *t;
-	/* XXX */
-	int rv = 1;
+	struct tcl_cable_s *t;
+	char  buf[8];
+	int rv, len;
 	
 	/* Entry condition. */
 	OS_TRAP_IF(instanceData == NULL || interp == NULL ||
 		   optionName == NULL || optionValue == NULL);
 	
-	/* Decode the instance data. */
-//	t = instanceData;
-	
 	/* Test the option name. */
-	if (os_strcmp(optionName, "-writable"))
+	if (os_strcmp(optionName, "-writable") != 0)
 		return TCL_ERROR;
 
-	/* XXX */
-	/* Test the state of the cable output queue. */
-	// rv = os_bwritable(t->cid);
-	if (rv)
-		Tcl_DStringAppend(optionValue, "1", 1);
-	else
-		Tcl_DStringAppend(optionValue, "0", 1);
+	/* Decode the instance data. */
+	t = instanceData;
+	
+	/* Get the next free message buffer. */
+	rv = os_bwritable(t->cid);
+
+	/* Convert the buffer size. */
+	len = snprintf(buf, 8, "%d", rv);
+	
+	/* Save the return value. */
+	Tcl_DStringAppend(optionValue, buf, len);
 	
 	return  TCL_OK;
 }

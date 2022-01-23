@@ -22,7 +22,8 @@ puts "Cable access name: $c"
 set i 0
 
 # Receive or send controller messages.
-while { 1 } {
+set busy 1
+while { $busy == 1 } {
     # Read a message from the display input queue of the display-controller cable.
     set n [gets $c msg]
 
@@ -35,13 +36,20 @@ while { 1 } {
     puts "D> rcvd: \[m=\"$msg\", l=$n\]"
 
     # Analyze the message contents.
-    if { $msg == "That's it." } {
-	break
+    if { $msg == "DONE" } {
+	set busy 0
+    } else {
+	# Test the input message.
+	if { $msg != $i } {
+	    error "input error: see trace"
+	}
     }
-
-    # Test the input message.
-    if { $msg != $i } {
-	error "input error: see trace"
+    
+    # Wait for the free message buffer.
+    set free 0
+    while { $n > $free } {
+	# Get the size of the next free message buffer.
+	set free [fconfigure $c -writable]
     }
     
     # Get back the message to the controller.
@@ -49,18 +57,9 @@ while { 1 } {
 
     # Send the message without buffering.
     flush $c
-
-    # Get the status of the cable output queue.
-    set ostat [fconfigure $c -writable]
-    puts "D> o-status=$ostat"
-
-    # Test the status of the cable output queue.
-    if { $ostat != 1 } {
-	error "output error: see trace"
-    }
     
     # Trace the output message.
-    puts "D> sent: \[m=\"$msg\", l=$n\]"
+    puts "D> sent: \[m=\"$msg\", l=$n, f=$free\]"
 
     # Increment the message counter.
     incr i

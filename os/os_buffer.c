@@ -223,8 +223,7 @@ static char *buf_q_alloc(buf_q_t *q, int size)
 	OS_TRAP_IF(size < 1 || q->lock_size > 0);
 	
         /* Test the state of the second queue buffer. */
-        if (q->_2nd_size > 0)
-        {
+        if (q->_2nd_size > 0) {
 		/* Calculate the free space of the second queue buffer. */
 		free = q->_1st_idx - q->_2nd_idx - q->_2nd_size;
 
@@ -333,11 +332,11 @@ static int buf_q_write(buf_q_t *q, char *buf, int count)
 	int rv;
 	char *dest;
 
-	/* Entry condition. */
-	OS_TRAP_IF(q->size < count);
-
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
+
+	/* Entry condition. */
+	OS_TRAP_IF(q->size < count);
 
 	/* Initialize the return value. */
 	rv = 0;
@@ -519,6 +518,54 @@ static int buf_write_cb(int c_id, char *buf, int count)
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+/**
+ * os_bwritable() - get the size of the free output message buffer.
+ * buffer.
+ *
+ * @u_id:  id of the entry point.
+ * Return:	the size of the free output message buffer.
+ **/
+int os_bwritable(int u_id)
+{
+	struct buf_data_s *b;
+	buf_q_t *q;
+	int free;
+		
+	/* Entry conditon. */
+	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
+
+	/* Map the ep id to the ep state. */
+	b = buf_data[u_id];
+
+	/* Test the ep state. */
+	OS_TRAP_IF(b == NULL);
+
+	/* Get the pointer to the output queue. */
+	q = b->out;
+
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+
+	/* Entry condition. */
+	OS_TRAP_IF(q->lock_size > 0);
+	
+        /* Test the state of the second queue buffer. */
+        if (q->_2nd_size > 0) {
+		/* Calculate the free space of the second queue buffer. */
+		free = q->_1st_idx - q->_2nd_idx - q->_2nd_size;
+        }
+        else {
+		/* Calculate the free space of the first queue buffer. */
+		free = q->size - q->_1st_idx - q->_1st_size;
+        }
+	
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+
+	return free;
+
+}
+
 /**
  * os_buffered_out() - get the fill level of the output queue buffer.
  *
