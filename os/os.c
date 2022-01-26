@@ -412,6 +412,9 @@ void os_init(int creator)
 	
 	/* Prepare the access to the entry points. */
 	os_buf_init();
+
+	/* Test the state, what you have used in any tcl/tk scripts. */
+	os_tcl_init();
 }
 
 /**
@@ -434,6 +437,7 @@ void os_exit(void)
 	os_mem_exit();
 	os_clock_exit_();
 	os_buf_exit();
+	os_tcl_exit();
 
 	/* Test the OS state. */
 	OS_TRAP_IF(p->cs_count != 0 || p->sem_count != 0 ||  p->spin_count != 0);

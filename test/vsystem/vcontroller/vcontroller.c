@@ -54,8 +54,8 @@ int main(void)
 	os_trace_button(0);
 
 	/* Create the the end point for the battery and display. */
-	b_id = os_c_open("/ctrl_batt", O_NBLOCK);
-	d_id = os_c_open("/ctrl_disp", O_NBLOCK);
+	b_id = os_c_open("/van/ctrl_batt", O_NBLOCK);
+	d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
 
 	/* Test loop. */
 	for(i = 1;; ) {

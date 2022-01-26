@@ -53,7 +53,7 @@ int main(void)
 	os_trace_button(1);
 
 	/* Create the the end point for the controller. */
-	b_id = os_c_open("/battery", O_NBLOCK);
+	b_id = os_c_open("/van/battery", O_NBLOCK);
 
 	/* Test loop. */
 	for(;;) {

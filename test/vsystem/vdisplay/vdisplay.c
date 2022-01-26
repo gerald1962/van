@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * van display.
+ * tide - Tcl Demonstrator.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -9,7 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"      /* Operating system: os_sem_create(). */
+#include "os.h"       /* Operating system: os_sem_create(). */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -26,6 +26,17 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/**
+ * tide_data - state of the Tcl demonstrator. 
+ *
+ * @my_trace:  if 1, activate the tide trace.
+ **/
+static struct tide_data_s {
+	int    my_trace;
+	Tcl_Interp  *interp;
+	
+} tide_data;
+
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
@@ -36,36 +47,41 @@
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * main() - start function of the control technology platform.
+ * main() - start function of the Tcl demonstrator.
  *
  * Return:	0 or force a software trap.
  **/
 int main(void)
 {
-	int b_id;
+	struct tide_data_s *t;
+	const char *result;
+	int rv, code;
+		
+	printf("tide - Tcl Demonstrator\n");
 	
-	printf("vdisplay\n");
-	
-	/* Prepare the battery end point. */
-	os_init(0);
+	/* Get the reference to the tide data. */
+	t = &tide_data;
 
-	/* Enable OS trace. */
-	os_trace_button(1);
+	/* Create a Tcl command interpreter. */
+	t->interp = Tcl_CreateInterp();
 
-	/* Create the the buffer end point for the controller. */
-	b_id = os_bopen("/display");
+	/* Create a van OS cabel with a display and any neighbouring lines. */
+	rv = Van_Init(t->interp);
+	OS_TRAP_IF(rv != TCL_OK);
 
-	/* Test loop. */
-	for(;;) {
-		/* Sleep some milliseconds. */
-		os_clock_msleep(100);
+	/* Read and evaluate the Tcl script. */
+	code = Tcl_EvalFile(t->interp, "c.tcl");
+	result = Tcl_GetStringResult(t->interp);
+
+	/* Aanalyze the result of the scipt execution. */
+	if (code != TCL_OK) {
+		printf("Error was: %s\n", result);
+		exit(1);
 	}
+	printf("Result was: %s\n", result);
 	
-	/* Release the display buffer point. */
-	os_bclose(b_id);
+	/* Delete a Tcl command interpreter. */
+	Tcl_DeleteInterp(t->interp);
 	
-	/* Release the OS resources. */
-	os_exit();
-	
-	return(0);
+	return (0);
 }

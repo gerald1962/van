@@ -85,7 +85,7 @@ int main(void)
 	/* Disable the user-friendly OS - FOS - trace and create the van server
 	 * device. */
 	os_trace_button(0);
-	v.dev_id = os_c_open("/ctrl_batt", 0);
+	v.dev_id = os_c_open("/van/ctrl_batt", 0);
 
 	/* Use the async. FOS I/O operations. */
 	aio.write_cb = aio_write_cb;

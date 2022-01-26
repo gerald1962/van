@@ -519,10 +519,34 @@ static int buf_write_cb(int c_id, char *buf, int count)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
+ * os_bsync() - get the fill level of the output queue buffer.
+ *
+ * @u_id:  id of the entry point.
+ *
+ * Return:	the fill level of the output queue.
+ **/
+int os_bsync(int u_id)
+{
+	struct buf_data_s *b;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
+
+	/* Map the ep id to the ep state. */
+	b = buf_data[u_id];
+
+	/* Test the ep state. */
+	OS_TRAP_IF(b == NULL);
+
+	return buf_q_buffered(b->out);
+}
+
+/**
  * os_bwritable() - get the size of the free output message buffer.
  * buffer.
  *
  * @u_id:  id of the entry point.
+ *
  * Return:	the size of the free output message buffer.
  **/
 int os_bwritable(int u_id)
@@ -564,30 +588,6 @@ int os_bwritable(int u_id)
 
 	return free;
 
-}
-
-/**
- * os_buffered_out() - get the fill level of the output queue buffer.
- *
- * @u_id:  id of the entry point.
- * @out:   if 1, take the output queue, otherwise the input queue.
- *
- * Return:	the queue fill level.
- **/
-int os_buffered_out(int u_id)
-{
-	struct buf_data_s *b;
-	
-	/* Entry conditon. */
-	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
-
-	/* Map the ep id to the ep state. */
-	b = buf_data[u_id];
-
-	/* Test the ep state. */
-	OS_TRAP_IF(b == NULL);
-
-	return buf_q_buffered(b->out);
 }
 
 /**
@@ -736,10 +736,11 @@ void os_bclose(int u_id)
  *  between controller and display e.g.
  *
  * @ep_name:  name of the entry point: "/display" ...
+ * @mode:     is not yet used.
  * 
  * Return:	the user entry point id.
  **/
-int os_bopen(const char *ep_name)
+int os_bopen(const char *ep_name, int mode)
 {
 	struct buf_data_s *b;
 	os_aio_cb_t aio;
@@ -750,7 +751,7 @@ int os_bopen(const char *ep_name)
 	os_cs_enter(&buf_list.mutex);
 
 	/* Search for the entry point name. */
-	for (n = buf_list.name; n != NULL; n++) {
+	for (n = buf_list.name; *n != NULL; n++) {
 		/* Test the entry point name. */
 		if (os_strcmp(*n, ep_name) == 0)
 			break;

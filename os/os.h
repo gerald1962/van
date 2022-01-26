@@ -17,6 +17,7 @@
 #include <unistd.h>     /* Common Unix interfaces: getopt().*/
 #include <semaphore.h>  /* Semaphore operations: sem_t. */
 #include <stdatomic.h>  /* ISO C11 Standard:  7.17  Atomics */
+#include <tcl/tcl.h>    /* Facilities of the Tcl interpreter. */
 
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
@@ -262,6 +263,8 @@ int os_c_read(int dev_id, char *buf, int count);
 int os_c_wait_init(int *list, int len);
 void os_c_wait_release(int id);
 void os_c_wait(int id);
+int os_c_writable(int id);
+int os_c_sync(int ep_id);
 
 /* Asynchronous cable I/O operations. */
 void os_c_action(int dev_id, os_aio_cb_t *cb);
@@ -278,11 +281,14 @@ void os_clock_msleep(long msec);
 void os_clock_trace(int id, int mode);
 
 /* Cable operations about I/O buffering. */
-int os_bopen(const char *ep_name);
+int os_bopen(const char *ep_name, int mode);
 void os_bclose(int ep_id);
 int os_bread(int ep_id, char *buf, int count);
-int os_bwrite(int ep_id, char *buf, int cont);
-int os_buffered_out(int ep_id);
+int os_bwrite(int ep_id, char *buf, int count);
 int os_bwritable(int ep_id);
+int os_bsync(int ep_id);
+
+/* Tcl/Tk. */
+int DLLEXPORT Van_Init(Tcl_Interp *interp);
 
 #endif /* __os_h__ */

@@ -192,7 +192,7 @@ static int cop_d_write(cop_ep_t *ep)
 	/* Test the cycle counter. */
 	if (ep->wr_count > ep->cycles) {
 		/* Get the fill level of the output buffer. */
-		n = os_buffered_out(ep->dev_id);
+		n = os_bsync(ep->dev_id);
 		if (n > 0)
 			return 1;
 
@@ -771,7 +771,7 @@ static void cop_display_init(struct cop_data_s *c)
 	
 	/* Open the display entry point with I/O buffering of the cable between
 	 * controller and display. */
-	disp->dev_id = os_bopen("/display");
+	disp->dev_id = os_bopen("/van/display", 0);
 	
 	/* Default value for the clock intervall. */
 	if (disp->interval < 1)
@@ -810,7 +810,7 @@ static void cop_battery_init(struct cop_data_s *c)
 	}
 	
 	/* Initialize the battery endpoints. */
-	cop_ep_init(batt, "n_batt", "battery", "/battery", 1);
+	cop_ep_init(batt, "n_batt", "battery", "/van/battery", 1);
 
 	/* Start the battery. */
 	os_memset(&msg, 0, sizeof(msg));	
@@ -848,8 +848,8 @@ static void cop_controller_init(struct cop_data_s *c)
 	c->c_thr = os_thread_create("controller", PRIO, Q_SIZE);
 	
 	/* Initialize the cable controller endpoints. */
-	cop_ep_init(batt, "c_batt", NULL, "/ctrl_batt", 0);
-	cop_ep_init(disp, "c_disp", NULL, "/ctrl_disp", 0);
+	cop_ep_init(batt, "c_batt", NULL, "/van/ctrl_batt", 0);
+	cop_ep_init(disp, "c_disp", NULL, "/van/ctrl_disp", 0);
 
 	/* Start the controller. */
 	os_memset(&msg, 0, sizeof(msg));	

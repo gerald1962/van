@@ -13,7 +13,7 @@ load ../../../lib/libvan[info sharedlibextension]
 puts "Cable Controller Knob"
 
 # Connect the display-controller cable.
-set c [cable display]
+set c [ cable /van/display ]
 
 # Trace the displace entry point name.
 puts "Cable access name: $c"
@@ -50,6 +50,9 @@ while { $busy == 1 } {
     while { $n > $free } {
 	# Get the size of the next free message buffer.
 	set free [fconfigure $c -writable]
+
+	# Wait a few milliseoncs
+	after 1
     }
     
     # Get back the message to the controller.
@@ -63,6 +66,16 @@ while { $busy == 1 } {
 
     # Increment the message counter.
     incr i
+}
+
+# Wait until the output queue is empty
+set n 1
+while { $n > 0 } {
+    # Get the number of the pending output bytes.
+    set n [fconfigure $c -sync]
+    
+    # Wait a few milliseoncs
+    after 1
 }
 
 # Pull out the display plug.

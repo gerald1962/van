@@ -1445,8 +1445,8 @@ static void site_usage(void)
 	printf("site - simultaneous van<->python data transfer experiments\n");
 	printf("  -h    show this usage\n");
 	printf("  -c x  cable configuration: substiute x with:\n");
-	printf("        p  van-python cable: \"/van_py\"  <-> \"/python\"\n");
-	printf("        t  van-tcl cable:    \"/van_tcl\" <-> \"/tcl\"\n");
+	printf("        p  battery cable: \"/van/ctrl_batt\" <-> \"/van/battery\"\n");
+	printf("        t  display cable: \"/van/ctrl_disp\" <-> \"/van/display\"\n");
 	printf("  -v x  van or ctr.-tech. I/O configuration: substitute x with:\n");
 	printf("        a   asynchronous read and write\n");
 	printf("        bc  blocking sync. copy read and write\n");
@@ -1623,13 +1623,13 @@ static void site_cable_conf(char *arg, cc_t *cc)
 	switch(*arg) {
 	case 'p':
 		cc->type   = CT_CTRL_BA;
-		cc->l_name = "/ctrl_batt";
-		cc->f_name = "/battery";
+		cc->l_name = "/van/ctrl_batt";
+		cc->f_name = "/van/battery";
 		break;
 	case 't':
 		cc->type   = CT_CTRL_DI;
-		cc->l_name = "/ctrl_disp";
-		cc->f_name = "/display";
+		cc->l_name = "/van/ctrl_disp";
+		cc->f_name = "/van/display";
 		break;
 	default:
 		site_usage();
@@ -1651,8 +1651,8 @@ static void site_default(void)
 	s = &site_stat;
 
 	s->cc.type     = CT_CTRL_BA;
-	s->cc.l_name   = "/ctrl_batt";
-	s->cc.f_name   = "/battery";
+	s->cc.l_name   = "/van/ctrl_batt";
+	s->cc.f_name   = "/van/battery";
 	s->c_io        = IO_SYNC_BL_COPY;
 	s->n_io        = IO_SYNC_BL_COPY;
 	s->c_wr_cycles = 0;

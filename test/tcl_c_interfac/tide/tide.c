@@ -9,11 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <tcl/tcl.h>  /* Facilities of the Tcl interpreter. */
 #include "os.h"       /* Operating system: os_sem_create(). */
-
-/* XXX */
-int DLLEXPORT Van_Init(Tcl_Interp *interp);
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -21,17 +17,9 @@ int DLLEXPORT Van_Init(Tcl_Interp *interp);
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P  "T>"  /* Prefix of the trace output. */
-
 /*============================================================================
   MACROS
   ============================================================================*/
-/* cop trace with filter. */
-#define TRACE(info_)  do { \
-		if (tide_data.my_trace) \
-			printf info_; \
-} while (0)
-
 /*============================================================================
   LOCAL TYPE DEFINITIONS
   ============================================================================*/

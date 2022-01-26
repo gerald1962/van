@@ -197,7 +197,7 @@ static int tri_d_write(tri_ep_t *ep)
 	/* Test the cycle counter. */
 	if (ep->wr_count > ep->cycles) {
 		/* Get the fill level of the output buffer. */
-		n = os_buffered_out(ep->dev_id);
+		n = os_bsync(ep->dev_id);
 		if (n > 0)
 			return 1;
 
@@ -676,7 +676,7 @@ static void tri_disp_cleanup(tri_ep_t *ep)
  **/
 static int tri_stop(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2346, 2346, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2346, 2346, 0 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -767,7 +767,7 @@ static void tri_display_init(struct tri_data_s *c)
 	
 	/* Open the display entry point with I/O buffering of the cable between
 	 * controller and display. */
-	disp->dev_id = os_bopen("/display");
+	disp->dev_id = os_bopen("/van/display", 0);
 	
 	/* Default value for the clock intervall. */
 	if (disp->interval < 1)
@@ -799,7 +799,7 @@ static void tri_battery_init(struct tri_data_s *c)
 	batt = &c->n_batt;
 	
 	/* Initialize the battery endpoint. */
-	tri_ep_init(batt, "n_batt", "battery", "/battery", 1);
+	tri_ep_init(batt, "n_batt", "battery", "/van/battery", 1);
 
 	/* Start the battery. */
 	os_memset(&msg, 0, sizeof(msg));	
@@ -828,8 +828,8 @@ static void tri_controller_init(struct tri_data_s *c)
 	c->c_thr = os_thread_create("controller", PRIO, Q_SIZE);
 	
 	/* Initialize the cable controller endpoints. */
-	tri_ep_init(batt, "c_batt", NULL, "/ctrl_batt", 0);
-	tri_ep_init(disp, "c_disp", NULL, "/ctrl_disp", 0);
+	tri_ep_init(batt, "c_batt", NULL, "/van/ctrl_batt", 0);
+	tri_ep_init(disp, "c_disp", NULL, "/van/ctrl_disp", 0);
 
 	/* Start the controller. */
 	os_memset(&msg, 0, sizeof(msg));	
@@ -869,7 +869,7 @@ static void tri_conf(struct tri_data_s *c)
  **/
 static int tri_start(void)
 {
-	// os_statistics_t expected = { 25, 28, 7, 2346, 2332, 7 };
+	// os_statistics_t expected = { 26, 28, 7, 2346, 2332, 7 };
 	struct tri_data_s *c;
 	int stat;
 

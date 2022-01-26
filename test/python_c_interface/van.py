@@ -106,7 +106,7 @@ def van_init():
     # for the communication with van.
     van.os_init(0)
     van.os_trace_button(0)
-    id = van.os_c_open(b"/battery", 0)
+    id = van.os_c_open(b"/van/battery", 0)
     return id;
 #
 

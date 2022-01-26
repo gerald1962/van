@@ -9,7 +9,7 @@ int main(void)
 	
 	os_init(0);
 	os_trace_button(0);
-	dev_id = os_c_open("/battery", 0);
+	dev_id = os_c_open("/van/battery", 0);
 
 	for(done = 0, i = 0; ! done; i++) {
 		n = os_c_read(dev_id, buf, OS_BUF_SIZE);		

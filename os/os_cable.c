@@ -33,18 +33,18 @@
 #define CAB_Q_SIZE     4  /* Data transfer queue size about shm. */
 
 /* Configuration of the controll cable endpoints . */
-#define CAB_CB_INT  "van_c_ba_int" /* Ctrl-battery interrupt simulation. */
-#define CAB_CD_INT  "van_c_di_int" /* Ctrl-display interrupt simulation. */
-#define CAB_CB_N    "/ctrl_batt"   /* Name of the battery shm device. */
-#define CAB_CD_N    "/ctrl_disp"   /* Name of the display shm device. */
-#define CAB_CB_T    "c_batt_int"   /* Name of the ctrl-batt int. handler. */
-#define CAB_CD_T    "c_disp_int"   /* Name of the ctrl-disp int. handler. */
+#define CAB_CB_INT  "van_c_ba_int"    /* Ctrl-battery interrupt simulation. */
+#define CAB_CD_INT  "van_c_di_int"    /* Ctrl-display interrupt simulation. */
+#define CAB_CB_N    "/van/ctrl_batt"  /* Name of the battery shm device. */
+#define CAB_CD_N    "/van/ctrl_disp"  /* Name of the display shm device. */
+#define CAB_CB_T    "c_batt_int"      /* Name of the ctrl-batt int. handler. */
+#define CAB_CD_T    "c_disp_int"      /* Name of the ctrl-disp int. handler. */
 
 /* Configuration of the neighbour endpoints. */
 #define CAB_BA_INT  "van_batt_int"  /* Battery interrupt simulation. */
 #define CAB_DI_INT  "van_disp_int"  /* Display interrupt simulation. */
-#define CAB_BA_N    "/battery"      /* Name of the batter shm device. */
-#define CAB_DI_N    "/display"      /* Name of the display shm device. */
+#define CAB_BA_N    "/van/battery"  /* Name of the batter shm device. */
+#define CAB_DI_N    "/van/display"  /* Name of the display shm device. */
 #define CAB_BA_T    "battery_int"   /* Name of the batery int. handler. */
 #define CAB_DI_T    "display_int"   /* Name of the display int. handler. */
 
@@ -792,6 +792,48 @@ static void cab_create(void)
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+/**
+ * os_c_sync() - get the number of the pending output bytes.
+ *
+ * @u_id:  id of the entry point.
+ *
+ * Return:	the status of the cable output wire.
+ **/
+int os_c_sync(int id)
+{
+	cab_dev_t *dev;
+	int pending_out;
+
+	/* Map the id to the device state. */
+	dev = cab_dev_get(id);
+	
+	/* Copy the state of the output buffer. */
+	pending_out = atomic_load(&dev->pending_out);
+
+	return pending_out;
+}
+
+/**
+ * os_c_writable() - get the size of the free cable output wire.
+ * buffer.
+ *
+ * @u_id:  id of the entry point.
+ * Return:	the size of the free cable output wire.
+ **/
+int os_c_writable(int id)
+{
+	cab_dev_t *dev;
+	int pending_out;
+
+	/* Map the id to the device state. */
+	dev = cab_dev_get(id);
+	
+	/* Copy the state of the output buffer. */
+	pending_out = atomic_load(&dev->pending_out);
+
+	return pending_out ? 0 : OS_BUF_SIZE;
+}
+
 /** 
  * os_c_wait() - the caller shall be suspended, until a read or write event is
  * available for the wires of a cable.

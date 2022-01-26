@@ -13,7 +13,7 @@ load ../../../lib/libvan[info sharedlibextension]
 puts "van display"
 
 # Connect the display-controller cable.
-set c [cable display]
+set c [cable /van/display]
 
 # Trace the displace entry point name.
 puts "Cable access name: $c"
