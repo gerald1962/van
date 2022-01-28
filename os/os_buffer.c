@@ -528,6 +528,7 @@ static int buf_write_cb(int c_id, char *buf, int count)
 int os_bsync(int u_id)
 {
 	struct buf_data_s *b;
+	int n;
 	
 	/* Entry conditon. */
 	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
@@ -538,7 +539,10 @@ int os_bsync(int u_id)
 	/* Test the ep state. */
 	OS_TRAP_IF(b == NULL);
 
-	return buf_q_buffered(b->out);
+	/* Save and test the fill level of the output queue. */
+	n = buf_q_buffered(b->out);
+	
+	return n;
 }
 
 /**

@@ -84,4 +84,8 @@ void tri_run(void);
 void clk_init(test_stat_t *stat);
 void clk_run(void);
 
+/* Test the Tcl/Tk driver. */
+void tic_init(test_stat_t *stat);
+void tic_run(void);
+
 #endif /* __vote_h__ */

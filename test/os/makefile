@@ -30,7 +30,8 @@ SRC_PATH  += $(TEST_PATH)
 #     Enable all compiler warnings.
 #
 # CFLAGS += --coverage -g -Wall
-CFLAGS += --coverage -g -Wall -DUSE_TCL_STUBS -ICLINC
+# CFLAGS += --coverage -g -Wall -DUSE_TCL_STUBS -ICLINC
+CFLAGS += --coverage -g -Wall -Wno-unknown-pragmas
 
 # Libraries for the linker:
 # rt
@@ -39,8 +40,8 @@ CFLAGS += --coverage -g -Wall -DUSE_TCL_STUBS -ICLINC
 # pthread
 #     The POSIX thread library
 #
-# LIBS = -lrt -lpthread
-LIBS = -lrt -lpthread -LCLLIB -ltclstub
+# LIBS = -lrt -lpthread -LCLLIB -ltclstub
+LIBS = -g -pthread -lpthread -lrt -ltcl -ldl -lm -lz
 
 # List of all sources files, like VAN OS files
 ALL_FILES =  \
@@ -49,6 +50,7 @@ ALL_FILES =  \
 	vote_but.c \
 	vote_clock.c \
 	vote_cob.c \
+	vote_tick.c \
 	vote_triad.c
 
 # List of all includes paths, like VAN OS directory

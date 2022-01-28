@@ -96,9 +96,11 @@ static struct cable_s {
  * cable_system - global state of all controller neighbours.
  *
  * @os_busy:  if 1, os_init() has already been executed.
+ * @test:     if 1, we want to determine the code coverage.
  **/
 static struct cable_system_s {
 	int  os_busy;
+	int  test;
 } cable_system;
 
 /*============================================================================
@@ -185,31 +187,6 @@ static int cab_getOptionProc(ClientData instanceData, Tcl_Interp *interp,
 	}
 
 	return TCL_ERROR;
-}
-
-/**
- * cab_setOptionProc() - called by the generic layer to set a channel type
- * specific option on a channel.
- *
- * @instanceData:  is the same as the value provided to Tcl_CreateChannel() when
- *                 the channel was created. 
- * @interp:        If an error occurs and interp is not NULL, the procedure
- *                 should store an error message in the interpreter's result.
- * @optionName:    is the name of an option to set.
- * @newValue:      is the new value for that option, as a string.
- *
- * Return:	If the option value is successfully modified to the new value,
- * the function returns TCL_OK. It should call Tcl_BadChannelOption which itself
- * returns TCL_ERROR if the optionName is unrecognized. If newValue specifies a
- * value for the option that is not supported or if a system call error occurs,
- * the function should leave an error message in the result field of interp if
- * interp is not NULL. The function should also call Tcl_SetErrno() to store an
- * appropriate POSIX error code.
- **/
-static int cab_setOptionProc(ClientData instanceData, Tcl_Interp *interp,
-			     CONST char *optionName, CONST char *newValue)
-{
-	return  TCL_ERROR;
 }
 
 /**
@@ -332,7 +309,7 @@ static int cab_closeProc(ClientData instanceData, Tcl_Interp *interp)
 	}
 
 	/* Test the OS termination condition. */
-	if (i < CABLE_COUNT)
+	if (i < CABLE_COUNT || cable_system.test)
 		return 0;
 	
 	/* Release the OS resources. */
@@ -368,7 +345,7 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
 	t->inputProc        = cab_inputProc;
 	t->outputProc       = cab_outputProc;
 	t->seekProc         = NULL;
-	t->setOptionProc    = cab_setOptionProc;
+	t->setOptionProc    = NULL;
 	t->getOptionProc    = cab_getOptionProc;
 	t->watchProc        = cab_watchProc;
 	t->getHandleProc    = NULL;
@@ -394,14 +371,14 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
 
 	/* Ensure the one time call and prepare IPC about shared memory.
 	 * Make sure, that the cable controller is running. */
-	if (! cable_system.os_busy) {
+	if (! cable_system.os_busy && ! cable_system.test) {
 		cable_system.os_busy = 1;
 		os_init(0);
+		
+		/* Deactivate the OS trace. */
+		os_trace_button(0);
 	}
 	
-	/* Deactivate the OS trace. */
-	os_trace_button(0);
-
 	/* Insert the display plug. */
 	c->van_ep_id = c->open(c->van_ep_name, 0);
 
@@ -516,8 +493,12 @@ void os_tcl_exit(void)
 /**
  * os_tcl_init() - protect the tcl entry points.
  *
+ * @test_mode:  if 1, do not invoke os_init() and os_exit().
+ *
  * Return:	None.
  **/
-void os_tcl_init(void)
+void os_tcl_init(int test_mode)
 {
+	/* Save the test mode. */
+	cable_system.test = test_mode;
 }

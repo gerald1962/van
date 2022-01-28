@@ -63,7 +63,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 6, 4, 0, 2350, 2350, 0 };
+	os_statistics_t expected = { 5, 4, 0, 2360, 2360, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -82,11 +82,11 @@ static int test_case_shutdown(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 6, 4, 0, 0, 0, 0 };
+	os_statistics_t expected = { 5, 4, 0, 0, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
-	os_init(1);
+	os_init(OS_CREATE | OS_TEST);
 
 	/* Switch off the OS trace. */
 	os_trace_button(0);
@@ -118,6 +118,9 @@ static void vote_run(void)
 
 	/* Test the van OS clock system. */
 	clk_run();
+
+	/* Test the Tcl/Tk driver. */
+	tic_run();
 
 	test_set_process(TEST_ADD(shutdown_system));
 }
@@ -219,7 +222,7 @@ int main(void)
 
 	/* Initialize the local pointer for TEST_ASSERT_EQ */
 	vote_p = &test_stat;
-	
+
 	/* Initialize the basic test system. */
 	but_init(&test_stat);
 	
@@ -231,6 +234,9 @@ int main(void)
 
 	/* Initialize the van OS clock system. */
 	clk_init(&test_stat);
+
+	/* Initialize the Tcl/Tk driver test. */
+	tic_init(&test_stat);
 
 	/* Run through all test system. */
 	vote_run();

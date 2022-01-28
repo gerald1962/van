@@ -28,6 +28,11 @@
 /* Name of the current funtion. */
 #define F  __FUNCTION__
 
+/* Bits to pass to os_init() to indicate what sorts of initial settings are of
+ * interest: */
+#define OS_CREATE  (1<<0)  /* Create the cable infrastructure. */
+#define OS_TEST    (1<<1)  /* Calculate the coverage of the van OS. */
+
 /* Support 1 MB for the standard string operations. */
 #define OS_MAX_STRING_LEN  1048576
 
@@ -202,7 +207,7 @@ typedef struct {
 void os_statistics(os_statistics_t *stat);
 
 /* Bootstrapping. */
-void os_init(int creator);
+void os_init(int mask);
 void os_exit(void);
 
 /* Trace handling. */

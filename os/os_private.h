@@ -52,7 +52,7 @@ void os_thread_init(os_conf_t *conf);
 void os_cab_init(os_conf_t *conf, int creator);
 void os_clock_init_(void);
 void os_buf_init(void);
-void os_tcl_init(void);
+void os_tcl_init(int test_mode);
 
 /* Test and free the OS resources. */
 void os_cab_ripcord(int coverage);

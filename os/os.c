@@ -378,11 +378,13 @@ void os_trace_button(int n)
  * os_init() - ensure the one time call and propagate the trace interface to the
  * submodules.
  *
- * @creator:  if 1, create the shared memory resources.
+ * @mask:  bits, to indicate what sorts of events are of interest:
+ *     OS_CREATE encoded as: (1<<1) and means: create the cable infrastructure.
+ *     OS_TEST   encoded as: (1<<2) and means: calculate the coverage of the OS.
  *
  * Return:	None.
  **/
-void os_init(int creator)
+void os_init(int mask)
 {
 	int is_init;
 	
@@ -403,9 +405,9 @@ void os_init(int creator)
 	
 	/* Initialize the thread table. */
 	os_thread_init(&os_conf);
-	
+
 	/* Install the shared memory area. */
-	os_cab_init(&os_conf, creator);
+	os_cab_init(&os_conf, mask & OS_CREATE);
 
 	/* Initialize the OS timer list. */
 	os_clock_init_();
@@ -414,7 +416,7 @@ void os_init(int creator)
 	os_buf_init();
 
 	/* Test the state, what you have used in any tcl/tk scripts. */
-	os_tcl_init();
+	os_tcl_init(mask & OS_TEST);
 }
 
 /**
