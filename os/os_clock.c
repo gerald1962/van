@@ -109,7 +109,8 @@ static void tm_handler(union sigval sv)
 	t = sv.sival_ptr;
 
 	/* Entry condition. */
-	OS_TRAP_IF(t == NULL || ! t->assigned);
+	if (t == NULL || ! t->assigned)
+		return;
 
 	/* Test the timer state. */
 	locked = atomic_load(&t->h_locked);

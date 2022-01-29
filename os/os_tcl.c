@@ -289,7 +289,7 @@ static int cab_closeProc(ClientData instanceData, Tcl_Interp *interp)
 	int i;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(instanceData == NULL || interp == NULL);
+	OS_TRAP_IF(instanceData == NULL);
 
 	/* Decode the instance data. */
 	c = instanceData;

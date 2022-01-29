@@ -64,6 +64,86 @@ static test_elem_t tic_system[] = {
   LOCAL FUNCTIONS
   ============================================================================*/
 /**
+ * tic_ctrl_read() - read a display message.
+ *
+ * @count:  current counter value.
+ * @limit:  limit of the send counter.
+ *
+ * Return:	new counter value.
+ **/
+static int tic_ctrl_read(int count, int limit)
+{
+	char buf[OS_BUF_SIZE];
+	int rv, n;
+	
+	/* Read the input from the display. */
+	rv = os_c_read(tic.id, buf, OS_BUF_SIZE);
+
+	/* Test the reply from the display. */
+	if (rv < 1)
+		return count;
+
+	/* Test the generator cycle counter. */
+	OS_TRAP_IF(count > limit);
+
+	/* Terminate the message with EOS. */
+	buf[rv] = '\0';
+			
+	/* Test the end condition of the test. */
+	if (os_strcmp(buf, "DONE") == 0)
+		return count + 1;
+			
+	/* Convert and test the received counter. */
+	n = strtol(buf, NULL, 10);
+	OS_TRAP_IF(n != count);
+
+	return count + 1;
+}
+
+/**
+ * tic_ctrl_write() - send a message to the display.
+ *
+ * @count:  current counter value.
+ * @limit:  limit of the send counter.
+ *
+ * Return:	new counter value.
+ **/
+static int tic_ctrl_write(int count, int limit)
+{
+	char buf[OS_BUF_SIZE];
+	int len, rv;
+	
+	/* Test the generator cycle counter. */
+	if (count < limit) {
+		/* Create the digit sequence. */
+		len = snprintf(buf, OS_BUF_SIZE, "%d", count);
+	}
+	else if (count == limit) {
+		/* Create the final response. */
+		len = snprintf(buf, OS_BUF_SIZE, "DONE");
+	}
+	else {
+		return count;
+	}
+
+	/* Include end of string. */
+	len++;
+
+	/* Start an attempt of transmission. */
+	rv = os_c_write(tic.id, buf, len);
+
+	/* Test the output of the send operation. */
+	if (rv < 1)
+		return count;
+
+	/* Test the send success. */
+	OS_TRAP_IF(rv != len);
+			
+	/* Increment the generator counter. */
+	return count + 1;
+}
+
+/**
  * tic_ctrl_exec() - the controller data data with the non blocking synchronous
  * operations with the display.
  *
@@ -73,8 +153,7 @@ static test_elem_t tic_system[] = {
  **/
 static void tic_ctrl_exec(os_queue_elem_t *msg)
 {
-	char buf[OS_BUF_SIZE];
-	int t_id, wr_c, rd_c, l, len, n, rv;
+	int t_id, wr_c, rd_c, l, n;
 	
 	/* Create the interval timer with a 2 millisecon period. */
 	t_id = os_clock_init("ctrl", 2);
@@ -84,71 +163,23 @@ static void tic_ctrl_exec(os_queue_elem_t *msg)
 	
 	/* The control thread analyzes or generates data from or to the
 	 * display. */
-	for (wr_c = 0, rd_c = 0, l = 42; wr_c <= l || rd_c <= l; len = 0) {
-		/* Test the generator cycle counter. */
-		if (wr_c < l) {
-			/* Create the digit sequence. */
-			len = snprintf(buf, OS_BUF_SIZE, "%d", wr_c);
-		}		
-		else if (wr_c == l) {
-			/* Create the final response. */
-			len = snprintf(buf, OS_BUF_SIZE, "DONE");
-		}
-		else {
-		}
+	for (wr_c = 0, rd_c = 0, l = 42; wr_c <= l || rd_c <= l;) {
+		/* Send a message to the display. */
+		wr_c = tic_ctrl_write(wr_c, l);
 
-		/* Test the output of the generator. */
-		if (len > 0) {
-			/* Include end of string. */
-			len++;
-
-			/* Start an attempt of transmission. */
-			rv = os_c_write(tic.id, buf, len);
-
-			/* Test the output of the send operation. */
-			if (rv > 0) {
-				/* Test the send success. */
-				OS_TRAP_IF(rv != len);
-			
-				/* Increment the generator counter. */
-				wr_c++;
-			}
-		}
-		
-		/* Read the input from the display. */
-		rv = os_c_read(tic.id, buf, OS_BUF_SIZE);
-
-		/* Test the reply from the display. */
-		if (rv > 0) {
-			/* Test the generator cycle counter. */
-			OS_TRAP_IF(rd_c > l);
-
-			/* Terminate the message with EOS. */
-			buf[rv] = '\0';
-			
-			/* Test the end condition of the test. */
-			if (os_strcmp(buf, "DONE") == 0) {
-				/* Increment the receive counter. */
-				rd_c++;
-				continue;
-			}
-			
-			/* Convert and test the received counter. */
-			n = strtol(buf, NULL, 10);
-			OS_TRAP_IF(n != rd_c);
-
-			/* Increment the receive counter. */
-			rd_c++;
-		}
+		/* Read a display message. */
+		rd_c = tic_ctrl_read(rd_c, l);
 		
 		/* Wait for the controller clock tick. */
 		n = os_clock_barrier(t_id);
 	}
 
-	/* Test the status of the output wire. */
+	/* Test the buffer status of the output wire. */
 	n = os_c_writable(tic.id);
 	OS_TRAP_IF(n < 1);
 
+	
+	/* Test the the progress of the going out message. */
 	n = os_c_sync(tic.id);
 	OS_TRAP_IF(n > 0);
 	
