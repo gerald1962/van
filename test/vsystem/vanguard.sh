@@ -10,6 +10,7 @@ sleep 0.1
 cd vdisplay; ./vdisplay.tcl &
 
 # Start the van battery program.
-cd ../vbattery; ./vbattery.tcl &
+# cd ../vbattery; ./vbattery.tcl &
+cd ..; xfce4-terminal --hold --title=vbattery -e "vbattery/out/vbattery" &
 
 # vanguard.sh
