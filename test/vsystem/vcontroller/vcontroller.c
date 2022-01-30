@@ -9,6 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include <string.h>  /* String operations. */
 #include "os.h"      /* Operating system: os_sem_create(). */
 
 /*============================================================================
@@ -28,6 +29,46 @@
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
+/**
+ * bs - controller status.
+ *
+ * @cycle:  time stamp - battery.
+ * @vlt:    voltage - battery.
+ * @crt:    current - battery.
+ **/
+
+static struct ctrl_s {
+	struct ctrl_bi_s {
+		int  cycle;
+		int  vlt;
+		int  crt;
+	} bi;
+	
+	struct ctrl_bo_s {
+		int  cycle;
+		int  button;
+	} bo;
+	
+	struct ctrl_pi_s {
+		int  cycle;
+		int  button;
+	} pi;
+	
+	struct ctrl_po_s {
+		int  cycle;
+		int  vlt;
+		int  crt;
+	} po;
+	
+	struct ctrl_s_s {
+		int  button;
+		int  vlt;
+		int  crt;
+		int  cap;
+		int  con;
+	} s;
+} ctrl;
+
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
@@ -41,9 +82,9 @@
  *
  * Return:	None.
  **/
-static void ctrl_disp_read(int id)
+static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 {
-	char buf[OS_BUF_SIZE];
+	char buf[OS_BUF_SIZE], *s;
 	int n;
 
 	/* Wait for a display signal. */
@@ -53,8 +94,25 @@ static void ctrl_disp_read(int id)
 	if (n < 1)
 		return;
 
-	/* Trace the display message. */
-	printf("%s: n=%d, buf=%s\n", P, n, buf);		
+	/* Add EOS. */
+	buf[n] = '\0';
+
+	/* Locate the button string. */
+	s = strstr(buf, "button=");
+	OS_TRAP_IF(s == NULL);
+	
+	/* Extract the button state. */
+	s += os_strlen("button=");
+
+	/* Convert and test the received button state. */
+	n = strtol(s, NULL, 10);
+	OS_TRAP_IF(n != 0 && n != 1);
+
+	/* Save the button state. */
+	pi->button = n;
+	
+	printf("%s INPUT-P %s", P, buf);		
+	printf("\n");
 }
 
 /**
@@ -65,17 +123,21 @@ static void ctrl_disp_read(int id)
  * @button:  switch on or off the battery.
  * Return:	None.
  **/
-static void ctrl_batt_write(int id, int cycle, int button)
+static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 {
 	char buf[OS_BUF_SIZE];
 	int n;
 
 	/* Define a battery signal. */
-	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::button=%d", cycle, button);
+	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::button=%d", bo->cycle, bo->button);
 
 	/* Include EOS. */
 	n++;
-	
+
+	/* Trace the message to battery. */
+	printf("%s OUTPUT-B %s", P, buf);
+	printf("\n");
+
 	/* Send the signal to the battery. */
 	os_c_write(id, buf, n);
 }
@@ -87,9 +149,9 @@ static void ctrl_batt_write(int id, int cycle, int button)
  *
  * Return:	None.
  **/
-static void ctrl_batt_read(int id)
+static void ctrl_batt_read(int id, struct ctrl_bi_s *bi)
 {
-	char buf[OS_BUF_SIZE];
+	char buf[OS_BUF_SIZE], *s, *l;
 	int n;
 	
 	n = os_c_read(id, buf, OS_BUF_SIZE);
@@ -99,7 +161,67 @@ static void ctrl_batt_read(int id)
 		return;
 
 	/* Trace the battery message. */
-	printf("%s %s\n", P, buf);		
+	printf("%s INPUT-B %s", P, buf);		
+	printf("\t");
+
+	/* Locate the cycle string. */
+	s = strstr(buf, "cycle=");
+	OS_TRAP_IF(s == NULL);
+	
+	/* Extract the cycle value. */
+	s += os_strlen("cycle=");
+
+	/* Locate the separator. */
+	l = strchr(s, ':');
+	OS_TRAP_IF(l == NULL);
+
+		/* Replace the separator with EOS. */
+	*l = '\0';
+	
+	/* Convert and test the received cycle. */
+	n = strtol(s, NULL, 10);
+
+	/* Save the cycle counter. */
+	bi->cycle = n;
+	
+	/* Replace EOS with the separator. */
+	*l = ':';
+
+	/* Locate the voltage string. */
+	s = strstr(buf, "voltage=");
+	OS_TRAP_IF(s == NULL);
+	
+	/* Extract the voltage value. */
+	s += os_strlen("voltage=");
+
+	/* Locate the separator. */
+	l = strchr(s, ':');
+	OS_TRAP_IF(l == NULL);
+
+	/* Replace the separator with EOS. */
+	*l = '\0';
+	
+	/* Convert and test the received voltage. */
+	n = strtol(s, NULL, 10);
+
+	/* Save the voltage. */
+	bi->vlt = n;
+	
+	/* Replace EOS with the separator. */
+	*l = ':';
+
+	/* Locate the current string. */
+	s = strstr(buf, "current=");
+	OS_TRAP_IF(s == NULL);
+	
+	/* Extract the current value. */
+	s += os_strlen("current=");
+
+	/* Convert and test the received current. */
+	n = strtol(s, NULL, 10);
+
+	/* Save the current. */
+	bi->crt = n;
 }
 
 /*============================================================================
@@ -112,7 +234,12 @@ static void ctrl_batt_read(int id)
  **/
 int main(void)
 {
-	int b_id, d_id, t_id, cycle, button;
+	int b_id, d_id, t_id, cycle;
+	struct ctrl_s_s *s = &ctrl.s;
+	struct ctrl_bo_s *bo = &ctrl.bo;
+	struct ctrl_bi_s *bi = &ctrl.bi;
+	struct ctrl_po_s *po = &ctrl.po;
+	struct ctrl_pi_s *pi = &ctrl.pi;
 	
 	printf("vcontroller\n");
 	
@@ -132,30 +259,38 @@ int main(void)
 	/* Start the periodic timer. */
 	os_clock_start(t_id);
 
-	/* Initialize the battery button. */
-	button = 0;
+	/* Estimate the load. */
+	s->cap = 10000 - 333;
+	s->con = 0;
 	
 	/* Test loop. */
-	for (cycle = 1;; cycle++) {
-		/* Analyze the battery output signals. */
-		ctrl_batt_read(b_id);
+	for (cycle = 0;; cycle+=250) {
 
-		/* Analyze the display output signals. */
-		ctrl_disp_read(d_id);
+		/* Get the input from the battary. */
+		ctrl_batt_read(b_id, bi);
+		s->vlt = bi->vlt;
+		s->crt = bi->crt;
 
-		/* Switch on the battery. */
-		if (cycle == 20) {
-			/* Change the battery button value. */
-			button = 1;
-		}
+		/* Get the input from display. */
+		ctrl_disp_read(d_id, pi);
+		s->button = pi->button;
 		
-		/* Send a signal to the battery. */
-		ctrl_batt_write(b_id, cycle, button);
+		/* calculate the consumption. */
+		s->con += s->vlt * s->crt * 250;
+                if (s->con >= s->cap)
+			s->button = 0; /* Switch off the battery. */
+		
+		/* Set the output to the battery. */
+		bo->cycle = cycle;
+		bo->button = s->button;
+	 	ctrl_batt_write(b_id, bo);
 
 		/* Wait for the controller clock tick. */
 		os_clock_barrier(t_id);
 	}
 
+	printf("vcontroller done \n");
+	
 	/* Release the end points. */
 	os_c_close(b_id);
 	os_c_close(d_id);

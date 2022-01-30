@@ -32,21 +32,28 @@
 /**
  * bs - battery status.
  *
- * @cycle:  time stamp from controller.
- * @but:    battery activity.
- * @vlt:    voltage.
- * @crt:    current.
- * @cap:    capacity.
- * @con:    consumption.   
+ * @cycle:  time stamp - controller
+ * @but:    battery on switch - controller
  **/
-static struct batt_s {
+static struct batt_ci_s {
 	int  cycle;
 	int  but;
+} ci = {0, 0};
+
+static struct batt_co_s {
+	int  cycle;
+	int  vlt;
+	int  crt;
+} co;
+
+static struct batt_s_s {
+	int  clock;
 	int  vlt;
 	int  crt;
 	int  cap;
 	int  con;
-} bs = { 0, 0, 1, 0, 10, 0 };
+} bs = { 100, 1, 0, 10000, 0 };
+		
 
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -61,18 +68,18 @@ static struct batt_s {
  *
  * Return:	None.
  **/
-static void batt_write(int id)
+static void batt_write(int id, struct batt_co_s *co)
 {
 	char buf[OS_BUF_SIZE];
 	int n, rv;
 
 	/* Send voltage and current to the controller. */
 	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d",
-		     bs.cycle, bs.vlt, bs.crt);
+		     co->cycle, co->vlt, co->crt);
 
 	/* Include EOS. */
 	n++;
-	
+
 	/* Send voltage and current to the controller. */
 	rv = os_c_write(id, buf, n);
 
@@ -90,19 +97,20 @@ static void batt_write(int id)
  *
  * Return:	None.
  **/
-static void batt_read(int id)
+static void batt_read(int id, struct batt_ci_s *ci)
 {
 	char buf[OS_BUF_SIZE], *s, *l;
 	int n;
-	
+
 	n = os_c_read(id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
 	if (n < 1)
 		return;
 
-	/* Trace the controller message. */
-	printf("%s %s\n", P, buf);
+	/* Trace the message from controller. */
+	printf("%s INPUT %s", P, buf);
+	printf("\n");
 
 	/* Locate the cycle string. */
 	s = strstr(buf, "cycle=");
@@ -122,7 +130,7 @@ static void batt_read(int id)
 	n = strtol(s, NULL, 10);
 
 	/* Save the cycle counter. */
-	bs.cycle = n;
+	ci->cycle = n;
 	
 	/* Replace EOS with the separator. */
 	*l = ':';
@@ -139,7 +147,7 @@ static void batt_read(int id)
 	OS_TRAP_IF(n != 0 && n != 1);
 
 	/* Save the button state. */
-	bs.but = n;
+	ci->but = n;
 }
 
 /*============================================================================
@@ -152,8 +160,8 @@ static void batt_read(int id)
  **/
 int main(void)
 {
-	int b_id, t_id;
-	
+	int b_id, t_id, cycle;
+
 	printf("vbattery\n");
 	
 	/* Prepare the battery end point. */
@@ -166,41 +174,47 @@ int main(void)
 	b_id = os_c_open("/van/battery", O_NBLOCK);
 
 	/* Create the interval timer with a 100 millisecon period. */
-	t_id = os_clock_init("batt", 100);
+	t_id = os_clock_init("batt", bs.clock);
 
 	/* Start the periodic timer. */
 	os_clock_start(t_id);
 
 	/* Test loop. */
-	for (;;) {
+	for (cycle = 0;; cycle+=bs.clock) {
 		/* Analyze the controller output signals. */
-		batt_read(b_id);
+		batt_read(b_id, &ci);
 
-		/* Test the button state. */
-		if (bs.but == 1) {
+		/* Test the on button. */
+		if (ci.but == 1) {
 			/* Change the current value. */
-			bs.crt = 1;
+			bs.crt = bs.vlt;
 			
 			/* Simulate the power consumption. */
-			bs.con += bs.vlt * bs.crt;
+			bs.con += bs.vlt * bs.crt * bs.clock;
 			
-			/* Simulate the voltage. */
+			/* Simulate the voltage collapse. */
 			if (bs.con >= bs.cap) {
 				/* Correct power consumption. */
 				bs.con = bs.cap;
 				
 				/* Voltage collaps. */
-				bs.vlt = 0;
-				bs.crt = 0;
+				bs.vlt = bs.crt = 0;
 			}
 		}
-
+		if (bs.vlt == 0)
+			printf("%s ERROR cycle=%d::battery collapsed\n", P, cycle);
+		
 		/* Send signals to the controller. */
-		batt_write(b_id);
+		co.cycle = cycle;
+		co.vlt = bs.vlt;
+		co.crt = bs.crt;
+		batt_write(b_id, &co);
 		
 		/* Wait for the battery clock tick. */
 		os_clock_barrier(t_id);
 	}
+	
+	printf("vbattery done\n");
 	
 	/* Release the battery end point. */
 	os_c_close(b_id);

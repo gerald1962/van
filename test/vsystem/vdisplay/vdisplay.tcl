@@ -62,7 +62,7 @@ proc disp_b_control {} {
     }
 
     # Inform the controller to activate the battery.
-    puts $d::ep_id "battery=1"
+    puts $d::ep_id "button=1:"
     
     # Send the message without buffering.
     flush $d::ep_id
