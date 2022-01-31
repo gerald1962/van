@@ -76,9 +76,10 @@ static struct ctrl_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /**
- * ctrl_disp_read() - analyze the display output.
+ * ctrl_disp_read() - get the input from display.
  *
  * @id:  display controller cable id.
+ * @pi:  pointer to the input from the display.
  *
  * Return:	None.
  **/
@@ -116,11 +117,11 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 }
 
 /**
- * ctrl_batt_write() - send a signal to the battery.
+ * ctrl_batt_write() - set the output to the battery.
  *
- * @id:      battery controller cable id.
- * @cycle:   time stamp.
- * @button:  switch on or off the battery.
+ * @id:  battery controller cable id.
+ * bo:   pointer to the ouput to the battery.
+ *
  * Return:	None.
  **/
 static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
@@ -143,9 +144,10 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 }
 
 /**
- * ctrl_batt_read() - analyze the battery output signals.
+ * ctrl_batt_read() - get the input from the battery.
  *
  * @id:  battery controller cable id.
+ * @bi:  pointer to the input from the battery
  *
  * Return:	None.
  **/
@@ -266,25 +268,31 @@ int main(void)
 	/* Test loop. */
 	for (cycle = 0;; cycle+=250) {
 
-		/* Get the input from the battary. */
+		/* Get the input from the battery. */
 		ctrl_batt_read(b_id, bi);
 		s->vlt = bi->vlt;
 		s->crt = bi->crt;
 
-		/* Get the input from display. */
+		/* Get the input from the display. */
 		ctrl_disp_read(d_id, pi);
 		s->button = pi->button;
 		
-		/* calculate the consumption. */
+		/* Calculate the consumption. */
 		s->con += s->vlt * s->crt * 250;
                 if (s->con >= s->cap)
 			s->button = 0; /* Switch off the battery. */
 		
 		/* Set the output to the battery. */
-		bo->cycle = cycle;
+		bo->cycle  = cycle;
 		bo->button = s->button;
 	 	ctrl_batt_write(b_id, bo);
 
+		/* Set the output to the display. */
+		// po->cycle = xxx;
+		// po->vlt   = s->vlt;
+		// po->crt   = s->crt;
+	 	// ctrl_disp_write(d_id, po);
+		
 		/* Wait for the controller clock tick. */
 		os_clock_barrier(t_id);
 	}
