@@ -76,6 +76,34 @@ static struct ctrl_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /**
+ * ctrl_disp_write() - set the output to the display.
+ *
+ * @id:  battery controller cable id.
+ * bo:   pointer to the ouput to the battery.
+ *
+ * Return:	None.
+ **/
+static void ctrl_disp_write(int id, struct ctrl_po_s* po)
+{
+	char buf[OS_BUF_SIZE];
+	int n;
+
+	/* Generate the output to the display. */
+	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d:",
+		     po->cycle, po->vlt, po->crt);
+
+	/* Include EOS. */
+	n++;
+
+	/* Trace the message to battery. */
+	printf("%s OUTPUT-D %s", P, buf);
+	printf("\n");
+
+	/* Send the signal to the display. */
+	os_c_write(id, buf, n);
+}
+
+/**
  * ctrl_disp_read() - get the input from display.
  *
  * @id:  display controller cable id.
@@ -288,10 +316,10 @@ int main(void)
 	 	ctrl_batt_write(b_id, bo);
 
 		/* Set the output to the display. */
-		// po->cycle = xxx;
-		// po->vlt   = s->vlt;
-		// po->crt   = s->crt;
-	 	// ctrl_disp_write(d_id, po);
+		po->cycle = cycle;
+		po->vlt   = s->vlt;
+		po->crt   = s->crt;
+	 	ctrl_disp_write(d_id, po);
 		
 		/* Wait for the controller clock tick. */
 		os_clock_barrier(t_id);

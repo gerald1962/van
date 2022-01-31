@@ -174,6 +174,21 @@ proc disp_b_drag { x y } {
 $d::cv bind b_move <ButtonPress-3>   { disp_b_grab %x %y }
 $d::cv bind b_move <ButtonRelease-3> { disp_b_drag %x %y }
 
+# Get the input from the controller.
+proc disp_input {} {
+    # Read a message from the display input queue of the display-controller cable.
+    set n [gets $d::ep_id buf]
+
+    # Trace the input from the controller.
+    puts "D> received: \[m=\"$buf\", l=$n\]"
+    
+    # Start the timer for the display input.
+    after 1000 disp_input
+}
+
+# Start the timer for the display input.
+disp_input
+
 # Communicate with the window manager: pass the string to the window manager for
 # use as the title for the display window.
 wm title . "vDisplay"
