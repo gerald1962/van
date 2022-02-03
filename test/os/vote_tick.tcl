@@ -13,7 +13,7 @@
 puts "Cable Controller Knob"
 
 # Connect the display-controller cable.
-set c [ cable /van/display ]
+set c [ vcable /van/display ]
 
 # Trace the displace entry point name.
 puts "Cable access name: $c"
