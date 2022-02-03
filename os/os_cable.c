@@ -405,7 +405,7 @@ static void cab_int_write(cab_dev_t *dev, cab_io_t *out)
 		}
 		return;
 	}
-
+	
 	/* Reset the write trigger. */
 	atomic_store(&dev->aio_wr_trigger, 0);
 

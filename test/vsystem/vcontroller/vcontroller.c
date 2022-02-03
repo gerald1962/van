@@ -135,11 +135,11 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 
 	/* Convert and test the received button state. */
 	n = strtol(s, NULL, 10);
-	OS_TRAP_IF(n != 0 && n != 1);
+	OS_TRAP_IF(n < 0 || n > 2);
 
 	/* Save the button state. */
 	pi->button = n;
-	
+
 	printf("%s INPUT-P %s", P, buf);		
 	printf("\n");
 }
@@ -169,6 +169,15 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 
 	/* Send the signal to the battery. */
 	os_c_write(id, buf, n);
+
+	/* Test the button state. */
+	if (bo->button == 2) {
+		/* Wait for the processing of the stop signal. */
+		do {
+			os_clock_msleep(1);
+			
+		} while (os_c_sync(id));
+	}
 }
 
 /**
@@ -294,7 +303,7 @@ int main(void)
 	s->con = 0;
 	
 	/* Test loop. */
-	for (cycle = 0;; cycle+=250) {
+	for (cycle = 0; s->button != 2; cycle+=250) {
 
 		/* Get the input from the battery. */
 		ctrl_batt_read(b_id, bi);
@@ -307,7 +316,9 @@ int main(void)
 		
 		/* Calculate the consumption. */
 		s->con += s->vlt * s->crt * 250;
-                if (s->con >= s->cap)
+
+		/* Test the battery capacitiy and the activity. */
+                if (s->con >= s->cap && s->button == 1)
 			s->button = 0; /* Switch off the battery. */
 		
 		/* Set the output to the battery. */
@@ -315,17 +326,24 @@ int main(void)
 		bo->button = s->button;
 	 	ctrl_batt_write(b_id, bo);
 
-		/* Set the output to the display. */
-		po->cycle = cycle;
-		po->vlt   = s->vlt;
-		po->crt   = s->crt;
-	 	ctrl_disp_write(d_id, po);
+		/* Test the stop button. */
+		if (s->button != 2) {
+			/* Set the output to the display. */
+			po->cycle = cycle;
+			po->vlt   = s->vlt;
+			po->crt   = s->crt;
+			ctrl_disp_write(d_id, po);
+		}
 		
 		/* Wait for the controller clock tick. */
 		os_clock_barrier(t_id);
 	}
 
+	/* Print the goodby notificaton. */
 	printf("vcontroller done \n");
+	
+	/* Stop the clock. */
+	os_clock_delete(t_id);
 	
 	/* Release the end points. */
 	os_c_close(b_id);

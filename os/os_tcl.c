@@ -90,7 +90,8 @@ static struct cable_s {
 		os_c_write,
 		os_c_writable,
 		os_c_sync,
-		0 }};
+		0 }
+};
 
 /**
  * cable_system - global state of all controller neighbours.
@@ -221,7 +222,7 @@ static int cab_outputProc(ClientData instanceData, CONST char *buf, int toWrite,
 	
 	/* Decode the instance data. */
 	c = instanceData;
-	
+
 	/* Send the message to the controller. */
 	n = c->write(c->van_ep_id, (char *) buf, toWrite);
 	OS_TRAP_IF(n < 0 && n != toWrite);
@@ -387,8 +388,8 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
 }
 	
 /**
- * cable_cmd() - invoked as a Tcl command, to establish a buffer link to
- * the cable controller.
+ * vcable_cmd() - invoked as a Tcl command, to establish a buffer link to
+ * the van cable controller.
  *
  * @cdata:   points to a data structure that describes what to do.
  * @interp:  Tcl interpreter handle.
@@ -397,8 +398,8 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
  *
  * Return:	TCL_OK.
  **/
-static int cable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
-			Tcl_Obj *const objv[])
+static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
+		      Tcl_Obj *const objv[])
 {
 	struct cable_s *c;
 	char *n;
@@ -468,9 +469,9 @@ int DLLEXPORT Van_Init(Tcl_Interp *interp)
 		return TCL_ERROR;
 	}
 
-	/* bCable shall be invoked as a Tcl command, to establish a buffer or
-	 * irq cable link to the cable controller. */
-	Tcl_CreateObjCommand(interp, "cable", cable_cmd, NULL, NULL);
+	/* vcable shall be invoked as a Tcl command, to establish a buffer or
+	 * irq cable link to the van cable controller. */
+	Tcl_CreateObjCommand(interp, "vcable", vcable_cmd, NULL, NULL);
 
 	return TCL_OK;
 }

@@ -144,7 +144,7 @@ static void batt_read(int id, struct batt_ci_s *ci)
 
 	/* Convert and test the received button state. */
 	n = strtol(s, NULL, 10);
-	OS_TRAP_IF(n != 0 && n != 1);
+	OS_TRAP_IF(n < 0 || n > 2);
 
 	/* Save the button state. */
 	ci->but = n;
@@ -180,12 +180,13 @@ int main(void)
 	os_clock_start(t_id);
 
 	/* Test loop. */
-	for (cycle = 0;; cycle+=bs.clock) {
+	for (cycle = 0; ci.but != 2; cycle+=bs.clock) {
 		/* Analyze the controller output signals. */
 		batt_read(b_id, &ci);
 
-		/* Test the on button. */
-		if (ci.but == 1) {
+		/* Test the on button state. */
+		switch (ci.but) {
+		case 1:
 			/* Change the current value. */
 			bs.crt = bs.vlt;
 			
@@ -200,7 +201,16 @@ int main(void)
 				/* Voltage collaps. */
 				bs.vlt = bs.crt = 0;
 			}
+			break;
+
+		case 2:
+			continue;
+			
+		default:
+			OS_TRAP_IF(ci.but != 0);
+			break;
 		}
+
 		if (bs.vlt == 0)
 			printf("%s ERROR cycle=%d::battery collapsed\n", P, cycle);
 		
@@ -214,7 +224,11 @@ int main(void)
 		os_clock_barrier(t_id);
 	}
 	
+	/* Print the goodby notificaton. */
 	printf("vbattery done\n");
+
+	/* Stop the clock. */
+	os_clock_delete(t_id);
 	
 	/* Release the battery end point. */
 	os_c_close(b_id);

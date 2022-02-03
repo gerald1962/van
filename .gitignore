@@ -1,0 +1,7 @@
+*~
+dep/
+obj/
+out/
+TAGS
+core
+*.so
