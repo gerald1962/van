@@ -109,7 +109,7 @@ proc disp_input_parse { buf } {
 
     # Count the elements of the controller signal.
     set ll [llength $list]
-    if { $ll != 11 } {
+    if { $ll != 15 } {
 	# Generate an error.
 	error "wrong format \"$buf\""
     }

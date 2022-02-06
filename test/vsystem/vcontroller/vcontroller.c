@@ -35,6 +35,7 @@
  * @cycle:  time stamp - battery.
  * @vlt:    voltage - battery.
  * @crt:    current - battery.
+ * @cha:    charching - battery.
  **/
 
 static struct ctrl_s {
@@ -58,6 +59,7 @@ static struct ctrl_s {
 		int  cycle;
 		int  vlt;
 		int  crt;
+		int  cha;
 	} po;
 	
 	struct ctrl_s_s {
@@ -65,7 +67,7 @@ static struct ctrl_s {
 		int  vlt;
 		int  crt;
 		int  cap;
-		int  con;
+		int  cha;
 	} s;
 } ctrl;
 
@@ -89,8 +91,8 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 	int n;
 
 	/* Generate the output to the display. */
-	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d:",
-		     po->cycle, po->vlt, po->crt);
+	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d::charging=%d:",
+		     po->cycle, po->vlt, po->crt, po->cha);
 
 	/* Include EOS. */
 	n++;
@@ -273,7 +275,7 @@ static void ctrl_batt_read(int id, struct ctrl_bi_s *bi)
  **/
 int main(void)
 {
-	int b_id, d_id, t_id, cycle;
+	int b_id, d_id, t_id, clock, cycle;
 	struct ctrl_s_s *s = &ctrl.s;
 	struct ctrl_bo_s *bo = &ctrl.bo;
 	struct ctrl_bi_s *bi = &ctrl.bi;
@@ -291,19 +293,20 @@ int main(void)
 	/* Create the the end point for the battery and display. */
 	b_id = os_c_open("/van/ctrl_batt", O_NBLOCK);
 	d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
+
+	/* Initialize the controller. */
+	s->cap = 10000;
+	s->cha = s->cap;
+	clock  = 250;
 	
 	/* Create the interval timer with x millisecond period. */
-	t_id = os_clock_init("ctrl", 250);
+	t_id = os_clock_init("ctrl", clock);
 	
 	/* Start the periodic timer. */
 	os_clock_start(t_id);
 
-	/* Estimate the load. */
-	s->cap = 10000 - 333;
-	s->con = 0;
-	
 	/* Test loop. */
-	for (cycle = 0; s->button != 2; cycle+=250) {
+	for (cycle = 0; s->button != 2; cycle += clock) {
 
 		/* Get the input from the battery. */
 		ctrl_batt_read(b_id, bi);
@@ -314,11 +317,11 @@ int main(void)
 		ctrl_disp_read(d_id, pi);
 		s->button = pi->button;
 		
-		/* Calculate the consumption. */
-		s->con += s->vlt * s->crt * 250;
+		/* Calculate the charging value: C = I * t. */
+		s->cha -= s->crt * clock;
 
 		/* Test the battery capacitiy and the activity. */
-                if (s->con >= s->cap && s->button == 1)
+                if (s->cha <= 0 && s->button == 1)
 			s->button = 0; /* Switch off the battery. */
 		
 		/* Set the output to the battery. */
@@ -332,6 +335,7 @@ int main(void)
 			po->cycle = cycle;
 			po->vlt   = s->vlt;
 			po->crt   = s->crt;
+			po->cha   = s->cha;
 			ctrl_disp_write(d_id, po);
 		}
 		
