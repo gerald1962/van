@@ -180,7 +180,7 @@ int main(void)
 	os_clock_start(t_id);
 
 	/* Test loop. */
-	for (cycle = 0; ci.but != 2; cycle+=bs.clock) {
+	for (cycle = 0; ci.but != 2; cycle += bs.clock) {
 		/* Analyze the controller output signals. */
 		batt_read(b_id, &ci);
 
@@ -195,6 +195,9 @@ int main(void)
 			
 			/* Simulate the voltage collapse. */
 			if (bs.con >= bs.cap) {
+
+				printf("%s voltage collaps\n", P);
+				
 				/* Correct power consumption. */
 				bs.con = bs.cap;
 				

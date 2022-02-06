@@ -18,25 +18,25 @@ load ../../../lib/libvan[info sharedlibextension]
 #
 # vd - describes the display state in the van system.
 #
-# ep_id:    display end point of the control display cable.
-# cv_id     canvas id.
-# cyc_id:   id of the cycle box.
-# c_x:      current x coordinate.
-# c_y:      current y coordinatd.
-# b_state:  if 1, the battery is active.
+# @p:        prompt of the display
+# @ep_id:    display end point of the control display cable.
+# @cv_id     canvas id.
+# @cv_w:     width of the canvas.
+# @cv_w:     height of the canvas.
+# @b_state:  if 1, the battery is active.
 namespace eval vd {
-    variable  p        "vD>"
+    variable  p        "D>"
     variable  ep_id
     variable  cv_id
-    variable  c_x
-    variable  c_y
+    variable  cv_w     600
+    variable  cv_h     400
     variable  b_state  0
 
     # bx - box ids of the canvas items.
     #
-    # cyc:  id of the cycle box.
-    # vlt:  id of the voltage box.
-    # crt:  id of the current box.
+    # @cyc:  id of the cycle box.
+    # @vlt:  id of the voltage box.
+    # @crt:  id of the current box.
     namespace eval bx {
 	variable  cyc
 	variable  vlt
@@ -60,6 +60,8 @@ namespace eval vd {
 # ============================================================================
 # disp_stop_exec{} - propagate the termination request to the controller and
 # battery.
+#
+# code:  id of the exit code.
 #
 # Return:     None.
 #
@@ -95,7 +97,12 @@ proc disp_stop_exec { code } {
     exit $code
 }
 
-# Get the input from the controller.
+# disp_input_parse{} - parse the input from the controller.
+#
+# @buf:  input signal from the controller.
+#
+# Return:     the trap information or TCL_OK.
+#
 proc disp_input_parse { buf } {
     # Match the regular expression against the controller signal.
     set list [regexp -inline -all -- {[a-z]+|=|[0-9]+|::}  $buf]
@@ -134,7 +141,7 @@ proc disp_input_parse { buf } {
     return TCL_OK
 }
 
-# Get the input from the controller.
+# disp_input{} - get the input from the controller.
 #
 # Return:     None.
 #
@@ -149,7 +156,7 @@ proc disp_input {} {
 	}
 	
 	# Trace the input from the controller.
-	puts "D> INPUT $buf"
+	puts "$vd::p INPUT $buf"
 
 	# Evaluate the input from the controller and trap exceptional returns
 	if { [ catch { disp_input_parse $buf } ] } {
@@ -267,6 +274,9 @@ proc disp_inp_boxes {} {
 
 # disp_out_exec() - update the display items and send the calculations results
 # to the controller.
+#
+# @b_state:  battery state.
+# @b_color:  color of the battery lamp.
 #
 # Return:     None.
 #
@@ -422,7 +432,7 @@ proc disp_stop {} {
 proc disp_housing {} {
     # Create and manipulate the display canvas widget.
     # All coordinates related to canvases are stored as floating-point numbers.
-    canvas .cv -width 600 -height 400 -bg gray92
+    canvas .cv -width $vd::cv_w -height $vd::cv_h -bg gray92
 
     # Save the canvas id.
     set vd::cv_id .cv
@@ -432,6 +442,9 @@ proc disp_housing {} {
 }
 
 # disp_frame{} - configure the housing frame.
+#
+# Return:     None.
+#
 proc disp_frame {} {
     # Communicate with the window manager:
 
@@ -441,11 +454,11 @@ proc disp_frame {} {
 
     # If width and height are specified, they give the minimum permissible
     # dimensions for window.
-    wm minsize . 600 400
+    wm minsize . $vd::cv_w $vd::cv_h
 
     # If width and height are specified, they give the maximum permissible
     # dimensions for window.
-    wm maxsize . 600 400
+    wm maxsize . $vd::cv_w $vd::cv_h
 }
 
 # disp_connect{} - complete the display-controller cable.
