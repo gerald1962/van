@@ -6,7 +6,7 @@
         S \                  .
           `                  .
           .                  .
-        N \                  .
+        N |                 .
 	  `                  .
 	 (A)                 .
           . . . (V) .  . . . .
@@ -21,14 +21,20 @@
 
 Einfaches Model:
 
-Die Batterie hat eine Energie von E[Watt-Sekunden]
+Die Batterie hat eine Kapazität von C[Ampere-Sekunden]
+Die Batterie hat eine Energie von E[Volt-Ampere-Sekunden]
 Sie liefert eine konstante Spannung U[Volt] solange sie noch eine Ladung hat.
 An die Batterie ist ein Verbraucher Rv[Ohm] angeschlossen.
+
+Schalter S und Notausschalter N werden vom Controller geschaltet.
+Die Eingabe geht über das Display.
+
 Der Notaus-Schalter N[0,1] wird von der Steuerung geregelt - dient dazu die Batterie auszuschalten wenn sie entladen ist.
 
-Der Nutzer bedient die Batterie über den Ein/Aus Schalter S[0,1].
-Der Verbraucher entnimmt der Batterie Energie wenn S = 1.
-Die vebrauchte Energie berechnet sich aus der entnommen Leistung L[Watt] über die Zeit t[Sekunde] mit
+Der Nutzer bedient die Batterie über den Ein/Aus Schalter S[0,1] oder Not-Ausschalter.
+
+Der Verbraucher entnimmt der Batterie Energie wenn S = 1 und N = 0.
+Die vebrauchte Energie berechnet sich aus der entnommen Leistung P[Volt Ampere] über die Zeit t[Sekunde] mit
 
 L = U*I = U*U/R
 V = U*U/R*t
@@ -37,7 +43,26 @@ Simulation der Batterie: Wenn S = 1 und N = 1 wird Energie verbraucht über die 
 
 Diagramme:
 
-Ladezustand
+Nominalspannung:
+U := 1 V
+
+Kapazität: (Maximale Ladung)
+C := I * t = 100 As
+
+Leistung:
+
+P := R * I * I
+
+Energie: (gepeichert)
+
+Mit U = R * I gilt
+
+E := P * t = U * I * t Volt Ampere Sekunden.
+
+Wir nehmen eine konstant bleibende Spannung bei geladener Batterie an.
+Bei vollständiger Entladung bricht die Spannung zusammen auf 0 Volt. 
+
+Verbrauch:
 
 E[WS]||
    .....
