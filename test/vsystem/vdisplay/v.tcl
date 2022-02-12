@@ -124,6 +124,129 @@ proc disp_charging { t } {
     after $vd::gw::delay disp_charging $t
 }
 
+# disp_stop_exec{} - propagate the termination request to the controller and
+# battery.
+#
+# code:  id of the exit code.
+#
+# Return:     None.
+#
+proc disp_stop_exec { code } {
+    # Send the stop signal to the controller.
+    puts $vd::ep_id "button=2:"
+    
+    # Send the signal without buffering.
+    flush $vd::ep_id
+    
+    # Wait until the output queue is empty
+    set n 1
+    while { $n > 0 } {
+	# Get the number of the pending output bytes.
+	set n [fconfigure $vd::ep_id -sync]
+
+ 	# Wait a few milliseconds
+	after 1
+    }
+
+    # Print the goodby notificaton.
+    puts "vdisplay done"
+    
+    # Pull out the display plug.
+    close $vd::ep_id
+
+    # This command deletes the windows given by the window arguments, plus all
+    # of their descendants. If a window “.” is deleted then all windows will be
+    # destroyed and the application will (normally) exit. 
+    destroy .
+    
+    # End the van system display application.
+    exit $code
+}
+
+# disp_input{} - parse the input from the controller.
+#
+# @buf:  input signal from the controller.
+#
+# Return:     the trap information or TCL_OK.
+#
+proc disp_input { buf } {
+    # Match the regular expression against the controller signal.
+    set list [regexp -inline -all -- {[a-z]+|=|[0-9]+|::}  $buf]
+
+    # Count the elements of the controller signal.
+    set ll [llength $list]
+    if { $ll != 15 } {
+	# Generate an error.
+	error "wrong format \"$buf\""
+    }
+    
+    # Retrive and test the cycle element.
+    if { [lindex $list 0] != "cycle" } {
+	error "missing \"cycle\" in \"$buf\""
+    }
+
+    # Save the counter value.
+    set vd::ci::cyc  [lindex $list 2]
+    
+    # Retrive and test the voltage element.
+    if { [lindex $list 4] != "voltage" } {
+	error "missing \"voltage\" in \"$buf\""
+    }
+    
+    # Save the voltage value.
+    set vd::ci::vlt  [lindex $list 6]
+    
+    # Retrive and test the current element.
+    if { [lindex $list 8] != "current" } {
+	error "missing \"current\" in \"$buf\""
+    }
+    
+    # Save the current value.
+    set vd::ci::crt  [lindex $list 10]
+    
+    return TCL_OK
+}
+
+# disp_input{} - get the input from the controller.
+#
+# Return:     None.
+#
+proc disp_input {} {
+    # Read all signal from the display input queue of the display-controller cable.
+    while { 1 } {
+	set n [gets $vd::ep_id buf]
+
+	# Test the length of the input signal.
+	if { $n < 1 } {
+	    break
+	}
+	
+	# Trace the input from the controller.
+	puts "$vd::p INPUT $buf"
+
+	# Evaluate the input from the controller and trap exceptional returns
+	if { [ catch { disp_input $buf } ] } {
+	    set info $::errorInfo
+	    puts "Invalid input from the controller: $info"
+
+	    # Propagate the termination request to the controller and battery.
+	    disp_stop_exec 1
+	}
+
+	# Update the cycle counter.
+	$vd::cv_id itemconfigure $vd::bx::cyc -text $vd::ci::cyc
+	
+	# Update the voltage value.
+	$vd::cv_id itemconfigure $vd::bx::vlt -text $vd::ci::vlt
+	
+	# Update the current value.
+	$vd::cv_id itemconfigure $vd::bx::crt -text $vd::ci::crt
+    }
+    
+    # Start the timer for the display input.
+    after 1000 disp_input
+}
+
 # disp_boxes{} - create the display input boxes.
 #
 # Return:     None.
@@ -216,6 +339,61 @@ proc disp_boxes {} {
     set x1  [expr 20 + $dx]
     set y1  [expr 20 + $dy]
     set vd::bx::crt  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+}
+
+# disp_batt_exec() - update the display items and send the calculations results
+# to the controller.
+#
+# @b_state:  battery state.
+# @b_color:  color of the battery lamp.
+#
+# Return:     None.
+#
+proc disp_batt_exec { b_state b_color } {
+    # Find all items with the "b_button" tags.
+    set list [$vd::cv_id find withtag b_light]
+
+    # Color all items yellow with the "b" tags.
+    foreach item $list {
+	# This command is similar to the configure widget command except that it
+	# modifies item-specific options for the items given by tagOrId.
+	$vd::cv_id itemconfigure $item -fill $b_color
+    }
+
+    # Update the battery state.
+    set vd::b_state  $b_state
+    
+    # Inform the controller to activate the battery or to initiate the shutdown
+    # procedure.
+    puts $vd::ep_id "button=$vd::b_state:"
+    
+    # Send the signal without buffering.
+    flush $vd::ep_id
+}
+
+# disp_batt_calc() - calculate the item display state and the output to the
+# controller.
+#
+# Return:     None.
+#
+proc disp_batt_calc {} {
+    # Evaluate the battery state.
+    switch $vd::b_state {
+	0        {
+	    # Update the battery state.
+	    disp_batt_exec 1 yellow 
+	}
+	
+	1        {
+	    # Update the battery state.
+	    disp_batt_exec 0 gray64
+	}
+	
+	default  {
+	    # After shutdown there is nothing more to do.
+	}
+    }
+    
 }
 
 # disp_batt{} - create the battery control button.
@@ -418,7 +596,7 @@ proc disp_connect {} {
 #
 proc main {} {
     # Complete the display-controller cable.
-    # disp_connect
+    disp_connect
 
     # Configure the main widget.
     disp_wm
@@ -439,7 +617,7 @@ proc main {} {
     disp_boxes
 
     # Start the timer for the display input from the controller.
-    # disp_input
+    disp_input
 }
 
 # Main process of the van display.

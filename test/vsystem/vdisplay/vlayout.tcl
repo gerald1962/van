@@ -10,14 +10,14 @@ wm title . "vLayout"
 
 # If width and height are specified, they give the minimum permissible
 # dimensions for window.
-wm minsize . 1100  400
+wm minsize . 1200  400
 
 # If width and height are specified, they give the maximum permissible
 # dimensions for window.
-wm maxsize . 1100  400
+wm maxsize . 1200  400
 
 # Create and manipulate the container widget for the switches.
-frame .sf -background gray92   -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 150 -height 400
+frame .sf -background gray92   -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 250 -height 400
 
 # Create and manipulate the container widget for the graphs.
 frame .gf -background gray7 -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 750 -height 400
