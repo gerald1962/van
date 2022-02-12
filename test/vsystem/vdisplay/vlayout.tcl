@@ -17,14 +17,14 @@ wm minsize . 1100  400
 wm maxsize . 1100  400
 
 # Create and manipulate the container widget for the switches.
-frame .sf -background red   -relief ridge -borderwidth 8 -padx 10 -pady 10 -width 150 -height 400
+frame .sf -background gray92   -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 150 -height 400
 
 # Create and manipulate the container widget for the graphs.
-frame .gf -background green -relief ridge -borderwidth 8 -padx 10 -pady 10 -width 750 -height 400
+frame .gf -background gray7 -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 750 -height 400
 
 # Create and manipulate the container widget for the boxes to display the
 # current input from the controller.
-frame .bf -background blue  -relief ridge -borderwidth 8 -padx 10 -pady 10 -width 200 -height 400
+frame .bf -background gray92  -relief ridge -borderwidth 4 -padx 10 -pady 10 -width 200 -height 400
 
 # -side side
 # Specifies which side of the container the content will be packed against. Must
