@@ -6,7 +6,7 @@
 xfce4-terminal --hold --title=vcontroller -e "vcontroller/out/vcontroller" &
 
 # Start the van display program.
-sleep 0.1
+sleep 0.500
 cd vdisplay; ./vdisplay.tcl &
 
 # Start the van battery program.
