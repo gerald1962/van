@@ -186,7 +186,16 @@ int main(void)
 
 		/* Test the on button state. */
 		switch (ci.but) {
+		case 0:
+			/* Disconnect the battery. */
+			
+			/* Change the current value. */
+			bs.crt = 0;
+			break;
+			
 		case 1:
+			/* Power on the battery. */
+			
 			/* Change the current value. */
 			bs.crt = bs.vlt;
 			
@@ -205,10 +214,10 @@ int main(void)
 				bs.vlt = bs.crt = 0;
 			}
 			break;
-
-		case 2:
-			continue;
 			
+		case 2:
+			/* Shut down the van system. */
+			continue;			
 		default:
 			OS_TRAP_IF(ci.but != 0);
 			break;

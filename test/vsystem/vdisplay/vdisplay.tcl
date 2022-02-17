@@ -26,15 +26,16 @@ load ../../../lib/libvan[info sharedlibextension]
 # @wm_w:     width of the main widget.
 # @wm_h:     height of the main widget.
 # @sw:       button widget for the actuators.
-# @gw:       widget for the graphs.
+# @cw:       widget for the battery charge graph.
+# @gw:       widget for any graph.
 # @bw:       box widget for the sensors.
 #
 # @b_state:  if 1, the battery is active.
 namespace eval vd {
-    variable  p        "D>"
+    variable  p      "D>"
     variable  ep_id
-    variable  wm_w    1400
-    variable  wm_h    800
+    variable  wm_w   1400
+    variable  wm_h   800
 
     # sw - button widget for the actuators.
     #
@@ -51,19 +52,28 @@ namespace eval vd {
 
     # cw - capacity widget.
     #
-    # @f:  frame widget id.
-    # @c:  canvas id.
-    # @w:  width of the frame widget and canvas.
-    # @w:  height of the frame widget and canvas.
-    # @p:  id of the coordinate system for the charge graph.
-    # @s:  second counter
+    # @f:      frame widget id.
+    # @c:      canvas id.
+    # @w:      width of the frame widget and canvas.
+    # @w:      height of the frame widget and canvas.
+    # @p:      id of the coordinate system for the charge graph.
+    # @s:      second counter
+    # @x_min:  current start point on the x-time-axis.
+    # @x_max:  current end point on the x-time-axis.
+    # @x_l:    list of the x coordinates.
+    # @y_l:    list of the x coordinates.
+    # @step:  scroll steps on the x-axis. 
     namespace eval cw {
 	variable  f
 	variable  c
-	variable  w   900
-	variable  h   400
+	variable  w      900
+	variable  h      400
 	variable  p
-	variable  s     0
+	variable  x_min    0
+	variable  x_max    5
+	variable  x_l     ""
+	variable  y_l     ""
+	variable  step     2
     }
 
     # gw - x graph widget.
@@ -166,15 +176,60 @@ proc disp_stop_exec { code } {
 #
 # Return:     None.
 #
-proc disp_charge_update { y } {
+proc disp_charge_update {} {
+    # Calculate the number of seconds.
+    set x  [expr $vd::ci::cyc / 1000.0 ]
+
+    # Test the current range of the x-time axis.
+    if { $x >= $vd::cw::x_max} {
+	# Calculate the new minimum value.
+	set vd::cw::x_min  [expr $vd::cw::x_min + $vd::cw::step]
+	
+	# Save the new maximum value.
+	set vd::cw::x_max  [expr $vd::cw::x_max + $vd::cw::step]
+	
+	# Set the scale parameter for the x-axis: new scale data for the axis, i.e.
+	# a 3-element list containing minimum, maximum and stepsize. Beware: Setting
+	# this option will clear all data from the plot.
+	$vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
+
+	# Count the number of the list elements.
+	set len [llength $vd::cw::x_l]
+
+	# Draw again the deleted graph period.
+	if { $len > 4 } {
+	    
+	    puts "len = $len, vd::cw::x_l = $vd::cw::x_l, vd::cw::y_l = $vd::cw::y_l"	
+
+	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
+	
+	    # Search for the new list start.
+	    set i  0
+	    foreach item $vd::cw::x_l {
+		# Test the final condition.
+		if { $i >= $vd::cw::x_min } {
+		    break
+		}
+
+		# Count the number of the elements.
+		incr i
+	    }
+
+	    # Make the list smaller.
+	    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $i]
+	    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $i]
+	}
+    }
+
+    # Extend lists with the charge graph coordinates.
+    lappend vd::cw::x_l  $x
+    lappend vd::cw::y_l  $vd::ci::cha
+
     # Add a data point to the plot.
     # Name of the data series the new point belongs to: string series (in)
     # X-coordinate of the new point: float xcrd (in)
     # Y-coordinate of the new point: float ycrd (in)
-    $vd::cw::p plot charge $vd::cw::s $y
-
-    # Increment the second counter.
-    incr vd::cw::s
+    $vd::cw::p plot charge $x $vd::ci::cha
 }
 
 # disp_input_parse{} - parse the input from the controller.
@@ -268,13 +323,13 @@ proc disp_input {} {
 	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::cha
 	
 	# Update the battery charge graph.
-	if { $vd::ci::crt > 0 } {
-	    disp_charge_update $vd::ci::cha
+	if { $vd::b_state == 1 && $vd::ci::crt > 0 } {
+	    disp_charge_update
 	}
     }
 
     # Start the timer for the display input.
-    after 1000 disp_input
+    after 100 disp_input
 }
 
 # disp_boxes{} - create the display input boxes.
@@ -407,7 +462,7 @@ proc disp_charge_draw {} {
     #
     # The command plotstyle can be used to set all manner of options.
     #
-    # configure - this subcommand allows you to set the options per chart type.
+    # Configure - this subcommand allows you to set the options per chart type.
     # scope is the name of the plot style to manipulate.
     ::Plotchart::plotstyle configure scope xyplot leftaxis   color      green
     ::Plotchart::plotstyle configure scope xyplot leftaxis   textcolor  green
@@ -433,7 +488,7 @@ proc disp_charge_draw {} {
     #                   stepsize for the x-axis, in this order.
     # list yaxis (in) - a 3-element list containing minimum, maximum and
     #                   stepsize for the y-axis, in this order.
-    set vd::cw::p [::Plotchart::createXYPlot $vd::cw::c [list 0 50 10] [list 0 12500 2500]]
+    set vd::cw::p  [::Plotchart::createXYPlot $vd::cw::c [list $vd::cw::x_min $vd::cw::x_max 1] [list 0 12500 2500]]
 
     # Set the value for one or more options regarding the drawing of data of a
     # ä specific series with the colour to be used when drawing the data series.
@@ -471,6 +526,26 @@ proc disp_batt_exec { b_state b_color } {
 	$vd::sw::c itemconfigure $item -fill $b_color
     }
 
+    # Test the current battery state.
+    if { $vd::b_state == 1 && $b_state == 0 } {
+	# Count the number of the list elements.
+	set n [llength $vd::cw::x_l]
+	incr n -1
+
+	# Test the list size.
+	if { $n > 0 } {
+	    # Delete the charge list.
+	    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $n]
+	    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $n]
+	    
+	    # set vd::cw::x_l  ""
+	    # set vd::cw::y_l  ""
+	    
+	    puts "n = $n, vd::cw::x_l = $vd::cw::x_l, vd::cw::y_l = $vd::cw::y_l"	
+	}
+	
+    }
+    
     # Update the battery state.
     set vd::b_state  $b_state
     
@@ -644,12 +719,6 @@ proc disp_frames {} {
     # pack $vd::cw::f -side left
     pack configure $vd::cw::f -anchor nw
     
-    # Shift the view in the window left or right according to number and what.
-    # Number must be an integer. If what is units, the view adjusts left or
-    # right in units of the xScrollIncrement option, if it is greater than zero,
-    # or in units of one-tenth the window's width otherwise. 
-    $vd::cw::c xview scroll $vd::cw::s unit
-
     #===========================================================================
     # x graph widget
     # ==========================================================================
