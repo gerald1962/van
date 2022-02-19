@@ -30,6 +30,19 @@
   LOCAL DATA
   ============================================================================*/
 /**
+ * bs_t - list of the battery states.
+ *
+ * @B_OFF:   disconnected battery.
+ * @B_ON:    the battery has been activated.
+ * @B_STOP:  shutown the battery system.
+ **/
+typedef enum {
+	B_OFF = 0,
+	B_ON,
+	B_STOP
+} bs_t;
+
+/**
  * bs - controller status.
  *
  * @cycle:  time stamp - battery.
@@ -46,13 +59,13 @@ static struct ctrl_s {
 	} bi;
 	
 	struct ctrl_bo_s {
-		int  cycle;
-		int  button;
+		int   cycle;
+		bs_t  button;
 	} bo;
 	
 	struct ctrl_pi_s {
-		int  cycle;
-		int  button;
+		int   cycle;
+		bs_t  button;
 	} pi;
 	
 	struct ctrl_po_s {
@@ -63,11 +76,11 @@ static struct ctrl_s {
 	} po;
 	
 	struct ctrl_s_s {
-		int  button;
-		int  vlt;
-		int  crt;
-		int  cap;
-		int  cha;
+		bs_t  button;
+		int   vlt;
+		int   crt;
+		int   cap;
+		int   cha;
 	} s;
 } ctrl;
 
@@ -122,11 +135,11 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	n = os_c_read(id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
-	if (n < 1)
+	if (n < 2)
 		return;
 
 	/* Add EOS. */
-	buf[n] = '\0';
+	buf[n - 1] = '\0';
 
 	/* Locate the button string. */
 	s = strstr(buf, "button=");
@@ -136,11 +149,23 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	s += os_strlen("button=");
 
 	/* Convert and test the received button state. */
-	n = strtol(s, NULL, 10);
-	OS_TRAP_IF(n < 0 || n > 2);
+	if (os_strcmp(s, "B_ON") == 0) {
+		/* Power on the battery. */
+		pi->button = B_ON;
+	}
+	else if (os_strcmp(s, "B_OFF") == 0) {
+		/* Disconnect the battery. */
+		pi->button = B_OFF;
 
-	/* Save the button state. */
-	pi->button = n;
+	}
+	else if (os_strcmp(s, "B_STOP") == 0) {
+		/* Shutdown the battery system. */
+		pi->button = B_STOP;
+	}
+	else {
+		/* Invalid battery state. */
+		OS_TRAP();
+	}
 
 	printf("%s INPUT-P %s", P, buf);		
 	printf("\n");
@@ -173,7 +198,7 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 	os_c_write(id, buf, n);
 
 	/* Test the button state. */
-	if (bo->button == 2) {
+	if (bo->button == B_STOP) {
 		/* Wait for the processing of the stop signal. */
 		do {
 			os_clock_msleep(1);
@@ -306,7 +331,7 @@ int main(void)
 	os_clock_start(t_id);
 
 	/* Test loop. */
-	for (cycle = 0; s->button != 2; cycle += clock) {
+	for (cycle = 0; s->button != B_STOP; cycle += clock) {
 
 		/* Get the input from the battery. */
 		ctrl_batt_read(b_id, bi);
@@ -321,8 +346,8 @@ int main(void)
 		s->cha -= s->crt * clock;
 
 		/* Test the battery capacitiy and the activity. */
-                if (s->cha <= 0 && s->button == 1)
-			s->button = 0; /* Switch off the battery. */
+                if (s->cha <= 0 && s->button == B_ON)
+			s->button = B_OFF; /* Switch off the battery. */
 		
 		/* Set the output to the battery. */
 		bo->cycle  = cycle;
@@ -330,7 +355,7 @@ int main(void)
 	 	ctrl_batt_write(b_id, bo);
 
 		/* Test the stop button. */
-		if (s->button != 2) {
+		if (s->button != B_STOP) {
 			/* Set the output to the display. */
 			po->cycle = cycle;
 			po->vlt   = s->vlt;

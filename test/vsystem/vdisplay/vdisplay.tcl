@@ -21,16 +21,17 @@ load ../../../lib/libvan[info sharedlibextension]
 #
 # vd - describes the display state in the van system.
 #
-# @p:        prompt of the display
-# @ep_id:    display end point of the control display cable.
-# @wm_w:     width of the main widget.
-# @wm_h:     height of the main widget.
-# @sw:       button widget for the actuators.
-# @cw:       widget for the battery charge graph.
-# @gw:       widget for any graph.
-# @bw:       box widget for the sensors.
-#
-# @b_state:  if 1, the battery is active.
+# @p:      prompt of the display
+# @ep_id:  display end point of the control display cable.
+# @wm_w:   width of the main widget forwarded to the windows manager.
+# @wm_h:   height of the main widget forwarded to the windows manager.
+# @sw:     button widget for the actuators.
+# @cw:     widget for the battery charge graph.
+# @gw:     widget for any graph.
+# @bw:     canvas coordinates for the sensor boxes.
+# @bx:     canvas ids of the sensor boxes.
+# @ci:     input from the battery controller.
+# @co:     output to the battery controller.
 namespace eval vd {
     variable  p      "D>"
     variable  ep_id
@@ -62,7 +63,7 @@ namespace eval vd {
     # @x_max:  current end point on the x-time-axis.
     # @x_l:    list of the x coordinates.
     # @y_l:    list of the x coordinates.
-    # @step:  scroll steps on the x-axis. 
+    # @x_len:  length of the x-axis in seconds.
     namespace eval cw {
 	variable  f
 	variable  c
@@ -73,7 +74,8 @@ namespace eval vd {
 	variable  x_max    5
 	variable  x_l     ""
 	variable  y_l     ""
-	variable  step     2
+	variable  x_len    5
+	variable  rst      1
     }
 
     # gw - x graph widget.
@@ -102,7 +104,7 @@ namespace eval vd {
 	variable  h   800
     }
 
-    variable  b_state  0
+    variable  b_state  "B_OFF"
 
     # bx - box ids of the canvas items.
     #
@@ -128,12 +130,23 @@ namespace eval vd {
 	variable  crt
 	variable  cha
     }
+
+    # co - output to the controller.
+    #
+    # @b_ctrl:  current control settings for the battery customers: B_STOP:
+    #           shutdown, B_ON: active battery, B_OFF: inactive battery,
+    #           B_EMPTY: discharged battery.
+    # @b_rech:  recharging state of the battery.
+    namespace eval co {
+	variable b_ctrl  "B_OFF"
+	variable b_rech    
+    }
 }
 
 #===============================================================================
 # LOCAL FUNCTIONS
 # ==============================================================================
-# disp_stop_exec{} - propagate the termination request to the controller and
+ # disp_stop_exec{} - propagate the termination request to the controller and
 # battery.
 #
 # code:  id of the exit code.
@@ -142,7 +155,7 @@ namespace eval vd {
 #
 proc disp_stop_exec { code } {
     # Send the stop signal to the controller.
-    puts $vd::ep_id "button=2:"
+    puts $vd::ep_id "button=B_STOP:"
     
     # Send the signal without buffering.
     flush $vd::ep_id
@@ -180,14 +193,41 @@ proc disp_charge_update {} {
     # Calculate the number of seconds.
     set x  [expr $vd::ci::cyc / 1000.0 ]
 
+    # Test the restart condition.
+    if { $vd::cw::rst == 1 } {
+	# Reset the restart condition.
+	set vd::cw::rst  0
+	
+	# If arg is an integer value of the same width as the machine word, returns
+	# arg, otherwise converts arg to an integer.
+	set x_i  [expr { int($x)} ]
+
+	# Test the current start of the x-axis.
+	if { $x_i > $vd::cw::x_min } {
+	    # Calculate the ininitial and final value of the x-axis.
+	    set vd::cw::x_min  $x_i
+	    set vd::cw::x_max  [expr { $vd::cw::x_min + $vd::cw::x_len }]
+	}
+
+	# Shift the x-axis.
+	$vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
+	
+	# Count the number of the list elements.
+	set len [llength $vd::cw::x_l]
+	
+	# Test the length of the coordinate list.
+	if { $len > 4 } {
+	    # Draw again the deleted graph period.
+	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
+	}
+    }
+    
     # Test the current range of the x-time axis.
-    if { $x >= $vd::cw::x_max} {
-	# Calculate the new minimum value.
-	set vd::cw::x_min  [expr $vd::cw::x_min + $vd::cw::step]
-	
-	# Save the new maximum value.
-	set vd::cw::x_max  [expr $vd::cw::x_max + $vd::cw::step]
-	
+    if { $x >= $vd::cw::x_max } {
+	# Calculate the ininitial and final value of the x-axis.
+	incr vd::cw::x_min
+	incr vd::cw::x_max
+
 	# Set the scale parameter for the x-axis: new scale data for the axis, i.e.
 	# a 3-element list containing minimum, maximum and stepsize. Beware: Setting
 	# this option will clear all data from the plot.
@@ -196,18 +236,16 @@ proc disp_charge_update {} {
 	# Count the number of the list elements.
 	set len [llength $vd::cw::x_l]
 
-	# Draw again the deleted graph period.
+	# Test the length of the coordinate list.
 	if { $len > 4 } {
-	    
-	    puts "len = $len, vd::cw::x_l = $vd::cw::x_l, vd::cw::y_l = $vd::cw::y_l"	
-
+	    # Draw again the deleted graph period.
 	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
 	
 	    # Search for the new list start.
 	    set i  0
 	    foreach item $vd::cw::x_l {
 		# Test the final condition.
-		if { $i >= $vd::cw::x_min } {
+		if { $item >= $vd::cw::x_min } {
 		    break
 		}
 
@@ -215,9 +253,11 @@ proc disp_charge_update {} {
 		incr i
 	    }
 
-	    # Make the list smaller.
-	    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $i]
-	    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $i]
+	    # Make the coordinates lists smaller.
+	    if { $i > 0 } {
+		set vd::cw::x_l [lreplace $vd::cw::x_l 0 $i]
+		set vd::cw::y_l [lreplace $vd::cw::y_l 0 $i]
+	    }
 	}
     }
 
@@ -230,6 +270,57 @@ proc disp_charge_update {} {
     # X-coordinate of the new point: float xcrd (in)
     # Y-coordinate of the new point: float ycrd (in)
     $vd::cw::p plot charge $x $vd::ci::cha
+}
+
+# disp_batt_exec() - update the display items and send the calculations results
+# to the controller.
+#
+# @b_state:  battery state.
+# @b_color:  color of the battery lamp.
+#
+# Return:     None.
+#
+proc disp_batt_exec { b_state b_color } {
+    # Find all items with the "bc_light" tag.
+    set list [$vd::sw::c find withtag bc_light]
+
+    # Color all items yellow with the "b" tags.
+    foreach item $list {
+	# This command is similar to the configure widget command except that it
+	# modifies item-specific options for the items given by tagOrId.
+	$vd::sw::c itemconfigure $item -fill $b_color
+    }
+
+    # Test the current battery state.
+    if { $vd::co::b_ctrl == "B_ON" && $b_state == "B_OFF" } {
+	# The battery state changes from active to inactive.
+	
+	# Count the number of the list elements.
+	set n [llength $vd::cw::x_l]
+	incr n -1
+
+	# Test the list size.
+	if { $n > 0 } {
+	    # Delete the charge list.
+	    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $n]
+	    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $n]
+	}	
+    }
+    
+    # Update the battery state.
+    set vd::co::b_ctrl  $b_state
+
+    # Test the battery state.
+    if { $vd::co::b_ctrl == "B_EMPTY" } {
+	return
+    }
+    
+    # Inform the controller to activate the battery or to initiate the shutdown
+    # procedure.
+    puts $vd::ep_id "button=$vd::co::b_ctrl:"
+    
+    # Send the signal without buffering.
+    flush $vd::ep_id
 }
 
 # disp_input_parse{} - parse the input from the controller.
@@ -289,7 +380,7 @@ proc disp_input_parse { buf } {
 # Return:     None.
 #
 proc disp_input {} {
-    # Read all signal from the display input queue of the display-controller cable.
+    # Read all signals from the display input queue of the display-controller cable.
     while { 1 } {
 	set n [gets $vd::ep_id buf]
 
@@ -321,10 +412,26 @@ proc disp_input {} {
 
 	# Update the charging value.
 	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::cha
-	
-	# Update the battery charge graph.
-	if { $vd::b_state == 1 && $vd::ci::crt > 0 } {
-	    disp_charge_update
+
+	# Evaluate the battery state.
+	switch $vd::co::b_ctrl {
+	    "B_ON" {
+		# Update the battery charge graph.
+		if { $vd::ci::cha > 0 } {
+		    disp_charge_update
+		} else {
+		    # The battery is empty.
+		    disp_batt_exec "B_EMPTY" red
+		}
+	    }
+
+	    "B_EMPTY" {
+		# The battery button has been deactivated.
+	    }
+	    
+	    default {
+		# After shutdown there is nothing more to do.
+	    }
 	}
     }
 
@@ -338,9 +445,6 @@ proc disp_input {} {
 #
 proc disp_boxes {} {
     # Origin of the coordinates system for the boxes
-    # set ox  0
-    # set oy  100
-    
     set ox  10
     set oy  10
     
@@ -507,86 +611,109 @@ proc disp_charge_draw {} {
     $vd::cw::p ytext charge
 }
 
-# disp_batt_exec() - update the display items and send the calculations results
-# to the controller.
-#
-# @b_state:  battery state.
-# @b_color:  color of the battery lamp.
+# disp_brecharge_calc() - calculate the item display state of the battery
+# recharge button and the output to the controller.
 #
 # Return:     None.
 #
-proc disp_batt_exec { b_state b_color } {
-    # Find all items with the "b_button" tags.
-    set list [$vd::sw::c find withtag b_light]
-
-    # Color all items yellow with the "b" tags.
-    foreach item $list {
-	# This command is similar to the configure widget command except that it
-	# modifies item-specific options for the items given by tagOrId.
-	$vd::sw::c itemconfigure $item -fill $b_color
-    }
-
-    # Test the current battery state.
-    if { $vd::b_state == 1 && $b_state == 0 } {
-	# Count the number of the list elements.
-	set n [llength $vd::cw::x_l]
-	incr n -1
-
-	# Test the list size.
-	if { $n > 0 } {
-	    # Delete the charge list.
-	    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $n]
-	    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $n]
-	    
-	    # set vd::cw::x_l  ""
-	    # set vd::cw::y_l  ""
-	    
-	    puts "n = $n, vd::cw::x_l = $vd::cw::x_l, vd::cw::y_l = $vd::cw::y_l"	
-	}
-	
-    }
-    
-    # Update the battery state.
-    set vd::b_state  $b_state
-    
-    # Inform the controller to activate the battery or to initiate the shutdown
-    # procedure.
-    puts $vd::ep_id "button=$vd::b_state:"
-    
-    # Send the signal without buffering.
-    flush $vd::ep_id
+proc disp_brecharge_calc {} {
+    puts "disp_brecharge_calc: ..."
 }
 
-# disp_batt_calc() - calculate the item display state and the output to the
-# controller.
+# disp_brecharge_create{} - create the battery button for the recharging.
 #
 # Return:     None.
 #
-proc disp_batt_calc {} {
+proc disp_brecharge_create {} {
+    # Items of type oval appear as circular or oval regions on the display.
+    # The arguments x1, y1, x2, and y2 or coordList give the coordinates of two
+    # diagonally opposite corners of a rectangular region enclosing the oval.
+    set dx   70
+    set dy  300
+    set x1 [expr 20 + $dx]
+    set y1 [expr 20 + $dy]
+    set x2 [expr 90 + $dx]
+    set y2 [expr 90 + $dy]
+    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gray80 -tags [list br_button]
+    
+    # Create the body of the battery control button.
+    set dx   70
+    set dy  300
+    set x1 [expr 40 + $dx]
+    set y1 [expr 40 + $dy]
+    set x2 [expr 70 + $dx]
+    set y2 [expr 70 + $dy]
+    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 2 -fill gray64 -tags [list br_button br_light]
+
+    # Create the lamp symbol of the recharging button:
+    # west-north - south-ost line.
+    set x1 [expr 45 + $dx]
+    set y1 [expr 45 + $dy]
+    set x2 [expr 65 + $dx]
+    set y2 [expr 65 + $dy]
+    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list br_button]
+
+    # west-south - ost-north line
+    set x1 [expr 45 + $dx]
+    set y1 [expr 65 + $dy]
+    set x2 [expr 65 + $dx]
+    set y2 [expr 45 + $dy]
+    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list br_button]
+
+    # A text item displays a string of characters on the screen in one or more
+    # lines. 
+    set dx 105
+    set dy 310
+    set x1 [expr 20 + $dx]
+    set y1 [expr 20 + $dy]
+    $vd::sw::c create text $x1 $y1 -justify center -text Recharge -tags [list br_button]
+    
+    # Bind associates command with all the items given by tagOrId such that whenever
+    # the event sequence given by sequence occurs for one of the items the command
+    # will be invoked.
+    # %x, %y
+    # The x and y fields from the event. For ButtonPress, ButtonRelease, ...
+    # %x and %y indicate the position of the mouse pointer relative to the receiving
+    # window.
+    $vd::sw::c bind br_button <ButtonPress-1> { disp_brecharge_calc }
+}
+
+# disp_bcontrol_calc() - calculate the item display state of the battery control
+# button and the output to the controller.
+#
+# Return:     None.
+#
+proc disp_bcontrol_calc {} {
     # Evaluate the battery state.
-    switch $vd::b_state {
-	0        {
+    switch $vd::co::b_ctrl {
+	"B_OFF" {
+	    # Trigger for the restart actions.
+	    set vd::cw::rst  1
+	    
 	    # Update the battery state.
-	    disp_batt_exec 1 yellow 
+	    disp_batt_exec "B_ON" yellow 
 	}
 	
-	1        {
+	"B_ON" {
 	    # Update the battery state.
-	    disp_batt_exec 0 gray64
+	    disp_batt_exec "B_OFF" gray64
+	}
+
+	"B_EMPTY" {
+	    # The battery button has been deactivated.
 	}
 	
-	default  {
+	default {
 	    # After shutdown there is nothing more to do.
 	}
     }
-    
 }
 
-# disp_batt{} - create the battery control button.
+# disp_bcontrol_create{} - create the battery control button.
 #
 # Return:     None.
 #
-proc disp_batt {} {
+proc disp_bcontrol_create {} {
     # Items of type oval appear as circular or oval regions on the display.
     # The arguments x1, y1, x2, and y2 or coordList give the coordinates of two
     # diagonally opposite corners of a rectangular region enclosing the oval.
@@ -596,29 +723,31 @@ proc disp_batt {} {
     set y1 [expr 20 + $dy]
     set x2 [expr 90 + $dx]
     set y2 [expr 90 + $dy]
-    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gray80 -tags [list b_button b_move]
+    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gray80 -tags [list bc_button]
 
+    # Create the body of the battery control button.
     set dx   70
     set dy  170
     set x1 [expr 40 + $dx]
     set y1 [expr 40 + $dy]
     set x2 [expr 70 + $dx]
     set y2 [expr 70 + $dy]
-    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 2 -fill gray64 -tags [list b_button b_light b_move]
-    
-    # west-north - south-ost line
+    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 2 -fill gray64 -tags [list bc_button bc_light]
+
+    # Create the lamp symbol of the battery control button:
+    # west-north - south-ost line.
     set x1 [expr 45 + $dx]
     set y1 [expr 45 + $dy]
     set x2 [expr 65 + $dx]
     set y2 [expr 65 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list b_lamp b_move]
+    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list bc_button]
 
     # west-south - ost-north line
     set x1 [expr 45 + $dx]
     set y1 [expr 65 + $dy]
     set x2 [expr 65 + $dx]
     set y2 [expr 45 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list b_lamp b_move]
+    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list bc_button]
 
     # A text item displays a string of characters on the screen in one or more
     # lines. 
@@ -626,7 +755,7 @@ proc disp_batt {} {
     set dy 180
     set x1 [expr 20 + $dx]
     set y1 [expr 20 + $dy]
-    $vd::sw::c create text $x1 $y1 -justify center -text Battery -tags [list b_move]
+    $vd::sw::c create text $x1 $y1 -justify center -text Battery -tags [list bc_button]
 
     # Bind associates command with all the items given by tagOrId such that whenever
     # the event sequence given by sequence occurs for one of the items the command
@@ -635,15 +764,14 @@ proc disp_batt {} {
     # The x and y fields from the event. For ButtonPress, ButtonRelease, ...
     # %x and %y indicate the position of the mouse pointer relative to the receiving
     # window.
-    $vd::sw::c bind b_button <ButtonPress-1> { disp_batt_calc }
-    $vd::sw::c bind b_lamp   <ButtonPress-1> { disp_batt_calc }
+    $vd::sw::c bind bc_button <ButtonPress-1> { disp_bcontrol_calc }
 }
 
-# disp_stop{} - create the stop button.
+# disp_bstop_create{} - create the stop button.
 #
 # Return:     None.
 #
-proc disp_stop {} {
+proc disp_bstop_create {} {
     # Items of type rectangle appear as rectangular regions on the display. Each
     # rectangle may have an outline, a fill, or both. 
     set dx  70
@@ -654,6 +782,7 @@ proc disp_stop {} {
     set y2 [expr 90 + $dy]
     $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gold -tags b_stop
 
+    # Create the body of the system shutdown button.
     set dx  70
     set dy  40
     set x1 [expr 40 + $dx]
@@ -806,11 +935,14 @@ proc main {} {
     disp_frames
 
     # Create the stop button.
-    disp_stop
+    disp_bstop_create
 
     # Create the battery control button.
-    disp_batt
+    disp_bcontrol_create
 
+    # Create the battery button for the recharging.
+    disp_brecharge_create
+    
     # Create the battery charge graph.
     disp_charge_draw
 
