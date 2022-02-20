@@ -104,8 +104,6 @@ namespace eval vd {
 	variable  h   800
     }
 
-    variable  b_state  "B_OFF"
-
     # bx - box ids of the canvas items.
     #
     # @cyc:  id of the cycle box.
@@ -123,12 +121,12 @@ namespace eval vd {
     # @cyc:  cycle value or time stamp.
     # @vlt:  voltatage value
     # @crt:  current value.
-    # @cha:  charging value.
+    # @dis:  discharging value.
     namespace eval ci {
 	variable  cyc
 	variable  vlt
 	variable  crt
-	variable  cha
+	variable  dis
     }
 
     # co - output to the controller.
@@ -136,10 +134,10 @@ namespace eval vd {
     # @b_ctrl:  current control settings for the battery customers: B_STOP:
     #           shutdown, B_ON: active battery, B_OFF: inactive battery,
     #           B_EMPTY: discharged battery.
-    # @b_rech:  recharging state of the battery.
+    # @b_rech:  recharging state of the battery: 0: off, 1: on
     namespace eval co {
 	variable b_ctrl  "B_OFF"
-	variable b_rech    
+	variable b_rech  0  
     }
 }
 
@@ -155,7 +153,7 @@ namespace eval vd {
 #
 proc disp_stop_exec { code } {
     # Send the stop signal to the controller.
-    puts $vd::ep_id "button=B_STOP:"
+    puts $vd::ep_id "control_button=B_STOP:"
     
     # Send the signal without buffering.
     flush $vd::ep_id
@@ -263,35 +261,35 @@ proc disp_charge_update {} {
 
     # Extend lists with the charge graph coordinates.
     lappend vd::cw::x_l  $x
-    lappend vd::cw::y_l  $vd::ci::cha
+    lappend vd::cw::y_l  $vd::ci::dis
 
     # Add a data point to the plot.
     # Name of the data series the new point belongs to: string series (in)
     # X-coordinate of the new point: float xcrd (in)
     # Y-coordinate of the new point: float ycrd (in)
-    $vd::cw::p plot charge $x $vd::ci::cha
+    $vd::cw::p plot charge $x $vd::ci::dis
 }
 
-# disp_batt_exec() - update the display items and send the calculations results
-# to the controller.
+# disp_bcontrol_exec() - update the display items of the battery control button
+# and send the calculations results to the controller.
 #
-# @b_state:  battery state.
-# @b_color:  color of the battery lamp.
+# @b_state:  battery control state.
+# @b_color:  color of the battery control lamp.
 #
 # Return:     None.
 #
-proc disp_batt_exec { b_state b_color } {
+proc disp_bcontrol_exec { b_state b_color } {
     # Find all items with the "bc_light" tag.
     set list [$vd::sw::c find withtag bc_light]
 
-    # Color all items yellow with the "b" tags.
+    # Color all items with the "bc_ligh" tags.
     foreach item $list {
 	# This command is similar to the configure widget command except that it
 	# modifies item-specific options for the items given by tagOrId.
 	$vd::sw::c itemconfigure $item -fill $b_color
     }
 
-    # Test the current battery state.
+    # Test the current battery control state.
     if { $vd::co::b_ctrl == "B_ON" && $b_state == "B_OFF" } {
 	# The battery state changes from active to inactive.
 	
@@ -307,7 +305,7 @@ proc disp_batt_exec { b_state b_color } {
 	}	
     }
     
-    # Update the battery state.
+    # Update the battery control state.
     set vd::co::b_ctrl  $b_state
 
     # Test the battery state.
@@ -315,9 +313,9 @@ proc disp_batt_exec { b_state b_color } {
 	return
     }
     
-    # Inform the controller to activate the battery or to initiate the shutdown
-    # procedure.
-    puts $vd::ep_id "button=$vd::co::b_ctrl:"
+    # Inform the controller to activate or to deactivate the battery control
+    # state.
+    puts $vd::ep_id "control_button=$vd::co::b_ctrl:"
     
     # Send the signal without buffering.
     flush $vd::ep_id
@@ -364,13 +362,13 @@ proc disp_input_parse { buf } {
     # Save the current value.
     set vd::ci::crt  [lindex $list 10]
     
-    # Retrive and test the charging element.
-    if { [lindex $list 12] != "charging" } {
-	error "missing \"charging\" in \"$buf\""
+    # Retrive and test the discharge element.
+    if { [lindex $list 12] != "discharge" } {
+	error "missing \"discharge\" in \"$buf\""
     }
     
-    # Save the charging value.
-    set vd::ci::cha  [lindex $list 14]
+    # Save the dischargin value.
+    set vd::ci::dis  [lindex $list 14]
     
     return TCL_OK
 }
@@ -411,17 +409,17 @@ proc disp_input {} {
 	$vd::bw::c itemconfigure $vd::bx::crt -text $vd::ci::crt
 
 	# Update the charging value.
-	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::cha
+	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::dis
 
 	# Evaluate the battery state.
 	switch $vd::co::b_ctrl {
 	    "B_ON" {
 		# Update the battery charge graph.
-		if { $vd::ci::cha > 0 } {
+		if { $vd::ci::dis > 0 } {
 		    disp_charge_update
 		} else {
 		    # The battery is empty.
-		    disp_batt_exec "B_EMPTY" red
+		    disp_bcontrol_exec "B_EMPTY" red
 		}
 	    }
 
@@ -530,7 +528,7 @@ proc disp_boxes {} {
     set vd::bx::crt  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
 
     #===========================================================================
-    # Charge box
+    # Discharge box
     # ==========================================================================
     
     # Create the display charge box.
@@ -547,7 +545,7 @@ proc disp_boxes {} {
     set dy  [expr $dy + 12]
     set x1  [expr 20 + $dx]
     set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Charge
+    $vd::bw::c create text $x1 $y1 -justify left -text Discharge
     
     # Print the charging value.
     set dx  [expr $ox + 45]
@@ -594,21 +592,50 @@ proc disp_charge_draw {} {
     #                   stepsize for the y-axis, in this order.
     set vd::cw::p  [::Plotchart::createXYPlot $vd::cw::c [list $vd::cw::x_min $vd::cw::x_max 1] [list 0 12500 2500]]
 
-    # Set the value for one or more options regarding the drawing of data of a
-    # ä specific series with the colour to be used when drawing the data series.
-    $vd::cw::p dataconfig charge -color red
-
     # Draw vertical ticklines at each tick location with the specified colour.
     $vd::cw::p xticklines green
     
     # Draw horizontal ticklines at each tick location with the specified colour.
     $vd::cw::p yticklines green
 
+    # Set the value for one or more options regarding the drawing of data of a
+    # ä specific series with the colour to be used when drawing the data series.
+    $vd::cw::p dataconfig charge -color red
+
     # Specify the title of the (horizontal) x-axis.
     $vd::cw::p xtext seconds
 
-    # Specify the title of the (horizontal) y-axis.
+    # Specify the title of the (vertical) y-axis.
     $vd::cw::p ytext charge
+}
+
+# disp_brecharge_exec() - update the display items of the battery recharge
+# button and send the calculations results to the controller.
+#
+# @b_state:  battery recharge state.
+# @b_color:  color of the battery control lamp.
+#
+# Return:     None.
+#
+proc disp_brecharge_exec { b_state b_color } {
+    # Find all items with the "br_light" tag.
+    set list [$vd::sw::c find withtag br_light]
+
+    # Color all items with the "br_light" tags.
+    foreach item $list {
+	# This command is similar to the configure widget command except that it
+	# modifies item-specific options for the items given by tagOrId.
+	$vd::sw::c itemconfigure $item -fill $b_color
+    }
+
+    # Update the battery recharge state.
+    set vd::co::b_rech  $b_state
+    
+    # Inform the controller to activate or to deactivate the battery recharging.
+    # puts $vd::ep_id "recharge_button=$vd::co::b_rech:"
+    
+    # Send the signal without buffering.
+    # flush $vd::ep_id
 }
 
 # disp_brecharge_calc() - calculate the item display state of the battery
@@ -617,7 +644,22 @@ proc disp_charge_draw {} {
 # Return:     None.
 #
 proc disp_brecharge_calc {} {
-    puts "disp_brecharge_calc: ..."
+    # Evaluate the battery control state.
+    switch $vd::co::b_rech {
+	0 {
+	    # Update the battery recharge state.
+	    disp_brecharge_exec 1 green2 
+	}
+	
+	1 {
+	    # Update the battery recharge state.
+	    disp_brecharge_exec 0 gray64
+	}
+
+	default {
+	    # After shutdown there is nothing more to do.
+	}
+    }
 }
 
 # disp_brecharge_create{} - create the battery button for the recharging.
@@ -684,23 +726,23 @@ proc disp_brecharge_create {} {
 # Return:     None.
 #
 proc disp_bcontrol_calc {} {
-    # Evaluate the battery state.
+    # Evaluate the battery control state.
     switch $vd::co::b_ctrl {
 	"B_OFF" {
 	    # Trigger for the restart actions.
 	    set vd::cw::rst  1
 	    
-	    # Update the battery state.
-	    disp_batt_exec "B_ON" yellow 
+	    # Update the battery control state.
+	    disp_bcontrol_exec "B_ON" yellow 
 	}
 	
 	"B_ON" {
-	    # Update the battery state.
-	    disp_batt_exec "B_OFF" gray64
+	    # Update the battery control state.
+	    disp_bcontrol_exec "B_OFF" gray64
 	}
 
 	"B_EMPTY" {
-	    # The battery button has been deactivated.
+	    # The battery control button has been deactivated.
 	}
 	
 	default {

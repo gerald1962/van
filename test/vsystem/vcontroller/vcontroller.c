@@ -104,7 +104,7 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 	int n;
 
 	/* Generate the output to the display. */
-	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d::charging=%d:",
+	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d::discharge=%d:",
 		     po->cycle, po->vlt, po->crt, po->cha);
 
 	/* Include EOS. */
@@ -142,11 +142,11 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	buf[n - 1] = '\0';
 
 	/* Locate the button string. */
-	s = strstr(buf, "button=");
+	s = strstr(buf, "control_button=");
 	OS_TRAP_IF(s == NULL);
 	
 	/* Extract the button state. */
-	s += os_strlen("button=");
+	s += os_strlen("control_button=");
 
 	/* Convert and test the received button state. */
 	if (os_strcmp(s, "B_ON") == 0) {
@@ -342,7 +342,7 @@ int main(void)
 		ctrl_disp_read(d_id, pi);
 		s->button = pi->button;
 		
-		/* Calculate the charging value: C = I * t. */
+		/* Calculate the discharging value: C = I * t. */
 		s->cha -= s->crt * clock;
 
 		/* Test the battery capacitiy and the activity. */
