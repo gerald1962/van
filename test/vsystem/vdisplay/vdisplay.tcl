@@ -14,7 +14,8 @@ package require Tk
 package require Plotchart
 
 # Load dynmically the van OS into the statically-linked interpreter.
-load ../../../lib/libvan[info sharedlibextension]
+# load ../../../lib/libvan[info sharedlibextension]
+load ../../lib/libvan[info sharedlibextension]
 
 # The namespace command lets you create, access, and destroy separate contexts
 # for commands and variables.
@@ -64,6 +65,7 @@ namespace eval vd {
     # @x_l:    list of the x coordinates.
     # @y_l:    list of the x coordinates.
     # @x_len:  length of the x-axis in seconds.
+    # @rst:    1: restart the battery activation.
     namespace eval cw {
 	variable  f
 	variable  c
@@ -109,11 +111,14 @@ namespace eval vd {
     # @cyc:  id of the cycle box.
     # @vlt:  id of the voltage box.
     # @crt:  id of the current box.
+    # @cha:  id of the charge quantity box.
+    # @lev:  id of the fill level box.
     namespace eval bx {
 	variable  cyc
 	variable  vlt
 	variable  crt
 	variable  cha
+	variable  lev
     }
     
     # ci - input from the controller.
@@ -121,19 +126,21 @@ namespace eval vd {
     # @cyc:  cycle value or time stamp.
     # @vlt:  voltatage value
     # @crt:  current value.
-    # @dis:  discharging value.
+    # @cha:  charge quantity.
+    # @lev:  fill level of the battery in percent.
     namespace eval ci {
 	variable  cyc
 	variable  vlt
 	variable  crt
-	variable  dis
+	variable  cha
+	variable  lev
     }
 
     # co - output to the controller.
     #
     # @b_ctrl:  current control settings for the battery customers: B_STOP:
     #           shutdown, B_ON: active battery, B_OFF: inactive battery,
-    #           B_EMPTY: discharged battery.
+    #           B_EMPTY: charged battery.
     # @b_rech:  recharging state of the battery: 0: off, 1: on
     namespace eval co {
 	variable b_ctrl  "B_OFF"
@@ -144,19 +151,37 @@ namespace eval vd {
 #===============================================================================
 # LOCAL FUNCTIONS
 # ==============================================================================
- # disp_stop_exec{} - propagate the termination request to the controller and
+# disp_ctrl_write{} - send the display signal to the controller.
+#
+# Return:     None.
+#
+proc disp_ctrl_write {} {
+    # Make a copy of the display actuators: controll and recharge button.
+    set ctrl  $vd::co::b_ctrl
+    set rech  $vd::co::b_rech
+
+    # Concatenate the signal elements to the controller.
+    set buf  "control_b=$ctrl\:\:recharge_b=$rech\:\:"
+    
+    # Send the signal to the controller.
+    puts $vd::ep_id  $buf
+
+    # Prevent the buffering of the output signal to the controller.
+    flush $vd::ep_id
+}
+
+# disp_stop_exec{} - propagate the termination request to the controller and
 # battery.
 #
-# code:  id of the exit code.
+# @code:  id of the exit code.
 #
 # Return:     None.
 #
 proc disp_stop_exec { code } {
     # Send the stop signal to the controller.
-    puts $vd::ep_id "control_button=B_STOP:"
-    
-    # Send the signal without buffering.
-    flush $vd::ep_id
+    set vd::co::b_ctrl  "B_STOP"
+    set vd::co::b_rech  0
+    disp_ctrl_write
     
     # Wait until the output queue is empty
     set n 1
@@ -183,6 +208,41 @@ proc disp_stop_exec { code } {
     exit $code
 }
 
+# disp_charge_coords{} - test and delete coordinates, which are outside range.
+#
+# Return:     None.
+#
+proc disp_charge_coords {} {
+    # Count the number of the list elements.
+    set len [llength $vd::cw::x_l]
+
+    # Test the number of the list elements
+    if { $len < 1 } {
+	return
+    }
+    
+    # Search for the new list start.
+    set i  0
+    foreach item $vd::cw::x_l {
+	# Test the final condition.
+	if { $item >= $vd::cw::x_min } {
+	    break
+	}
+
+	# Count the number of the elements.
+	incr i
+    }
+
+    # Test the number of coordinates, which are outside range.
+    if { $i < 1 } {
+	return
+    }
+
+    # Make the coordinates lists smaller.
+    set vd::cw::x_l [lreplace $vd::cw::x_l 0 $i]
+    set vd::cw::y_l [lreplace $vd::cw::y_l 0 $i]
+}
+
 # disp_charge_update{} - update the battery charge graph.
 #
 # Return:     None.
@@ -193,7 +253,8 @@ proc disp_charge_update {} {
 
     # Test the restart condition.
     if { $vd::cw::rst == 1 } {
-	# Reset the restart condition.
+	
+	# Reset the restart condition.    
 	set vd::cw::rst  0
 	
 	# If arg is an integer value of the same width as the machine word, returns
@@ -205,10 +266,13 @@ proc disp_charge_update {} {
 	    # Calculate the ininitial and final value of the x-axis.
 	    set vd::cw::x_min  $x_i
 	    set vd::cw::x_max  [expr { $vd::cw::x_min + $vd::cw::x_len }]
+	    
+	    # Shift the x-axis.
+	    $vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
 	}
 
-	# Shift the x-axis.
-	$vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
+	# Test and delete coordinates, which are outside range.
+	disp_charge_coords
 	
 	# Count the number of the list elements.
 	set len [llength $vd::cw::x_l]
@@ -222,6 +286,7 @@ proc disp_charge_update {} {
     
     # Test the current range of the x-time axis.
     if { $x >= $vd::cw::x_max } {
+	
 	# Calculate the ininitial and final value of the x-axis.
 	incr vd::cw::x_min
 	incr vd::cw::x_max
@@ -231,6 +296,9 @@ proc disp_charge_update {} {
 	# this option will clear all data from the plot.
 	$vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
 
+	# Test and delete coordinates, which are outside range.
+	disp_charge_coords
+	
 	# Count the number of the list elements.
 	set len [llength $vd::cw::x_l]
 
@@ -238,36 +306,18 @@ proc disp_charge_update {} {
 	if { $len > 4 } {
 	    # Draw again the deleted graph period.
 	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
-	
-	    # Search for the new list start.
-	    set i  0
-	    foreach item $vd::cw::x_l {
-		# Test the final condition.
-		if { $item >= $vd::cw::x_min } {
-		    break
-		}
-
-		# Count the number of the elements.
-		incr i
-	    }
-
-	    # Make the coordinates lists smaller.
-	    if { $i > 0 } {
-		set vd::cw::x_l [lreplace $vd::cw::x_l 0 $i]
-		set vd::cw::y_l [lreplace $vd::cw::y_l 0 $i]
-	    }
 	}
     }
 
-    # Extend lists with the charge graph coordinates.
+    # Extend the lists with the charge graph coordinates.
     lappend vd::cw::x_l  $x
-    lappend vd::cw::y_l  $vd::ci::dis
+    lappend vd::cw::y_l  $vd::ci::cha
 
     # Add a data point to the plot.
     # Name of the data series the new point belongs to: string series (in)
     # X-coordinate of the new point: float xcrd (in)
     # Y-coordinate of the new point: float ycrd (in)
-    $vd::cw::p plot charge $x $vd::ci::dis
+    $vd::cw::p plot charge $x $vd::ci::cha
 }
 
 # disp_bcontrol_exec() - update the display items of the battery control button
@@ -313,12 +363,8 @@ proc disp_bcontrol_exec { b_state b_color } {
 	return
     }
     
-    # Inform the controller to activate or to deactivate the battery control
-    # state.
-    puts $vd::ep_id "control_button=$vd::co::b_ctrl:"
-    
-    # Send the signal without buffering.
-    flush $vd::ep_id
+    # Instruct the controller to activate or to deactivate the battery.
+    disp_ctrl_write
 }
 
 # disp_input_parse{} - parse the input from the controller.
@@ -333,7 +379,7 @@ proc disp_input_parse { buf } {
 
     # Count the elements of the controller signal.
     set ll [llength $list]
-    if { $ll != 15 } {
+    if { $ll != 19 } {
 	# Generate an error.
 	error "wrong format \"$buf\""
     }
@@ -362,22 +408,30 @@ proc disp_input_parse { buf } {
     # Save the current value.
     set vd::ci::crt  [lindex $list 10]
     
-    # Retrive and test the discharge element.
-    if { [lindex $list 12] != "discharge" } {
-	error "missing \"discharge\" in \"$buf\""
+    # Retrive and test the charge element.
+    if { [lindex $list 12] != "charge" } {
+	error "missing \"charge\" in \"$buf\""
     }
     
-    # Save the dischargin value.
-    set vd::ci::dis  [lindex $list 14]
+    # Save the discharging value.
+    set vd::ci::cha  [lindex $list 14]
+    
+    # Retrive and test the fill level element.
+    if { [lindex $list 16] != "level" } {
+	error "missing \"level\" in \"$buf\""
+    }
+    
+    # Save the fill level value.
+    set vd::ci::lev  [lindex $list 18]
     
     return TCL_OK
 }
 
-# disp_input{} - get the input from the controller.
+# disp_ctrl_read{} - get the input from the controller.
 #
 # Return:     None.
 #
-proc disp_input {} {
+proc disp_ctrl_read {} {
     # Read all signals from the display input queue of the display-controller cable.
     while { 1 } {
 	set n [gets $vd::ep_id buf]
@@ -409,13 +463,16 @@ proc disp_input {} {
 	$vd::bw::c itemconfigure $vd::bx::crt -text $vd::ci::crt
 
 	# Update the charging value.
-	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::dis
+	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::cha
+
+	# Update the fill evel value.
+	$vd::bw::c itemconfigure $vd::bx::lev -text $vd::ci::lev
 
 	# Evaluate the battery state.
 	switch $vd::co::b_ctrl {
 	    "B_ON" {
 		# Update the battery charge graph.
-		if { $vd::ci::dis > 0 } {
+		if { $vd::ci::cha > 0 } {
 		    disp_charge_update
 		} else {
 		    # The battery is empty.
@@ -434,7 +491,7 @@ proc disp_input {} {
     }
 
     # Start the timer for the display input.
-    after 100 disp_input
+    after 100 disp_ctrl_read
 }
 
 # disp_boxes{} - create the display input boxes.
@@ -528,7 +585,7 @@ proc disp_boxes {} {
     set vd::bx::crt  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
 
     #===========================================================================
-    # Discharge box
+    # Charge box
     # ==========================================================================
     
     # Create the display charge box.
@@ -545,7 +602,7 @@ proc disp_boxes {} {
     set dy  [expr $dy + 12]
     set x1  [expr 20 + $dx]
     set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Discharge
+    $vd::bw::c create text $x1 $y1 -justify left -text Charge
     
     # Print the charging value.
     set dx  [expr $ox + 45]
@@ -553,6 +610,33 @@ proc disp_boxes {} {
     set x1  [expr 20 + $dx]
     set y1  [expr 20 + $dy]
     set vd::bx::cha  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+
+    #===========================================================================
+    # Fill level box
+    # ==========================================================================
+    
+    # Create the display fill level box.
+    set dx  $ox
+    set dy  [expr $oy + 200]
+    set x1  [expr 20  + $dx]
+    set y1  [expr 20  + $dy]
+    set x2  [expr 110 + $dx]
+    set y2  [expr 45  + $dy]
+    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
+    
+    # Print the fill level text.
+    set dx  [expr $dx + 125 ]
+    set dy  [expr $dy + 12]
+    set x1  [expr 20 + $dx]
+    set y1  [expr 20 + $dy]
+    $vd::bw::c create text $x1 $y1 -justify left -text Level
+    
+    # Print the charging value.
+    set dx  [expr $ox + 45]
+    set dy  [expr $dy + 0]
+    set x1  [expr 20 + $dx]
+    set y1  [expr 20 + $dy]
+    set vd::bx::lev  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
 }
 
 # disp_charge_draw{} - create the charge graph.
@@ -593,9 +677,11 @@ proc disp_charge_draw {} {
     set vd::cw::p  [::Plotchart::createXYPlot $vd::cw::c [list $vd::cw::x_min $vd::cw::x_max 1] [list 0 12500 2500]]
 
     # Draw vertical ticklines at each tick location with the specified colour.
+    # $vd::cw::p xticklines green
     $vd::cw::p xticklines green
     
     # Draw horizontal ticklines at each tick location with the specified colour.
+    # $vd::cw::p yticklines green
     $vd::cw::p yticklines green
 
     # Set the value for one or more options regarding the drawing of data of a
@@ -632,10 +718,7 @@ proc disp_brecharge_exec { b_state b_color } {
     set vd::co::b_rech  $b_state
     
     # Inform the controller to activate or to deactivate the battery recharging.
-    # puts $vd::ep_id "recharge_button=$vd::co::b_rech:"
-    
-    # Send the signal without buffering.
-    # flush $vd::ep_id
+    disp_ctrl_write
 }
 
 # disp_brecharge_calc() - calculate the item display state of the battery
@@ -932,7 +1015,12 @@ proc disp_frames {} {
 #
 proc disp_wm {} {
     # Communicate with the window manager:
-
+    
+    # wm geometry window ?newGeometry?
+    # NewGeometry has the form =widthxheight rootflagx x rootflagy y, where any
+    # of =, widthxheight, or +x+y'' may be omitted.
+    wm geometry . $vd::wm_w\x$vd::wm_h+1350+0
+    
     # Pass the string to the window manager for use as the title for the display
     # window.
     wm title . "vDisplay"
@@ -992,7 +1080,7 @@ proc main {} {
     disp_boxes
 
     # Start the timer for the display input from the controller.
-    disp_input
+    disp_ctrl_read
 }
 
 # Main process of the van display.
