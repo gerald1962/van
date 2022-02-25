@@ -138,13 +138,37 @@ namespace eval vd {
 
     # co - output to the controller.
     #
-    # @b_ctrl:  current control settings for the battery customers: B_STOP:
+    # @ctrl_b:  current state of the battery control button: B_STOP:
     #           shutdown, B_ON: active battery, B_OFF: inactive battery,
-    #           B_EMPTY: charged battery.
-    # @b_rech:  recharging state of the battery: 0: off, 1: on
+    #           B_EMPTY: discharged battery, nevertheless the battery is active
+    #           and can be charged at any time.
+    # @rech_b:  recharging state of the battery: 0: off, 1: on
     namespace eval co {
-	variable b_ctrl  "B_OFF"
-	variable b_rech  0  
+	variable ctrl_b  "B_OFF"
+	variable rech_b  0  
+    }
+
+    # ds - battery display state
+    #
+    # @ctrl_b:  current state of the battery control button: B_STOP:
+    #           shutdown, B_ON: active battery, B_OFF: inactive battery,
+    #           B_EMPTY: discharged battery, therefor the control button has
+    #           been blocked. Nevertheless the battery is active
+    # @rech_b:  recharging state of the battery: 0: off, 1: on
+    #           and can be charged at any time.
+    # @cyc:     cycle value or time stamp.
+    # @vlt:     voltatage value
+    # @crt:     current value.
+    # @cha:     charge quantity.
+    # @lev:     fill level of the battery in percent.
+    namespace eval ds {
+	variable  ctrl_b  "B_OFF"
+	variable  rech_b  0  
+	variable  cyc
+	variable  vlt
+	variable  crt
+	variable  cha
+	variable  lev
     }
 }
 
@@ -157,8 +181,8 @@ namespace eval vd {
 #
 proc disp_ctrl_write {} {
     # Make a copy of the display actuators: controll and recharge button.
-    set ctrl  $vd::co::b_ctrl
-    set rech  $vd::co::b_rech
+    set ctrl  $vd::co::ctrl_b
+    set rech  $vd::co::rech_b
 
     # Concatenate the signal elements to the controller.
     set buf  "control_b=$ctrl\:\:recharge_b=$rech\:\:"
@@ -179,8 +203,8 @@ proc disp_ctrl_write {} {
 #
 proc disp_stop_exec { code } {
     # Send the stop signal to the controller.
-    set vd::co::b_ctrl  "B_STOP"
-    set vd::co::b_rech  0
+    set vd::co::ctrl_b  "B_STOP"
+    set vd::co::rech_b  0
     disp_ctrl_write
     
     # Wait until the output queue is empty
@@ -208,11 +232,11 @@ proc disp_stop_exec { code } {
     exit $code
 }
 
-# disp_charge_coords{} - test and delete coordinates, which are outside range.
+# disp_charge_xylist{} - test and delete coordinates, which are outside range.
 #
 # Return:     None.
 #
-proc disp_charge_coords {} {
+proc disp_charge_xylist {} {
     # Count the number of the list elements.
     set len [llength $vd::cw::x_l]
 
@@ -230,7 +254,7 @@ proc disp_charge_coords {} {
 	}
 
 	# Count the number of the elements.
-	incr i
+	incr i -1
     }
 
     # Test the number of coordinates, which are outside range.
@@ -248,6 +272,9 @@ proc disp_charge_coords {} {
 # Return:     None.
 #
 proc disp_charge_update {} {
+    # Initialize the redraw state.
+    set redraw  0
+    
     # Calculate the number of seconds.
     set x  [expr $vd::ci::cyc / 1000.0 ]
 
@@ -263,29 +290,30 @@ proc disp_charge_update {} {
 
 	# Test the current start of the x-axis.
 	if { $x_i > $vd::cw::x_min } {
+	    # Remove the lines, symbols and other graphical object associated
+	    # with the actual data from the plot.
+	    $vd::cw::p deletedata
+	
 	    # Calculate the ininitial and final value of the x-axis.
 	    set vd::cw::x_min  $x_i
 	    set vd::cw::x_max  [expr { $vd::cw::x_min + $vd::cw::x_len }]
 	    
 	    # Shift the x-axis.
 	    $vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
-	}
-
-	# Test and delete coordinates, which are outside range.
-	disp_charge_coords
+	    
+	    # Test and delete coordinates, which are outside range.
+	    disp_charge_xylist
 	
-	# Count the number of the list elements.
-	set len [llength $vd::cw::x_l]
-	
-	# Test the length of the coordinate list.
-	if { $len > 4 } {
-	    # Draw again the deleted graph period.
-	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
+	    # Redraw the charge graph.
+	    set redraw  1
 	}
     }
     
     # Test the current range of the x-time axis.
     if { $x >= $vd::cw::x_max } {
+	# Remove the lines, symbols and other graphical object associated
+	# with the actual data from the plot.
+	$vd::cw::p deletedata
 	
 	# Calculate the ininitial and final value of the x-axis.
 	incr vd::cw::x_min
@@ -297,27 +325,33 @@ proc disp_charge_update {} {
 	$vd::cw::p xconfig -scale [list $vd::cw::x_min $vd::cw::x_max 1]
 
 	# Test and delete coordinates, which are outside range.
-	disp_charge_coords
-	
-	# Count the number of the list elements.
-	set len [llength $vd::cw::x_l]
+	disp_charge_xylist
 
-	# Test the length of the coordinate list.
-	if { $len > 4 } {
-	    # Draw again the deleted graph period.
-	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
-	}
+	# Redraw the charge graph.
+	set redraw  1
     }
 
     # Extend the lists with the charge graph coordinates.
     lappend vd::cw::x_l  $x
     lappend vd::cw::y_l  $vd::ci::cha
 
-    # Add a data point to the plot.
-    # Name of the data series the new point belongs to: string series (in)
-    # X-coordinate of the new point: float xcrd (in)
-    # Y-coordinate of the new point: float ycrd (in)
-    $vd::cw::p plot charge $x $vd::ci::cha
+    # Test the redraw state.
+    if { $redraw } {
+	# Count the number of the list elements.
+	set len [llength $vd::cw::x_l]
+
+	# Test the list size.
+	if { $len > 2 } {
+	    # Draw again the deleted graph period.
+	    $vd::cw::p plotlist charge $vd::cw::x_l $vd::cw::y_l
+	}
+    } else {
+	# Add a data point to the plot.
+	# Name of the data series the new point belongs to: string series (in)
+	# X-coordinate of the new point: float xcrd (in)
+	# Y-coordinate of the new point: float ycrd (in)	
+	$vd::cw::p plot charge $x $vd::ci::cha
+    }
 }
 
 # disp_bcontrol_exec() - update the display items of the battery control button
@@ -340,7 +374,7 @@ proc disp_bcontrol_exec { b_state b_color } {
     }
 
     # Test the current battery control state.
-    if { $vd::co::b_ctrl == "B_ON" && $b_state == "B_OFF" } {
+    if { $vd::co::ctrl_b == "B_ON" && $b_state == "B_OFF" } {
 	# The battery state changes from active to inactive.
 	
 	# Count the number of the list elements.
@@ -356,10 +390,10 @@ proc disp_bcontrol_exec { b_state b_color } {
     }
     
     # Update the battery control state.
-    set vd::co::b_ctrl  $b_state
+    set vd::co::ctrl_b  $b_state
 
     # Test the battery state.
-    if { $vd::co::b_ctrl == "B_EMPTY" } {
+    if { $vd::co::ctrl_b == "B_EMPTY" } {
 	return
     }
     
@@ -423,6 +457,14 @@ proc disp_input_parse { buf } {
     
     # Save the fill level value.
     set vd::ci::lev  [lindex $list 18]
+
+    # Refresh the display state.
+    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  vd::ci::cyc
     
     return TCL_OK
 }
@@ -469,7 +511,7 @@ proc disp_ctrl_read {} {
 	$vd::bw::c itemconfigure $vd::bx::lev -text $vd::ci::lev
 
 	# Evaluate the battery state.
-	switch $vd::co::b_ctrl {
+	switch $vd::co::ctrl_b {
 	    "B_ON" {
 		# Update the battery charge graph.
 		if { $vd::ci::cha > 0 } {
@@ -494,149 +536,75 @@ proc disp_ctrl_read {} {
     after 100 disp_ctrl_read
 }
 
+# disp_box_create{} - create a sensor display box.
+#
+# @y1_r:  
+#
+# Return:     the canvas item id.
+#
+proc disp_box_create { y1_r y2_r label } {
+    # All sensor boxes are located on the same hoizontal line or x-axis.
+    # Here is the list of the reference points on the x-axis.
+    set x1_r   30
+    set x2_r  120
+
+    # Define the start of any box text  on the vertical or y-axis.
+    set y1  [expr $y1_r +  12]
+    
+    # Create the sensor box.
+    $vd::bw::c create rectangle $x1_r $y1_r $x2_r $y2_r -width 2 -fill snow -outline snow3
+
+    # Print the sensor text.
+    set x1  [expr $x1_r + 125]
+    $vd::bw::c create text $x1 $y1 -justify left -text $label
+
+    # Print the initial value of the sensor.
+    set x1  [expr $x1_r + 45]
+    
+    # Return the box item id.
+    return [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+}
+
 # disp_boxes{} - create the display input boxes.
 #
 # Return:     None.
 #
 proc disp_boxes {} {
-    # Origin of the coordinates system for the boxes
-    set ox  10
-    set oy  10
-    
-    #===========================================================================
-    # Cycle box
-    # ==========================================================================
-    
-    # Create the display cycle box.
-    set dx  $ox
-    set dy  $oy
-    set x1  [expr 20  + $dx]
-    set y1  [expr 20  + $dy]
-    set x2  [expr 110 + $dx]
-    set y2  [expr 45  + $dy]
-    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
+    # Define the origion points of the sensor boxes on the vertical or y-axis.
 
-    # Print the cycle text.
-    set dx  [expr $dx + 125 ]
-    set dy  [expr $dy + 12]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Cycles
+    # Top left y-coordinate.
+    set y1_o    0
 
-    # Print the cycle counter value.
-    set dx  [expr $ox + 45]
-    set dy  [expr $dy + 0]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    set vd::bx::cyc  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
-    
-    #===========================================================================
-    # Voltage box
-    # ==========================================================================
-    
-    # Create the display voltage box.
-    set dx  $ox
-    set dy  [expr $oy + 50]
-    set x1  [expr 20  + $dx]
-    set y1  [expr 20  + $dy]
-    set x2  [expr 110 + $dx]
-    set y2  [expr 45  + $dy]
-    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
-    
-    # Print the voltage text.
-    set dx  [expr $dx + 125 ]
-    set dy  [expr $dy + 12]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Voltage
-    
-    # Print the voltage value.
-    set dx  [expr $ox + 45]
-    set dy  [expr $dy + 0]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    set vd::bx::vlt  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+    # Bottom right y-coordinate.
+    set y2_o   25
 
-    #===========================================================================
-    # Current box
-    # ==========================================================================
+    # Distance between sensor boxes.
+    set dy     50
     
-    # Create the display current box.
-    set dx  $ox
-    set dy  [expr $oy + 100]
-    set x1  [expr 20  + $dx]
-    set y1  [expr 20  + $dy]
-    set x2  [expr 110 + $dx]
-    set y2  [expr 45  + $dy]
-    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
-    
-    # Print the current text.
-    set dx  [expr $dx + 125 ]
-    set dy  [expr $dy + 12]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Current
-    
-    # Print the current value.
-    set dx  [expr $ox + 45]
-    set dy  [expr $dy + 0]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    set vd::bx::crt  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+    # Create the cycle box.
+    set y1  [expr $y1_o + $dy]
+    set y2  [expr $y2_o + $dy]
+    set vd::bx::cyc  [disp_box_create $y1 $y2 "Cycles"]
 
-    #===========================================================================
-    # Charge box
-    # ==========================================================================
-    
-    # Create the display charge box.
-    set dx  $ox
-    set dy  [expr $oy + 150]
-    set x1  [expr 20  + $dx]
-    set y1  [expr 20  + $dy]
-    set x2  [expr 110 + $dx]
-    set y2  [expr 45  + $dy]
-    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
-    
-    # Print the charging text.
-    set dx  [expr $dx + 125 ]
-    set dy  [expr $dy + 12]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Charge
-    
-    # Print the charging value.
-    set dx  [expr $ox + 45]
-    set dy  [expr $dy + 0]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    set vd::bx::cha  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+    # Create the voltage box.
+    set y1  [expr $y1_o + $dy * 2]
+    set y2  [expr $y2_o + $dy * 2]
+    set vd::bx::vlt  [disp_box_create $y1 $y2 "Voltage"]
 
-    #===========================================================================
-    # Fill level box
-    # ==========================================================================
-    
-    # Create the display fill level box.
-    set dx  $ox
-    set dy  [expr $oy + 200]
-    set x1  [expr 20  + $dx]
-    set y1  [expr 20  + $dy]
-    set x2  [expr 110 + $dx]
-    set y2  [expr 45  + $dy]
-    $vd::bw::c create rectangle $x1 $y1 $x2 $y2 -width 2 -fill snow -outline snow3
-    
-    # Print the fill level text.
-    set dx  [expr $dx + 125 ]
-    set dy  [expr $dy + 12]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    $vd::bw::c create text $x1 $y1 -justify left -text Level
-    
-    # Print the charging value.
-    set dx  [expr $ox + 45]
-    set dy  [expr $dy + 0]
-    set x1  [expr 20 + $dx]
-    set y1  [expr 20 + $dy]
-    set vd::bx::lev  [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+    # Create the current box.
+    set y1  [expr $y1_o + $dy * 3]
+    set y2  [expr $y2_o + $dy * 3]
+    set vd::bx::crt  [disp_box_create $y1 $y2 "Current"]
+
+    # Create the charge box.
+    set y1  [expr $y1_o + $dy * 4]
+    set y2  [expr $y2_o + $dy * 4]
+    set vd::bx::cha  [disp_box_create $y1 $y2 "Charge"]
+
+    # Create the fill level box.
+    set y1  [expr $y1_o + $dy * 5]
+    set y2  [expr $y2_o + $dy * 5]
+    set vd::bx::lev  [disp_box_create $y1 $y2 "Level"]
 }
 
 # disp_charge_draw{} - create the charge graph.
@@ -686,7 +654,7 @@ proc disp_charge_draw {} {
 
     # Set the value for one or more options regarding the drawing of data of a
     # ä specific series with the colour to be used when drawing the data series.
-    $vd::cw::p dataconfig charge -color red
+    $vd::cw::p dataconfig charge -color red -width 3
 
     # Specify the title of the (horizontal) x-axis.
     $vd::cw::p xtext seconds
@@ -715,7 +683,7 @@ proc disp_brecharge_exec { b_state b_color } {
     }
 
     # Update the battery recharge state.
-    set vd::co::b_rech  $b_state
+    set vd::co::rech_b  $b_state
     
     # Inform the controller to activate or to deactivate the battery recharging.
     disp_ctrl_write
@@ -728,7 +696,7 @@ proc disp_brecharge_exec { b_state b_color } {
 #
 proc disp_brecharge_calc {} {
     # Evaluate the battery control state.
-    switch $vd::co::b_rech {
+    switch $vd::co::rech_b {
 	0 {
 	    # Update the battery recharge state.
 	    disp_brecharge_exec 1 green2 
@@ -810,7 +778,7 @@ proc disp_brecharge_create {} {
 #
 proc disp_bcontrol_calc {} {
     # Evaluate the battery control state.
-    switch $vd::co::b_ctrl {
+    switch $vd::co::ctrl_b {
 	"B_OFF" {
 	    # Trigger for the restart actions.
 	    set vd::cw::rst  1

@@ -266,7 +266,7 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 		break;
 	}
 	
-	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::control_b=%s::recharge_b=%d",
+	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::control_b=%s::recharge_b=%d:",
 		     bo->cycle, s, bo->rech_b);
 
 	/* Include EOS. */
@@ -294,7 +294,7 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
  * convert the digit string to int.
  *
  * @buf:  source buffer.
- * @pat:  search patter.
+ * @pat:  search pattern.
  *
  * Return:	the digit string as integer.
  **/
@@ -310,7 +310,7 @@ static int ctrl_read_int(char *buf, char *pat)
 	/* Jump over the pattern string. */
 	s += os_strlen(pat);
 
-	/* Locate the separator of the message elements. */
+	/* Locate the separator of the message element. */
 	sep = strchr(s, ':');
 	OS_TRAP_IF(sep == NULL);
 
@@ -349,7 +349,7 @@ static void ctrl_batt_read(int id, struct ctrl_bi_s *bi)
 	printf("%s INPUT-B %s", P, buf);		
 	printf("\t");
 
-	/* Get the cycle counter. */
+	/* Get the battery time stamp. */
 	bi->cycle = ctrl_read_int(buf, "cycle=");
 	
 	/* Get the voltage value. */
