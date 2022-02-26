@@ -22,8 +22,6 @@ load ../../lib/libvan[info sharedlibextension]
 #
 # vd - describes the display state in the van system.
 #
-# @p:      prompt of the display
-# @ep_id:  display end point of the control display cable.
 # @wm_w:   width of the main widget forwarded to the windows manager.
 # @wm_h:   height of the main widget forwarded to the windows manager.
 # @sw:     button widget for the actuators.
@@ -34,12 +32,10 @@ load ../../lib/libvan[info sharedlibextension]
 # @ci:     input from the battery controller.
 # @co:     output to the battery controller.
 namespace eval vd {
-    variable  p      "D>"
-    variable  ep_id
     variable  wm_w   1400
     variable  wm_h   800
 
-    # sw - button widget for the actuators.
+    # sw - switch or button widget for the actuators.
     #
     # @f:  frame widget id.
     # @c:  canvas id.
@@ -106,7 +102,7 @@ namespace eval vd {
 	variable  h   800
     }
 
-    # bx - box ids of the canvas items.
+    # bx - box ids of the canvas sensor items.
     #
     # @cyc:  id of the cycle box.
     # @vlt:  id of the voltage box.
@@ -150,6 +146,8 @@ namespace eval vd {
 
     # ds - battery display state
     #
+    # @p:       display prompt.
+    # @ep_id:   display end point of the controller display cable.
     # @ctrl_b:  current state of the battery control button: B_STOP:
     #           shutdown, B_ON: active battery, B_OFF: inactive battery,
     #           B_EMPTY: discharged battery, therefor the control button has
@@ -162,6 +160,8 @@ namespace eval vd {
     # @cha:     charge quantity.
     # @lev:     fill level of the battery in percent.
     namespace eval ds {
+        variable  p       "D>"
+        variable  ep_id
 	variable  ctrl_b  "B_OFF"
 	variable  rech_b  0  
 	variable  cyc
@@ -181,17 +181,17 @@ namespace eval vd {
 #
 proc disp_ctrl_write {} {
     # Make a copy of the display actuators: controll and recharge button.
-    set ctrl  $vd::co::ctrl_b
-    set rech  $vd::co::rech_b
+    set vd::co::ctrl_b  $vd::ds::ctrl_b
+    set vd::co::rech_b  $vd::ds::rech_b
 
     # Concatenate the signal elements to the controller.
-    set buf  "control_b=$ctrl\:\:recharge_b=$rech\:\:"
+    set buf  "control_b=$vd::co::ctrl_b\:\:recharge_b=$vd::co::rech_b\:\:"
     
     # Send the signal to the controller.
-    puts $vd::ep_id  $buf
+    puts $vd::ds::ep_id  $buf
 
     # Prevent the buffering of the output signal to the controller.
-    flush $vd::ep_id
+    flush $vd::ds::ep_id
 }
 
 # disp_stop_exec{} - propagate the termination request to the controller and
@@ -203,15 +203,15 @@ proc disp_ctrl_write {} {
 #
 proc disp_stop_exec { code } {
     # Send the stop signal to the controller.
-    set vd::co::ctrl_b  "B_STOP"
-    set vd::co::rech_b  0
+    set vd::ds::ctrl_b  "B_STOP"
+    set vd::ds::rech_b  0
     disp_ctrl_write
     
     # Wait until the output queue is empty
     set n 1
     while { $n > 0 } {
 	# Get the number of the pending output bytes.
-	set n [fconfigure $vd::ep_id -sync]
+	set n [fconfigure $vd::ds::ep_id -sync]
 
  	# Wait a few milliseconds
 	after 1
@@ -221,7 +221,7 @@ proc disp_stop_exec { code } {
     puts "vdisplay done"
     
     # Pull out the display plug.
-    close $vd::ep_id
+    close $vd::ds::ep_id
 
     # This command deletes the windows given by the window arguments, plus all
     # of their descendants. If a window “.” is deleted then all windows will be
@@ -374,7 +374,7 @@ proc disp_bcontrol_exec { b_state b_color } {
     }
 
     # Test the current battery control state.
-    if { $vd::co::ctrl_b == "B_ON" && $b_state == "B_OFF" } {
+    if { $vd::ds::ctrl_b == "B_ON" && $b_state == "B_OFF" } {
 	# The battery state changes from active to inactive.
 	
 	# Count the number of the list elements.
@@ -390,10 +390,10 @@ proc disp_bcontrol_exec { b_state b_color } {
     }
     
     # Update the battery control state.
-    set vd::co::ctrl_b  $b_state
+    set vd::ds::ctrl_b  $b_state
 
     # Test the battery state.
-    if { $vd::co::ctrl_b == "B_EMPTY" } {
+    if { $vd::ds::ctrl_b == "B_EMPTY" } {
 	return
     }
     
@@ -459,12 +459,11 @@ proc disp_input_parse { buf } {
     set vd::ci::lev  [lindex $list 18]
 
     # Refresh the display state.
-    set vd::ds::cyc  vd::ci::cyc
-    set vd::ds::cyc  vd::ci::cyc
-    set vd::ds::cyc  vd::ci::cyc
-    set vd::ds::cyc  vd::ci::cyc
-    set vd::ds::cyc  vd::ci::cyc
-    set vd::ds::cyc  vd::ci::cyc
+    set vd::ds::cyc  $vd::ci::cyc
+    set vd::ds::vlt  $vd::ci::vlt
+    set vd::ds::crt  $vd::ci::crt
+    set vd::ds::cha  $vd::ci::cha
+    set vd::ds::lev  $vd::ci::lev
     
     return TCL_OK
 }
@@ -476,7 +475,7 @@ proc disp_input_parse { buf } {
 proc disp_ctrl_read {} {
     # Read all signals from the display input queue of the display-controller cable.
     while { 1 } {
-	set n [gets $vd::ep_id buf]
+	set n [gets $vd::ds::ep_id buf]
 
 	# Test the length of the input signal.
 	if { $n < 1 } {
@@ -484,7 +483,7 @@ proc disp_ctrl_read {} {
 	}
 	
 	# Trace the input from the controller.
-	puts "$vd::p INPUT $buf"
+	puts "$vd::ds::p INPUT $buf"
 
 	# Evaluate the input from the controller and trap exceptional returns
 	if { [ catch { disp_input_parse $buf } ] } {
@@ -496,26 +495,28 @@ proc disp_ctrl_read {} {
 	}
 
 	# Update the cycle counter.
-	$vd::bw::c itemconfigure $vd::bx::cyc -text $vd::ci::cyc
+	$vd::bw::c itemconfigure $vd::bx::cyc -text $vd::ds::cyc
 	
 	# Update the voltage value.
-	$vd::bw::c itemconfigure $vd::bx::vlt -text $vd::ci::vlt
+	$vd::bw::c itemconfigure $vd::bx::vlt -text $vd::ds::vlt
 	
 	# Update the current value.
-	$vd::bw::c itemconfigure $vd::bx::crt -text $vd::ci::crt
+	$vd::bw::c itemconfigure $vd::bx::crt -text $vd::ds::crt
 
 	# Update the charging value.
-	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ci::cha
+	$vd::bw::c itemconfigure $vd::bx::cha -text $vd::ds::cha
 
 	# Update the fill evel value.
-	$vd::bw::c itemconfigure $vd::bx::lev -text $vd::ci::lev
+	$vd::bw::c itemconfigure $vd::bx::lev -text $vd::ds::lev
 
 	# Evaluate the battery state.
-	switch $vd::co::ctrl_b {
+	switch $vd::ds::ctrl_b {
 	    "B_ON" {
 		# Update the battery charge graph.
-		if { $vd::ci::cha > 0 } {
-		    disp_charge_update
+		disp_charge_update
+		
+		# Test the charge quantity of the battery.
+		if { $vd::ds::cha > 0 } {
 		} else {
 		    # The battery is empty.
 		    disp_bcontrol_exec "B_EMPTY" red
@@ -523,7 +524,17 @@ proc disp_ctrl_read {} {
 	    }
 
 	    "B_EMPTY" {
-		# The battery button has been deactivated.
+		# Update the battery charge graph.
+		disp_charge_update
+		
+		# The battery is active, but it is flat.
+		# Test the charge quantity of the battery.
+		if { $vd::ds::cha < 1 } {
+		    break
+		}
+		
+		# Change the state of the battery control button.
+		disp_bcontrol_exec "B_ON" yellow 	    
 	    }
 	    
 	    default {
@@ -654,7 +665,7 @@ proc disp_charge_draw {} {
 
     # Set the value for one or more options regarding the drawing of data of a
     # ä specific series with the colour to be used when drawing the data series.
-    $vd::cw::p dataconfig charge -color red -width 3
+    $vd::cw::p dataconfig charge -color red -width 2
 
     # Specify the title of the (horizontal) x-axis.
     $vd::cw::p xtext seconds
@@ -683,7 +694,7 @@ proc disp_brecharge_exec { b_state b_color } {
     }
 
     # Update the battery recharge state.
-    set vd::co::rech_b  $b_state
+    set vd::ds::rech_b  $b_state
     
     # Inform the controller to activate or to deactivate the battery recharging.
     disp_ctrl_write
@@ -695,8 +706,13 @@ proc disp_brecharge_exec { b_state b_color } {
 # Return:     None.
 #
 proc disp_brecharge_calc {} {
+    # Test the battery control button.
+    if { $vd::ds::ctrl_b == "B_OFF" } {
+	return;
+    }
+    
     # Evaluate the battery control state.
-    switch $vd::co::rech_b {
+    switch $vd::ds::rech_b {
 	0 {
 	    # Update the battery recharge state.
 	    disp_brecharge_exec 1 green2 
@@ -778,8 +794,8 @@ proc disp_brecharge_create {} {
 #
 proc disp_bcontrol_calc {} {
     # Evaluate the battery control state.
-    switch $vd::co::ctrl_b {
-	"B_OFF" {
+    switch -regexp $vd::ds::ctrl_b {
+	B_OFF {
 	    # Trigger for the restart actions.
 	    set vd::cw::rst  1
 	    
@@ -787,15 +803,14 @@ proc disp_bcontrol_calc {} {
 	    disp_bcontrol_exec "B_ON" yellow 
 	}
 	
-	"B_ON" {
+	(B_ON)|(B_EMPTY) {
+	    # Update the battery recharge state.
+	    disp_brecharge_exec 0 gray64
+	    
 	    # Update the battery control state.
 	    disp_bcontrol_exec "B_OFF" gray64
 	}
 
-	"B_EMPTY" {
-	    # The battery control button has been deactivated.
-	}
-	
 	default {
 	    # After shutdown there is nothing more to do.
 	}
@@ -1011,8 +1026,9 @@ proc disp_wm {} {
 #
 proc disp_connect {} {
     # The controller has to be started before, otherwise the display plug cannot
-    # be inserted.
-    set vd::ep_id [vcable /van/display]
+    # be inserted, to provide the controller display cable for the bidirectional
+    # message or signal tranfer between controller and display.
+    set vd::ds::ep_id [vcable /van/display]
 }
 
 #===============================================================================
