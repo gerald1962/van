@@ -140,8 +140,8 @@ namespace eval vd {
     #           and can be charged at any time.
     # @rech_b:  recharging state of the battery: 0: off, 1: on
     namespace eval co {
-	variable ctrl_b  "B_OFF"
-	variable rech_b  0  
+	variable ctrl_b
+	variable rech_b
     }
 
     # ds - battery display state
@@ -194,14 +194,12 @@ proc disp_ctrl_write {} {
     flush $vd::ds::ep_id
 }
 
-# disp_stop_exec{} - propagate the termination request to the controller and
+# disp_bstop_cb{} - propagate the termination request to the controller and
 # battery.
-#
-# @code:  id of the exit code.
 #
 # Return:     None.
 #
-proc disp_stop_exec { code } {
+proc disp_bstop_cb {} {
     # Send the stop signal to the controller.
     set vd::ds::ctrl_b  "B_STOP"
     set vd::ds::rech_b  0
@@ -229,7 +227,7 @@ proc disp_stop_exec { code } {
     destroy .
     
     # End the van system display application.
-    exit $code
+    exit 0
 }
 
 # disp_charge_xylist{} - test and delete coordinates, which are outside range.
@@ -363,8 +361,8 @@ proc disp_charge_update {} {
 # Return:     None.
 #
 proc disp_bcontrol_exec { b_state b_color } {
-    # Find all items with the "bc_light" tag.
-    set list [$vd::sw::c find withtag bc_light]
+    # Find all items with the "bctrl_light" tag.
+    set list [$vd::sw::c find withtag bctrl_light]
 
     # Color all items with the "bc_ligh" tags.
     foreach item $list {
@@ -468,11 +466,11 @@ proc disp_input_parse { buf } {
     return TCL_OK
 }
 
-# disp_ctrl_read{} - get the input from the controller.
+# disp_input_wait{} - get the input from the controller.
 #
 # Return:     None.
 #
-proc disp_ctrl_read {} {
+proc disp_input_wait {} {
     # Read all signals from the display input queue of the display-controller cable.
     while { 1 } {
 	set n [gets $vd::ds::ep_id buf]
@@ -491,7 +489,7 @@ proc disp_ctrl_read {} {
 	    puts "Invalid input from the controller: $info"
 
 	    # Propagate the termination request to the controller and battery.
-	    disp_stop_exec 1
+	    disp_bstop_cb 1
 	}
 
 	# Update the cycle counter.
@@ -517,10 +515,11 @@ proc disp_ctrl_read {} {
 		
 		# Test the charge quantity of the battery.
 		if { $vd::ds::cha > 0 } {
-		} else {
-		    # The battery is empty.
-		    disp_bcontrol_exec "B_EMPTY" red
+		    break
 		}
+		
+		# The battery is empty.
+		disp_bcontrol_exec "B_EMPTY" red
 	    }
 
 	    "B_EMPTY" {
@@ -544,16 +543,16 @@ proc disp_ctrl_read {} {
     }
 
     # Start the timer for the display input.
-    after 100 disp_ctrl_read
+    after 100 disp_input_wait
 }
 
-# disp_box_create{} - create a sensor display box.
+# disp_sensor_create{} - create a sensor display box.
 #
 # @y1_r:  
 #
 # Return:     the canvas item id.
 #
-proc disp_box_create { y1_r y2_r label } {
+proc disp_sensor_create { y1_r y2_r label } {
     # All sensor boxes are located on the same hoizontal line or x-axis.
     # Here is the list of the reference points on the x-axis.
     set x1_r   30
@@ -576,11 +575,11 @@ proc disp_box_create { y1_r y2_r label } {
     return [$vd::bw::c create text $x1 $y1 -justify center -text 0]
 }
 
-# disp_boxes{} - create the display input boxes.
+# disp_sensors{} - create the display sensors or input boxes.
 #
 # Return:     None.
 #
-proc disp_boxes {} {
+proc disp_sensors {} {
     # Define the origion points of the sensor boxes on the vertical or y-axis.
 
     # Top left y-coordinate.
@@ -595,34 +594,34 @@ proc disp_boxes {} {
     # Create the cycle box.
     set y1  [expr $y1_o + $dy]
     set y2  [expr $y2_o + $dy]
-    set vd::bx::cyc  [disp_box_create $y1 $y2 "Cycles"]
+    set vd::bx::cyc  [disp_sensor_create $y1 $y2 "Cycles"]
 
     # Create the voltage box.
     set y1  [expr $y1_o + $dy * 2]
     set y2  [expr $y2_o + $dy * 2]
-    set vd::bx::vlt  [disp_box_create $y1 $y2 "Voltage"]
+    set vd::bx::vlt  [disp_sensor_create $y1 $y2 "Voltage"]
 
     # Create the current box.
     set y1  [expr $y1_o + $dy * 3]
     set y2  [expr $y2_o + $dy * 3]
-    set vd::bx::crt  [disp_box_create $y1 $y2 "Current"]
+    set vd::bx::crt  [disp_sensor_create $y1 $y2 "Current"]
 
     # Create the charge box.
     set y1  [expr $y1_o + $dy * 4]
     set y2  [expr $y2_o + $dy * 4]
-    set vd::bx::cha  [disp_box_create $y1 $y2 "Charge"]
+    set vd::bx::cha  [disp_sensor_create $y1 $y2 "Charge"]
 
     # Create the fill level box.
     set y1  [expr $y1_o + $dy * 5]
     set y2  [expr $y2_o + $dy * 5]
-    set vd::bx::lev  [disp_box_create $y1 $y2 "Level"]
+    set vd::bx::lev  [disp_sensor_create $y1 $y2 "Level"]
 }
 
-# disp_charge_draw{} - create the charge graph.
+# disp_charge_graph{} - create the charge graph.
 #
 # Return:     None.
 #
-proc disp_charge_draw {} {
+proc disp_charge_graph {} {
     # ::Plotchart::plotstyle subcmd style args
     #
     # The command plotstyle can be used to set all manner of options.
@@ -684,7 +683,7 @@ proc disp_charge_draw {} {
 #
 proc disp_brecharge_exec { b_state b_color } {
     # Find all items with the "br_light" tag.
-    set list [$vd::sw::c find withtag br_light]
+    set list [$vd::sw::c find withtag bcha_light]
 
     # Color all items with the "br_light" tags.
     foreach item $list {
@@ -700,12 +699,12 @@ proc disp_brecharge_exec { b_state b_color } {
     disp_ctrl_write
 }
 
-# disp_brecharge_calc() - calculate the item display state of the battery
+# disp_brecharge_cb() - calculate the item display state of the battery
 # recharge button and the output to the controller.
 #
 # Return:     None.
 #
-proc disp_brecharge_calc {} {
+proc disp_brecharge_cb {} {
     # Test the battery control button.
     if { $vd::ds::ctrl_b == "B_OFF" } {
 	return;
@@ -729,70 +728,12 @@ proc disp_brecharge_calc {} {
     }
 }
 
-# disp_brecharge_create{} - create the battery button for the recharging.
-#
-# Return:     None.
-#
-proc disp_brecharge_create {} {
-    # Items of type oval appear as circular or oval regions on the display.
-    # The arguments x1, y1, x2, and y2 or coordList give the coordinates of two
-    # diagonally opposite corners of a rectangular region enclosing the oval.
-    set dx   70
-    set dy  300
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    set x2 [expr 90 + $dx]
-    set y2 [expr 90 + $dy]
-    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gray80 -tags [list br_button]
-    
-    # Create the body of the battery control button.
-    set dx   70
-    set dy  300
-    set x1 [expr 40 + $dx]
-    set y1 [expr 40 + $dy]
-    set x2 [expr 70 + $dx]
-    set y2 [expr 70 + $dy]
-    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 2 -fill gray64 -tags [list br_button br_light]
-
-    # Create the lamp symbol of the recharging button:
-    # west-north - south-ost line.
-    set x1 [expr 45 + $dx]
-    set y1 [expr 45 + $dy]
-    set x2 [expr 65 + $dx]
-    set y2 [expr 65 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list br_button]
-
-    # west-south - ost-north line
-    set x1 [expr 45 + $dx]
-    set y1 [expr 65 + $dy]
-    set x2 [expr 65 + $dx]
-    set y2 [expr 45 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list br_button]
-
-    # A text item displays a string of characters on the screen in one or more
-    # lines. 
-    set dx 105
-    set dy 310
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    $vd::sw::c create text $x1 $y1 -justify center -text Recharge -tags [list br_button]
-    
-    # Bind associates command with all the items given by tagOrId such that whenever
-    # the event sequence given by sequence occurs for one of the items the command
-    # will be invoked.
-    # %x, %y
-    # The x and y fields from the event. For ButtonPress, ButtonRelease, ...
-    # %x and %y indicate the position of the mouse pointer relative to the receiving
-    # window.
-    $vd::sw::c bind br_button <ButtonPress-1> { disp_brecharge_calc }
-}
-
-# disp_bcontrol_calc() - calculate the item display state of the battery control
+# disp_bcontrol_cb() - calculate the item display state of the battery control
 # button and the output to the controller.
 #
 # Return:     None.
 #
-proc disp_bcontrol_calc {} {
+proc disp_bcontrol_cb {} {
     # Evaluate the battery control state.
     switch -regexp $vd::ds::ctrl_b {
 	B_OFF {
@@ -817,96 +758,62 @@ proc disp_bcontrol_calc {} {
     }
 }
 
-# disp_bcontrol_create{} - create the battery control button.
+# disp_actuator_create{} - create an  actuator or control button.
+#
+# @dx:        top left x coordinate.
+# @dy:        top left y coordinate.
+# @l_symbol:  if 1, create the lamp symbol.
+# @b_tag:     button tag.
+# @b_colour:  colour of the button.
+# @l_tag:     lamp tag.
+# @l_colour:  colour of the lamp.
+# @l_width:   outline width of the lamp circle.
+# @b_text:    title of the button.
+# @cb:        button call back.
 #
 # Return:     None.
 #
-proc disp_bcontrol_create {} {
+proc disp_actuator_create { dx dy l_symbol b_tag b_colour l_tag l_colour l_width b_text cb } {
     # Items of type oval appear as circular or oval regions on the display.
     # The arguments x1, y1, x2, and y2 or coordList give the coordinates of two
     # diagonally opposite corners of a rectangular region enclosing the oval.
-    set dx   70
-    set dy  170
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    set x2 [expr 90 + $dx]
-    set y2 [expr 90 + $dy]
-    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gray80 -tags [list bc_button]
+    set x1 [expr $dx +  0]
+    set y1 [expr $dy +  0]
+    set x2 [expr $dx + 70]
+    set y2 [expr $dy + 70]
+    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill $b_colour -tags [list $b_tag]
 
     # Create the body of the battery control button.
-    set dx   70
-    set dy  170
-    set x1 [expr 40 + $dx]
-    set y1 [expr 40 + $dy]
-    set x2 [expr 70 + $dx]
-    set y2 [expr 70 + $dy]
-    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 2 -fill gray64 -tags [list bc_button bc_light]
+    set x1 [expr $dx + 20]
+    set y1 [expr $dy + 20]
+    set x2 [expr $dx + 50]
+    set y2 [expr $dy + 50]
+    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width $l_width -fill $l_colour -tags [list $b_tag $l_tag]
 
-    # Create the lamp symbol of the battery control button:
-    # west-north - south-ost line.
-    set x1 [expr 45 + $dx]
-    set y1 [expr 45 + $dy]
-    set x2 [expr 65 + $dx]
-    set y2 [expr 65 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list bc_button]
+    # Test the state of the lamp sysmbol.
+    if { $l_symbol } {
+	# Create the lamp symbol of the battery control button:
+	# west-north - south-ost line.
+	set x1 [expr $dx + 25]
+	set y1 [expr $dy + 25]
+	set x2 [expr $dx + 45]
+	set y2 [expr $dy + 45]
+	$vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list $b_tag]
 
-    # west-south - ost-north line
-    set x1 [expr 45 + $dx]
-    set y1 [expr 65 + $dy]
-    set x2 [expr 65 + $dx]
-    set y2 [expr 45 + $dy]
-    $vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list bc_button]
-
-    # A text item displays a string of characters on the screen in one or more
-    # lines. 
-    set dx 105
-    set dy 180
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    $vd::sw::c create text $x1 $y1 -justify center -text Battery -tags [list bc_button]
-
-    # Bind associates command with all the items given by tagOrId such that whenever
-    # the event sequence given by sequence occurs for one of the items the command
-    # will be invoked.
-    # %x, %y
-    # The x and y fields from the event. For ButtonPress, ButtonRelease, ...
-    # %x and %y indicate the position of the mouse pointer relative to the receiving
-    # window.
-    $vd::sw::c bind bc_button <ButtonPress-1> { disp_bcontrol_calc }
-}
-
-# disp_bstop_create{} - create the stop button.
-#
-# Return:     None.
-#
-proc disp_bstop_create {} {
-    # Items of type rectangle appear as rectangular regions on the display. Each
-    # rectangle may have an outline, a fill, or both. 
-    set dx  70
-    set dy  40
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    set x2 [expr 90 + $dx]
-    set y2 [expr 90 + $dy]
-    $vd::sw::c create rectangle $x1 $y1 $x2 $y2 -width 0 -fill gold -tags b_stop
-
-    # Create the body of the system shutdown button.
-    set dx  70
-    set dy  40
-    set x1 [expr 40 + $dx]
-    set y1 [expr 40 + $dy]
-    set x2 [expr 70 + $dx]
-    set y2 [expr 70 + $dy]
-    $vd::sw::c create oval $x1 $y1 $x2 $y2 -width 0 -fill red2 -tags b_stop
-
-    # A text item displays a string of characters on the screen in one or more
-    # lines. 
-    set dx  105
-    set dy   50
-    set x1 [expr 20 + $dx]
-    set y1 [expr 20 + $dy]
-    $vd::sw::c create text $x1 $y1 -justify center -text Stop
+	# west-south - ost-north line
+	set x1 [expr $dx + 25]
+	set y1 [expr $dy + 45]
+	set x2 [expr $dx + 45]
+	set y2 [expr $dy + 25]
+	$vd::sw::c create line $x1 $y1 $x2 $y2 -width 2 -tags [list $b_tag]
+    }
     
+    # A text item displays a string of characters on the screen in one or more
+    # lines. 
+    set x1 [expr $dx + 35]
+    set y1 [expr $dy + 10]
+    $vd::sw::c create text $x1 $y1 -justify center -text $b_text -tags [list $b_tag]
+
     # Bind associates command with all the items given by tagOrId such that whenever
     # the event sequence given by sequence occurs for one of the items the command
     # will be invoked.
@@ -914,14 +821,44 @@ proc disp_bstop_create {} {
     # The x and y fields from the event. For ButtonPress, ButtonRelease, ...
     # %x and %y indicate the position of the mouse pointer relative to the receiving
     # window.
-    $vd::sw::c bind b_stop  <ButtonPress-1> { disp_stop_exec 0 }
+    $vd::sw::c bind $b_tag <ButtonPress-1> $cb
 }
 
-# disp_frames{} - create and manipulate the container widgets.
+# disp_actuators{} - create the display actuators or control buttions.
 #
 # Return:     None.
 #
-proc disp_frames {} {
+proc disp_actuators {} {
+    # Define the horizontal inital coordinate of the actuators buttons.
+    set dx  90
+    
+    # Define the vertical initial coordinate of the actuators buttons.
+    set dy  60
+
+    # Create the button to shut down the battery system.
+    set func [list disp_bstop_cb]
+    disp_actuator_create $dx $dy 0 bstop_press gold bstop_light red2 0 Stop $func
+    
+    # Define the vertical orientation of the battery on and off switch.
+    set dy  [expr $dy + 130]
+    
+    # Create the button to activate or deactivate the battery.
+    set func [list disp_bcontrol_cb]
+    disp_actuator_create $dx $dy 1 bctr_press gray80 bctrl_light gray64 2 Battery $func
+
+    # Define the vertical orientation of the recharging button.
+    set dy  [expr $dy + 130]
+    
+    # Create the button to recharge the battery.
+    set func [list disp_brecharge_cb]
+    disp_actuator_create $dx $dy 1 bcha_press gray80 bcha_light gray64 2 Charge $func
+}
+
+# disp_container_frames{} - create and manipulate the container widgets.
+#
+# Return:     None.
+#
+proc disp_container_frames {} {
     #===========================================================================
     # Battery actuators widget
     # ==========================================================================
@@ -992,11 +929,11 @@ proc disp_frames {} {
     place configure $vd::bw::f -x $x -y 0
 }
 
-# disp_wm{} - configure the root widget
+# disp_main_widget{} - configure the root widget
 #
 # Return:     None.
 #
-proc disp_wm {} {
+proc disp_main_widget {} {
     # Communicate with the window manager:
     
     # wm geometry window ?newGeometry?
@@ -1017,18 +954,39 @@ proc disp_wm {} {
     wm maxsize . $vd::wm_w $vd::wm_h
     
     # Destroy the root window.
-    bind . <Destroy> { disp_stop_exec 0 }
+    bind . <Destroy> { disp_bstop_cb 0 }
 }
 
-# disp_connect{} - complete the display-controller cable.
+# disp_cable{} - insert the display-controller cable.
 #
 # Return:     None.
 #
-proc disp_connect {} {
+proc disp_cable_insert {} {
     # The controller has to be started before, otherwise the display plug cannot
     # be inserted, to provide the controller display cable for the bidirectional
     # message or signal tranfer between controller and display.
     set vd::ds::ep_id [vcable /van/display]
+}
+
+# disp_specify{} - specify the looks of the GUI.
+#
+# Return:     None.
+#
+proc disp_looks_specify {} {
+    # Configure the main widget.
+    disp_main_widget
+
+    # Create and manipulate the container widgets.
+    disp_container_frames
+
+    # Create the display actuators or control buttions.
+    disp_actuators
+    
+    # Create the battery charge graph.
+    disp_charge_graph
+
+    # Create the display sensors or notification boxes.
+    disp_sensors
 }
 
 #===============================================================================
@@ -1039,32 +997,15 @@ proc disp_connect {} {
 # Return:     None.
 #
 proc main {} {
-    # Complete the display-controller cable.
-    disp_connect
+    # Insert the display-controller cable.
+    disp_cable_insert
 
-    # Configure the main widget.
-    disp_wm
-
-    # Create and manipulate the container widgets.
-    disp_frames
-
-    # Create the stop button.
-    disp_bstop_create
-
-    # Create the battery control button.
-    disp_bcontrol_create
-
-    # Create the battery button for the recharging.
-    disp_brecharge_create
+    # Specify the looks of the graphical user interface.
+    disp_looks_specify
     
-    # Create the battery charge graph.
-    disp_charge_draw
-
-    # Create the display input boxes.
-    disp_boxes
-
-    # Start the timer for the display input from the controller.
-    disp_ctrl_read
+    # Start the timer for the evalution of the display input from the
+    # controller.
+    disp_input_wait
 }
 
 # Main process of the van display.
