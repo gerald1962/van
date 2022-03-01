@@ -989,6 +989,25 @@ proc disp_looks_specify {} {
     disp_sensors
 }
 
+# disp_argv{} - analyze the vdisplay arguments.
+#
+# Return:     None.
+#
+proc disp_argv {} {
+    # $argc  - number items of arguments passed to a script.
+    # $argv  - list of the arguments.
+    # $argv0 - name of the script.
+    if { $::argc > 0 } {
+	set i 1
+	foreach arg $::argv {
+	    puts "argument $i is $arg"
+	    incr i
+	}
+    } else {
+	puts "no command line argument passed"
+    }    
+}
+
 #===============================================================================
 # EXPORTED FUNCTIONS
 # ==============================================================================
@@ -997,6 +1016,9 @@ proc disp_looks_specify {} {
 # Return:     None.
 #
 proc main {} {
+    # Analyze the vdisplay arguments.
+    # disp_argv
+    
     # Insert the display-controller cable.
     disp_cable_insert
 

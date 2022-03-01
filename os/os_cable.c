@@ -3,7 +3,7 @@
 /*
  * Operating system interfaces.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 
 /*============================================================================

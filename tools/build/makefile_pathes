@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+
 # This makefile is used to include the pathes for the system resources.
 
 # List of the van platform sources

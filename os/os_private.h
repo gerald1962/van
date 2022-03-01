@@ -1,4 +1,11 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+
+/*
+ * Operating system interfaces for the internal use.
+ *
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+ */
+
 #ifndef __os_private_h__
 #define __os_private_h__
 
@@ -50,11 +57,13 @@ void os_trap_init(os_conf_t *conf);
 void os_mem_init(void);
 void os_thread_init(os_conf_t *conf);
 void os_cab_init(os_conf_t *conf, int creator);
+void os_inet_init(os_conf_t *conf);
 void os_clock_init_(void);
 void os_buf_init(void);
 void os_tcl_init(int test_mode);
 
 /* Test and free the OS resources. */
+void os_inet_exit(void);
 void os_cab_ripcord(int coverage);
 void os_cab_exit(void);
 void os_thread_exit(void);

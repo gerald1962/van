@@ -6,6 +6,7 @@ ${BUILD_LIB}_FILES +=  \
     os_buffer.c \
     os_cable.c \
     os_clock.c \
+    os_inet.c \
     os_mem.c \
     os_pthread.c \
     os_string.c \

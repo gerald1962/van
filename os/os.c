@@ -3,7 +3,7 @@
 /*
  * Operating system interfaces.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 
 /*============================================================================
@@ -409,6 +409,9 @@ void os_init(int mask)
 	/* Install the shared memory area. */
 	os_cab_init(&os_conf, mask & OS_CREATE);
 
+	/* Prepare the internet end points. */
+	os_inet_init(&os_conf);
+	
 	/* Initialize the OS timer list. */
 	os_clock_init_();
 	
@@ -434,6 +437,7 @@ void os_exit(void)
 	is_init = atomic_load(&p->is_init);
 	OS_TRAP_IF(! is_init);
 
+	os_inet_exit();
 	os_cab_exit();
 	os_thread_exit();
 	os_mem_exit();

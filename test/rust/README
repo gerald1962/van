@@ -1,0 +1,5 @@
+Compile the rust source text rut.rs:
+rustc rut.rs
+
+Execute the tutorial examples:
+./rut

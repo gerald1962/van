@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 # Makefile for a van program
 
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+
 # Define the pathes for the van system.
 VAN_SRC := \
     ${GLOBALPATH}/os

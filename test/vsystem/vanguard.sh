@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+#
 # vanguard.sh - start the van system.
 
 # 1 xfce4-terminal - A Terminal emulator for X
