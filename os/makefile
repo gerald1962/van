@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+
 # Source files
 ${BUILD_LIB}_FILES +=  \
     os.c \
@@ -9,6 +11,7 @@ ${BUILD_LIB}_FILES +=  \
     os_inet.c \
     os_mem.c \
     os_pthread.c \
+    os_queue.c \
     os_string.c \
     os_tcl.c \
     os_trap.c

@@ -36,8 +36,11 @@
 /* Support 1 MB for the standard string operations. */
 #define OS_MAX_STRING_LEN  1048576
 
-/* Maximum length of a name strings. */
+/* Maximum length of a name string. */
 #define OS_MAX_NAME_LEN  16
+
+/* Maximum length of a thread name string. */
+#define OS_THREAD_NAME_LEN  16
 
 /* Number of the supported threads. */
 #define OS_THREAD_LIMIT  16
@@ -295,5 +298,9 @@ int os_bsync(int ep_id);
 
 /* Tcl/Tk. */
 int DLLEXPORT Van_Init(Tcl_Interp *interp);
+
+/* Internet interfaces. */
+int os_inet_open(int is_server, const char *ip_address);
+void os_inet_close(int cid);
 
 #endif /* __os_h__ */

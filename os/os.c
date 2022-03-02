@@ -396,21 +396,21 @@ void os_init(int mask)
 	/* Switch on the trace. */
 	os_conf.trace_stat = 1;
 	
-	/* Install a signal handler to generate a core dump, if the test
-         * programm has been terminated with Ctrl-C. */
-        os_trap_init(&os_conf);
-
 	/* Initialize the os_malloc list. */
 	os_mem_init();
 	
 	/* Initialize the thread table. */
 	os_thread_init(&os_conf);
 
+	/* Install a signal handler to generate a core dump, if the test
+         * programm has been terminated with Ctrl-C. */
+        os_trap_init(&os_conf);
+
 	/* Install the shared memory area. */
 	os_cab_init(&os_conf, mask & OS_CREATE);
 
 	/* Prepare the internet end points. */
-	os_inet_init(&os_conf);
+	os_inet_init();
 	
 	/* Initialize the OS timer list. */
 	os_clock_init_();

@@ -3,7 +3,7 @@
 /*
  * Pthread interfaces.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 
 /*============================================================================
@@ -81,7 +81,7 @@ typedef enum {
 typedef struct {
 	_Atomic os_thread_state_t  state;
 	int               idx;
-	char              name[OS_MAX_NAME_LEN + 1];
+	char              name[OS_THREAD_NAME_LEN + 1];
 	os_thread_prio_t  prio;
 	pthread_attr_t    attr;
 	pthread_t         pthread;
@@ -109,7 +109,7 @@ typedef struct {
 static os_conf_t *os_conf_p;
 
 /**
- * os_thread_list_s - list of the installed thread.
+ * os_thread_list_s - list of the installed threads.
  *
  * @list:     list of the installed thread.
  * @count:    number of the installed threads.
@@ -572,9 +572,9 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	
 	/* Save the thread name. */
 	len = os_strlen(name);
-	OS_TRAP_IF(len >= OS_MAX_NAME_LEN);
-	os_memset(thread->name, 0, OS_MAX_NAME_LEN);
-	os_strcpy(thread->name, OS_MAX_NAME_LEN, name);
+	OS_TRAP_IF(len >= OS_THREAD_NAME_LEN);
+	os_memset(thread->name, 0, OS_THREAD_NAME_LEN);
+	os_strcpy(thread->name, OS_THREAD_NAME_LEN, name);
 
 	/* Initialize the thread state. */
 	OS_TRACE(("%s [t=%s,s=boot,o=create]\n", OS, thread->name));

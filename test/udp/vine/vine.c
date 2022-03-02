@@ -17,7 +17,8 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P "I>"  /* Controller prompt. */
+#define P            "I>"         /* Internet test prompt. */
+#define CLIENT_ADDR  "127.0.0.1"  /* IP address of the van display client. */
 
 /*============================================================================
   MACROS
@@ -44,7 +45,15 @@
  **/
 int main(void)
 {
-	printf("vine\n");
+	int srv_id;
+	
+	printf("%s van internet test\n", P);
+
+	/* Start the van controller server. */
+	srv_id = os_inet_open(1, CLIENT_ADDR);
+
+	/* Shutdown the van controller server. */
+	os_inet_close(srv_id);
 	
 	return(0);
 }
