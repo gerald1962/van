@@ -48,14 +48,6 @@ typedef struct {
   EXPORTED FUNCTIONS
   ============================================================================*/
 
-/* Signal queue interfaces. */
-int os_mq_rmem(void *queue);
-int os_mq_wmem(void *queue);
-int os_mq_write(void *queue, char *buf, int count);
-int os_mq_read(void *queue, char *buf, int count);
-void os_mq_delete(void *queue);
-void *os_mq_init(int size);
-
 /* Data gathering. */
 void os_thread_statistics(os_statistics_t *stat);
 void os_mem_statistics(os_statistics_t *stat);

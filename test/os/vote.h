@@ -1,10 +1,22 @@
 /* SPDX-License-Identifier: GPL-2.0 */
+
+/*
+ * Coverage of the VAN operating system tests:
+ * list of all test entry points.
+ *
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+ */
+
 #ifndef __vote_h__
 #define __vote_h__
 
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
+#include <unistd.h>  /* Standard Unix lib: usleep(). */
+#include <time.h>    /* Get time in seconds: time(). */
+#include "os.h"      /* Van Operating system: os_clock_init(). */
+
 /*============================================================================
   NAME CONSTANTS DEFINITIONS
   ============================================================================*/
@@ -87,5 +99,9 @@ void clk_run(void);
 /* Test the Tcl/Tk driver. */
 void tic_init(test_stat_t *stat);
 void tic_run(void);
+
+/* Test the message queue interfaces. */
+void mq_init(test_stat_t *stat);
+void mq_run(void);
 
 #endif /* __vote_h__ */

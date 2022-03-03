@@ -38,22 +38,35 @@
   LOCAL TYPE DEFINITIONS
   ============================================================================*/
 /**
- * inet - state of the van internet end point.
+ * inet_sock_t - state of the local or remote peer.
  *
- * @cid:      communication id of the internet end point.
- * @is_srv:   if 1, the internet end point is a server.
- * @ip_addr:  copy of the IP address string.
- * @rcv_thr:  id of the receiver thread.
- * @snd_thr:  id of the sender thread.
- * @sid:      socket file descriptor.
+ * @ip_addr:  IP address string.
+ * @port:     port number.
+ * @sock:     socket address..
+ **/
+typedef struct inet_sock_s {
+	char   ip_addr[INET_ADDR_LEN];
+	int    port;
+	struct sockaddr_in  sock;
+} inet_sock_t;
+
+/**
+ * inet_t - state of the van internet end point.
+ *
+ * @cid:       communication id of the internet end point.
+ * @rcv_thr:   id of the receiver thread.
+ * @snd_thr:   id of the sender thread.
+ * @sid:       socket file descriptor.
+ * @my_addr:   socket address of the local peer.
+ * @his_addr:  socket address of the remote peer.
  **/
 typedef struct inet_s {
 	int    cid;
-	int    is_srv;
-	char   ip_addr[INET_ADDR_LEN];
 	void  *rcv_thr;
 	void  *snd_thr;
 	int    sid;
+	inet_sock_t  my_addr;
+	inet_sock_t  his_addr;	
 } inet_t;
 
 /*============================================================================
@@ -77,6 +90,33 @@ static struct is_s {
 /*============================================================================
   LOCAL FUNCTIONS
   ============================================================================*/
+/**
+ * inet_sock_create() - define the socket address of the remote peer.
+ *
+ * @s:        pointer to the socket description.
+ * @ip_addr:  pointer to the IP address string.
+ * @port:     port number.
+ *
+ * Return:	None.
+ **/
+static void inet_sock_create(inet_sock_t *s, const char *ip_addr, int port)
+{
+	int rv;
+	
+	/* Save the addresses of the peers. */
+	os_strcpy(s->ip_addr, INET_ADDR_LEN, ip_addr);
+	s->port = port;
+	
+	/* Define the socket address of the peer. */
+	s->sock.sin_family = AF_INET;
+	s->sock.sin_port = htons(port);
+	
+	/* Convert the Internet host address from the IPv4 numbers-and-dots
+	 * notation into binary form. */
+	rv = inet_aton(ip_addr, &s->sock.sin_addr);
+	OS_TRAP_IF(rv != 1);
+}
+
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
@@ -124,26 +164,40 @@ void os_inet_close(int cid)
 /**
  * os_inet_open() - establish a server or client internet end point.
  *
- * @is_server:  if 1, the van server shall be installed, otherwise the client.
- * ip_address:  pointer to the IP address string.
+ * @my_addr:   pointer to my peer IP address string.
+ * @my_p:      my peer port number.
+ * @his_addr:  pointer to the remote peer IP address string.
+ * @his_p:     port number of the remove peer.
  *
  * Return:	return the connection id.
  **/
-int os_inet_open(int is_server, const char *ip_address)
+int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p)
 {
 	inet_t **p, *ip;
 	char name[OS_THREAD_NAME_LEN];
-	int n, i;
+	int my_len, his_len, lower_p, upper_p, i, rv;
 	
-	/* Entry condition. */
-	OS_TRAP_IF(ip_address == NULL);
-
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
 
-	/* Test the length of the IP address. */
-	n = os_strlen(ip_address);
-	OS_TRAP_IF(n >= INET_ADDR_LEN);
+	/* Entry condition. */
+	OS_TRAP_IF(my_addr == NULL || his_addr == NULL);
+	
+	/* Test the length of the IP addresses. */
+	my_len  = os_strlen(my_addr);
+	his_len = os_strlen(his_addr);
+	OS_TRAP_IF(my_len < 1 || my_len >= INET_ADDR_LEN ||
+		   his_len < 1 || his_len >= INET_ADDR_LEN);
+
+	/* The port range 49152–65535 (2^15 + 2^14 to 2^16 − 1) contains dynamic
+	 * or private ports that cannot be registered with IANA. This range is
+	 * used for private or customized services, for temporary purposes, and
+	 * for automatic allocation of ephemeral ports: see
+	 * https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers */
+	lower_p = (2 << 13) + (2 << 14);
+	upper_p = (2 << 15) - 1;
+	OS_TRAP_IF(my_p < lower_p || my_p >= upper_p ||
+		   his_p < lower_p || his_p >= upper_p);
 
 	/* Search for a free internet end point. */
 	for (i = 0, p = is.inet; i < INET_COUNT && *p != NULL; i++, p++)
@@ -157,11 +211,9 @@ int os_inet_open(int is_server, const char *ip_address)
 	ip = *p;
 	os_memset(ip, 0, sizeof(inet_t));
 
-	/* Initialize the state of the internet end point. */
+	/* Save the connection id. */
 	ip->cid = i;
-	ip->is_srv = is_server;
-	os_strcpy(ip->ip_addr, INET_ADDR_LEN, ip_address);
-
+	
 	/* Build the name of the receiver thread. */
 	snprintf(name, OS_THREAD_NAME_LEN, "inet_rcv_%d", i);
 	
@@ -173,6 +225,12 @@ int os_inet_open(int is_server, const char *ip_address)
 	
 	/* Create the sender thread. */
 	ip->snd_thr = os_thread_create(name, INET_THR_PRIO, INET_THR_QSIZE);
+
+	/* Define the socket address of the local peer. */
+	inet_sock_create(&ip->my_addr, my_addr, my_p);
+	
+	/* Define the socket address of the remote peer. */
+	inet_sock_create(&ip->his_addr, his_addr, his_p);
 	
 	/* Creates an endpoint for the internet communication and returns a file
 	 * descriptor that refers to that endpoint:
@@ -184,12 +242,16 @@ int os_inet_open(int is_server, const char *ip_address)
 	ip->sid = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	OS_TRAP_IF(ip->sid == -1);
 
-	/* Test the peer reference point. */
-	if (is_server) {
-		/* Only allow a specific van client IP address. */
-		
-	}
-	
+	/* When a socket is created with socket(), it exists in a name space
+	 * (address family) but has no address assigned to it. bind() assigns
+	 * the address specified by addr to the socket referred to by the file
+	 * descriptor sockfd. */
+	rv = bind(ip->sid, (struct sockaddr *) &ip->my_addr.sock,
+		  sizeof(ip->my_addr.sock));
+	OS_TRAP_IF(rv != 0);
+
+	/* Start the receiver and sender thread. */
+
 	/* XXX */
 	
 	/* Leave the critical section. */

@@ -9,7 +9,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"    /* Operating system: os_sem_create(). */
 #include "vote.h"  /* Van OS test environment. */
 
 /*============================================================================
@@ -63,7 +62,7 @@ static test_elem_t shutdown_system[] = {
  **/
 static int test_case_shutdown(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2360, 2360, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2382, 2382, 0 };
 	int stat;
 	
 	/* Verify the OS state. */
@@ -82,7 +81,7 @@ static int test_case_shutdown(void)
  **/
 static int test_case_boot(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 0, 0, 0 };
+	os_statistics_t expected = { 6, 4, 0, 0, 0, 0 };
 	int stat;
 	
 	/* Initialize all OS layers. */
@@ -121,6 +120,9 @@ static void vote_run(void)
 
 	/* Test the Tcl/Tk driver. */
 	tic_run();
+
+	/* Test the message queue interfaces. */
+	mq_run();
 
 	test_set_process(TEST_ADD(shutdown_system));
 }
@@ -237,6 +239,9 @@ int main(void)
 
 	/* Initialize the Tcl/Tk driver test. */
 	tic_init(&test_stat);
+
+	/* Initialize the message queue test. */
+	mq_init(&test_stat);
 
 	/* Run through all test system. */
 	vote_run();

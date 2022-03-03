@@ -299,8 +299,16 @@ int os_bsync(int ep_id);
 /* Tcl/Tk. */
 int DLLEXPORT Van_Init(Tcl_Interp *interp);
 
+/* Message queue interfaces. */
+int os_mq_rmem(void *mq);
+int os_mq_wmem(void *mq);
+int os_mq_write(void *mq, char *buf, int count);
+int os_mq_read(void *mq, char *buf, int count);
+void os_mq_delete(void *mq);
+void *os_mq_init(int size);
+
 /* Internet interfaces. */
-int os_inet_open(int is_server, const char *ip_address);
+int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
 void os_inet_close(int cid);
 
 #endif /* __os_h__ */

@@ -9,8 +9,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <time.h>    /* Get time in seconds: time(). */
-#include "os.h"      /* Operating system: os_sem_create(). */
 #include "vote.h"    /* Van OS test environment. */
 
 /*============================================================================
@@ -676,7 +674,7 @@ static void tri_disp_cleanup(tri_ep_t *ep)
  **/
 static int tri_stop(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2346, 2346, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2346, 2346, 0 };
 	struct tri_data_s *c;
 	int stat;
 	
@@ -869,7 +867,7 @@ static void tri_conf(struct tri_data_s *c)
  **/
 static int tri_start(void)
 {
-	// os_statistics_t expected = { 25, 28, 7, 2346, 2332, 7 };
+	// os_statistics_t expected = { 26, 28, 7, 2346, 2332, 7 };
 	struct tri_data_s *c;
 	int stat;
 

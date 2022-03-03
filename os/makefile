@@ -10,8 +10,8 @@ ${BUILD_LIB}_FILES +=  \
     os_clock.c \
     os_inet.c \
     os_mem.c \
+    os_mq.c \
     os_pthread.c \
-    os_queue.c \
     os_string.c \
     os_tcl.c \
     os_trap.c

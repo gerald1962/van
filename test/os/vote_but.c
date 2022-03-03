@@ -3,12 +3,11 @@
 /*
  * Baic van OS interfaces under test.
  *
- * Copyright (C) 2021 Gerald Schueller <gerald.schueller@web.de>
+ * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"    /* Operating system: os_sem_create(). */
 #include "vote.h"  /* Van OS test environment. */
 
 /*============================================================================
@@ -239,7 +238,7 @@ static void but_msg_send(void *thread)
  **/
 static int but_multi_thread(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2322, 2322, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2322, 2322, 0 };
 	char name[OS_MAX_NAME_LEN];
 	void **p;
 	int i, stat;
@@ -293,7 +292,7 @@ static int but_multi_thread(void)
  **/
 static int but_queue_limit(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2306, 2306, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2306, 2306, 0 };
 	void *p;
 	int i, stat;
 
@@ -333,7 +332,7 @@ static int but_queue_limit(void)
  **/
 static int but_malloc_limit(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2050, 2050, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2050, 2050, 0 };
 	int i, stat;
 	void *p;
 
@@ -358,7 +357,7 @@ static int but_malloc_limit(void)
  **/
 static int but_queue(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2, 2, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2, 2, 0 };
 	void *p;
 	int stat;
 
@@ -396,7 +395,7 @@ static int but_queue(void)
  **/
 static int but_thread_limit(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 1, 1, 0 };
+	os_statistics_t expected = { 6, 4, 0, 1, 1, 0 };
 	char name[OS_MAX_NAME_LEN];
 	void *p[OS_THREAD_LIMIT];
 	int i, j, stat;
@@ -431,7 +430,7 @@ static int but_thread_limit(void)
  **/
 static int but_thread(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 1, 1, 0 };
+	os_statistics_t expected = { 6, 4, 0, 1, 1, 0 };
 	void *p;
 	char *name;
 	int stat;
@@ -463,7 +462,7 @@ static int but_thread(void)
  **/
 static int but_string(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 1, 1, 0 };
+	os_statistics_t expected = { 6, 4, 0, 1, 1, 0 };
 	char    s1[BUT_LEN], *s2 = "*coverage*";
 	int n, stat;
 
@@ -506,7 +505,7 @@ static int but_string(void)
  **/
 static int but_mem(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 1, 1, 0 };
+	os_statistics_t expected = { 6, 4, 0, 1, 1, 0 };
 	void *p;
 	int stat;
 
@@ -527,7 +526,7 @@ static int but_mem(void)
  **/
 static int but_sync(void)
 {	
-	os_statistics_t expected = { 5, 4, 0, 0, 0, 0 };
+	os_statistics_t expected = { 6, 4, 0, 0, 0, 0 };
 	sem_t           sem;
 	pthread_mutex_t mutex;
 	spinlock_t      spinlock;
@@ -564,7 +563,7 @@ static int but_sync(void)
  **/
 static int but_trap(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 0, 0, 0 };
+	os_statistics_t expected = { 6, 4, 0, 0, 0, 0 };
 	int stat;
 
 	/* Use the test agreement. */

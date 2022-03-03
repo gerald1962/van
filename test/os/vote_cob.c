@@ -8,8 +8,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <unistd.h>  /* Standard Unix lib: usleep(). */
-#include "os.h"      /* Operating system: os_sem_create(). */
 #include "vote.h"    /* Van OS test environment. */
 
 /*============================================================================
@@ -134,7 +132,7 @@ static void cob_wait(void)
  **/
 static int cob_stop(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2330, 2330, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2330, 2330, 0 };
 	int stat;
 
 	/* Remove the py device. */
@@ -228,7 +226,7 @@ static int cob_van_read_cb(int dev_id, char *buf, int count)
 
 static int cob_aio(void)
 {
-	os_statistics_t expected = { 13, 17, 4, 2330, 2326, 4 };
+	os_statistics_t expected = { 14, 17, 4, 2330, 2326, 4 };
 	os_aio_cb_t cb;
 	int stat;
 
@@ -311,7 +309,7 @@ static void cob_van_zsync_2048b(os_queue_elem_t *m)
 
 static int cob_zsync_2048b(void)
 {
-	os_statistics_t expected = { 13, 17, 4, 2330, 2326, 4 };
+	os_statistics_t expected = { 14, 17, 4, 2330, 2326, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -375,7 +373,7 @@ static void cob_van_sync_1b(os_queue_elem_t *m)
 
 static int cob_sync_1b(void)
 {
-	os_statistics_t expected = { 13, 17, 4, 2328, 2324, 4 };
+	os_statistics_t expected = { 14, 17, 4, 2328, 2324, 4 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -405,7 +403,7 @@ static int cob_sync_1b(void)
  **/
 static int cob_start(void)
 {
-	os_statistics_t expected = { 13, 17, 4, 2326, 2322, 4 };
+	os_statistics_t expected = { 14, 17, 4, 2326, 2322, 4 };
 	int stat;
 
 	/* Create the control semaphore for the main process. */

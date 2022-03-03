@@ -9,9 +9,7 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"    /* Van Operating system: os_clock_init(). */
 #include "vote.h"  /* Van OS test environment. */
-#include <time.h>  /* Get time in seconds: time(). */
 
 /*============================================================================
   EXPORTED INCLUDE REFERENCES
@@ -129,7 +127,7 @@ static void clk_thr_exec(os_queue_elem_t *msg)
  **/
 static int clk_all_clocks(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2350, 2350, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2350, 2350, 0 };
 	os_queue_elem_t msg;
 	void *thr[OS_CLOCK_LIMIT];
 	char n[OS_MAX_NAME_LEN];
@@ -192,7 +190,7 @@ static int clk_all_clocks(void)
  **/
 static int clk_1st_clock(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2346, 2346, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2346, 2346, 0 };
 	int t_id, stat;
 	
 	/* Create the interval timer. */
@@ -223,13 +221,13 @@ static int clk_1st_clock(void)
 }
 
 /**
- * clk_stop() - xxx
+ * clk_stop() - end of the clock interface test.
  *
  * Return:	the test status.
  **/
 static int clk_stop(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2350, 2350, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2350, 2350, 0 };
 	int stat;
 
 	/* Verify the OS state. */
@@ -239,13 +237,13 @@ static int clk_stop(void)
 }
 
 /**
- * clk_start() - xxx
+ * clk_start() - start of the clock interface test.
  *
  * Return:	the test status.
  **/
 static int clk_start(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2346, 2346, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2346, 2346, 0 };
 	int stat;
 
 	/* Verify the OS state. */
@@ -270,7 +268,7 @@ void clk_init(test_stat_t *stat)
 }
 
 /**
- * tri_run() - test the clock operations.
+ * clk_run() - test the clock operations.
  *
  * Return:	None.
  **/

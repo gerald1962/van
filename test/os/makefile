@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0
 
-# Makefile for COST - coverage of the operating system test
+# Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
+
+# Makefile for vote - coverage of the van operating system test
 
 # Define the root of the VAN platform.
 GLOBALPATH := $(abspath ../..)
@@ -50,6 +52,7 @@ ALL_FILES =  \
 	vote_but.c \
 	vote_clock.c \
 	vote_cob.c \
+	vote_mq.c \
 	vote_tick.c \
 	vote_triad.c
 

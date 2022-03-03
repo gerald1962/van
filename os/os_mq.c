@@ -209,20 +209,20 @@ static char *os_mq_alloc(os_mq_t *q, int size)
 /**
  * os_mq_rmem() - get the fill level of the queue buffer for reading.
  *
- * @queue:  generic pointer to the I/O queue.
+ * @mq:  generic pointer to the I/O queue.
  *
  * Return:	the fill level of the queue buffer.
  **/
-int os_mq_rmem(void *queue)
+int os_mq_rmem(void *mq)
 {	
 	os_mq_t *q;
 	int size;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(queue == NULL);
+	OS_TRAP_IF(mq == NULL);
 	
 	/* Decode the reference to the queue. */
-	q = queue;
+	q = mq;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
@@ -239,20 +239,20 @@ int os_mq_rmem(void *queue)
 /**
  * os_mq_wmem() - get the size of the free output message buffer for writing. 
  *
- * @queue:  generic pointer to the I/O queue.
+ * @mq:  generic pointer to the I/O queue.
  *
  * Return:	the free queue buffer space.
  **/
-int os_mq_wmem(void *queue)
+int os_mq_wmem(void *mq)
 {
 	os_mq_t *q;
 	int size;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(queue == NULL);
+	OS_TRAP_IF(mq == NULL);
 	
 	/* Decode the reference to the queue. */
-	q = queue;
+	q = mq;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
@@ -280,23 +280,23 @@ int os_mq_wmem(void *queue)
  * os_mq_write() - write to an I/O queue. os_mq_add() writes up to count
  * bytes from the buffer starting at buf to the queue referred to by q.
  *
- * @queue:  generic pointer to the I/O queue.
+ * @mq:     generic pointer to the I/O queue.
  * @buf:    pointer to the queue element.
  * @count:  size of the queue element.
  *
  * Return:	1, if buf has been added, otherwise 0.
  **/
-int os_mq_write(void *queue, char *buf, int count)
+int os_mq_write(void *mq, char *buf, int count)
 {
 	os_mq_t *q;
 	int rv;
 	char *dest;
 
 	/* Entry condition. */
-	OS_TRAP_IF(queue == NULL);
+	OS_TRAP_IF(mq == NULL);
 	
 	/* Decode the reference to the queue. */
-	q = queue;
+	q = mq;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
@@ -335,23 +335,23 @@ l_end:
  * os_mq_read() - read from an I/O queue. os_mq_read() attempts to read up to
  * count bytes from the queue into the buffer starting at buf.
  *
- * @queue:  generic pointer to the I/O queue.
+ * @mq:     generic pointer to the I/O queue.
  * @buf:    pointer to the destination queue element buffer.
  * @count:  size of the queue element buffer.
  *
  * Return:	the number of bytes read.
  **/
-int os_mq_read(void *queue, char *buf, int count)
+int os_mq_read(void *mq, char *buf, int count)
 {
 	os_mq_t *q;
 	char *src, *end;
 	int rv, size;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(queue == NULL);
+	OS_TRAP_IF(mq == NULL);
 	
 	/* Decode the reference to the queue. */
-	q = queue;
+	q = mq;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&q->mutex);
@@ -397,19 +397,19 @@ l_end:
  * os_mq_delete() - frees the buffer queue object, which must have been returned
  * by a previous call to os_mq_init().
  *
- * @queue:  generic pointer to the queue object.
+ * @mq:  generic pointer to the queue object.
  *
  * Return:	None.
  **/
-void os_mq_delete(void *queue)
+void os_mq_delete(void *mq)
 {
 	os_mq_t *q;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(queue == NULL);
+	OS_TRAP_IF(mq == NULL);
 	
 	/* Decode the reference to the queue. */
-	q = queue;
+	q = mq;
 	
 	/* Free the queue buffer. */
 	OS_FREE(q->buf);

@@ -9,7 +9,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include "os.h"      /* Operating system: os_sem_create(). */
 #include "vote.h"    /* Van OS test environment. */
 
 /*============================================================================
@@ -200,7 +199,7 @@ static void tic_ctrl_exec(os_queue_elem_t *msg)
  **/
 static int tic_display(void)
 {
-	os_statistics_t expected = { 9, 11, 2, 2360, 2358, 2 };
+	os_statistics_t expected = { 10, 11, 2, 2360, 2358, 2 };
 	Tcl_Interp  *interp;
 	const char *result;
 	int rv, code, stat;
@@ -242,7 +241,7 @@ static int tic_display(void)
  **/
 static int tic_controller(void)
 {
-	os_statistics_t expected = { 9, 11, 2, 2353, 2350, 2 };
+	os_statistics_t expected = { 10, 11, 2, 2353, 2350, 2 };
 	os_queue_elem_t msg;
 	int stat;
 
@@ -264,7 +263,7 @@ static int tic_controller(void)
  **/
 static int tic_stop(void)
 {
-	os_statistics_t expected = { 5, 4, 0, 2360, 2360, 0 };
+	os_statistics_t expected = { 6, 4, 0, 2360, 2360, 0 };
 	int stat;
 
 	/* Remove the controller device. */
@@ -289,7 +288,7 @@ static int tic_stop(void)
  **/
 static int tic_start(void)
 {
-	os_statistics_t expected = { 9, 11, 2, 2352, 2350, 2 };
+	os_statistics_t expected = { 10, 11, 2, 2352, 2350, 2 };
 	int stat;
 
 	/* Create the control semaphore for the main process. */
