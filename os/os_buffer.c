@@ -191,7 +191,7 @@ int os_bsync(int u_id)
 	/* Test the ep state. */
 	OS_TRAP_IF(b == NULL);
 
-	/* Save and test the fill level of the output queue. */
+	/* Get the fill level of the output queue. */
 	n = os_mq_rmem(b->out);
 	
 	return n;
@@ -244,7 +244,7 @@ int os_bwritable(int u_id)
  * @buf:    pointer to the source buffer.
  * @count:  fill level of the source buffer.
  *
- * Return:	the number the number of bytes written.
+ * Return:	the number of bytes written.
  **/
 int os_bwrite(int u_id, char *buf, int count)
 {
@@ -317,7 +317,7 @@ int os_bread(int u_id, char *buf, int count)
 	/* Copy the next queue element. */
 	size = os_mq_read(b->in, buf, count);
 
-	/* Test the state of the input buffer*/
+	/* Test the state of the input buffer. */
 	trigger = atomic_exchange(&b->in_trigger, 0);
 	if (trigger) {
 		/* Trigger the cable driver to invoke the async. read

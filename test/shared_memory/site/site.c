@@ -2,7 +2,7 @@
 
 /*
  * site - Simultaneous C and N date transer experiments from the c or van
- * to a n - py or tcl - and back.
+ * to an - py or tcl - and back.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */

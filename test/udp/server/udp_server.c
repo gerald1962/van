@@ -12,11 +12,13 @@
 
 #define BUFLEN 512	//Max length of buffer
 
-#define SERV_ADDR "127.0.0.1"
-#define SERV_PORT 62058	//The port on which to receive data
+//#define SERV_ADDR "127.0.0.1"
+#define SERV_ADDR  "192.168.178.96"
+#define SERV_PORT  62058	//The port on which to receive data
 
-#define CLI_ADDR  "127.0.0.1"
-#define CLI_PORT  58062	//The port on which to send data
+//#define CLI_ADDR   "127.0.0.1"
+#define CLI_ADDR   "192.168.178.1"
+#define CLI_PORT   58062	//The port on which to send data
 
 void die(char *s)
 {

@@ -56,15 +56,18 @@ typedef struct {
   LOCAL FUNCTION PROTOTYPES
   ============================================================================*/
 /**
- * os_mq_remove() - remove the message from the I/O queue.
+ * os_mq_remove_up() - remove the message from the unprotected I/O queue.
  *
  * @q:     pointer to the I/O queue.
  * @size:  size of the consumed message.
  *
  * Return:	None.
  **/
-static void os_mq_remove(os_mq_t *q, int size)
+static void os_mq_remove_up(os_mq_t *q, int size)
 {
+	/* Test the fill level of the queue buffer. */
+	OS_TRAP_IF ((q->_1st_size + q->_2nd_size) < size);
+	
 	/* Test the fill level of the first mesage queue buffer. */
 	if (size >= q->_1st_size) {
 		/* The first mesage queue buffer is empty. */
@@ -85,14 +88,14 @@ static void os_mq_remove(os_mq_t *q, int size)
 }
 
 /**
- * os_mq_get() - get the pointer to the next message bufffer.
+ * os_mq_get_up() - get the pointer to the next unprotected message bufffer.
  *
  * @q:     pointer to the I/O queue.
- * @size:  return the size of the the I/O queue.
+ * @size:  return the fill level of the I/O queue.
  *
- * Return:	pointer to the message buffer.
+ * Return:	the pointer to the message buffer.
  **/
-static char *os_mq_get(os_mq_t *q, int *size)
+static char *os_mq_get_up(os_mq_t *q, int *size)
 {
 	/* Test the fill level of the first mesage queue buffer. */
 	if (q->_1st_size < 1)
@@ -106,23 +109,24 @@ static char *os_mq_get(os_mq_t *q, int *size)
 }
 
 /**
- * os_mq_add() - save the new message in the 1st or 2nd queue buffer.
+ * os_mq_add_up() - unprotected release of the filled message buffer in the 1st
+ * or 2nd queue buffer.
  *
- * @q:    pointer to the I/O queue.
- * size:  size of the message buffer.
+ * @q:     pointer to the I/O queue.
+ * @size:  size of the message buffer.
  *
- * Return:	pointer to the message buffer.
+ * Return:	None.
  **/
-static void os_mq_add(os_mq_t *q, int size)
+static void os_mq_add_up(os_mq_t *q, int size)
 {
 	/* Entry condition. */
-	OS_TRAP_IF(size < 1 || size != q->lock_size);
+	OS_TRAP_IF(size < 1 || size > q->lock_size);
 	
 	/* Test the initial state of the queue buffer. */
         if (q->_1st_size == 0 && q->_2nd_size == 0) {
 		/* Start with the first queue buffer. */
 		q->_1st_idx  = q->lock_idx;
-		q->_1st_size = q->lock_size;
+		q->_1st_size = size;
 
 		/* Unlock the first queue buffer. */
 		q->lock_idx  = 0;
@@ -133,11 +137,11 @@ static void os_mq_add(os_mq_t *q, int size)
 	/* Test the state of the first queue buffer. */
         if (q->lock_idx == q->_1st_idx + q->_1st_size) {
 		/* The current message shall be saved in the first queue. */
-		q->_1st_size += q->lock_size;
+		q->_1st_size += size;
         }
         else {
 		/* The current message shall be saved in the second queue. */
-		q->_2nd_size += q->lock_size;
+		q->_2nd_size += size;
         }
 
 	/* Unlock the queue buffer. */
@@ -146,14 +150,14 @@ static void os_mq_add(os_mq_t *q, int size)
 }
 
 /**
- * os_mq_alloc() - reserve a queue buffer.
+ * os_mq_alloc_up() - reserve a unprotected queue buffer.
  *
- * @q:    pointer to the I/O queue.
- * size:  size of the wanted message buffer.
+ * @q:     pointer to the I/O queue.
+ * @size:  size of the wanted message buffer.
  *
  * Return:	pointer to the message buffer.
  **/
-static char *os_mq_alloc(os_mq_t *q, int size)
+static char *os_mq_alloc_up(os_mq_t *q, int size)
 {
 	int free;
 	
@@ -277,7 +281,166 @@ int os_mq_wmem(void *mq)
 }
 
 /**
- * os_mq_write() - write to an I/O queue. os_mq_add() writes up to count
+ * os_mq_add() - release the filled message buffer.
+ *
+ * @mq:    generic pointer to the I/O queue.
+ * @size:  size of the message buffer.
+ *
+ * Return:	None.
+ **/
+void os_mq_add(void *mq, int size)
+{
+	os_mq_t *q;
+
+	/* Entry condition. */
+	OS_TRAP_IF(mq == NULL || size < 2);
+	
+	/* Decode the reference to the queue. */
+	q = mq;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+	
+	/* Unprotected release of the filled message buffer in the 1st or 2nd
+	 * queue buffer. */
+	os_mq_add_up(q, size);
+
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+}
+
+/**
+ * os_mq_free() - free the reserved queue buffer.
+ *
+ * @mq:    generic pointer to the I/O queue.
+ *
+ * Return:	None.
+ **/
+void os_mq_free(void *mq)
+{
+	os_mq_t *q;
+
+	/* Entry condition. */
+	OS_TRAP_IF(mq == NULL);
+	
+	/* Decode the reference to the queue. */
+	q = mq;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+
+	/* Unlock the queue buffer. */
+	q->lock_size = 0;
+	
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+}
+
+/**
+ * os_mq_alloc() - reserve a queue buffer.
+ *
+ * @mq:    generic pointer to the I/O queue.
+ * @size:  size of the wanted message buffer.
+ *
+ * Return:	pointer to the message buffer.
+ **/
+char *os_mq_alloc(void *mq, int size)
+{
+	os_mq_t *q;
+	char *buf;
+
+	/* Entry condition. */
+	OS_TRAP_IF(mq == NULL || size < 2);
+	
+	/* Decode the reference to the queue. */
+	q = mq;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+	
+	/* Allocate a message buffer. */
+	buf = os_mq_alloc_up(q, size);
+
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+
+	return buf;
+}
+
+/**
+ * os_mq_remove() - remove the message from the I/O queue.
+ *
+ * @mq:    generic pointer to the I/O queue.
+ * @size:  size of the consumed message.
+ *
+ * Return:	None.
+ **/
+void os_mq_remove(void *mq, int size)
+{
+	os_mq_t *q;
+
+	/* Entry condition. */
+	OS_TRAP_IF(mq == NULL || size < 2);
+	
+	/* Decode the reference to the queue. */
+	q = mq;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+	
+	/* Remove the message from the I/O queue. */
+	os_mq_remove_up(q, size);
+
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+}
+
+/**
+ * os_mq_get() - get the pointer to the next message bufffer.
+ *
+ * @mq:    generic pointer to the I/O queue.
+ * @size:  return the size of the message.
+ *
+ * Return:	the pointer to the message buffer.
+ **/
+char *os_mq_get(void *mq, int *size)
+{
+	os_mq_t *q;
+	char *start, *end;
+
+	/* Entry condition. */
+	OS_TRAP_IF(mq == NULL || size == NULL);
+	
+	/* Decode the reference to the queue. */
+	q = mq;
+	
+	/* Enter the critical section. */
+	os_cs_enter(&q->mutex);
+	
+	/* Get the pointer to the next message. */
+	*size = 0;
+        start = os_mq_get_up(q, size);
+	if (start == NULL)
+		goto l_end;
+	
+	/* Search for the end of the queue element. */
+	end = os_memchr(start, start + *size, '#', *size);
+	OS_TRAP_IF(end == NULL);
+
+	/* Calculate the lenght of the queue element. */
+	end++;
+	*size = end - start;
+	OS_TRAP_IF(*size < 2);
+
+l_end:
+	/* Leave the critical section. */
+	os_cs_leave(&q->mutex);
+
+	return start;
+}
+
+/**
+ * os_mq_write() - write to an I/O queue. os_mq_add_up() writes up to count
  * bytes from the buffer starting at buf to the queue referred to by q.
  *
  * @mq:     generic pointer to the I/O queue.
@@ -308,7 +471,7 @@ int os_mq_write(void *mq, char *buf, int count)
 	rv = 0;
 	
 	/* Allocate a message buffer. */
-	dest = os_mq_alloc(q, count);
+	dest = os_mq_alloc_up(q, count);
 	if (dest == NULL)
 		goto l_end;
 	
@@ -319,7 +482,7 @@ int os_mq_write(void *mq, char *buf, int count)
 	os_memcpy(dest, count, buf, count);
 	
 	/* Release the message buffer. */
-	os_mq_add(q, count);
+	os_mq_add_up(q, count);
 	
 	/* Update the return value. */
 	rv = 1;
@@ -361,11 +524,11 @@ int os_mq_read(void *mq, char *buf, int count)
 	
 	/* Get the pointer to the next message. */
 	size = 0;
-	src = os_mq_get(q, &size);
+	src = os_mq_get_up(q, &size);
 	if (src == NULL)
 		goto l_end;
 
-	/* XXX Search for the end of the queue element. */
+	/* Search for the end of the queue element. */
 	end = os_memchr(src, src + size, '#', size);
 	OS_TRAP_IF(end == NULL);
 
@@ -377,11 +540,11 @@ int os_mq_read(void *mq, char *buf, int count)
 	/* Copy the queue element. */
 	os_memcpy (buf, count, src, size);
 
-	/* XXX Replace the queue element delimter with EOS. */
+	/* Replace the queue element delimter with EOS. */
 	buf[size - 1] = '\0';
 
 	/* Remove the message from the I/O queue. */
-	os_mq_remove(q, size);
+	os_mq_remove_up(q, size);
 
 	/* Copy the size of the queue element. */
 	rv = size - 1;
@@ -410,6 +573,9 @@ void os_mq_delete(void *mq)
 	
 	/* Decode the reference to the queue. */
 	q = mq;
+
+	/* Test the queue buffer state. */
+	OS_TRAP_IF(q->lock_size != 0);
 	
 	/* Free the queue buffer. */
 	OS_FREE(q->buf);

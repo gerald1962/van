@@ -302,6 +302,11 @@ int DLLEXPORT Van_Init(Tcl_Interp *interp);
 /* Message queue interfaces. */
 int os_mq_rmem(void *mq);
 int os_mq_wmem(void *mq);
+void os_mq_add(void *mq, int size);
+void os_mq_free(void *mq);
+char *os_mq_alloc(void *mq, int size);
+void os_mq_remove(void *mq, int size);
+char *os_mq_get(void *mq, int *size);
 int os_mq_write(void *mq, char *buf, int count);
 int os_mq_read(void *mq, char *buf, int count);
 void os_mq_delete(void *mq);
@@ -310,5 +315,9 @@ void *os_mq_init(int size);
 /* Internet interfaces. */
 int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
 void os_inet_close(int cid);
+int os_inet_wait(int cid, char *identifier);
+int os_inet_read(int cid, char *buf, int count);
+int os_inet_write(int cid, char *buf, int count);
+int os_inet_sync(int cid);
 
 #endif /* __os_h__ */

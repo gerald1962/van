@@ -11,6 +11,9 @@
   ============================================================================*/
 #include <sys/socket.h>  /* Internet communication: socket(). */
 #include <arpa/inet.h>   /* Internet communication: IPPROTO_UDP. */
+#include <errno.h>       /* ISO C99 Standard: 7.5 Errors: errno. */
+#include <netdb.h>       /* Network database operations: gai_strerror(). */
+
 #include "os.h"          /* Operating system: os_inet_sopen() */
 #include "os_private.h"  /* Local interfaces of the OS: os_trap_init() */
 
@@ -20,9 +23,11 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define INET_ADDR_LEN   32  /* Max. length of the IP address string. */
-#define INET_COUNT       2  /* Number of the peers. */
-#define INET_THR_QSIZE   1  /* Input queue size of the inet threads. */
+#define INET_ADDR_LEN     32  /* Max. length of the IP address string. */
+#define INET_COUNT         2  /* Number of the peers. */
+#define INET_THR_QSIZE     1  /* Input queue size of the inet threads. */
+#define INET_MQ_SIZE    2048  /* SIze of the I/O queues. */
+#define INET_MTU_SIZE    512  /* Max. size of a message. */
 
 /* Define the priority of the inet threads. */
 #if defined(USE_OS_RT)
@@ -42,7 +47,7 @@
  *
  * @ip_addr:  IP address string.
  * @port:     port number.
- * @sock:     socket address..
+ * @sock:     socket address.
  **/
 typedef struct inet_sock_s {
 	char   ip_addr[INET_ADDR_LEN];
@@ -51,22 +56,41 @@ typedef struct inet_sock_s {
 } inet_sock_t;
 
 /**
+ * inet_thr_t - state of the receiver or send thread.
+ *
+ * @tid:        id of the receiver or send thread.
+ * @suspend:    rx/tx thread control semaphore.
+ * @suspended:  if 1, the rx/tx thread shall be controlled  by suspend.
+ * @down:       If 1, initiate the shut down of the rx/tx thread.
+ **/
+typedef struct inet_thr_s {
+	void   *tid;
+	sem_t   suspend;
+	atomic_int  suspended;
+	atomic_int  down;
+} inet_thr_t;
+
+/**
  * inet_t - state of the van internet end point.
  *
  * @cid:       communication id of the internet end point.
- * @rcv_thr:   id of the receiver thread.
- * @snd_thr:   id of the sender thread.
+ * @in:        input queue, written from the receving thread.
+ * @out:       output queue, read from the send thread.
  * @sid:       socket file descriptor.
+ * @recv_thr:  state of the receiver thread.
+ * @send_thr:  state of the send thread.
  * @my_addr:   socket address of the local peer.
  * @his_addr:  socket address of the remote peer.
  **/
 typedef struct inet_s {
 	int    cid;
-	void  *rcv_thr;
-	void  *snd_thr;
+	void  *in;
+	void  *out;
 	int    sid;
+	inet_thr_t   recv_thr;
+	inet_thr_t   send_thr;
 	inet_sock_t  my_addr;
-	inet_sock_t  his_addr;	
+	inet_sock_t  his_addr;
 } inet_t;
 
 /*============================================================================
@@ -91,7 +115,209 @@ static struct is_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /**
- * inet_sock_create() - define the socket address of the remote peer.
+ * inet_snd_exec() - send internet packets to the remote host.
+ *
+ * @msg:  generic input message.
+ *
+ * Return:	None.
+ **/
+static void inet_snd_exec(os_queue_elem_t *g_msg)
+{
+	inet_thr_t  *thr;
+	inet_t *ip;
+	char *buf;
+	int down, size, rv, err;
+
+	/* Decode the pointer to the inet state. */
+	ip = g_msg->param;
+
+	/* Get the pointer to the state of the receiving thread. */
+	thr = &ip->send_thr;
+	
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	OS_TRAP_IF(rv != 0);
+
+	/* Loop thru the signals, which are exchanged with the controller and
+	 * display. */
+	for (;;) {
+		/* Test the thread state. */
+		down = atomic_load(&thr->down);
+		if (down)
+			return;
+
+		/* Send all pending messages. */
+		for(;;) {
+			/* Get the pointer to the message. */
+			buf = os_mq_get(ip->out, &size);
+			if (buf == NULL)
+				break;
+		
+			/* Blocking transmission of a message to another
+			 * socket. */
+			rv = send(ip->sid, buf, size, 0);
+
+			/* Test the return value. */
+			if (rv != size) {
+				/* Copy and print the error code. */
+				err = errno;
+				printf("%s: rv=%d, size=%d, errno=%d\n",
+				       F, rv, size, err);
+			}
+			
+			OS_TRAP_IF(rv == -1);
+
+			/* Remove the message from the output queue. */
+			os_mq_remove(ip->out, size);
+		}
+
+		/* Start the suspend actions. */
+		atomic_store(&thr->suspended, 1);
+		
+		/* Wait for the resume trigger from the controller or display. */
+		os_sem_wait(&thr->suspend);
+
+		/* The send thread has been resumed. */
+		atomic_store(&thr->suspended, 0);
+	}
+}
+
+/**
+ * inet_rcv_exec() - wait and process internet packets from the remote host.
+ *
+ * @msg:  generic input message.
+ *
+ * Return:	None.
+ **/
+static void inet_rcv_exec(os_queue_elem_t *g_msg)
+{
+	inet_thr_t  *thr;
+	inet_t *ip;
+	char *buf;
+	int rv, down, size, err;
+
+	/* Decode the pointer to the inet state. */
+	ip = g_msg->param;
+
+	/* Get the pointer to the state of the receiving thread. */
+	thr = &ip->recv_thr;
+	
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	OS_TRAP_IF(rv != 0);
+	
+	/* Loop thru the signals, which are exchanged with the controller and
+	 * display. */
+	for (;;) {
+		/* Test the thread state. */
+		down = atomic_load(&thr->down);
+		if (down)
+			return;
+
+		/* Receive all pending messages. */
+		for (;;) {
+			/* Reserve a message buffer. */
+			buf = os_mq_alloc(ip->in, INET_MTU_SIZE);
+
+			/* Test the buffer state. */
+			if (buf == NULL)
+				break;
+			
+			/* Blocking receipt of a message from a socket. */
+			size = recv(ip->sid, buf, INET_MTU_SIZE, 0); 
+			if (size == 0) {
+				/* Release the reserved message buffer. */
+				os_mq_free(ip->in);
+				break;
+			}
+			
+			/* Test the return value of the receive operation. */
+			if (size == -1) {
+				/* Copy and print the error code. */
+				err = errno;
+				printf("%s: errno=%d\n", F, err);
+			}
+			
+			OS_TRAP_IF(size == -1);
+
+			/* Complete the receive operation. */
+			os_mq_add(ip->in, size);
+		}
+
+		/* Start the suspend actions. */
+		atomic_store(&thr->suspended, 1);
+		
+		/* Wait for the resume trigger from the controller or display. */
+		os_sem_wait(&thr->suspend);
+
+		/* The receiving thread has been resumed. */
+		atomic_store(&thr->suspended, 0);
+	}
+}
+
+/**
+ * inet_threads_start() - start the receiver and send thread.
+ *
+ * @ip:  pointer to the inet state.
+ *
+ * Return:	None.
+ **/
+static void inet_threads_start(inet_t *ip)
+{
+	os_queue_elem_t msg;
+	
+	/* Start the receiving thread. */
+	os_memset(&msg, 0, sizeof(msg));
+	msg.param = ip;
+	msg.cb    = inet_rcv_exec;
+	OS_SEND(ip->recv_thr.tid, &msg, sizeof(msg));
+
+	/* Start the send thread. */
+	os_memset(&msg, 0, sizeof(msg));
+	msg.param = ip;
+	msg.cb    = inet_snd_exec;
+	OS_SEND(ip->send_thr.tid, &msg, sizeof(msg));
+}
+
+/**
+ * inet_sock_create() - install the socket.
+ *
+ * @ip:  pointer to the inet state.
+ *
+ * Return:	None.
+ **/
+static void inet_sock_create(inet_t *ip)
+{
+	int rv;
+	
+	/* Creates an endpoint for the internet communication and returns a file
+	 * descriptor that refers to that endpoint:
+	 * AF_INET      IPv4 Internet protocols.
+	 * SOCK_DGRAM   supports datagrams (connectionless, unreliable messages
+	 *              of a fixed maximum length).
+	 * IPPROTO_UDP  for udp(7) datagram sockets.
+	 *  */
+	ip->sid = socket(AF_INET, SOCK_DGRAM, 0);
+	OS_TRAP_IF(ip->sid == -1);
+
+	/* When a socket is created with socket(), it exists in a name space
+	 * (address family) but has no address assigned to it. bind() assigns
+	 * the address specified by addr to the socket referred to by the file
+	 * descriptor sockfd. */
+	rv = bind(ip->sid, (struct sockaddr *) &ip->my_addr.sock,
+		  sizeof(ip->my_addr.sock));
+	OS_TRAP_IF(rv != 0);
+
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	OS_TRAP_IF(rv != 0);
+}
+
+/**
+ * inet_sock_addr() - define the socket resources of the remote or local peer.
  *
  * @s:        pointer to the socket description.
  * @ip_addr:  pointer to the IP address string.
@@ -99,7 +325,7 @@ static struct is_s {
  *
  * Return:	None.
  **/
-static void inet_sock_create(inet_sock_t *s, const char *ip_addr, int port)
+static void inet_sock_addr(inet_sock_t *s, const char *ip_addr, int port)
 {
 	int rv;
 	
@@ -117,9 +343,184 @@ static void inet_sock_create(inet_sock_t *s, const char *ip_addr, int port)
 	OS_TRAP_IF(rv != 1);
 }
 
+/**
+ * inet_thr_cleanup() - free the resources resources of the receiving of send
+ * thread.
+ *
+ * @thr:    pointer to the thread state.
+ *
+ * Return:	None.
+ **/
+static void inet_thr_cleanup(inet_thr_t *thr)
+{
+	/* Trigger for the thread, to terminate it. */
+	atomic_store(&thr->down, 1);
+
+	/* Start with the shut down operations. */
+	os_sem_release(&thr->suspend);
+
+	/* Remove the receiving or send thread. */
+	os_thread_destroy(thr->tid);
+
+	/* Destroy the control semaphore for the thread. */
+	os_sem_delete(&thr->suspend);
+}
+
+/**
+ * inet_thr_init() - create the resources for the receiving or send thread.
+ *
+ * @cid:    inet communication id.
+ * @thr:    pointer to the thread state.
+ * @infix:  infix of the thread name.
+ *
+ * Return:	None.
+ **/
+static void inet_thr_init(int cid, inet_thr_t *thr, char *infix)
+{
+	char name[OS_THREAD_NAME_LEN];
+	int n;
+	
+	/* Build the thread name. */
+	n = snprintf(name, OS_THREAD_NAME_LEN, "inet_%s_%d", infix, cid);
+	OS_TRAP_IF(n >= OS_THREAD_NAME_LEN);
+	
+	/* Start the receiving or send thread. */
+	thr->tid = os_thread_create(name, INET_THR_PRIO, INET_THR_QSIZE);
+
+	/* Create the control semaphore for the receiving thread, e.g. */
+	os_sem_init(&thr->suspend, 0);
+}
+
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
+/**
+ * os_inet_sync() - get the fill level of the output queue buffer.
+ *
+ * @cid:  socket communication id.
+ *
+ * Return:	the fill level of the output queue.
+ **/
+int os_inet_sync(int cid)
+{
+	inet_t *ip;
+	int n;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT);
+
+	/* Map the cid to the inet state. */
+	ip = is.inet[cid];
+
+	/* Test the inet state. */
+	OS_TRAP_IF(ip == NULL);
+
+	/* Get the fill level of the output queue. */
+	n = os_mq_rmem(ip->out);
+	
+	return n;
+}
+
+/**
+ * os_inet_write() - write to an internet socket. os_inet_write() writes up to
+ * count bytes from the buffer starting at buf to the intnet socket referred to
+ * by the communication id cid.
+ * The number of bytes written may be less than count if, for example, there is
+ * insufficient space on the underlying buffer.
+ * On success, the number of bytes written is returned.
+ * On error, -1 is returned.
+ * Note that a successful os_inet_write() may transfer fewer than count bytes. Such
+ * partial writes can occur for example, because there was insufficient space on
+ * the buffer to write all of the requested bytes.
+ * If no errors are detected, or error detection is not performed, 0 will be
+ * returned without causing any other effect.
+ *
+ * @cid:    socket communication id.
+ * @buf:    pointer to the source buffer.
+ * @count:  fill level of the source buffer.
+ *
+ * Return:	the number of bytes written.
+ **/
+int os_inet_write(int cid, char *buf, int count)
+{
+	inet_t *ip;
+	int rv, suspended;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||
+		   buf == NULL || count < 0 || count >= INET_MTU_SIZE);
+
+	/* Test the size of the destination buffer. */
+	if (count < 1)
+		return 0;
+	
+	/* Map the cid to the inet state. */
+	ip = is.inet[cid];
+
+	/* Test the inet state. */
+	OS_TRAP_IF(ip == NULL);
+
+	/* Write to the output queue. */
+	rv = os_mq_write(ip->out, buf, count);
+
+	/* Get the state of the send thread. */
+	suspended = atomic_load(&ip->send_thr.suspended);
+	
+	/* Test the state of the send thread. */
+	if (suspended) {
+		/* Resume the send thread. */
+		os_sem_release(&ip->send_thr.suspend);
+	}
+	
+	/* Inform the user, that the output message has been saved or none. */
+	return rv ? count : 0;
+}
+
+/**
+ * os_inet_read() - read from an internet socket. os_inet_read() attempts to
+ * read up to count bytes from the internet socket into the buffer starting
+ * at buf.
+ *
+ * @cid     internet communication id.
+ * @buf:    pointer to the destination buffer.
+ * @count:  size of the receive buffer.
+ *
+ * Return:	the number of bytes read.
+ **/
+int os_inet_read(int cid, char *buf, int count)
+{
+	inet_t *ip;
+	int size, suspended;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||
+		   buf == NULL || count < 0);
+
+	/* Test the size of the destination buffer. */
+	if (count < 1)
+		return 0;
+	
+	/* Map the cid to the inet state. */
+	ip = is.inet[cid];
+
+	/* Test the inet state. */
+	OS_TRAP_IF(ip == NULL);
+
+	/* Copy the next queue element. */
+	size = os_mq_read(ip->in, buf, count);
+
+	/* Get the state of the receiving thread. */
+	suspended = atomic_load(&ip->recv_thr.suspended);
+	
+	/* Test the state of the receiving thread. */
+	if (suspended) {
+		/* Resume the receiving thread. */
+		os_sem_release(&ip->recv_thr.suspend);
+	}
+	
+	return size;
+}
+
 /**
  * os_inet_close() - remove a server or client internet end point.
  *
@@ -136,27 +537,34 @@ void os_inet_close(int cid)
 	os_cs_enter(&is.mutex);
 
 	/* Entry point. */
-	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT || is.inet[cid] == NULL ||
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||  is.inet[cid] == NULL ||
 		   is.inet[cid]->cid != cid);
 
 	/* Get the pointer to the internet end point state. */
 	ip = is.inet[cid];
 
-	/* Release the endpoint for the internet communication. */
+	/* Shut down part of a full-duplex connection. Further receptions and
+	 * transmissions will be disallowed. */
+	rv = shutdown(ip->sid, SHUT_RDWR);
+	OS_TRAP_IF(rv == -1);
+
+	/* Remove the endpoint for the internet communication. */
 	rv = close(ip->sid);
 	OS_TRAP_IF(rv == -1);
 
-	/* XXX */
-	
-	/* Release the sender thread. */
-	os_thread_destroy(ip->snd_thr);
-	
-	/* Release the receiver thread. */
-	os_thread_destroy(ip->rcv_thr);
+	/* Free the send thread resources. */
+	inet_thr_cleanup(&ip->send_thr);
+
+	/* Free the receiving thread resources. */
+	inet_thr_cleanup(&ip->recv_thr);
+
+	/* Free the I/O queues */
+	os_mq_delete(ip->in);
+	os_mq_delete(ip->out);
 
 	/* Free the memory for the state of the internet end point. */
 	OS_FREE(is.inet[cid]);
-	
+
 	/* Leave the critical section. */
 	os_cs_leave(&is.mutex);
 }
@@ -174,8 +582,7 @@ void os_inet_close(int cid)
 int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p)
 {
 	inet_t **p, *ip;
-	char name[OS_THREAD_NAME_LEN];
-	int my_len, his_len, lower_p, upper_p, i, rv;
+	int my_len, his_len, lower_p, upper_p, i;
 	
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
@@ -206,6 +613,7 @@ int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p)
 	/* Final condition. */
 	OS_TRAP_IF(i >= INET_COUNT);
 
+	/* Reset the inet element. */
 	/* Allocate memory for the state of the internet end point. */
 	*p = OS_MALLOC(sizeof(inet_t));
 	ip = *p;
@@ -213,46 +621,28 @@ int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p)
 
 	/* Save the connection id. */
 	ip->cid = i;
-	
-	/* Build the name of the receiver thread. */
-	snprintf(name, OS_THREAD_NAME_LEN, "inet_rcv_%d", i);
-	
-	/* Create the receiver thread. */
-	ip->rcv_thr = os_thread_create(name, INET_THR_PRIO, INET_THR_QSIZE);
 
-	/* Build the name of the sender thread. */
-	snprintf(name, OS_THREAD_NAME_LEN, "inet_snd_%d", i);
-	
-	/* Create the sender thread. */
-	ip->snd_thr = os_thread_create(name, INET_THR_PRIO, INET_THR_QSIZE);
+	/* Create the I/O queues. */
+	ip->in  = os_mq_init(INET_MQ_SIZE);
+	ip->out = os_mq_init(INET_MQ_SIZE);
 
 	/* Define the socket address of the local peer. */
-	inet_sock_create(&ip->my_addr, my_addr, my_p);
+	inet_sock_addr(&ip->my_addr, my_addr, my_p);
 	
 	/* Define the socket address of the remote peer. */
-	inet_sock_create(&ip->his_addr, his_addr, his_p);
+	inet_sock_addr(&ip->his_addr, his_addr, his_p);
+
+	/* Install the socket. */
+	inet_sock_create(ip);
+
+	/* Create the resources for the receiving thread. */
+	inet_thr_init(i, &ip->recv_thr, "rcv");
 	
-	/* Creates an endpoint for the internet communication and returns a file
-	 * descriptor that refers to that endpoint:
-	 * AF_INET      IPv4 Internet protocols.
-	 * SOCK_DGRAM   supports datagrams (connectionless, unreliable messages
-	 *              of a fixed maximum length).
-	 * IPPROTO_UDP  for udp(7) datagram sockets.
-	 *  */
-	ip->sid = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	OS_TRAP_IF(ip->sid == -1);
-
-	/* When a socket is created with socket(), it exists in a name space
-	 * (address family) but has no address assigned to it. bind() assigns
-	 * the address specified by addr to the socket referred to by the file
-	 * descriptor sockfd. */
-	rv = bind(ip->sid, (struct sockaddr *) &ip->my_addr.sock,
-		  sizeof(ip->my_addr.sock));
-	OS_TRAP_IF(rv != 0);
-
-	/* Start the receiver and sender thread. */
-
-	/* XXX */
+	/* Create the resources for the send thread. */
+	inet_thr_init(i, &ip->send_thr, "snd");
+	
+	/* Start the receiving and send thread. */
+	inet_threads_start(ip);
 	
 	/* Leave the critical section. */
 	os_cs_leave(&is.mutex);
