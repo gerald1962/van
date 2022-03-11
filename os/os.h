@@ -315,6 +315,8 @@ void *os_mq_init(int size);
 /* Internet interfaces. */
 int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
 void os_inet_close(int cid);
+int os_inet_accept(int cid);
+int os_inet_connect(int cid);
 int os_inet_wait(int cid, char *identifier);
 int os_inet_read(int cid, char *buf, int count);
 int os_inet_write(int cid, char *buf, int count);

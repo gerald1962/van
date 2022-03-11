@@ -205,8 +205,10 @@ static void local_cleanup(void)
  **/
 static void local_init(void)
 {
+	int rv;
+	
 	/* Initialize the van OS resources. */
-	os_init(1);
+	os_init(0);
 	
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
@@ -215,10 +217,22 @@ static void local_init(void)
 	lp.my_trace = 1;
 	
 	/* Allocate the socket resources. */
+	
 	lp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
 	lp.limit = LIMIT;
+	
+	/* Wait for the connection establishment. */
+	for (;;) {
+		/* Send the connection establishment message to vcontroller.*/
+		rv = os_inet_connect(lp.inet_id);
+		if (rv == 0)
+			return;
+		
+		/* Wait some microseconds. */
+		usleep(1000);
+	}
 }
 
 /*============================================================================

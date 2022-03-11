@@ -28,6 +28,11 @@
 #define INET_THR_QSIZE     1  /* Input queue size of the inet threads. */
 #define INET_MQ_SIZE    2048  /* SIze of the I/O queues. */
 #define INET_MTU_SIZE    512  /* Max. size of a message. */
+#define INET_CE_SIZE      32  /* Buffer size for the connection establishment. */
+
+/* Accept message for the connection establishment. */
+#define INET_ACCEPT_MSG  "user=vdisplay#"
+#define INET_ACCEPT_LEN  (sizeof(INET_ACCEPT_MSG) - 1)
 
 /* Define the priority of the inet threads. */
 #if defined(USE_OS_RT)
@@ -134,11 +139,6 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 	/* Get the pointer to the state of the receiving thread. */
 	thr = &ip->send_thr;
 	
-	/* Initiate a connection on a socket. */
-	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
-		     sizeof(ip->his_addr.sock));
-	OS_TRAP_IF(rv != 0);
-
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
 	for (;;) {
@@ -195,19 +195,14 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 	inet_thr_t  *thr;
 	inet_t *ip;
 	char *buf;
-	int rv, down, size, err;
+	int down, size, err;
 
 	/* Decode the pointer to the inet state. */
 	ip = g_msg->param;
 
 	/* Get the pointer to the state of the receiving thread. */
 	thr = &ip->recv_thr;
-	
-	/* Initiate a connection on a socket. */
-	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
-		     sizeof(ip->his_addr.sock));
-	OS_TRAP_IF(rv != 0);
-	
+
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
 	for (;;) {
@@ -308,11 +303,6 @@ static void inet_sock_create(inet_t *ip)
 	 * descriptor sockfd. */
 	rv = bind(ip->sid, (struct sockaddr *) &ip->my_addr.sock,
 		  sizeof(ip->my_addr.sock));
-	OS_TRAP_IF(rv != 0);
-
-	/* Initiate a connection on a socket. */
-	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
-		     sizeof(ip->his_addr.sock));
 	OS_TRAP_IF(rv != 0);
 }
 
@@ -522,6 +512,116 @@ int os_inet_read(int cid, char *buf, int count)
 }
 
 /**
+ * os_inet_connect() - send the connection establishment message to vcontroller.
+ *
+ * @cid:  internet connection id.
+ *
+ * Return:	0, if the vcontroller peer is active.
+ **/
+int os_inet_connect(int cid)
+{
+	inet_t *ip;
+	int rv;
+
+	/* Enter the critical section. */
+	os_cs_enter(&is.mutex);
+
+	/* Entry point. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||  is.inet[cid] == NULL ||
+		   is.inet[cid]->cid != cid);
+
+	/* Get the pointer to the internet end point state. */
+	ip = is.inet[cid];
+
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	if (rv != 0) {
+		rv = -1;
+		goto l_end;
+	}
+	
+	/* Ublocking transmission of a message to another socket. */
+	rv = send(ip->sid, INET_ACCEPT_MSG, INET_ACCEPT_LEN, MSG_DONTWAIT);
+
+	/* Test the status of the receive operation. */
+	if (rv != INET_ACCEPT_LEN) {
+		rv = -1;
+		goto l_end;
+	}
+
+	/* Initialize the return value. */
+	rv = 0;
+
+	/* Start the receiving and send thread. */
+	inet_threads_start(ip);
+	
+l_end:
+	/* Leave the critical section. */
+	os_cs_leave(&is.mutex);
+
+	return rv;
+}
+
+/**
+ * os_inet_accept() - wait for the vdisplay peer.
+ *
+ * @cid:  internet connection id.
+ *
+ * Return:	0, if the vdisplay peer is active.
+ **/
+int os_inet_accept(int cid)
+{
+	inet_t *ip;
+	char buf[INET_CE_SIZE];
+	int rv, size;
+
+	/* Enter the critical section. */
+	os_cs_enter(&is.mutex);
+
+	/* Entry point. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||  is.inet[cid] == NULL ||
+		   is.inet[cid]->cid != cid);
+
+	/* Initialize the return value. */
+	size = -1;
+	
+	/* Get the pointer to the internet end point state. */
+	ip = is.inet[cid];
+
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	if (rv != 0)
+		goto l_end;
+
+	/* Unblocking receipt of a message from a socket. */
+	size = recv(ip->sid, buf, INET_CE_SIZE, MSG_DONTWAIT);
+
+	/* Test the status of the receive operation. */
+	if (size != INET_ACCEPT_LEN) {
+		size = -1;
+		goto l_end;
+	}
+
+	/* Test the received message for the connection establishment. */
+	size = os_strncmp(buf, INET_ACCEPT_MSG, INET_ACCEPT_LEN);
+	if (size != 0) {
+		size = -1;
+		goto l_end;
+	}
+
+	/* Start the receiving and send thread. */
+	inet_threads_start(ip);
+
+l_end:
+	/* Leave the critical section. */
+	os_cs_leave(&is.mutex);
+
+	return size;
+}
+
+/**
  * os_inet_close() - remove a server or client internet end point.
  *
  * @cid:  internet connection id.
@@ -640,9 +740,6 @@ int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p)
 	
 	/* Create the resources for the send thread. */
 	inet_thr_init(i, &ip->send_thr, "snd");
-	
-	/* Start the receiving and send thread. */
-	inet_threads_start(ip);
 	
 	/* Leave the critical section. */
 	os_cs_leave(&is.mutex);

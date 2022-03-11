@@ -25,7 +25,7 @@
 #define PRIO      OS_THREAD_PRIO_FOREG  /* Thread foreground priority. */
 #define Q_SIZE     4           /* Size of the thread input queue. */
 #define BUF_SIZE  32           /* Size of the I/O buffer. */
-#define LIMIT     99           /* Number of the send cycles. */
+#define LIMIT      0           /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -43,6 +43,7 @@
  * vine_t - state of the local or remote peer.
  *
  * @inet_cid:  inet communication id.
+ * @is_disp:   if 1, the peer is the vdisplay application.
  * @name:      name of the test thread.
  * @my_addr:   local IPv4 address.
  * @my_port:   local UDP port.
@@ -58,12 +59,13 @@
  * @done:      if 1, everything sent and received, resume the main process.
  **/
 typedef struct vine_s {
+	int    inet_id;
+	int    is_disp;
 	char   name[OS_THREAD_NAME_LEN];
 	char  *my_addr;
 	int    my_port;
 	char  *his_addr;
 	int    his_port;
-	int    inet_id;
 	void  *thr_id;
 	int    clk_id;
 	int    limit;
@@ -244,6 +246,39 @@ static int vine_read(vine_t *vp)
 	return 1;
 }
 
+/** 
+ * vine_connect() - establish the connection between vcontroller and vdisplay.
+ *
+ * @vp:  pointer to the remote of local peer state.
+ *
+ * Return:	None.
+ **/
+static void vine_connect(vine_t *vp)
+{
+	int rv;
+	
+	/* Wait for the connection establishment. */
+	for (;;) {
+		/* Test the application type. */
+		if (vp->is_disp) {
+			/* Send the connection establishment message to
+			 * vcontroller.*/
+			rv = os_inet_connect(vp->inet_id);
+			if (rv == 0)
+				return;
+		}
+		else {
+			/* Wait for the vdisplay peer.*/
+			rv = os_inet_accept(vp->inet_id);
+			if (rv == 0)
+				return;
+		}
+		
+		/* Wait some microseconds. */
+		usleep(1000);
+	}
+}
+	
 /**
  * vine_test_exec() -  exchange test messages between the local and remote peer.
  *
@@ -258,6 +293,9 @@ static void vine_test_exec(os_queue_elem_t *g_msg)
 	
 	/* Decode the pointer to the state state. */
 	vp = g_msg->param;
+
+	/* Establish the connection between vcontroller and vdisplay. */
+	vine_connect(vp);
 	
 	/* Exchange test messages between the local and remote peer. */
 	busy_rd = busy_wr = 1;
@@ -381,10 +419,12 @@ static void vine_init(void)
 	/* Allocate the resources for the remote peer. */
 	vine_alloc(&vs.rp, HIS_ADDR, HIS_PORT, MY_ADDR, MY_PORT,
 		   "vine_rp", LIMIT);
+	vs.rp.is_disp = 0;
 	
 	/* Allocate the resources for the local peer. */
 	vine_alloc(&vs.lp, MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT,
 		   "vine_lp", LIMIT);
+	vs.lp.is_disp = 1;
 }
 
 /*============================================================================

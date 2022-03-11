@@ -171,6 +171,7 @@ static int remote_read(void)
  **/
 static void remote_wait(void)
 {
+#if 0
 	/* Meeting with the local peer. */
 	for (;;) {
 		/* Wait for the identifier from the local peer. */
@@ -180,7 +181,8 @@ static void remote_wait(void)
 
 		/* Wait some time, until the local peer is present. */
 		usleep(1);
-	}	
+	}
+#endif
 }
 
 /**
@@ -227,6 +229,8 @@ static void remote_cleanup(void)
  **/
 static void remote_init(void)
 {
+	int rv;
+	
 	/* Initialize the van OS resources. */
 	os_init(1);
 	
@@ -241,6 +245,17 @@ static void remote_init(void)
 	
 	/* Save the number of the send cycles. */
 	rp.limit = LIMIT;
+
+	/* Wait for the connection establishment. */
+	for (;;) {
+		/* Wait for the vdisplay peer.*/
+		rv = os_inet_accept(rp.inet_id);
+		if (rv == 0)
+			return;
+		
+		/* Wait some microseconds. */
+		usleep(1000);
+	}
 }
 
 /*============================================================================
