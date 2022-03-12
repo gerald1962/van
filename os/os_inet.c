@@ -28,7 +28,7 @@
 #define INET_THR_QSIZE     1  /* Input queue size of the inet threads. */
 #define INET_MQ_SIZE    2048  /* SIze of the I/O queues. */
 #define INET_MTU_SIZE    512  /* Max. size of a message. */
-#define INET_CE_SIZE      32  /* Buffer size for the connection establishment. */
+#define INET_CE_SIZE     512  /* Buffer size for the connection establishment. */
 
 /* Accept message for the connection establishment. */
 #define INET_ACCEPT_MSG  "user=vdisplay#"
@@ -205,8 +205,8 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 	inet_thr_t  *thr;
 	socklen_t  addr_len;
 	inet_t *ip;
-	char *buf;
-	int down, size, err;
+	char *buf, *s;
+	int calling, down, size, err;
 
 	/* Decode the pointer to the inet state. */
 	ip = g_msg->param;
@@ -218,6 +218,9 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 	addr = (struct sockaddr *) &ip->his_addr.sock;
 	addr_len = sizeof(ip->his_addr.sock);
 
+	/* Test the call status. */
+	calling = 1;
+	
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
 	for (;;) {
@@ -252,6 +255,22 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 			}
 			
 			OS_TRAP_IF(size == -1);
+
+			/* Test the receive phase. */
+			if (calling) {
+				/* Search for a ring message. */
+				s = strstr(buf, ":mode=calling:");
+
+				/* Test the message type. */
+				if (s != NULL) {
+					/* Discard a call message. */
+					os_mq_free(ip->in);
+					continue;
+				}
+
+				/* Leave the call phase. */
+				calling = 0;
+			}
 
 			/* Complete the receive operation. */
 			os_mq_add(ip->in, size);
@@ -290,6 +309,66 @@ static void inet_threads_start(inet_t *ip)
 	msg.param = ip;
 	msg.cb    = inet_snd_exec;
 	OS_SEND(ip->send_thr.tid, &msg, sizeof(msg));
+}
+
+/**
+ * os_inet_connect_req() - analyze the connect request from vdisplay peer.
+ *
+ * @ip:  pointer to the inet state.
+ *
+ * Return:	0 if the vdisplay is online, otherwise -1.
+ **/
+static int os_inet_connect_req(inet_t *ip)
+{
+	socklen_t len, rv;
+	char *s;
+	
+	/* Unblocking read of the request from the vdisplay. */
+	len = sizeof(ip->his_addr.sock);
+	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
+		      (struct sockaddr *) &ip->his_addr.sock, &len);
+	if (rv < 1)
+		return -1;
+
+	/* Analyze the vdisplay request. */
+	s = strstr(ip->ce_buf, ":peer=vdisplay:");
+
+	/* Calculate the return value. */
+	rv = (s == NULL) ? -1 : 0;
+
+	return rv;
+}
+
+/**
+ * os_inet_connect_rsp() - analyze the vcontroller response.
+ *
+ * @ip:  pointer to the inet state.
+ *
+ * Return:	0 if the vcontroller is online, otherwise -1.
+ **/
+static int os_inet_connect_rsp(inet_t *ip)
+{
+	socklen_t len, rv;
+	char *s;
+	
+	/* Test the sequence number. */
+	if (ip->seqno < 1)
+		return -1;
+	
+	/* Unblocking read of the response from the vcontroller. */
+	len = sizeof(ip->his_addr.sock);
+	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
+		      (struct sockaddr *) &ip->his_addr.sock, &len);
+	if (rv < 1)
+		return -1;
+
+	/* Analyze the vcontroller response. */
+	s = strstr(ip->ce_buf, ":peer=vcontroller:");
+
+	/* Calculate the return value. */
+	rv = (s == NULL) ? -1 : 0;
+
+	return rv;
 }
 
 /**
@@ -534,31 +613,6 @@ int os_inet_read(int cid, char *buf, int count)
  *
  * Return:	0, if the vcontroller peer is active.
  **/
-static int os_inet_connect_rsp(inet_t *ip)
-{
-	socklen_t len, rv;
-	char *s;
-	
-	/* Test the sequence number. */
-	if (ip->seqno < 1)
-		return -1;
-	
-	/* Unblocking read of the response from the vcontroller. */
-	len = sizeof(ip->his_addr.sock);
-	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	if (rv < 1)
-		return -1;
-
-	/* Analyze the vcontroller response. */
-	s = strstr(ip->ce_buf, "#peer=vcontroller#");
-
-	/* Calculate the return value. */
-	rv = (s == NULL) ? -1 : 0;
-
-	return rv;
-}
-
 int os_inet_connect(int cid)
 {
 	inet_t *ip;
@@ -574,7 +628,7 @@ int os_inet_connect(int cid)
 	/* Get the pointer to the peer state. */
 	ip = is.inet[cid];
 
-	/* Analyze the controller response. */
+	/* Analyze the vcontroller response. */
 	rv = os_inet_connect_rsp(ip);
 	if (rv == 0) {
 		/* Start the receiving and send thread. */
@@ -586,7 +640,7 @@ int os_inet_connect(int cid)
 	ip->seqno++;
 
 	/* Frame the request to the vcontroller. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d#peer=vdisplay#",
+	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::peer=vdisplay:",
 		      ip->seqno);
 	OS_TRAP_IF(rv >= INET_CE_SIZE);
 	
@@ -612,27 +666,6 @@ l_end:
  *
  * Return:	0, if the vdisplay peer is active.
  **/
-static int os_inet_connect_req(inet_t *ip)
-{
-	socklen_t len, rv;
-	char *s;
-	
-	/* Unblocking read of the request from the vdisplay. */
-	len = sizeof(ip->his_addr.sock);
-	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	if (rv < 1)
-		return -1;
-
-	/* Analyze the vdisplay request. */
-	s = strstr(ip->ce_buf, "#peer=vdisplay#");
-
-	/* Calculate the return value. */
-	rv = (s == NULL) ? -1 : 0;
-
-	return rv;
-}
-
 int os_inet_accept(int cid)
 {
 	inet_t *ip;
@@ -657,7 +690,7 @@ int os_inet_accept(int cid)
 	ip->seqno++;
 
 	/* Frame the response to the vdisplay. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d#peer=vcontroller#",
+	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::mode=calling::peer=vcontroller:",
 		      ip->seqno);
 	OS_TRAP_IF(rv >= INET_CE_SIZE);
 	
@@ -691,7 +724,7 @@ l_end:
 void os_inet_close(int cid)
 {
 	inet_t *ip;
-	int rv, err;
+	int rv;
 
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
