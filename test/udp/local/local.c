@@ -17,13 +17,13 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P         "R>"         /* Prompt of the local peer. */
-#define MY_ADDR   "127.0.0.1"  /* IP address of the van display. */
-#define MY_PORT   58062        /* Port number of the van display. */
-#define HIS_ADDR  "127.0.0.1"  /* IP address of the van controller. */
-#define HIS_PORT  62058        /* Port number of the van controller. */
-#define BUF_SIZE  32           /* Size of the I/O buffer. */
-#define LIMIT      9           /* Number of the send cycles. */
+#define P         "R>"              /* Prompt of the local peer. */
+#define MY_ADDR   "192.168.178.96"  /* IP address of the van controller. */
+#define MY_PORT   62058             /* Port number of the van controller. */
+#define HIS_ADDR  "192.168.178.1"    /* IP address of the van display. */
+#define HIS_PORT  58062             /* Port number of the van display. */
+#define BUF_SIZE  32                /* Size of the I/O buffer. */
+#define LIMIT      9                /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -208,7 +208,7 @@ static void local_init(void)
 	int rv;
 	
 	/* Initialize the van OS resources. */
-	os_init(0);
+	os_init(1);
 	
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
@@ -226,7 +226,7 @@ static void local_init(void)
 	/* Wait for the connection establishment. */
 	for (;;) {
 		/* Send the connection establishment message to vcontroller.*/
-		rv = os_inet_connect(lp.inet_id);
+		rv = os_inet_accept(lp.inet_id);
 		if (rv == 0)
 			return;
 		
