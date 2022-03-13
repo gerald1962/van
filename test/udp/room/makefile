@@ -3,7 +3,7 @@
 # Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
 
 # Name of the executable research programme.
-MODULE := local
+MODULE := room
 
 # Define the root of the VAN platform.
 GLOBALPATH := $(abspath ../../..)
@@ -15,7 +15,7 @@ include ${GLOBALPATH}/tools/build/makefile_pathes
 #
 VAN_FILES := \
   ${${BUILD_LIB}_FILES} \
-  local.c
+  room.c
 
 # Include the framework makefile with the integration operations.
 include ${GLOBALPATH}/tools/build/makefile_operations

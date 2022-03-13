@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Test of the local peer.
+ * Test of the box peer.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -17,20 +17,20 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P         "R>"         /* Prompt of the local peer. */
-#define MY_ADDR   "127.0.0.1"  /* IP address of the van display. */
-#define MY_PORT   58062        /* Port number of the van display. */
-#define HIS_ADDR  "127.0.0.1"  /* IP address of the van controller. */
-#define HIS_PORT  62058        /* Port number of the van controller. */
-#define BUF_SIZE  32           /* Size of the I/O buffer. */
-#define LIMIT      9           /* Number of the send cycles. */
+#define P         "B>"              /* Prompt of the box peer. */
+#define MY_ADDR   "10.0.2.15"       /* IP address of the box peer. */
+#define MY_PORT   58062             /* Port number of the box peer. */
+#define HIS_ADDR  "192.168.178.96"  /* IP address of the room peer. */
+#define HIS_PORT  62058             /* Port number of the room peer. */
+#define BUF_SIZE  32                /* Size of the I/O buffer. */
+#define LIMIT      9                /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
   ============================================================================*/
 /* Vine trace with filter. */
 #define TRACE(info_)  do { \
-    if (lp.my_trace) \
+    if (bp.my_trace) \
 	    printf info_; \
 } while (0)
 
@@ -41,16 +41,18 @@
   LOCAL DATA
   ============================================================================*/
 /**
- * lp - state of the local peer.
+ * bp - state of the box peer.
  *
  * @my_trace:  if 1, the trace is active.
- * @lp:        local peer.
- * @rp:        local peer.
- * @suspend:   control semaphore of the main process.
- * @mutex:     protect the critical section in the resume operation for the main
- *             process.
+ * @inet_id:   inet id.
+ * @limit:     number of the generator cycles.
+ * @rd_count:  current read cycles.
+ * @wr_count:  current write cycles.
+ * @buf:       I/O buffer.
+ * @rd_done:   if 1, all input messages have been consumed.
+ * @wr_done:   if 1, all output messages have generated.
  **/
-static struct v_s {
+static struct mp_s {
 	int   my_trace;
 	int   inet_id;
 	int   limit;
@@ -60,7 +62,7 @@ static struct v_s {
 	int   rd_done;
 	int   wr_done;
 	int   done;
-} lp;
+} bp;
 	
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -69,40 +71,40 @@ static struct v_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /** 
- * local_write() - generate the output for the local peer.
+ * box_write() - generate the output for the room peer.
  *
  * Return:	0, if all data have been sent.
  **/
-static int local_write(void)
+static int box_write(void)
 {
 	int n, rv;
 	
 	/* Test the final condition of the producer. */
-	if (lp.wr_done)
+	if (bp.wr_done)
 		return 0;
 
 	/* Test the cycle counter. */
-	if (lp.wr_count > lp.limit) {
+	if (bp.wr_count > bp.limit) {
 		/* Restart the send operation and get the fill level of the
 		 * output buffer. */
-		n = os_inet_sync(lp.inet_id);
+		n = os_inet_sync(bp.inet_id);
 		if (n > 0)
 			return 1;
 
 		/* Update the final condition of the producer. */
-		lp.wr_done = 1;
+		bp.wr_done = 1;
 		return 0;
 	}
 	
 	/* Test the write cycle counter. */
-	if (lp.wr_count == lp.limit) {
+	if (bp.wr_count == bp.limit) {
 		/* Save the final response. */
-		n = snprintf(lp.buf, BUF_SIZE, "DONE");
+		n = snprintf(bp.buf, BUF_SIZE, "DONE");
 		OS_TRAP_IF(n >= BUF_SIZE);
 	}
 	else {
 		/* Generate the test message. */
-		n = snprintf(lp.buf, OS_BUF_SIZE, "%d", lp.wr_count);
+		n = snprintf(bp.buf, OS_BUF_SIZE, "%d", bp.wr_count);
 		OS_TRAP_IF(n >= BUF_SIZE);
 	}
 
@@ -110,7 +112,7 @@ static int local_write(void)
 	n++;
 	
 	/* Start an attempt of transmission. */
-	rv = os_inet_write(lp.inet_id, lp.buf, n);
+	rv = os_inet_write(bp.inet_id, bp.buf, n);
 	OS_TRAP_IF(rv != 0 && rv != n);
 
 	/* Test the success of the transmission. */
@@ -118,115 +120,115 @@ static int local_write(void)
 		return 1;
 
 	/* Replace the message delimiter with EOS. */
-	lp.buf[n -1] = '\0';
+	bp.buf[n -1] = '\0';
 	
 	/* The transmission has worked. */
-	TRACE(("%s sent: b=\"%s\", n=%d\n", P, lp.buf, n));
+	TRACE(("%s sent: b=\"%s\", n=%d\n", P, bp.buf, n));
 	
 	/* Increment the cycle counter. */
-	lp.wr_count++;
+	bp.wr_count++;
 	return 1;
 }
 
 /** 
- * local_read() - read the input from the local peer.
+ * box_read() - read the input from the room peer.
  *
  * Return:	0, if all data have been received.
  **/
-static int local_read(void)
+static int box_read(void)
 {
 	int n;
 	
 	/* Test the final condition of the consumer. */
-	if (lp.rd_done)
+	if (bp.rd_done)
 		return 0;
 
 	/* Wait for the data from the producer. */
-	n = os_inet_read(lp.inet_id, lp.buf, BUF_SIZE);
+	n = os_inet_read(bp.inet_id, bp.buf, BUF_SIZE);
 	if (n < 1)
 		return 1;
 		
-	TRACE(("%s rcvd: b=\"%s\", n=%d\n", P, lp.buf, n));
+	TRACE(("%s rcvd: b=\"%s\", n=%d\n", P, bp.buf, n));
 		       
 	/* Test the end condition of the test. */
-	if (os_strcmp(lp.buf, "DONE") == 0) {
-		lp.rd_done = 1;
+	if (os_strcmp(bp.buf, "DONE") == 0) {
+		bp.rd_done = 1;
 		return 0;
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(lp.buf, NULL, 10);
-	OS_TRAP_IF(lp.rd_count != n);
+	n = strtol(bp.buf, NULL, 10);
+	OS_TRAP_IF(bp.rd_count != n);
 
 	/* Increment the receive counter. */
-	lp.rd_count++;
+	bp.rd_count++;
 	
 	return 1;
 }
 
 /**
- * local_test() - produce/consume messages for/from the local peer.
+ * box_test() - produce/consume messages for/from the room peer.
  *
  * Return:	None.
  **/
-static void local_test(void)
+static void box_test(void)
 {
 	int busy_rd, busy_wr;
-	
-	/* Produce/consume messages for/from the local peer.*/
+
+	/* Produce/consume messages for/from the box peer.*/
 	busy_rd = busy_wr = 1;
 	while (busy_rd || busy_wr) {
-		/* Read the input from the local peer. */
-		busy_rd = local_read();
+		/* Read the input from the room peer. */
+		busy_rd = box_read();
 
-		/* Generate the output for the local peer. */
-		busy_wr = local_write();
+		/* Generate the output for the room peer. */
+		busy_wr = box_write();
 
 		/* Wait some microseconds. */
-		//usleep(1000);
+		usleep(1000);
 	}
 }
 
 /**
- * local_cleanup() - free the resources of the local peer.
+ * box_cleanup() - free the resources of the box peer.
  *
  * Return:	None.
  **/
-static void local_cleanup(void)
+static void box_cleanup(void)
 {
-	/* Close the local socket. */
-	os_inet_close(lp.inet_id);
+	/* Close the box socket. */
+	os_inet_close(bp.inet_id);
 }
 
 /**
- * local_init() - allocate the resources for the test with the local peer.
+ * box_init() - allocate the resources for the test with the box peer.
  *
  * Return:	None.
  **/
-static void local_init(void)
+static void box_init(void)
 {
 	int rv;
 	
 	/* Initialize the van OS resources. */
-	os_init(0);
+	os_init(1);
 	
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
 
-	/* Switch on the trace of the local peer. */
-	lp.my_trace = 1;
+	/* Switch on the trace of the box peer. */
+	bp.my_trace = 1;
 	
 	/* Allocate the socket resources. */
-	
-	lp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
+	bp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
-	lp.limit = LIMIT;
-	
+	bp.limit = LIMIT;
+
 	/* Wait for the connection establishment. */
 	for (;;) {
-		/* Send the connection establishment message to vcontroller.*/
-		rv = os_inet_connect(lp.inet_id);
+		/* Send the connection request to the room peer and wait for
+		 * the response.*/
+		rv = os_inet_connect(bp.inet_id);
 		if (rv == 0)
 			return;
 		
@@ -239,22 +241,22 @@ static void local_init(void)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * main() - start function of the local peer.
+ * main() - start function of the box peer.
  *
  * Return:	0 or force a software trap.
  **/
 int main(void)
 {
-	printf("%s local peer\n", P);
+	printf("%s box peer\n", P);
 
 	/* Allocate the resources for the internet loop test. */
-	local_init();
+	box_init();
 
-	/* Produce/consume messages for/from the local peer. */
-	local_test();
+	/* Produce/consume messages for/from the room peer. */
+	box_test();
 
 	/* Free the resources for the internet loop test. */
-	local_cleanup();
+	box_cleanup();
 
 	/* Release the van OS resources. */
 	os_exit();

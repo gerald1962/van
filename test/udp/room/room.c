@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Test of the remote peer.
+ * Test of the room peer.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -17,13 +17,13 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P         "R>"         /* Prompt of the remote peer. */
-#define MY_ADDR   "127.0.0.1"  /* IP address of the van display. */
-#define MY_PORT   62058        /* Port number of the van controller. */
-#define HIS_ADDR  "127.0.0.1"  /* IP address of the van controller. */
-#define HIS_PORT  58062        /* Port number of the van display. */
-#define BUF_SIZE  32           /* Size of the I/O buffer. */
-#define LIMIT      9           /* Number of the send cycles. */
+#define P         "R>"              /* Prompt of the room peer. */
+#define MY_ADDR   "192.168.178.96"  /* IP address of the room peer. */
+#define MY_PORT   62058             /* Port number of the room peer. */
+#define HIS_ADDR  "192.168.178.1"   /* IP address of the box peer. */
+#define HIS_PORT  58062             /* Port number of the box peer. */
+#define BUF_SIZE  32                /* Size of the I/O buffer. */
+#define LIMIT      9                /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -41,16 +41,18 @@
   LOCAL DATA
   ============================================================================*/
 /**
- * rp - state of the remote peer.
+ * rp - state of the room peer.
  *
  * @my_trace:  if 1, the trace is active.
- * @lp:        local peer.
- * @rp:        remote peer.
- * @suspend:   control semaphore of the main process.
- * @mutex:     protect the critical section in the resume operation for the main
- *             process.
+ * @inet_id:   inet id.
+ * @limit:     number of the generator cycles.
+ * @rd_count:  current read cycles.
+ * @wr_count:  current write cycles.
+ * @buf:       I/O buffer.
+ * @rd_done:   if 1, all input messages have been consumed.
+ * @wr_done:   if 1, all output messages have generated.
  **/
-static struct v_s {
+static struct sp_s {
 	int   my_trace;
 	int   inet_id;
 	int   limit;
@@ -69,11 +71,11 @@ static struct v_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /** 
- * remote_write() - generate the output for the local peer.
+ * room_write() - generate the output for the box peer.
  *
  * Return:	0, if all data have been sent.
  **/
-static int remote_write(void)
+static int room_write(void)
 {
 	int n, rv;
 	
@@ -129,11 +131,11 @@ static int remote_write(void)
 }
 
 /** 
- * remote_read() - read the input from the local peer.
+ * room_read() - read the input from the box peer.
  *
  * Return:	0, if all data have been received.
  **/
-static int remote_read(void)
+static int room_read(void)
 {
 	int n;
 	
@@ -165,46 +167,22 @@ static int remote_read(void)
 }
 
 /**
- * remote_wait() - wait for the identifier from the local peer.
+ * room_test() - produce/consume messages for/from the box peer.
  *
  * Return:	None.
  **/
-static void remote_wait(void)
-{
-#if 0
-	/* Meeting with the local peer. */
-	for (;;) {
-		/* Wait for the identifier from the local peer. */
-		rv = os_inet_wait(rp.inet_id, "hello vcontroller");
-		if (rv == 0)
-			return;
-
-		/* Wait some time, until the local peer is present. */
-		usleep(1);
-	}
-#endif
-}
-
-/**
- * remote_test() - produce/consume messages for/from the local peer.
- *
- * Return:	None.
- **/
-static void remote_test(void)
+static void room_test(void)
 {
 	int busy_rd, busy_wr;
-
-	/* Produce/consume messages for/from the local peer.*/
+	
+	/* Produce/consume messages for/from the box peer.*/
 	busy_rd = busy_wr = 1;
 	while (busy_rd || busy_wr) {
-		/* Wait for the identifier from the local peer. */
-		remote_wait();
+		/* Read the input from the box peer. */
+		busy_rd = room_read();
 
-		/* Read the input from the local peer. */
-		busy_rd = remote_read();
-
-		/* Generate the output for the local peer. */
-		busy_wr = remote_write();
+		/* Generate the output for the box peer. */
+		busy_wr = room_write();
 
 		/* Wait some microseconds. */
 		usleep(1000);
@@ -212,22 +190,22 @@ static void remote_test(void)
 }
 
 /**
- * remote_cleanup() - free the resources of the remote peer.
+ * room_cleanup() - free the resources of the room peer.
  *
  * Return:	None.
  **/
-static void remote_cleanup(void)
+static void room_cleanup(void)
 {
-	/* Close the remote socket. */
+	/* Close the room socket. */
 	os_inet_close(rp.inet_id);
 }
 
 /**
- * remote_init() - allocate the resources for the test with the remote peer.
+ * room_init() - allocate the resources for the test with the room peer.
  *
  * Return:	None.
  **/
-static void remote_init(void)
+static void room_init(void)
 {
 	int rv;
 	
@@ -237,24 +215,26 @@ static void remote_init(void)
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
 
-	/* Switch on the trace of the remote peer. */
+	/* Switch on the trace of the room peer. */
 	rp.my_trace = 1;
 	
 	/* Allocate the socket resources. */
+	
 	rp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
 	rp.limit = LIMIT;
-
+	
 	/* Wait for the connection establishment. */
 	for (;;) {
-		/* Wait for the vdisplay peer.*/
+		/* Wait for the connection request from the box peer and send
+		 * the response. */
 		rv = os_inet_accept(rp.inet_id);
 		if (rv == 0)
 			return;
 		
 		/* Wait some microseconds. */
-		usleep(1000);
+		sleep(0.1);
 	}
 }
 
@@ -262,22 +242,22 @@ static void remote_init(void)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * main() - start function of the remote peer.
+ * main() - start function of the room peer.
  *
  * Return:	0 or force a software trap.
  **/
 int main(void)
 {
-	printf("%s remote peer\n", P);
+	printf("%s room peer\n", P);
 
 	/* Allocate the resources for the internet loop test. */
-	remote_init();
+	room_init();
 
-	/* Produce/consume messages for/from the local peer. */
-	remote_test();
+	/* Produce/consume messages for/from the box peer. */
+	room_test();
 
 	/* Free the resources for the internet loop test. */
-	remote_cleanup();
+	room_cleanup();
 
 	/* Release the van OS resources. */
 	os_exit();
