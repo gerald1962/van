@@ -30,7 +30,7 @@ int main(void)
 {
 	struct sockaddr_in si_me, si_other;
 	ssize_t sent_len;
-	int s, rv, i, slen = sizeof(si_other) , recv_len, err;
+	int s, i, slen = sizeof(si_other) , recv_len, err;
 	char buf[BUFLEN];
 	
 	//create a UDP socket
@@ -40,11 +40,7 @@ int main(void)
 	}
 
 	memset((char *) &si_other, 0, sizeof(si_other));
-#if 1
 	si_other.sin_family = AF_INET;
-#else
-	si_other.sin_family = AF_UNSPEC;
-#endif
 	si_other.sin_port = htons(CLI_PORT);
 	
 	//only allow a specific client IP address
@@ -70,13 +66,7 @@ int main(void)
 	{
 		die("bind");
 	}
-
-#if 0
-	rv = connect(s, (struct sockaddr *) &si_other, slen);
-	if (rv != 0)
-		die("connect");
-#endif
-
+	
 	//keep listening for data
 	while(1)
 	{
@@ -84,8 +74,6 @@ int main(void)
 		fflush(stdout);
 		
 		//try to receive some data, this is a blocking call
-		memset(buf, 0, BUFLEN);
-#if 1
 		if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) == -1)
 		{
 			die("recvfrom()");
@@ -93,22 +81,13 @@ int main(void)
 		
 		//print details of the client/peer and the data received
 		printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
-#else
-		recv_len = recv(s, buf, BUFLEN, 0);
-		if (recv_len == -1)
-			die("recv()");
-#endif
 		printf("Data: %s\n" , buf);
 		
 		//now reply the client with the same data
-#if 1
 		if (sendto(s, buf, recv_len, 0, (struct sockaddr*) &si_other, slen) == -1)
+		{
 			die("sendto()");
-#else
-		rv = send(s, buf, recv_len, 0);
-		if (rv == -1)
-			die("send()");
-#endif
+		}
 	}
 
 	close(s);

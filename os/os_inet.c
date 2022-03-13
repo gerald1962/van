@@ -28,7 +28,7 @@
 #define INET_THR_QSIZE     1  /* Input queue size of the inet threads. */
 #define INET_MQ_SIZE    2048  /* SIze of the I/O queues. */
 #define INET_MTU_SIZE    512  /* Max. size of a message. */
-#define INET_CE_SIZE     512  /* Buffer size for the connection establishment. */
+#define INET_CE_SIZE      32  /* Buffer size for the connection establishment. */
 
 /* Accept message for the connection establishment. */
 #define INET_ACCEPT_MSG  "user=vdisplay#"
@@ -82,7 +82,6 @@ typedef struct inet_thr_s {
  * @in:        input queue, written from the receving thread.
  * @out:       output queue, read from the send thread.
  * @sid:       socket file descriptor.
- * @seqno:     sequence number of a message.
  * @recv_thr:  state of the receiver thread.
  * @send_thr:  state of the send thread.
  * @my_addr:   socket address of the local peer.
@@ -93,8 +92,6 @@ typedef struct inet_s {
 	void  *in;
 	void  *out;
 	int    sid;
-	int    seqno;
-	char   ce_buf[INET_CE_SIZE];
 	inet_thr_t   recv_thr;
 	inet_thr_t   send_thr;
 	inet_sock_t  my_addr;
@@ -131,9 +128,7 @@ static struct is_s {
  **/
 static void inet_snd_exec(os_queue_elem_t *g_msg)
 {
-	struct sockaddr *addr;
 	inet_thr_t  *thr;
-	socklen_t  addr_len;
 	inet_t *ip;
 	char *buf;
 	int down, size, rv, err;
@@ -143,10 +138,6 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 
 	/* Get the pointer to the state of the receiving thread. */
 	thr = &ip->send_thr;
-
-	/* Get the pointer to the socket descripton. */
-	addr = (struct sockaddr *) &ip->his_addr.sock;
-	addr_len = sizeof(ip->his_addr.sock);
 	
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
@@ -165,7 +156,7 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 		
 			/* Blocking transmission of a message to another
 			 * socket. */
-			rv = sendto(ip->sid, buf, size, 0, addr, addr_len);
+			rv = send(ip->sid, buf, size, 0);
 
 			/* Test the return value. */
 			if (rv != size) {
@@ -201,26 +192,17 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
  **/
 static void inet_rcv_exec(os_queue_elem_t *g_msg)
 {
-	struct sockaddr *addr;
 	inet_thr_t  *thr;
-	socklen_t  addr_len;
 	inet_t *ip;
-	char *buf, *s;
-	int calling, down, size, err;
+	char *buf;
+	int down, size, err;
 
 	/* Decode the pointer to the inet state. */
 	ip = g_msg->param;
 
 	/* Get the pointer to the state of the receiving thread. */
 	thr = &ip->recv_thr;
-	
-	/* Get the pointer to the socket descripton. */
-	addr = (struct sockaddr *) &ip->his_addr.sock;
-	addr_len = sizeof(ip->his_addr.sock);
 
-	/* Test the call status. */
-	calling = 1;
-	
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
 	for (;;) {
@@ -239,8 +221,7 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 				break;
 			
 			/* Blocking receipt of a message from a socket. */
-			size = recvfrom(ip->sid, buf, INET_MTU_SIZE, 0,
-					addr, &addr_len); 
+			size = recv(ip->sid, buf, INET_MTU_SIZE, 0); 
 			if (size == 0) {
 				/* Release the reserved message buffer. */
 				os_mq_free(ip->in);
@@ -255,22 +236,6 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 			}
 			
 			OS_TRAP_IF(size == -1);
-
-			/* Test the receive phase. */
-			if (calling) {
-				/* Search for a ring message. */
-				s = strstr(buf, ":mode=calling:");
-
-				/* Test the message type. */
-				if (s != NULL) {
-					/* Discard a call message. */
-					os_mq_free(ip->in);
-					continue;
-				}
-
-				/* Leave the call phase. */
-				calling = 0;
-			}
 
 			/* Complete the receive operation. */
 			os_mq_add(ip->in, size);
@@ -312,66 +277,6 @@ static void inet_threads_start(inet_t *ip)
 }
 
 /**
- * os_inet_connect_req() - analyze the connect request from vdisplay peer.
- *
- * @ip:  pointer to the inet state.
- *
- * Return:	0 if the vdisplay is online, otherwise -1.
- **/
-static int os_inet_connect_req(inet_t *ip)
-{
-	socklen_t len, rv;
-	char *s;
-	
-	/* Unblocking read of the request from the vdisplay. */
-	len = sizeof(ip->his_addr.sock);
-	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	if (rv < 1)
-		return -1;
-
-	/* Analyze the vdisplay request. */
-	s = strstr(ip->ce_buf, ":peer=vdisplay:");
-
-	/* Calculate the return value. */
-	rv = (s == NULL) ? -1 : 0;
-
-	return rv;
-}
-
-/**
- * os_inet_connect_rsp() - analyze the vcontroller response.
- *
- * @ip:  pointer to the inet state.
- *
- * Return:	0 if the vcontroller is online, otherwise -1.
- **/
-static int os_inet_connect_rsp(inet_t *ip)
-{
-	socklen_t len, rv;
-	char *s;
-	
-	/* Test the sequence number. */
-	if (ip->seqno < 1)
-		return -1;
-	
-	/* Unblocking read of the response from the vcontroller. */
-	len = sizeof(ip->his_addr.sock);
-	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	if (rv < 1)
-		return -1;
-
-	/* Analyze the vcontroller response. */
-	s = strstr(ip->ce_buf, ":peer=vcontroller:");
-
-	/* Calculate the return value. */
-	rv = (s == NULL) ? -1 : 0;
-
-	return rv;
-}
-
-/**
  * inet_sock_create() - install the socket.
  *
  * @ip:  pointer to the inet state.
@@ -389,7 +294,7 @@ static void inet_sock_create(inet_t *ip)
 	 *              of a fixed maximum length).
 	 * IPPROTO_UDP  for udp(7) datagram sockets.
 	 *  */
-	ip->sid = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	ip->sid = socket(AF_INET, SOCK_DGRAM, 0);
 	OS_TRAP_IF(ip->sid == -1);
 
 	/* When a socket is created with socket(), it exists in a name space
@@ -607,7 +512,7 @@ int os_inet_read(int cid, char *buf, int count)
 }
 
 /**
- * os_inet_connect() - send the connection establishment message to the vcontroller.
+ * os_inet_connect() - send the connection establishment message to vcontroller.
  *
  * @cid:  internet connection id.
  *
@@ -616,7 +521,7 @@ int os_inet_read(int cid, char *buf, int count)
 int os_inet_connect(int cid)
 {
 	inet_t *ip;
-	int rv, len;
+	int rv;
 
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
@@ -625,33 +530,32 @@ int os_inet_connect(int cid)
 	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||  is.inet[cid] == NULL ||
 		   is.inet[cid]->cid != cid);
 
-	/* Get the pointer to the peer state. */
+	/* Get the pointer to the internet end point state. */
 	ip = is.inet[cid];
 
-	/* Analyze the vcontroller response. */
-	rv = os_inet_connect_rsp(ip);
-	if (rv == 0) {
-		/* Start the receiving and send thread. */
-		inet_threads_start(ip);
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
+	if (rv != 0) {
+		rv = -1;
 		goto l_end;
 	}
 	
-	/* Increment the sequence number. */
-	ip->seqno++;
+	/* Ublocking transmission of a message to another socket. */
+	rv = send(ip->sid, INET_ACCEPT_MSG, INET_ACCEPT_LEN, MSG_DONTWAIT);
 
-	/* Frame the request to the vcontroller. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::peer=vdisplay:",
-		      ip->seqno);
-	OS_TRAP_IF(rv >= INET_CE_SIZE);
+	/* Test the status of the receive operation. */
+	if (rv != INET_ACCEPT_LEN) {
+		rv = -1;
+		goto l_end;
+	}
+
+	/* Initialize the return value. */
+	rv = 0;
+
+	/* Start the receiving and send thread. */
+	inet_threads_start(ip);
 	
-	/* Unblocking transmission of a message to another socket. */
-	len = sizeof(ip->his_addr.sock);
-	sendto (ip->sid, ip->ce_buf, rv, MSG_DONTWAIT,
-		(struct sockaddr *) &ip->his_addr.sock, len);
-
-	/* Update the return value. */
-	rv = -1;
-
 l_end:
 	/* Leave the critical section. */
 	os_cs_leave(&is.mutex);
@@ -669,7 +573,8 @@ l_end:
 int os_inet_accept(int cid)
 {
 	inet_t *ip;
-	int rv, len;
+	char buf[INET_CE_SIZE];
+	int rv, size;
 
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
@@ -678,40 +583,42 @@ int os_inet_accept(int cid)
 	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT ||  is.inet[cid] == NULL ||
 		   is.inet[cid]->cid != cid);
 
+	/* Initialize the return value. */
+	size = -1;
+	
 	/* Get the pointer to the internet end point state. */
 	ip = is.inet[cid];
 
-	/* Analyze the connect request from vdisplay peer. */
-	rv = os_inet_connect_req(ip);
+	/* Initiate a connection on a socket. */
+	rv = connect(ip->sid, (struct sockaddr *) &ip->his_addr.sock,
+		     sizeof(ip->his_addr.sock));
 	if (rv != 0)
 		goto l_end;
 
-	/* Increment the sequence number. */
-	ip->seqno++;
+	/* Unblocking receipt of a message from a socket. */
+	size = recv(ip->sid, buf, INET_CE_SIZE, MSG_DONTWAIT);
 
-	/* Frame the response to the vdisplay. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::mode=calling::peer=vcontroller:",
-		      ip->seqno);
-	OS_TRAP_IF(rv >= INET_CE_SIZE);
-	
-	/* Unblocking transmission of a message to another socket. */
-	len = sizeof(ip->his_addr.sock);
-	rv = sendto (ip->sid, ip->ce_buf, rv, MSG_DONTWAIT,
-		     (struct sockaddr *) &ip->his_addr.sock, len);
-	OS_TRAP_IF(rv == -1);
-	
+	/* Test the status of the receive operation. */
+	if (size != INET_ACCEPT_LEN) {
+		size = -1;
+		goto l_end;
+	}
+
+	/* Test the received message for the connection establishment. */
+	size = os_strncmp(buf, INET_ACCEPT_MSG, INET_ACCEPT_LEN);
+	if (size != 0) {
+		size = -1;
+		goto l_end;
+	}
+
 	/* Start the receiving and send thread. */
 	inet_threads_start(ip);
-
-	
-	/* Update the return value. */
-	rv = 0;
 
 l_end:
 	/* Leave the critical section. */
 	os_cs_leave(&is.mutex);
 
-	return rv;
+	return size;
 }
 
 /**
@@ -738,7 +645,8 @@ void os_inet_close(int cid)
 
 	/* Shut down part of a full-duplex connection. Further receptions and
 	 * transmissions will be disallowed. */
-	shutdown(ip->sid, SHUT_RDWR);
+	rv = shutdown(ip->sid, SHUT_RDWR);
+	OS_TRAP_IF(rv == -1);
 
 	/* Remove the endpoint for the internet communication. */
 	rv = close(ip->sid);

@@ -13,7 +13,6 @@
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
 #include <stdio.h>      /* Standard C library:   printf(). */
-#include <string.h>     /* String operations: strstr(). */
 #include <stdlib.h>     /* Standard C library:   strtol(). */
 #include <unistd.h>     /* Common Unix interfaces: getopt().*/
 #include <semaphore.h>  /* Semaphore operations: sem_t. */

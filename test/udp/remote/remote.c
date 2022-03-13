@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
 
 /*
- * Test of the store peer.
+ * Test of the remote peer.
  *
  * Copyright (C) 2022 Gerald Schueller <gerald.schueller@web.de>
  */
@@ -17,20 +17,20 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P         "S>"              /* Prompt of the store peer. */
-#define MY_ADDR   "192.168.178.96"  /* IP address of the store peer. */
-#define MY_PORT   62058             /* Port number of the store peer. */
-#define HIS_ADDR  "192.168.178.1"   /* IP address of the mail peer. */
-#define HIS_PORT  58062             /* Port number of the mail peer. */
-#define BUF_SIZE  32                /* Size of the I/O buffer. */
-#define LIMIT      9                /* Number of the send cycles. */
+#define P         "R>"         /* Prompt of the remote peer. */
+#define MY_ADDR   "127.0.0.1"  /* IP address of the van display. */
+#define MY_PORT   62058        /* Port number of the van controller. */
+#define HIS_ADDR  "127.0.0.1"  /* IP address of the van controller. */
+#define HIS_PORT  58062        /* Port number of the van display. */
+#define BUF_SIZE  32           /* Size of the I/O buffer. */
+#define LIMIT      9           /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
   ============================================================================*/
 /* Vine trace with filter. */
 #define TRACE(info_)  do { \
-    if (sp.my_trace) \
+    if (rp.my_trace) \
 	    printf info_; \
 } while (0)
 
@@ -41,18 +41,16 @@
   LOCAL DATA
   ============================================================================*/
 /**
- * sp - state of the store peer.
+ * rp - state of the remote peer.
  *
  * @my_trace:  if 1, the trace is active.
- * @inet_id:   inet id.
- * @limit:     number of the generator cycles.
- * @rd_count:  current read cycles.
- * @wr_count:  current write cycles.
- * @buf:       I/O buffer.
- * @rd_done:   if 1, all input messages have been consumed.
- * @wr_done:   if 1, all output messages have generated.
+ * @lp:        local peer.
+ * @rp:        remote peer.
+ * @suspend:   control semaphore of the main process.
+ * @mutex:     protect the critical section in the resume operation for the main
+ *             process.
  **/
-static struct sp_s {
+static struct v_s {
 	int   my_trace;
 	int   inet_id;
 	int   limit;
@@ -62,7 +60,7 @@ static struct sp_s {
 	int   rd_done;
 	int   wr_done;
 	int   done;
-} sp;
+} rp;
 	
 /*============================================================================
   LOCAL FUNCTION PROTOTYPES
@@ -71,40 +69,40 @@ static struct sp_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /** 
- * store_write() - generate the output for the mail peer.
+ * remote_write() - generate the output for the local peer.
  *
  * Return:	0, if all data have been sent.
  **/
-static int store_write(void)
+static int remote_write(void)
 {
 	int n, rv;
 	
 	/* Test the final condition of the producer. */
-	if (sp.wr_done)
+	if (rp.wr_done)
 		return 0;
 
 	/* Test the cycle counter. */
-	if (sp.wr_count > sp.limit) {
+	if (rp.wr_count > rp.limit) {
 		/* Restart the send operation and get the fill level of the
 		 * output buffer. */
-		n = os_inet_sync(sp.inet_id);
+		n = os_inet_sync(rp.inet_id);
 		if (n > 0)
 			return 1;
 
 		/* Update the final condition of the producer. */
-		sp.wr_done = 1;
+		rp.wr_done = 1;
 		return 0;
 	}
 	
 	/* Test the write cycle counter. */
-	if (sp.wr_count == sp.limit) {
+	if (rp.wr_count == rp.limit) {
 		/* Save the final response. */
-		n = snprintf(sp.buf, BUF_SIZE, "DONE");
+		n = snprintf(rp.buf, BUF_SIZE, "DONE");
 		OS_TRAP_IF(n >= BUF_SIZE);
 	}
 	else {
 		/* Generate the test message. */
-		n = snprintf(sp.buf, OS_BUF_SIZE, "%d", sp.wr_count);
+		n = snprintf(rp.buf, OS_BUF_SIZE, "%d", rp.wr_count);
 		OS_TRAP_IF(n >= BUF_SIZE);
 	}
 
@@ -112,7 +110,7 @@ static int store_write(void)
 	n++;
 	
 	/* Start an attempt of transmission. */
-	rv = os_inet_write(sp.inet_id, sp.buf, n);
+	rv = os_inet_write(rp.inet_id, rp.buf, n);
 	OS_TRAP_IF(rv != 0 && rv != n);
 
 	/* Test the success of the transmission. */
@@ -120,69 +118,93 @@ static int store_write(void)
 		return 1;
 
 	/* Replace the message delimiter with EOS. */
-	sp.buf[n -1] = '\0';
+	rp.buf[n -1] = '\0';
 	
 	/* The transmission has worked. */
-	TRACE(("%s sent: b=\"%s\", n=%d\n", P, sp.buf, n));
+	TRACE(("%s sent: b=\"%s\", n=%d\n", P, rp.buf, n));
 	
 	/* Increment the cycle counter. */
-	sp.wr_count++;
+	rp.wr_count++;
 	return 1;
 }
 
 /** 
- * store_read() - read the input from the mail peer.
+ * remote_read() - read the input from the local peer.
  *
  * Return:	0, if all data have been received.
  **/
-static int store_read(void)
+static int remote_read(void)
 {
 	int n;
 	
 	/* Test the final condition of the consumer. */
-	if (sp.rd_done)
+	if (rp.rd_done)
 		return 0;
 
 	/* Wait for the data from the producer. */
-	n = os_inet_read(sp.inet_id, sp.buf, BUF_SIZE);
+	n = os_inet_read(rp.inet_id, rp.buf, BUF_SIZE);
 	if (n < 1)
 		return 1;
 		
-	TRACE(("%s rcvd: b=\"%s\", n=%d\n", P, sp.buf, n));
+	TRACE(("%s rcvd: b=\"%s\", n=%d\n", P, rp.buf, n));
 		       
 	/* Test the end condition of the test. */
-	if (os_strcmp(sp.buf, "DONE") == 0) {
-		sp.rd_done = 1;
+	if (os_strcmp(rp.buf, "DONE") == 0) {
+		rp.rd_done = 1;
 		return 0;
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(sp.buf, NULL, 10);
-	OS_TRAP_IF(sp.rd_count != n);
+	n = strtol(rp.buf, NULL, 10);
+	OS_TRAP_IF(rp.rd_count != n);
 
 	/* Increment the receive counter. */
-	sp.rd_count++;
+	rp.rd_count++;
 	
 	return 1;
 }
 
 /**
- * store_test() - produce/consume messages for/from the mail peer.
+ * remote_wait() - wait for the identifier from the local peer.
  *
  * Return:	None.
  **/
-static void store_test(void)
+static void remote_wait(void)
+{
+#if 0
+	/* Meeting with the local peer. */
+	for (;;) {
+		/* Wait for the identifier from the local peer. */
+		rv = os_inet_wait(rp.inet_id, "hello vcontroller");
+		if (rv == 0)
+			return;
+
+		/* Wait some time, until the local peer is present. */
+		usleep(1);
+	}
+#endif
+}
+
+/**
+ * remote_test() - produce/consume messages for/from the local peer.
+ *
+ * Return:	None.
+ **/
+static void remote_test(void)
 {
 	int busy_rd, busy_wr;
-	
-	/* Produce/consume messages for/from the mail peer.*/
+
+	/* Produce/consume messages for/from the local peer.*/
 	busy_rd = busy_wr = 1;
 	while (busy_rd || busy_wr) {
-		/* Read the input from the mail peer. */
-		busy_rd = store_read();
+		/* Wait for the identifier from the local peer. */
+		remote_wait();
 
-		/* Generate the output for the mail peer. */
-		busy_wr = store_write();
+		/* Read the input from the local peer. */
+		busy_rd = remote_read();
+
+		/* Generate the output for the local peer. */
+		busy_wr = remote_write();
 
 		/* Wait some microseconds. */
 		usleep(1000);
@@ -190,22 +212,22 @@ static void store_test(void)
 }
 
 /**
- * store_cleanup() - free the resources of the store peer.
+ * remote_cleanup() - free the resources of the remote peer.
  *
  * Return:	None.
  **/
-static void store_cleanup(void)
+static void remote_cleanup(void)
 {
-	/* Close the store socket. */
-	os_inet_close(sp.inet_id);
+	/* Close the remote socket. */
+	os_inet_close(rp.inet_id);
 }
 
 /**
- * store_init() - allocate the resources for the test with the store peer.
+ * remote_init() - allocate the resources for the test with the remote peer.
  *
  * Return:	None.
  **/
-static void store_init(void)
+static void remote_init(void)
 {
 	int rv;
 	
@@ -215,26 +237,24 @@ static void store_init(void)
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
 
-	/* Switch on the trace of the store peer. */
-	sp.my_trace = 1;
+	/* Switch on the trace of the remote peer. */
+	rp.my_trace = 1;
 	
 	/* Allocate the socket resources. */
-	
-	sp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
+	rp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
-	sp.limit = LIMIT;
-	
+	rp.limit = LIMIT;
+
 	/* Wait for the connection establishment. */
 	for (;;) {
-		/* Wait for the connection request from the mail peer and send
-		 * the response. */
-		rv = os_inet_accept(sp.inet_id);
+		/* Wait for the vdisplay peer.*/
+		rv = os_inet_accept(rp.inet_id);
 		if (rv == 0)
 			return;
 		
 		/* Wait some microseconds. */
-		sleep(0.1);
+		usleep(1000);
 	}
 }
 
@@ -242,22 +262,22 @@ static void store_init(void)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * main() - start function of the store peer.
+ * main() - start function of the remote peer.
  *
  * Return:	0 or force a software trap.
  **/
 int main(void)
 {
-	printf("%s store peer\n", P);
+	printf("%s remote peer\n", P);
 
 	/* Allocate the resources for the internet loop test. */
-	store_init();
+	remote_init();
 
-	/* Produce/consume messages for/from the mail peer. */
-	store_test();
+	/* Produce/consume messages for/from the local peer. */
+	remote_test();
 
 	/* Free the resources for the internet loop test. */
-	store_cleanup();
+	remote_cleanup();
 
 	/* Release the van OS resources. */
 	os_exit();
