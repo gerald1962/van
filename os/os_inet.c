@@ -137,6 +137,9 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 	inet_t *ip;
 	char *buf;
 	int down, size, rv, err;
+#if 0
+	int snd_count, n;
+#endif
 
 	/* Decode the pointer to the inet state. */
 	ip = g_msg->param;
@@ -147,7 +150,10 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 	/* Get the pointer to the socket descripton. */
 	addr = (struct sockaddr *) &ip->his_addr.sock;
 	addr_len = sizeof(ip->his_addr.sock);
-	
+
+#if 0
+	snd_count = 0;
+#endif
 	/* Loop thru the signals, which are exchanged with the controller and
 	 * display. */
 	for (;;) {
@@ -162,7 +168,13 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 			buf = os_mq_get(ip->out, &size);
 			if (buf == NULL)
 				break;
-		
+#if 0
+			/* Convert and test the send counter. */
+			n = strtol(buf, NULL, 10);
+			OS_TRAP_IF(snd_count != n);
+			snd_count++;
+#endif
+
 			/* Blocking transmission of a message to another
 			 * socket. */
 			rv = sendto(ip->sid, buf, size, 0, addr, addr_len);
@@ -256,6 +268,9 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 			
 			OS_TRAP_IF(size == -1);
 
+			/* Test the message format. */
+			OS_TRAP_IF(buf[size - 1] != '\0');
+			
 			/* Test the receive phase. */
 			if (calling) {
 				/* Search for a ring message. */
@@ -272,6 +287,9 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 				calling = 0;
 			}
 
+			/* Replace end of string with the message delimiter. */
+			buf[size - 1] = '#';
+	
 			/* Complete the receive operation. */
 			os_mq_add(ip->in, size);
 		}
@@ -380,7 +398,8 @@ static int os_inet_connect_rsp(inet_t *ip)
  **/
 static void inet_sock_create(inet_t *ip)
 {
-	int rv;
+	socklen_t len;
+	int size, rv;
 	
 	/* Creates an endpoint for the internet communication and returns a file
 	 * descriptor that refers to that endpoint:
@@ -391,6 +410,18 @@ static void inet_sock_create(inet_t *ip)
 	 *  */
 	ip->sid = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	OS_TRAP_IF(ip->sid == -1);
+
+	/* Use 30 MB for the kernel UDP read and write buffer. */
+	size = 30 * 1024 * 1024;
+	len = sizeof(int);
+
+	/* Set the receive buffer size on the socket. */
+	rv = setsockopt(ip->sid, SOL_SOCKET, SO_RCVBUF, &size, len);
+	OS_TRAP_IF(rv != 0);
+
+	/* Set the send buffer size on the socket. */
+	rv = setsockopt(ip->sid, SOL_SOCKET, SO_SNDBUF, &size, len);
+	OS_TRAP_IF(rv != 0);
 
 	/* When a socket is created with socket(), it exists in a name space
 	 * (address family) but has no address assigned to it. bind() assigns
@@ -640,8 +671,11 @@ int os_inet_connect(int cid)
 	ip->seqno++;
 
 	/* Frame the request to the vcontroller. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::peer=vdisplay:",
+	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::mode=calling::peer=vdisplay:",
 		      ip->seqno);
+	
+	/* Include EOS. */
+	rv++;	
 	OS_TRAP_IF(rv >= INET_CE_SIZE);
 	
 	/* Unblocking transmission of a message to another socket. */
@@ -690,8 +724,11 @@ int os_inet_accept(int cid)
 	ip->seqno++;
 
 	/* Frame the response to the vdisplay. */
-	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::mode=calling::peer=vcontroller:",
+	rv = snprintf(ip->ce_buf, INET_CE_SIZE, "seqno=%d::peer=vcontroller:",
 		      ip->seqno);
+	
+	/* Include EOS. */
+	rv++;
 	OS_TRAP_IF(rv >= INET_CE_SIZE);
 	
 	/* Unblocking transmission of a message to another socket. */

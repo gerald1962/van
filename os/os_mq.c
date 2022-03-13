@@ -432,6 +432,9 @@ char *os_mq_get(void *mq, int *size)
 	*size = end - start;
 	OS_TRAP_IF(*size < 2);
 
+	/* Replace the queue element delimter with EOS. */
+	start[*size - 1] = '\0';
+
 l_end:
 	/* Leave the critical section. */
 	os_cs_leave(&q->mutex);
@@ -475,7 +478,7 @@ int os_mq_write(void *mq, char *buf, int count)
 	if (dest == NULL)
 		goto l_end;
 	
-	/* XXX Replace end of string with the message delimiter. */
+	/* Replace end of string with the message delimiter. */
 	buf[count - 1] = '#';
 
 	/* Save the message. */

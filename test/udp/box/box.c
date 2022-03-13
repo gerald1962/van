@@ -23,7 +23,8 @@
 #define HIS_ADDR  "192.168.178.96"  /* IP address of the room peer. */
 #define HIS_PORT  62058             /* Port number of the room peer. */
 #define BUF_SIZE  32                /* Size of the I/O buffer. */
-#define LIMIT      9                /* Number of the send cycles. */
+#define WR_FREQ   2                 /* Relation between read and write. */
+#define WR_LIMIT  999999            /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -45,7 +46,9 @@
  *
  * @my_trace:  if 1, the trace is active.
  * @inet_id:   inet id.
- * @limit:     number of the generator cycles.
+ * @wr_limit:  number of the generator cycles.
+ * @wr_edge:   actual rising coordinate of the write edge graph.
+ * @wr_freq:   the relationship between write and read opertions.
  * @rd_count:  current read cycles.
  * @wr_count:  current write cycles.
  * @buf:       I/O buffer.
@@ -55,7 +58,9 @@
 static struct mp_s {
 	int   my_trace;
 	int   inet_id;
-	int   limit;
+	int   wr_limit;
+	int   wr_edge;
+	int   wr_freq;
 	int   rd_count;
 	int   wr_count;
 	char  buf[BUF_SIZE];
@@ -84,7 +89,7 @@ static int box_write(void)
 		return 0;
 
 	/* Test the cycle counter. */
-	if (bp.wr_count > bp.limit) {
+	if (bp.wr_count > bp.wr_limit) {
 		/* Restart the send operation and get the fill level of the
 		 * output buffer. */
 		n = os_inet_sync(bp.inet_id);
@@ -95,9 +100,19 @@ static int box_write(void)
 		bp.wr_done = 1;
 		return 0;
 	}
+
+	/* Test the send frequency. */
+	if (bp.wr_edge < bp.wr_freq) {
+		/* Increase the coordinate of the send edge graph. */
+		bp.wr_edge++;
+		return 1;
+	}
+
+	/* Jump back to the origin of the send edge graph. */
+	bp.wr_edge = 0;
 	
 	/* Test the write cycle counter. */
-	if (bp.wr_count == bp.limit) {
+	if (bp.wr_count == bp.wr_limit) {
 		/* Save the final response. */
 		n = snprintf(bp.buf, BUF_SIZE, "DONE");
 		OS_TRAP_IF(n >= BUF_SIZE);
@@ -185,7 +200,7 @@ static void box_test(void)
 		busy_wr = box_write();
 
 		/* Wait some microseconds. */
-		usleep(1000);
+		usleep(1);
 	}
 }
 
@@ -222,18 +237,21 @@ static void box_init(void)
 	bp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
-	bp.limit = LIMIT;
+	bp.wr_limit = WR_LIMIT;
 
+	/* Save the write frequency. */
+	bp.wr_freq = WR_FREQ;
+	
 	/* Wait for the connection establishment. */
 	for (;;) {
 		/* Send the connection request to the room peer and wait for
-		 * the response.*/
+		 * the response. */
 		rv = os_inet_connect(bp.inet_id);
 		if (rv == 0)
 			return;
 		
 		/* Wait some microseconds. */
-		usleep(1000);
+		sleep(0.1);
 	}
 }
 

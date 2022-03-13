@@ -23,7 +23,8 @@
 #define HIS_ADDR  "192.168.178.1"   /* IP address of the box peer. */
 #define HIS_PORT  58062             /* Port number of the box peer. */
 #define BUF_SIZE  32                /* Size of the I/O buffer. */
-#define LIMIT      9                /* Number of the send cycles. */
+#define WR_FREQ   2                 /* Relation between read and write. */
+#define WR_LIMIT  9999999           /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -45,7 +46,9 @@
  *
  * @my_trace:  if 1, the trace is active.
  * @inet_id:   inet id.
- * @limit:     number of the generator cycles.
+ * @wr_limit:  number of the generator cycles.
+ * @wr_edge:   actual rising coordinate of the write edge graph.
+ * @wr_freq:   the relationship between write and read opertions.
  * @rd_count:  current read cycles.
  * @wr_count:  current write cycles.
  * @buf:       I/O buffer.
@@ -55,7 +58,9 @@
 static struct sp_s {
 	int   my_trace;
 	int   inet_id;
-	int   limit;
+	int   wr_limit;
+	int   wr_edge;
+	int   wr_freq;
 	int   rd_count;
 	int   wr_count;
 	char  buf[BUF_SIZE];
@@ -84,7 +89,7 @@ static int room_write(void)
 		return 0;
 
 	/* Test the cycle counter. */
-	if (rp.wr_count > rp.limit) {
+	if (rp.wr_count > rp.wr_limit) {
 		/* Restart the send operation and get the fill level of the
 		 * output buffer. */
 		n = os_inet_sync(rp.inet_id);
@@ -96,8 +101,18 @@ static int room_write(void)
 		return 0;
 	}
 	
+	/* Test the send frequency. */
+	if (rp.wr_edge < rp.wr_freq) {
+		/* Increase the coordinate of send edge graph. */
+		rp.wr_edge++;
+		return 1;
+	}
+
+	/* Jump back to the origin of the send edge graph. */
+	rp.wr_edge = 0;
+	
 	/* Test the write cycle counter. */
-	if (rp.wr_count == rp.limit) {
+	if (rp.wr_count == rp.wr_limit) {
 		/* Save the final response. */
 		n = snprintf(rp.buf, BUF_SIZE, "DONE");
 		OS_TRAP_IF(n >= BUF_SIZE);
@@ -185,7 +200,7 @@ static void room_test(void)
 		busy_wr = room_write();
 
 		/* Wait some microseconds. */
-		usleep(1000);
+		usleep(1);
 	}
 }
 
@@ -218,13 +233,15 @@ static void room_init(void)
 	/* Switch on the trace of the room peer. */
 	rp.my_trace = 1;
 	
-	/* Allocate the socket resources. */
-	
+	/* Allocate the socket resources. */	
 	rp.inet_id = os_inet_open(MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT);
 	
 	/* Save the number of the send cycles. */
-	rp.limit = LIMIT;
+	rp.wr_limit = WR_LIMIT;
 	
+	/* Save the write frequency. */
+	rp.wr_freq = WR_FREQ;
+
 	/* Wait for the connection establishment. */
 	for (;;) {
 		/* Wait for the connection request from the box peer and send
