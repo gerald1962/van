@@ -23,7 +23,7 @@
 #define HIS_ADDR  "127.0.0.1"  /* IP address of the van controller. */
 #define HIS_PORT  62058        /* Port number of the van controller. */
 #define PRIO      OS_THREAD_PRIO_FOREG  /* Thread foreground priority. */
-#define Q_SIZE     4           /* Size of the thread input queue. */
+#define Q_SIZE    4            /* Size of the thread input queue. */
 #define BUF_SIZE  32           /* Size of the I/O buffer. */
 #define WR_FREQ   10           /* Relation between write and read. */
 #define WR_LIMIT  99999        /* Number of the send cycles. */
