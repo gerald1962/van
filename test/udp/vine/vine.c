@@ -25,7 +25,8 @@
 #define PRIO      OS_THREAD_PRIO_FOREG  /* Thread foreground priority. */
 #define Q_SIZE     4           /* Size of the thread input queue. */
 #define BUF_SIZE  32           /* Size of the I/O buffer. */
-#define LIMIT      0           /* Number of the send cycles. */
+#define WR_FREQ   10           /* Relation between write and read. */
+#define WR_LIMIT  99999        /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
@@ -50,7 +51,9 @@
  * @his_addr:  remote IPv4 address.
  * @his_port:  remote UDP port.
  * @thr_id:    pointer to the device thread.
- * @limit:     limit of the output cycles.
+ * @wr_limit:  limit of the output cycles.
+ * @wr_edge:   actual rising coordinate of the write edge graph.
+ * @wr_freq:   the relationship between write and read opertions.
  * @rd_count:  number of the received packets.
  * @wr_count:  number of the sent packets.
  * @buf:       I/O buffer.
@@ -68,7 +71,9 @@ typedef struct vine_s {
 	int    his_port;
 	void  *thr_id;
 	int    clk_id;
-	int    limit;
+	int    wr_limit;
+	int    wr_edge;
+	int    wr_freq;
 	int    rd_count;
 	int    wr_count;
 	char   buf[BUF_SIZE];
@@ -162,7 +167,7 @@ static int vine_write(vine_t *vp)
 		return 0;
 
 	/* Test the cycle counter. */
-	if (vp->wr_count > vp->limit) {
+	if (vp->wr_count > vp->wr_limit) {
 		/* Restart the send operation and get the fill level of the
 		 * output buffer. */
 		n = os_inet_sync(vp->inet_id);
@@ -174,8 +179,18 @@ static int vine_write(vine_t *vp)
 		return 0;
 	}
 	
+	/* Test the send frequency. */
+	if (vp->wr_edge < vp->wr_freq) {
+		/* Increase the coordinate of the send edge graph. */
+		vp->wr_edge++;
+		return 1;
+	}
+
+	/* Jump back to the origin of the send edge graph. */
+	vp->wr_edge = 0;
+	
 	/* Test the write cycle counter. */
-	if (vp->wr_count == vp->limit) {
+	if (vp->wr_count == vp->wr_limit) {
 		/* Save the final response. */
 		n = snprintf(vp->buf, BUF_SIZE, "DONE");
 		OS_TRAP_IF(n >= BUF_SIZE);
@@ -261,7 +276,7 @@ static void vine_connect(vine_t *vp)
 	for (;;) {
 		/* Test the application type. */
 		if (vp->is_disp) {
-			/* Send the connection establishment message to
+			/* Send the connection establishment message to the
 			 * vcontroller.*/
 			rv = os_inet_connect(vp->inet_id);
 			if (rv == 0)
@@ -275,7 +290,7 @@ static void vine_connect(vine_t *vp)
 		}
 		
 		/* Wait some microseconds. */
-		usleep(1000);
+		usleep(1);
 	}
 }
 	
@@ -307,7 +322,7 @@ static void vine_test_exec(os_queue_elem_t *g_msg)
 		busy_wr = vine_write(vp);
 
 		/* Wait some microseconds. */
-		usleep(1000);
+		usleep(1);
 	}
 
 	/* Resume the main process. */
@@ -353,18 +368,18 @@ static void vine_cleanup(void)
 /**
  * vine_alloc() - allocate the resources for the remote or local peer state.
  *
- * @vp:     pointer to the test state of a peer.
- * @a1:     pointer to the IPv4 address string.
- * @p1:     port number.
- * @a2:     pointer to the IPv4 address string.
- * @p2:     port number.
- * @n:      name of the test thread.
- * @limit:  number of send cycles.
+ * @vp:        pointer to the test state of a peer.
+ * @a1:        pointer to the IPv4 address string.
+ * @p1:        port number.
+ * @a2:        pointer to the IPv4 address string.
+ * @p2:        port number.
+ * @n:         name of the test thread.
+ * @wr_limit:  number of the send cycles.
  *
  * Return:	None.
  **/
 static void vine_alloc(vine_t *vp, char *a1, int p1, char *a2, int p2,
-		       const char *n, int limit)
+		       const char *n, int wr_limit)
 {
 	os_queue_elem_t msg;
 
@@ -385,7 +400,10 @@ static void vine_alloc(vine_t *vp, char *a1, int p1, char *a2, int p2,
 	vp->thr_id = os_thread_create(n, PRIO, Q_SIZE);
 
 	/* Save the number of the send cycles. */
-	vp->limit = limit;
+	vp->wr_limit = wr_limit;
+	
+	/* Save the write frequency. */
+	vp->wr_freq = WR_FREQ;
 	
 	/* Start the test thread. */
 	os_memset(&msg, 0, sizeof(msg));
@@ -418,12 +436,12 @@ static void vine_init(void)
 
 	/* Allocate the resources for the remote peer. */
 	vine_alloc(&vs.rp, HIS_ADDR, HIS_PORT, MY_ADDR, MY_PORT,
-		   "vine_rp", LIMIT);
+		   "vine_rp", WR_LIMIT);
 	vs.rp.is_disp = 0;
 	
 	/* Allocate the resources for the local peer. */
 	vine_alloc(&vs.lp, MY_ADDR, MY_PORT, HIS_ADDR, HIS_PORT,
-		   "vine_lp", LIMIT);
+		   "vine_lp", WR_LIMIT);
 	vs.lp.is_disp = 1;
 }
 

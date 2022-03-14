@@ -412,7 +412,7 @@ static void inet_sock_create(inet_t *ip)
 	OS_TRAP_IF(ip->sid == -1);
 
 	/* Use 30 MB for the kernel UDP read and write buffer. */
-	size = 30 * 1024 * 1024;
+	size = 2 * 1024 * 1024;
 	len = sizeof(int);
 
 	/* Set the receive buffer size on the socket. */

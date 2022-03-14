@@ -23,8 +23,8 @@
 #define HIS_ADDR  "192.168.178.96"  /* IP address of the room peer. */
 #define HIS_PORT  62058             /* Port number of the room peer. */
 #define BUF_SIZE  32                /* Size of the I/O buffer. */
-#define WR_FREQ   2                 /* Relation between read and write. */
-#define WR_LIMIT  999999            /* Number of the send cycles. */
+#define WR_FREQ   10                /* Relation between read and write. */
+#define WR_LIMIT  99999             /* Number of the send cycles. */
 
 /*============================================================================
   MACROS
