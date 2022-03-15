@@ -22,7 +22,7 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P  "I>"  /* Prompt for the interrup thread. */
+#define P  "I>"  /* Prompt for the interrupt thread. */
 
 #define CAB_SHM_FILE  "/tmp/van.shm"  /* Name of the shared memory file. */
 

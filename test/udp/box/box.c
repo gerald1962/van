@@ -152,7 +152,7 @@ static int box_write(void)
  **/
 static int box_read(void)
 {
-	int n;
+	int n, i;
 	
 	/* Test the final condition of the consumer. */
 	if (bp.rd_done)
@@ -172,8 +172,8 @@ static int box_read(void)
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(bp.buf, NULL, 10);
-	OS_TRAP_IF(bp.rd_count != n);
+	i = os_strtol_b10(bp.buf, n);
+	OS_TRAP_IF(bp.rd_count != i);
 
 	/* Increment the receive counter. */
 	bp.rd_count++;

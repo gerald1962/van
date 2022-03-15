@@ -39,7 +39,7 @@
 /**
  * os_memset() - memset with additional assertions.
  *
- * see memset
+ * man memset
  **/
 void *os_memset(void *s, int c, size_t n)
 {
@@ -51,7 +51,7 @@ void *os_memset(void *s, int c, size_t n)
 /**
  * os_memcpy() - memset with additional assertions.
  *
- * see memcpy
+ * man memcpy
  **/
 void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)
 {
@@ -63,7 +63,7 @@ void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n)
 /**
  * os_memcmp() - memcmp with additional assertions.
  *
- * see memccmp
+ * man memccmp
  **/
 int os_memcmp(const void *s1, const void *s2, size_t n)
 {
@@ -73,9 +73,22 @@ int os_memcmp(const void *s1, const void *s2, size_t n)
 }
 
 /**
+ * os_memchr() - memchr with additional assertions.
+ *
+ * man memchr
+ **/
+void *os_memchr(const void *s, const void *end, int c, size_t n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(s == NULL || end == NULL || end < s || n < 1 ||
+		   ((char *) end - (char *) s) != n);
+	return memchr(s, c, n);
+}
+
+/**
  * os_strnlen() - strnlen with additional assertions.
  *
- * see strnlen
+ * man strnlen
  **/
 size_t os_strnlen(const char *s, size_t maxlen)
 {
@@ -87,7 +100,7 @@ size_t os_strnlen(const char *s, size_t maxlen)
 /**
  * os_strlen() - strlen with additional assertions.
  *
- * see strlen
+ * man strlen
  **/
 size_t os_strlen(const char *s)
 {
@@ -107,7 +120,7 @@ size_t os_strlen(const char *s)
 /**
  * os_strcpy() - strcpy with additional assertions.
  *
- * see strcpy
+ * man strcpy
  **/
 char *os_strcpy(char *dest, int dest_n, const char *src)
 {
@@ -129,7 +142,7 @@ char *os_strcpy(char *dest, int dest_n, const char *src)
 /**
  * os_strncmp() - strncmp with additional assertions.
  *
- * see strncmp
+ * man strncmp
  **/
 int os_strncmp(const char *s1, const char *s2, int n)
 {
@@ -141,7 +154,7 @@ int os_strncmp(const char *s1, const char *s2, int n)
 /**
  * os_strcmp() - strcmp with additional assertions.
  *
- * see strcmp
+ * man strcmp
  **/
 int os_strcmp(const char *s1, const char *s2)
 {
@@ -150,15 +163,54 @@ int os_strcmp(const char *s1, const char *s2)
 	return strcmp(s1, s2);
 }
 
+
 /**
- * os_memchr() - memchr with additional assertions.
+ * os_strstr() - strstr with additional assertions.
  *
- * see memchr
+ * man strstr
  **/
-void *os_memchr(const void *s, const void *end, int c, size_t n)
+char *os_strstr(const char *haystack, int haystack_len, const char *needle)
 {
 	/* Entry condition. */
-	OS_TRAP_IF(s == NULL || end == NULL || end < s || n < 1 ||
-		   ((char *) end - (char *) s) != n);
-	return memchr(s, c, n);
+	OS_TRAP_IF(haystack == NULL || haystack_len < 1 || needle == NULL ||
+		   haystack[haystack_len] != '\0');
+
+	return strstr(haystack, needle);
+}
+
+/**
+ * os_strchr() - strchr with additional assertions.
+ *
+ * man strchr
+ **/
+char *os_strchr(const char *s, int s_len, int c)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(s == NULL || s_len < 1 || s_len > OS_MAX_STRING_LEN ||
+		   s[s_len] != '\0');
+
+	return strchr(s, c);
+}
+
+/**
+ * os_strtol_b10() - strtol with base 10 and additional assertions.
+ *
+ * man strtol
+ **/
+long int os_strtol_b10(const char *nptr, int n_len)
+{
+	char *endptr;
+	int n;
+	
+	/* Entry condition. */
+	OS_TRAP_IF(nptr == NULL || n_len < 1 || nptr[n_len] != '\0');
+
+	/* Convert the digit string to a long integer. */
+	endptr = NULL;
+	n = strtol(nptr, &endptr, 10);
+
+	/* Test the ramaining garbage characters. */
+	OS_TRAP_IF(*endptr != '\0');
+
+	return n;
 }

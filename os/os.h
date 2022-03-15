@@ -34,8 +34,9 @@
 #define OS_CREATE  (1<<0)  /* Create the cable infrastructure. */
 #define OS_TEST    (1<<1)  /* Calculate the coverage of the van OS. */
 
-/* Support 1 MB for the standard string operations. */
-#define OS_MAX_STRING_LEN  1048576
+/* Only allow MTU for the standard string operations: 
+ * see https://en.wikipedia.org/wiki/Path_MTU_Discovery */
+#define OS_MAX_STRING_LEN  1500
 
 /* Maximum length of a name string. */
 #define OS_MAX_NAME_LEN  16
@@ -228,12 +229,15 @@ void os_free(void **ptr);
 void *os_memset(void *s, int c, size_t n);
 void *os_memcpy(void *dest, size_t dest_n, const void *src, size_t src_n);
 int os_memcmp(const void *s1, const void *s2, size_t n);
+void *os_memchr(const void *s, const void *end, int c, size_t n);
 size_t os_strnlen(const char *s, size_t maxlen);
 size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);
 int os_strncmp(const char *s1, const char *s2, int n);
 int os_strcmp(const char *s1, const char *s2);
-void *os_memchr(const void *s, const void *end, int c, size_t n);
+char *os_strstr(const char *haystack, int haystack_len, const char *needle);
+char *os_strchr(const char *s, int s_len, int c);
+long int os_strtol_b10(const char *nptr, int n_len);
 
 /* Critical section. */
 void os_cs_init(pthread_mutex_t *mutex);

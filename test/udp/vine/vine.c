@@ -252,7 +252,7 @@ static int vine_read(vine_t *vp)
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(vp->buf, NULL, 10);
+	n = os_strtol_b10(vp->buf, n);
 	OS_TRAP_IF(vp->rd_count != n);
 
 	/* Increment the receive counter. */

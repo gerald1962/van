@@ -277,7 +277,15 @@ static int os_thread_suspend(os_thread_t *thread, int *count_p)
 static void os_pthread_once_init(void)
 {
 	int ret;
-	
+
+	/* The first call to pthread_once() by any thread in a process, with a
+	 * given once_control, will call the init_routine() with no arguments.
+	 * Subsequent calls of pthread_once() with the same once_control will
+	 * not call the init_routine(). On return from pthread_once(), it is
+	 * guaranteed that init_routine() has completed. The once_contro
+	 *l parameter is used to determine whether the associated initialisation
+	 * routine has been called. */
+
 	/* Create a data key visible to all theads in the process. */
 	ret = pthread_key_create(&os_thread_list.key, NULL);
 	OS_TRAP_IF(ret != 0);
@@ -597,7 +605,7 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	OS_TRAP_IF(ret != 0);
 
 	/* Save the thread prioriiy. */
-	thread->prio  = prio;
+	thread->prio = prio;
 
 	/* Create the control semaphore for os_thread_delete. */
 	os_sem_init(&thread->suspend_p, 0);
@@ -611,7 +619,7 @@ void *os_thread_create(const char *name, os_thread_prio_t prio, int q_size)
 	ret = pthread_create(&thread->pthread, NULL, os_thread_cb, thread);
 	OS_TRAP_IF(ret != 0);
 
-	/* Wait for the start of the client. os_thread. */
+	/* Wait for the start of the thread. */
 	os_sem_wait(&thread->suspend_p);
 	
 	return thread;
@@ -666,7 +674,7 @@ void os_queue_send(void *g_thread, os_queue_elem_t *msg, int size)
 	/* Increment the number of the queue elements. */
 	q->count++;
 
-	/* Test the state of the message queueu. */
+	/* Test the state of the message queue. */
 	if (q->count > q->limit) {
 		OS_TRACE(("> %s: \"%s\": count=%d, limit=%d", F, thread->name,
 			  q->count, q->limit));

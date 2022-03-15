@@ -209,36 +209,39 @@ static void batt_write(int cycle)
  * convert the digit string to int.
  *
  * @buf:  source buffer.
+ * @len:  length of the source buffer.
  * @pat:  search pattern.
  *
  * Return:	the digit string as integer.
  **/
-static int batt_read_int(char *buf, char *pat)
+static int batt_read_int(char *buf, int len, char *pat)
 {
 	char *s, *sep;
-	int n;
+	int n, i;
 	
 	/* Locate the pattern string. */
-	s = strstr(buf, pat);
+	s = os_strstr(buf, len, pat);
 	OS_TRAP_IF(s == NULL);
 	
 	/* Jump over the pattern string. */
 	s += os_strlen(pat);
 
 	/* Locate the separator of the message element. */
-	sep = strchr(s, ':');
+	n = os_strlen(s);
+	sep = os_strchr(s, n, ':');
 	OS_TRAP_IF(sep == NULL);
 
 	/* Replace the separator with EOS. */
 	*sep = '\0';
 	
 	/* Convert the received digits. */
-	n = strtol(s, NULL, 10);
+	n = os_strlen(s);
+	i = os_strtol_b10(s, n);
 
 	/* Replace EOS with the separator. */
 	*sep = ':';
 
-	return n;
+	return i;
 }
 
 /**
@@ -249,31 +252,35 @@ static int batt_read_int(char *buf, char *pat)
 static void batt_read(void)
 {
 	char buf[OS_BUF_SIZE], *s, *sep;
-	int n;
+	int n, m_len, e_len;
 
 	/* Get the input signal from the controller. */
 	n = os_c_read(bs.b_id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
-	if (n < 1)
+	if (n < 2)
 		return;
-	
-       /* Trace the input signal from the controller. */
+
+	/* Save the message len. */
+	m_len = n - 1;
+
+	/* Trace the input signal from the controller. */
         printf("%s INPUT %s", P, buf);
         printf("\n");
 
 	/* Get the controller time stamp. */
-	ci.cycle = batt_read_int(buf, "cycle=");
+	ci.cycle = batt_read_int(buf, m_len, "cycle=");
 	
 	/* Locate the battery control button string. */
-	s = strstr(buf, "control_b=");
+	s = os_strstr(buf, m_len, "control_b=");
 	OS_TRAP_IF(s == NULL);
 	
 	/* Jump over the battery control button string. */
 	s += os_strlen("control_b=");
 
 	/* Locate the separator. */
-	sep = strchr(s, ':');
+	e_len = os_strlen(s);
+	sep = os_strchr(s, e_len, ':');
 	OS_TRAP_IF(sep == NULL);
 
 	/* Replace the separator with EOS. */
@@ -302,7 +309,7 @@ static void batt_read(void)
 	*sep = ':';
 
 	/* Get the status of the recharge operation. */
-	ci.rech_b = batt_read_int(buf, "recharge_b=");
+	ci.rech_b = batt_read_int(buf, m_len, "recharge_b=");
 	
 	/* Update the battery state. */
 	bs.ctrl_b = ci.ctrl_b;

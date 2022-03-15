@@ -169,8 +169,8 @@ static void inet_snd_exec(os_queue_elem_t *g_msg)
 			if (buf == NULL)
 				break;
 #if 0
-			/* Convert and test the send counter. */
-			n = strtol(buf, NULL, 10);
+			/* Substract EOS, convert and test the send counter. */
+			n = os_strtol_b10(buf, size - 1);
 			OS_TRAP_IF(snd_count != n);
 			snd_count++;
 #endif
@@ -273,17 +273,17 @@ static void inet_rcv_exec(os_queue_elem_t *g_msg)
 			
 			/* Test the receive phase. */
 			if (calling) {
-				/* Search for a ring message. */
-				s = strstr(buf, ":mode=calling:");
+				/* Substract EOS and search for a ring message. */
+				s = os_strstr(buf, size - 1, ":mode=calling:");
 
-				/* Test the message type. */
+				/* Test the presence of the message element. */
 				if (s != NULL) {
 					/* Discard a call message. */
 					os_mq_free(ip->in);
 					continue;
 				}
 
-				/* Leave the call phase. */
+				/* Leave the call establishment phase. */
 				calling = 0;
 			}
 
@@ -338,18 +338,23 @@ static void inet_threads_start(inet_t *ip)
  **/
 static int os_inet_connect_req(inet_t *ip)
 {
-	socklen_t len, rv;
+	socklen_t len;
 	char *s;
+	int rv;
 	
 	/* Unblocking read of the request from the vdisplay. */
 	len = sizeof(ip->his_addr.sock);
 	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
 		      (struct sockaddr *) &ip->his_addr.sock, &len);
+	
+	/* Substract EOS. */
+	rv--;
+	
 	if (rv < 1)
 		return -1;
 
 	/* Analyze the vdisplay request. */
-	s = strstr(ip->ce_buf, ":peer=vdisplay:");
+	s = os_strstr(ip->ce_buf, rv, ":peer=vdisplay:");
 
 	/* Calculate the return value. */
 	rv = (s == NULL) ? -1 : 0;
@@ -377,11 +382,15 @@ static int os_inet_connect_rsp(inet_t *ip)
 	len = sizeof(ip->his_addr.sock);
 	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
 		      (struct sockaddr *) &ip->his_addr.sock, &len);
+	
+	/* Substract EOS. */
+	rv--;
+	
 	if (rv < 1)
 		return -1;
 
 	/* Analyze the vcontroller response. */
-	s = strstr(ip->ce_buf, ":peer=vcontroller:");
+	s = os_strstr(ip->ce_buf, rv, ":peer=vcontroller:");
 
 	/* Calculate the return value. */
 	rv = (s == NULL) ? -1 : 0;

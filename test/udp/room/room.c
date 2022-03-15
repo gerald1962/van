@@ -152,7 +152,7 @@ static int room_write(void)
  **/
 static int room_read(void)
 {
-	int n;
+	int n, i;
 	
 	/* Test the final condition of the consumer. */
 	if (rp.rd_done)
@@ -172,8 +172,8 @@ static int room_read(void)
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(rp.buf, NULL, 10);
-	OS_TRAP_IF(rp.rd_count != n);
+	i = os_strtol_b10(rp.buf, n);
+	OS_TRAP_IF(rp.rd_count != i);
 
 	/* Increment the receive counter. */
 	rp.rd_count++;

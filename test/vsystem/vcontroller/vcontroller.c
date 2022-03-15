@@ -153,34 +153,38 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 {
 	char buf[OS_BUF_SIZE], *s, *sep;
-	int n;
+	int b_len, m_len, e_len, n;
 
 	/* Wait for a display signal. */
-	n = os_c_read(id, buf, OS_BUF_SIZE);
+	b_len = os_c_read(id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
-	if (n < 2)
+	if (b_len < 2)
 		return;
 
+	/* Save the message len. */
+	m_len = b_len - 1;
+	
 	/* Add EOS. */
-	buf[n - 1] = '\0';
+	buf[m_len] = '\0';
 
 	/* Trace the input signal from the display. */
 	printf("%s INPUT-D %s", P, buf);		
 	printf("\n");
 	
 	/* Locate the control button string. */
-	s = strstr(buf, "control_b=");
+	s = os_strstr(buf, m_len, "control_b=");
 	OS_TRAP_IF(s == NULL);
 	
 	/* Jump over the control button string. */
 	s += os_strlen("control_b=");
 
-	/* Locate the separator of the message elements. */
-	sep =  strchr(s, ':');
+	/* Locate the separator of the message element. */
+	e_len = os_strlen(s);
+	sep = os_strchr(s, e_len, ':');
 	OS_TRAP_IF(sep == NULL);
 	
-	/* Replace the separator with EOS. */
+	/* Replace the message element separator with EOS. */
 	*sep = '\0';
 
 	/* Convert and test the received control button action. */
@@ -206,33 +210,32 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 		OS_TRAP();
 	}
 
-	/* Replace EOS with the separator. */
+	/* Insert the message element separator again. */
 	*sep = ':';
 	
 	/* Locate the recharge button string. */
-	s = strstr(buf, "recharge_b="); 
+	s = os_strstr(buf, m_len, "recharge_b="); 
 	OS_TRAP_IF(s == NULL);
 	
 	/* Jump over the recharge button setting. */
 	s += os_strlen("recharge_b=");
 
-	/* Locate the separator of the message elements. */
-	sep =  strchr(s, ':');
+	/* Locate the separator of the message element. */
+	e_len = os_strlen(s);
+	sep = os_strchr(s, e_len, ':');
 	OS_TRAP_IF(sep == NULL);
 	
 	/* Replace the separator with EOS. */
 	*sep = '\0';
 
-	/* Convert and test the received recharge button setting. */
-	n = strtol(s, NULL, 10);
-
-	/* Test the recharge button setting. */
-	OS_TRAP_IF(n < 0 || n > 1);
+	/* Convert and test the received recharge button setting. */	
+	e_len = os_strlen(s);
+	n = os_strtol_b10(s, e_len);
 
 	/* Update the recharge operation. */
 	pi->rech_b = n;
 	
-	/* Replace EOS with the separator. */
+	/* Insert the message element separator again. */
 	*sep = ':';
 }
 
@@ -293,36 +296,39 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
  * convert the digit string to int.
  *
  * @buf:  source buffer.
+ * @len:  length of the source buffer.
  * @pat:  search pattern.
  *
  * Return:	the digit string as integer.
  **/
-static int ctrl_read_int(char *buf, char *pat)
+static int ctrl_read_int(char *buf, int len, char *pat)
 {
 	char *s, *sep;
-	int n;
+	int n, i;
 	
 	/* Locate the pattern string. */
-	s = strstr(buf, pat);
+	s = os_strstr(buf, len, pat);
 	OS_TRAP_IF(s == NULL);
 	
 	/* Jump over the pattern string. */
-	s += os_strlen(pat);
+	s += os_strlen(pat);;
 
 	/* Locate the separator of the message element. */
-	sep = strchr(s, ':');
+	n = os_strlen(s);
+	sep = os_strchr(s, n, ':');
 	OS_TRAP_IF(sep == NULL);
 
 	/* Replace the separator with EOS. */
 	*sep = '\0';
 	
 	/* Convert the received digits. */
-	n = strtol(s, NULL, 10);
+	n = os_strlen(s);
+	i = os_strtol_b10(s, n);
 
 	/* Replace EOS with the separator. */
 	*sep = ':';
 
-	return n;
+	return i;
 }
 
 /**
@@ -341,24 +347,27 @@ static void ctrl_batt_read(int id, struct ctrl_bi_s *bi)
 	n = os_c_read(id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
-	if (n < 1)
+	if (n < 2)
 		return;
 
 	/* Trace the battery message. */
 	printf("%s INPUT-B %s", P, buf);		
 	printf("\t");
 
+	/* Substract EOS. */
+	n--;
+	
 	/* Get the battery time stamp. */
-	bi->cycle = ctrl_read_int(buf, "cycle=");
+	bi->cycle = ctrl_read_int(buf, n, "cycle=");
 	
 	/* Get the voltage value. */
-	bi->vlt = ctrl_read_int(buf, "voltage=");
+	bi->vlt = ctrl_read_int(buf, n, "voltage=");
 
 	/* Get the current value. */
-	bi->crt = ctrl_read_int(buf, "current=");
+	bi->crt = ctrl_read_int(buf, n, "current=");
 
 	/* Get the charge value. */
-	bi->cha = ctrl_read_int(buf, "charge=");
+	bi->cha = ctrl_read_int(buf, n, "charge=");
 }
 
 /**
@@ -462,7 +471,7 @@ static void ctrl_init(void)
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
 
-	/* Create the the end point for the battery and display. */
+	/* Create the end points for the battery and display. */
 	s->b_id = os_c_open("/van/ctrl_batt", O_NBLOCK);
 	s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
 
@@ -478,20 +487,57 @@ static void ctrl_init(void)
 	os_clock_start(s->t_id);
 }
 
+/**
+ * ctrl_usage() - provide information aboute the vcontroller configuration.
+ *
+ * Return:	None.
+ **/
+static void ctrl_usage(void)
+{
+	printf("vcontrol - van battery controller\n");
+	printf("  -h          show this usage\n");
+	printf("  -c ip-addr  ip address of the vcontroller\n");
+	printf("  -d ip-addr  ip address of the vdisplay\n");
+}
+
+/**
+ * ctrl_argv() - analyze the controller arguments.
+ *
+ * @argc:  argument counter.
+ * @argv:  list of the arguments.
+ *
+ * Return:	None.
+ **/
+static void ctrl_argv(int argc, char *argv[])
+{
+	/* Test the number of the controller arguments. */
+	if (argc != 1 && argc != 2 && argc != 5) {
+		/* Support the user. */
+		ctrl_usage();
+		exit(1);
+	}
+}
+
 /*============================================================================
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
- * main() - start function of the control technology platform.
+ * main() - start function of the van battery controller.
+ *
+ * @argc:  argument counter.
+ * @argv:  list of the arguments.
  *
  * Return:	0 or force a software trap.
  **/
-int main(void)
+int main(int argc, char *argv[])
 {
 	int cycle;
 	struct ctrl_s_s *s = &ctrl.s;
 	struct ctrl_bi_s *bi = &ctrl.bi;
 
+	/* Analyze the controller arguments. */
+	ctrl_argv(argc, argv);
+	
 	/* Initialize the battery controller state. */
 	ctrl_init();
 
