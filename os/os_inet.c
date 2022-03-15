@@ -345,14 +345,13 @@ static int os_inet_connect_req(inet_t *ip)
 	/* Unblocking read of the request from the vdisplay. */
 	len = sizeof(ip->his_addr.sock);
 	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	
-	/* Substract EOS. */
-	rv--;
-	
+		      (struct sockaddr *) &ip->his_addr.sock, &len);	
 	if (rv < 1)
 		return -1;
 
+	/* Substract EOS. */
+	rv--;
+	
 	/* Analyze the vdisplay request. */
 	s = os_strstr(ip->ce_buf, rv, ":peer=vdisplay:");
 
@@ -371,8 +370,9 @@ static int os_inet_connect_req(inet_t *ip)
  **/
 static int os_inet_connect_rsp(inet_t *ip)
 {
-	socklen_t len, rv;
+	socklen_t len;
 	char *s;
+	int rv;
 	
 	/* Test the sequence number. */
 	if (ip->seqno < 1)
@@ -381,14 +381,13 @@ static int os_inet_connect_rsp(inet_t *ip)
 	/* Unblocking read of the response from the vcontroller. */
 	len = sizeof(ip->his_addr.sock);
 	rv = recvfrom(ip->sid, ip->ce_buf, INET_CE_SIZE, MSG_DONTWAIT,
-		      (struct sockaddr *) &ip->his_addr.sock, &len);
-	
-	/* Substract EOS. */
-	rv--;
-	
+		      (struct sockaddr *) &ip->his_addr.sock, &len);	
 	if (rv < 1)
 		return -1;
 
+	/* Substract EOS. */
+	rv--;
+	
 	/* Analyze the vcontroller response. */
 	s = os_strstr(ip->ce_buf, rv, ":peer=vcontroller:");
 
