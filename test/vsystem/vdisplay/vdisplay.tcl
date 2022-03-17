@@ -109,22 +109,30 @@ namespace eval vd {
     # @crt:  id of the current box.
     # @cha:  id of the charge quantity box.
     # @lev:  id of the fill level box.
+    # @dtc:  id of the disply box for the transfer counters.
+    # @ctc:  id of the controll box for the transfer counters.
     namespace eval bx {
 	variable  cyc
 	variable  vlt
 	variable  crt
 	variable  cha
 	variable  lev
+	variable  dtc
+	variable  ctc
     }
     
     # ci - input from the controller.
     #
-    # @cyc:  cycle value or time stamp.
-    # @vlt:  voltatage value
-    # @crt:  current value.
-    # @cha:  charge quantity.
-    # @lev:  fill level of the battery in percent.
+    # @rx_n:    number of the received display messages from the controller
+    # @tx_n:    number of the sent display messages from the controller
+    # @cyc:     cycle value or time stamp.
+    # @vlt:     voltatage value
+    # @crt:     current value.
+    # @cha:     charge quantity.
+    # @lev:     fill level of the battery in percent.
     namespace eval ci {
+	variable  rx_n
+	variable  tx_n
 	variable  cyc
 	variable  vlt
 	variable  crt
@@ -134,12 +142,16 @@ namespace eval vd {
 
     # co - output to the controller.
     #
+    # @rx_n:    number of the received controller messages
+    # @tx_n:    number of the sent controller messages
     # @ctrl_b:  current state of the battery control button: B_STOP:
     #           shutdown, B_ON: active battery, B_OFF: inactive battery,
     #           B_EMPTY: discharged battery, nevertheless the battery is active
     #           and can be charged at any time.
     # @rech_b:  recharging state of the battery: 0: off, 1: on
     namespace eval co {
+	variable rx_n
+	variable tx_n
 	variable ctrl_b
 	variable rech_b
     }
@@ -159,16 +171,24 @@ namespace eval vd {
     # @crt:     current value.
     # @cha:     charge quantity.
     # @lev:     fill level of the battery in percent.
+    # @d_rx_n:  number of the received messages by the display
+    # @d_tx_n:  number of the sent messages by the display
+    # @c_rx_n:  number of the received display messages by the controller
+    # @c_tx_n:  number of the sent display messages by the controller
     namespace eval ds {
         variable  p       "D>"
-        variable  ep_id
+        variable  ep_id   -1
 	variable  ctrl_b  "B_OFF"
 	variable  rech_b  0  
-	variable  cyc
-	variable  vlt
-	variable  crt
-	variable  cha
-	variable  lev
+	variable  cyc     0
+	variable  vlt     0
+	variable  crt     0
+	variable  cha     0
+	variable  lev     0
+	variable  d_rx_n    0
+	variable  d_tx_n    0
+	variable  c_rx_n    0
+	variable  c_tx_n    0
     }
 }
 
@@ -180,12 +200,17 @@ namespace eval vd {
 # Return:     None.
 #
 proc disp_ctrl_write {} {
+    # Update the send counter.
+    incr vd::ds::d_tx_n
+    
     # Make a copy of the display actuators: controll and recharge button.
+    set vd::co::rx_n    $vd::ds::d_rx_n
+    set vd::co::tx_n    $vd::ds::d_tx_n
     set vd::co::ctrl_b  $vd::ds::ctrl_b
     set vd::co::rech_b  $vd::ds::rech_b
 
     # Concatenate the signal elements to the controller.
-    set buf  "control_b=$vd::co::ctrl_b\:\:recharge_b=$vd::co::rech_b\:\:"
+    set buf  "rxno=$vd::co::rx_n\:\:txno=$vd::co::tx_n\:\:control_b=$vd::co::ctrl_b\:\:recharge_b=$vd::co::rech_b\:\:"
     
     # Send the signal to the controller.
     puts $vd::ds::ep_id  $buf
@@ -399,6 +424,40 @@ proc disp_bcontrol_exec { b_state b_color } {
     disp_ctrl_write
 }
 
+# disp_type_value{} - parse the type and value of a message parameter from the
+# controller.
+#
+# @buf:   unstructed input from the controller.
+# @msg:   structed input from the controller.
+# @i:     type index and value index.
+# @type:  type of the message parameter.
+#
+# Return:     the value of the message parameter type.
+#
+proc disp_type_value { buf msg &i type } {
+    # upvar arranges for one or more local variables in the current procedure to
+    # refer to variables in an enclosing procedure call or to global variables.
+    # Level may have any of the forms permitted for the uplevel command, and may
+    # be omitted (it defaults to 1).    
+    upvar 1 ${&i} i
+    
+    # Test the type of the message parameter.
+    if { [lindex $msg $i] != $type } {
+	error "missing \"$type\" in \"$buf\""
+    }
+    
+    # Update the message index.
+    incr i +2
+
+    # Return the value of the message parameter type.
+    set n  [lindex $msg $i]
+
+    # Update the message index.
+    incr i +2
+    
+    return $n
+}
+
 # disp_input_parse{} - parse the input from the controller.
 #
 # @buf:  input signal from the controller.
@@ -406,62 +465,51 @@ proc disp_bcontrol_exec { b_state b_color } {
 # Return:     the trap information or TCL_OK.
 #
 proc disp_input_parse { buf } {
+    # Intialize the index counter.
+    set i  0
+
+    # Update the receive counter.
+    incr vd::ds::d_rx_n
+    
     # Match the regular expression against the controller signal.
-    set list [regexp -inline -all -- {[a-z]+|=|[0-9]+|::}  $buf]
+    set msg [regexp -inline -all -- {[a-z]+|=|[0-9]+|::}  $buf]
 
     # Count the elements of the controller signal.
-    set ll [llength $list]
-    if { $ll != 19 } {
+    set ll [llength $msg]
+    if { $ll != 27 } {
 	# Generate an error.
 	error "wrong format \"$buf\""
     }
-    
-    # Retrive and test the cycle element.
-    if { [lindex $list 0] != "cycle" } {
-	error "missing \"cycle\" in \"$buf\""
-    }
 
-    # Save the counter value.
-    set vd::ci::cyc  [lindex $list 2]
+    # Get the rx counter value.
+    set vd::ci::rx_n [disp_type_value $buf $msg i "rxno"]
     
-    # Retrive and test the voltage element.
-    if { [lindex $list 4] != "voltage" } {
-	error "missing \"voltage\" in \"$buf\""
-    }
+    # Get the tx counter value.
+    set vd::ci::tx_n [disp_type_value $buf $msg i "txno"]
     
-    # Save the voltage value.
-    set vd::ci::vlt  [lindex $list 6]
+    # Get the cycle value.
+    set vd::ci::cyc  [disp_type_value $buf $msg i "cycle"]
     
-    # Retrive and test the current element.
-    if { [lindex $list 8] != "current" } {
-	error "missing \"current\" in \"$buf\""
-    }
-    
-    # Save the current value.
-    set vd::ci::crt  [lindex $list 10]
-    
-    # Retrive and test the charge element.
-    if { [lindex $list 12] != "charge" } {
-	error "missing \"charge\" in \"$buf\""
-    }
-    
-    # Save the discharging value.
-    set vd::ci::cha  [lindex $list 14]
-    
-    # Retrive and test the fill level element.
-    if { [lindex $list 16] != "level" } {
-	error "missing \"level\" in \"$buf\""
-    }
-    
-    # Save the fill level value.
-    set vd::ci::lev  [lindex $list 18]
+    # Get the voltage value.
+    set vd::ci::vlt  [disp_type_value $buf $msg i "voltage"]
+
+    # Get the current value.
+    set vd::ci::crt  [disp_type_value $buf $msg i "current"]
+
+    # Get the charge value.
+    set vd::ci::cha  [disp_type_value $buf $msg i "charge"]
+
+    # Get the fill level value.
+    set vd::ci::lev  [disp_type_value $buf $msg i "level"]
 
     # Refresh the display state.
-    set vd::ds::cyc  $vd::ci::cyc
-    set vd::ds::vlt  $vd::ci::vlt
-    set vd::ds::crt  $vd::ci::crt
-    set vd::ds::cha  $vd::ci::cha
-    set vd::ds::lev  $vd::ci::lev
+    set vd::ds::cyc     $vd::ci::cyc
+    set vd::ds::vlt     $vd::ci::vlt
+    set vd::ds::crt     $vd::ci::crt
+    set vd::ds::cha     $vd::ci::cha
+    set vd::ds::lev     $vd::ci::lev
+    set vd::ds::c_rx_n  $vd::ci::rx_n
+    set vd::ds::c_tx_n  $vd::ci::tx_n
     
     return TCL_OK
 }
@@ -473,7 +521,7 @@ proc disp_input_parse { buf } {
 proc disp_input_wait {} {
     # Read all signals from the display input queue of the display-controller cable.
     while { 1 } {
-	set n [gets $vd::ds::ep_id buf]
+	set n  [gets $vd::ds::ep_id buf]
 
 	# Test the length of the input signal.
 	if { $n < 1 } {
@@ -506,6 +554,16 @@ proc disp_input_wait {} {
 
 	# Update the fill evel value.
 	$vd::bw::c itemconfigure $vd::bx::lev -text $vd::ds::lev
+
+	# Update the display transfer counters..
+	set rx_n  $vd::ds::d_rx_n
+	set tx_n  $vd::ds::d_tx_n
+	$vd::bw::c itemconfigure $vd::bx::dtc -text "$rx_n / $tx_n"
+	
+	# Update the controller transfer counters..
+	set rx_n  $vd::ds::c_rx_n
+	set tx_n  $vd::ds::c_tx_n
+	$vd::bw::c itemconfigure $vd::bx::ctc -text "$tx_n / $rx_n"
 
 	# Evaluate the battery state.
 	switch $vd::ds::ctrl_b {
@@ -542,7 +600,9 @@ proc disp_input_wait {} {
 	}
     }
 
-    # Start the timer for the display input.
+    # Start the timer for the display input with 100 milliseconds.
+    # The keyword after ms schedules that script to be evaluated at least 'ms'
+    # millisecondss in the future.
     after 100 disp_input_wait
 }
 
@@ -572,7 +632,7 @@ proc disp_sensor_create { y1_r y2_r label } {
     set x1  [expr $x1_r + 45]
     
     # Return the box item id.
-    return [$vd::bw::c create text $x1 $y1 -justify center -text 0]
+    return [$vd::bw::c create text $x1 $y1 -justify center -text "0 / 0"]
 }
 
 # disp_sensors{} - create the display sensors or input boxes.
@@ -590,31 +650,51 @@ proc disp_sensors {} {
 
     # Distance between sensor boxes.
     set dy     50
+
+    # Initialize the multiplier for shift on the y-axis.
+    set m  0
     
     # Create the cycle box.
-    set y1  [expr $y1_o + $dy]
-    set y2  [expr $y2_o + $dy]
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
     set vd::bx::cyc  [disp_sensor_create $y1 $y2 "Cycles"]
 
     # Create the voltage box.
-    set y1  [expr $y1_o + $dy * 2]
-    set y2  [expr $y2_o + $dy * 2]
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
     set vd::bx::vlt  [disp_sensor_create $y1 $y2 "Voltage"]
 
     # Create the current box.
-    set y1  [expr $y1_o + $dy * 3]
-    set y2  [expr $y2_o + $dy * 3]
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
     set vd::bx::crt  [disp_sensor_create $y1 $y2 "Current"]
 
     # Create the charge box.
-    set y1  [expr $y1_o + $dy * 4]
-    set y2  [expr $y2_o + $dy * 4]
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
     set vd::bx::cha  [disp_sensor_create $y1 $y2 "Charge"]
 
     # Create the fill level box.
-    set y1  [expr $y1_o + $dy * 5]
-    set y2  [expr $y2_o + $dy * 5]
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
     set vd::bx::lev  [disp_sensor_create $y1 $y2 "Level"]
+    
+    # Create the display box for the transfer counters.
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
+    set vd::bx::dtc  [disp_sensor_create $y1 $y2 "D Rx/Tx"]
+    
+    # Create the controller box for the transfer counters.
+    incr  m
+    set y1  [expr $y1_o + $dy * $m]
+    set y2  [expr $y2_o + $dy * $m]
+    set vd::bx::ctc  [disp_sensor_create $y1 $y2 "C Tx/Rx"]
 }
 
 # disp_charge_graph{} - create the charge graph.
@@ -1018,7 +1098,7 @@ proc disp_argv {} {
 proc main {} {
     # Analyze the vdisplay arguments.
     # disp_argv
-    
+
     # Insert the display-controller cable.
     disp_cable_insert
 

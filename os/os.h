@@ -12,8 +12,9 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <stdio.h>      /* Standard C library:   printf(). */
+#include <stdio.h>      /* ISO C Standard: Input/output: printf(). */
 #include <string.h>     /* String operations: strstr(). */
+#include <ctype.h>      /* ISO C Standard: Character handling: isdigit(). */
 #include <stdlib.h>     /* Standard C library:   strtol(). */
 #include <unistd.h>     /* Common Unix interfaces: getopt().*/
 #include <semaphore.h>  /* Semaphore operations: sem_t. */

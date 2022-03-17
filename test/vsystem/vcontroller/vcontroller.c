@@ -19,9 +19,23 @@
   ============================================================================*/
 #define P "C>"  /* Controller prompt. */
 
+/* Max. length of an IPv4 string buffer. */
+#define CTRL_IPv4_ADDR_LEN  32
+
 /*============================================================================
   MACROS
   ============================================================================*/
+/**
+ * CTRL_IPV4_ERROR() - parse error of an IPv4 address string.
+ *
+ * Return:	None.
+ **/
+#define CTRL_IPV4_ERROR() do { \
+	printf("%s error: IPv4 address format error\n", P); \
+	ctrl_usage(); \
+	exit(1); \
+} while (0)
+
 /*============================================================================
   LOCAL TYPE DEFINITIONS
   ============================================================================*/
@@ -56,13 +70,21 @@ typedef enum {
  * @t_id:    id of the periodic control timer.
  * @clock:   time intervall of the battery controller.
  *
+ * @rx_cnt:  number of the receved controller messages from the display.
+ * @tx_cnt:  number of the sent messages to the controller.
  * @cycle:   time stamp - battery.
  * @ctrl_b:  current contol button setting.
  * @rech_b:  current recharge button setting.
  * @vlt:     voltage - battery.
  * @crt:     current - battery.
  * @cha:     charge quantity - battery.
- **@lev:     fill leve of the battery.
+ * @lev:     fill leve of the battery.
+ *
+ * @is_inet:   if 1, vcontroller and vdisplay are connected over inet.
+ * @my_addr:   IPv4 address of the vcontroller.
+ * @his_addr:  IPv4 address of the vdisplay.
+ * @rx_cnt:    number of the received message from the display.
+ * @tx_cnt:    number of the sent messages to the display.
  **/
 static struct ctrl_s {
 	struct ctrl_bi_s {
@@ -79,12 +101,16 @@ static struct ctrl_s {
 	} bo;
 	
 	struct ctrl_pi_s {
+		int   rx_cnt;
+		int   tx_cnt;
 		int   cycle;
 		cb_t  ctrl_b;
 		int   rech_b;
 	} pi;
 	
 	struct ctrl_po_s {
+		int  rx_cnt;
+		int  tx_cnt;
 		int  cycle;
 		int  vlt;
 		int  crt;
@@ -93,6 +119,12 @@ static struct ctrl_s {
 	} po;
 	
 	struct ctrl_s_s {
+		int   is_inet;
+		char  my_addr[CTRL_IPv4_ADDR_LEN];
+		char  his_addr[CTRL_IPv4_ADDR_LEN];
+		int   rx_cnt;
+		int   tx_cnt;
+	
 		int   b_id;
 		int   d_id;
 		int   t_id;
@@ -115,6 +147,46 @@ static struct ctrl_s {
   LOCAL FUNCTIONS
   ============================================================================*/
 /**
+ * ctrl_read_int() - search for the pattern combined with the digit string and
+ * convert the digit string to int.
+ *
+ * @buf:  source buffer.
+ * @len:  length of the source buffer.
+ * @pat:  search pattern.
+ *
+ * Return:	the digit string as integer.
+ **/
+static int ctrl_read_int(char *buf, int len, char *pat)
+{
+	char *s, *sep;
+	int n, i;
+	
+	/* Locate the pattern string. */
+	s = os_strstr(buf, len, pat);
+	OS_TRAP_IF(s == NULL);
+	
+	/* Jump over the pattern string. */
+	s += os_strlen(pat);;
+
+	/* Locate the separator of the message element. */
+	n = os_strlen(s);
+	sep = os_strchr(s, n, ':');
+	OS_TRAP_IF(sep == NULL);
+
+	/* Replace the separator with EOS. */
+	*sep = '\0';
+	
+	/* Convert the received digits. */
+	n = os_strlen(s);
+	i = os_strtol_b10(s, n);
+
+	/* Replace EOS with the separator. */
+	*sep = ':';
+
+	return i;
+}
+
+/**
  * ctrl_disp_write() - set the output to the display.
  *
  * @id:  battery controller cable id.
@@ -128,8 +200,9 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 	int n;
 
 	/* Generate the output to the display. */
-	n = snprintf(buf, OS_BUF_SIZE, "cycle=%d::voltage=%d::current=%d::charge=%d::level=%d:",
-		     po->cycle, po->vlt, po->crt, po->cha, po->lev);
+	n = snprintf(buf, OS_BUF_SIZE,
+		     "rxno=%d::txno=%d::cycle=%d::voltage=%d::current=%d::charge=%d::level=%d:",
+		     po->rx_cnt, po->tx_cnt, po->cycle, po->vlt, po->crt, po->cha, po->lev);
 
 	/* Include EOS. */
 	n++;
@@ -153,7 +226,7 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 {
 	char buf[OS_BUF_SIZE], *s, *sep;
-	int b_len, m_len, e_len, n;
+	int b_len, m_len, e_len;
 
 	/* Wait for a display signal. */
 	b_len = os_c_read(id, buf, OS_BUF_SIZE);
@@ -171,6 +244,12 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	/* Trace the input signal from the display. */
 	printf("%s INPUT-D %s", P, buf);		
 	printf("\n");
+	
+	/* Get the rx counter from the display. */
+	pi->rx_cnt = ctrl_read_int(buf, m_len, "rxno=");
+	
+	/* Get the tx counter from the display. */
+	pi->tx_cnt = ctrl_read_int(buf, m_len, "txno=");
 	
 	/* Locate the control button string. */
 	s = os_strstr(buf, m_len, "control_b=");
@@ -213,30 +292,8 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	/* Insert the message element separator again. */
 	*sep = ':';
 	
-	/* Locate the recharge button string. */
-	s = os_strstr(buf, m_len, "recharge_b="); 
-	OS_TRAP_IF(s == NULL);
-	
-	/* Jump over the recharge button setting. */
-	s += os_strlen("recharge_b=");
-
-	/* Locate the separator of the message element. */
-	e_len = os_strlen(s);
-	sep = os_strchr(s, e_len, ':');
-	OS_TRAP_IF(sep == NULL);
-	
-	/* Replace the separator with EOS. */
-	*sep = '\0';
-
-	/* Convert and test the received recharge button setting. */	
-	e_len = os_strlen(s);
-	n = os_strtol_b10(s, e_len);
-
-	/* Update the recharge operation. */
-	pi->rech_b = n;
-	
-	/* Insert the message element separator again. */
-	*sep = ':';
+	/* Get the battery recharge setting. */
+	pi->rech_b = ctrl_read_int(buf, m_len, "recharge_b=");
 }
 
 /**
@@ -289,46 +346,6 @@ static void ctrl_batt_write(int id, struct ctrl_bo_s* bo)
 			
 		} while (os_c_sync(id));
 	}
-}
-
-/**
- * ctrl_read_int() - search for the pattern combined with the digit string and
- * convert the digit string to int.
- *
- * @buf:  source buffer.
- * @len:  length of the source buffer.
- * @pat:  search pattern.
- *
- * Return:	the digit string as integer.
- **/
-static int ctrl_read_int(char *buf, int len, char *pat)
-{
-	char *s, *sep;
-	int n, i;
-	
-	/* Locate the pattern string. */
-	s = os_strstr(buf, len, pat);
-	OS_TRAP_IF(s == NULL);
-	
-	/* Jump over the pattern string. */
-	s += os_strlen(pat);;
-
-	/* Locate the separator of the message element. */
-	n = os_strlen(s);
-	sep = os_strchr(s, n, ':');
-	OS_TRAP_IF(sep == NULL);
-
-	/* Replace the separator with EOS. */
-	*sep = '\0';
-	
-	/* Convert the received digits. */
-	n = os_strlen(s);
-	i = os_strtol_b10(s, n);
-
-	/* Replace EOS with the separator. */
-	*sep = ':';
-
-	return i;
 }
 
 /**
@@ -399,13 +416,18 @@ static void ctrl_write(int cycle)
 	/* Test the stop button. */
 	if (s->ctrl_b == B_STOP)
 		return;
+
+	/* Update the send counter. */
+	s->tx_cnt++;
 	
 	/* Set the output to the display. */
-	po->cycle = cycle;
-	po->vlt   = s->vlt;
-	po->crt   = s->crt;
-	po->cha   = bi->cha;  /* XXX */
-	po->lev   = s->lev;
+	po->rx_cnt = s->rx_cnt;
+	po->tx_cnt = s->tx_cnt;
+	po->cycle  = cycle;
+	po->vlt    = s->vlt;
+	po->crt    = s->crt;
+	po->cha    = bi->cha;  /* XXX */
+	po->lev    = s->lev;
 	ctrl_disp_write(s->d_id, po);
 }
 
@@ -427,6 +449,8 @@ static void ctrl_read(void)
 
 	/* Get the input from the display. */
 	ctrl_disp_read(s->d_id, pi);
+	s->rx_cnt = pi->tx_cnt;
+	
 	s->ctrl_b = pi->ctrl_b;
 	s->rech_b = pi->rech_b;		
 }
@@ -488,7 +512,7 @@ static void ctrl_init(void)
 }
 
 /**
- * ctrl_usage() - provide information aboute the vcontroller configuration.
+ * ctrl_usage() - provide information about the vcontroller configuration.
  *
  * Return:	None.
  **/
@@ -501,6 +525,129 @@ static void ctrl_usage(void)
 }
 
 /**
+ * ctrl_ipv4_parse() - parse an IPv4 address string.
+ *
+ * @src:   input of the IPv4 address string parser.
+ * @dest:  output of the IPv4 address string parser.
+ * @done:  if 1, the IPv4 address is already preseent.
+ *
+ * Return:	None.
+ **/
+static void ctrl_ipv4_parse(char *src, char *dest, int done)
+{
+	/* One of the four integers of an IPv4 address and segment counter. */
+	int i, c, is_empty;
+	char *p;
+
+	/* Entry condition. */
+	if (done)
+		CTRL_IPV4_ERROR();
+	
+	/* Initialze the segment integer and counter of an IPv4 address. */
+	is_empty = 1;
+	i = 0;
+	c = 0;
+	
+	/* Loop thru the IP string. */
+	for (p = src; *p != '\0'; p++) {
+		/* Analyze the current character. */
+		if (isdigit(*p)) {
+			/* Update the digit test. */
+			is_empty = 0;
+			
+			/* Update the segment integer. */
+			i = (i * 10) + (*p - '0');
+			
+			/* Test the integer value of an IPv4 segement digit
+			 * sequence: 127.0.0.256 */
+			if (i > 255)
+				CTRL_IPV4_ERROR();
+		}
+		else if (*p == '.') {
+			/* Jump to the next segment of an IPv4 adderss: test the
+			 * segment counter: 127.0..1  */
+			if (c > 3 || is_empty)
+				CTRL_IPV4_ERROR();
+
+			/* Reset the digit test. */
+			is_empty = 1;
+			
+			/* Reset the segment integer of an IPv4 address. */
+			i = 0;
+
+			/* Update the segment counter. */
+			c++;
+		}
+		else {
+			/* The vcontroller has been invoked with a strange IPv4 address. */
+			CTRL_IPV4_ERROR();
+		}
+	}
+
+	/* Test the segment counter. */
+	if (! is_empty && c == 3) {
+		/* Save the IPv4 address. */
+		os_strcpy(dest, CTRL_IPv4_ADDR_LEN, src);
+		return;
+	}
+	
+	/* Invalid IPv4 format: 127.0.0 or 127.0 ... */
+	CTRL_IPV4_ERROR();
+}
+
+/**
+ * ctrl_ip_addr() - get the IP addresses.
+ *
+ * @argc:  argument counter.
+ * @argv:  list of the arguments.
+ *
+ * Return:	None.
+ **/
+static void ctrl_ip_addr(int argc, char *argv[])
+{
+	struct ctrl_s_s *s;
+	int my_addr, his_addr, opt;
+
+	/* Get the reference to the controller state. */
+	s = &ctrl.s;
+	
+	/* Initialize the IPv4 address test. */
+	my_addr  = 0;
+	his_addr = 0;
+	
+	/* Analyze the vcontroller arguments. */
+	while ((opt = getopt(argc, argv, "c:d:")) != -1) {
+		/* Analyze the current argument. */
+		switch (opt) {
+		case 'c':
+			/* Parse the IPv4 address of the vcontroller. */
+			ctrl_ipv4_parse(optarg, s->my_addr, my_addr);
+			my_addr = 1;
+			break;
+		case 'd':
+			/* Parse the IPv4 address of the vdisplay. */
+			ctrl_ipv4_parse(optarg, s->his_addr, his_addr);
+			his_addr = 1;
+			break;
+		default:
+			ctrl_usage();
+			exit(1);
+			break;
+
+		}
+	}
+
+	/* Exit condition. */
+	if (! my_addr || ! his_addr) {
+		ctrl_usage();
+		exit(1);
+	}
+
+	/* Connect the vcontroller and the vdisplay over inet. */
+	s->is_inet = 1;
+}
+
+/**
  * ctrl_argv() - analyze the controller arguments.
  *
  * @argc:  argument counter.
@@ -510,11 +657,35 @@ static void ctrl_usage(void)
  **/
 static void ctrl_argv(int argc, char *argv[])
 {
-	/* Test the number of the controller arguments. */
-	if (argc != 1 && argc != 2 && argc != 5) {
+	/* verify the arguments. */
+	switch(argc) {
+	case 1:
+		/* The vcontroller shall be called as follows: vcontroller. 
+		 * In this case the vcontroller and the vdisplay are connected
+		 * over shared memory. */
+		break;
+	case 2:
+		/* The vcontroller shall be called as follows: 
+		 * vcontroller -h or x, to get usage information. */
+		
+		/* Support the user. */
+		ctrl_usage();
+		exit(0);
+		break;
+	case 5:
+		/* The vcontroller shall be called as follows: 
+		 * vcontroller -c 127.0.0.1 -d 127.0.0.1 
+		 * In this case the vcontroller and vdisplay are connected over
+		 * the internet. */
+		
+		/* Get the IP addresses. */
+		ctrl_ip_addr(argc, argv);
+		break;
+	default:
 		/* Support the user. */
 		ctrl_usage();
 		exit(1);
+		break;
 	}
 }
 
@@ -535,12 +706,12 @@ int main(int argc, char *argv[])
 	struct ctrl_s_s *s = &ctrl.s;
 	struct ctrl_bi_s *bi = &ctrl.bi;
 
-	/* Analyze the controller arguments. */
+	/* Analyze the vcontroller arguments. */
 	ctrl_argv(argc, argv);
-	
+
 	/* Initialize the battery controller state. */
 	ctrl_init();
-
+	
 	/* Test loop. */
 	for (cycle = 0; s->ctrl_b != B_STOP; cycle += s->clock) {
 		/* Get the input from the battery and display. */
@@ -548,23 +719,23 @@ int main(int argc, char *argv[])
 		
 		/* Calculate the charging value: C = I * t. */
 		s->cha -= s->crt * s->clock;
-
+		
 		/* XXX Calculate the the fill level of the battery in percent. */
 #if 0
 		s->lev = (s->cha * 100) / s->cap;
 #else
 		s->lev = (bi->cha * 100) / s->cap;
 #endif
-
+		
 		/* Send the output signals to the battery and display. */
 		ctrl_write(cycle);
-				
+		
 		/* Wait for the controller clock tick. */
 		os_clock_barrier(s->t_id);
 	}
-
+	
 	/* Release the battery controller resources. */
 	ctrl_cleanup();
 	
-	return(0);
+	return (0);
 }

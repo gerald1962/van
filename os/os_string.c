@@ -169,11 +169,11 @@ int os_strcmp(const char *s1, const char *s2)
  *
  * man strstr
  **/
-char *os_strstr(const char *haystack, int haystack_len, const char *needle)
+char *os_strstr(const char *haystack, int h_len, const char *needle)
 {
 	/* Entry condition. */
-	OS_TRAP_IF(haystack == NULL || haystack_len < 1 || needle == NULL ||
-		   haystack[haystack_len] != '\0');
+	OS_TRAP_IF(haystack == NULL || h_len < 1 || h_len > OS_MAX_STRING_LEN ||
+		   needle == NULL || haystack[h_len] != '\0');
 
 	return strstr(haystack, needle);
 }
@@ -203,7 +203,8 @@ long int os_strtol_b10(const char *nptr, int n_len)
 	int n;
 	
 	/* Entry condition. */
-	OS_TRAP_IF(nptr == NULL || n_len < 1 || nptr[n_len] != '\0');
+	OS_TRAP_IF(nptr == NULL || n_len < 1 || n_len > OS_MAX_STRING_LEN ||
+		   nptr[n_len] != '\0');
 
 	/* Convert the digit string to a long integer. */
 	endptr = NULL;
