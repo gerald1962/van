@@ -501,6 +501,8 @@ static void ctrl_init(void)
 	/* Create the end point for the display cable: either the display shall
 	 * be connected with a shared memory or with an inet cable. */
 
+	/* XXX */
+#if 0
 	/* Test the user user request. */
 	if (xxx) {
 		/* Activate the shared memory cable for the communication with
@@ -512,6 +514,11 @@ static void ctrl_init(void)
 		 * the display. */
 		d_id = os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
 	}
+#else
+	/* Activate the shared memory cable for the communication with
+	 * the display. */
+	s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
+#endif
 	
 	/* Initialize the controller. */
 	s->cap   = 10000;
