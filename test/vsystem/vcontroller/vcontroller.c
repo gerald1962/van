@@ -495,10 +495,24 @@ static void ctrl_init(void)
 	/* Enable or disable the OS trace. */
 	os_trace_button(0);
 
-	/* Create the end points for the battery and display. */
+	/* Create the end point for the battery cable. */
 	s->b_id = os_c_open("/van/ctrl_batt", O_NBLOCK);
-	s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
+	
+	/* Create the end point for the display cable: either the display shall
+	 * be connected with a shared memory or with an inet cable. */
 
+	/* Test the user user request. */
+	if (xxx) {
+		/* Activate the shared memory cable for the communication with
+		 * the display. */
+		s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
+	}
+	else {
+		/* Activate the inet cable for the communication with
+		 * the display. */
+		d_id = os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
+	}
+	
 	/* Initialize the controller. */
 	s->cap   = 10000;
 	s->cha   = s->cap;

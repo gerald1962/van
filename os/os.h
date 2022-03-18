@@ -279,6 +279,7 @@ void os_c_wait_release(int id);
 void os_c_wait(int id);
 int os_c_writable(int id);
 int os_c_sync(int ep_id);
+int os_c_connect(int ep_id);
 
 /* Asynchronous cable I/O operations. */
 void os_c_action(int dev_id, os_aio_cb_t *cb);
@@ -301,6 +302,7 @@ int os_bread(int ep_id, char *buf, int count);
 int os_bwrite(int ep_id, char *buf, int count);
 int os_bwritable(int ep_id);
 int os_bsync(int ep_id);
+int os_bconnect(int ep_id);
 
 /* Tcl/Tk. */
 int DLLEXPORT Van_Init(Tcl_Interp *interp);
@@ -319,11 +321,21 @@ void os_mq_delete(void *mq);
 void *os_mq_init(int size);
 
 /* Internet interfaces. */
+#if 0
+#define OS_ARG_LEN  32
+char argv[4][OS_ARG_LEN];
+os_strcpy(argv[0], OS_ARG_LEN, my_addr);
+os_strcpy(argv[1], OS_ARG_LEN, my_port);
+os_strcpy(argv[2], OS_ARG_LEN, his_addr);
+os_strcpy(argv[3], OS_ARG_LEN, his_port);
+int os_inet_open(4, argv);
+int os_inet_open(int argc, char **argv);
+#else
 int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
+#endif
 void os_inet_close(int cid);
 int os_inet_accept(int cid);
 int os_inet_connect(int cid);
-int os_inet_wait(int cid, char *identifier);
 int os_inet_read(int cid, char *buf, int count);
 int os_inet_write(int cid, char *buf, int count);
 int os_inet_sync(int cid);

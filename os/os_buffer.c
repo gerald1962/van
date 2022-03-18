@@ -171,6 +171,33 @@ static int buf_write_cb(int c_id, char *buf, int count)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
+ * os_bconnect() - test the connection status to the other peer.
+ *
+ * @u_id:  id of the entry point.
+ *
+ * Return:	0, if the connection exists.
+ **/
+int os_bconnect(int u_id)
+{
+	struct buf_data_s *b;
+	int rv;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(u_id < 0 || u_id >= BUF_EP_COUNT);
+
+	/* Map the ep id to the ep state. */
+	b = buf_data[u_id];
+
+	/* Test the ep state. */
+	OS_TRAP_IF(b == NULL);
+
+	/* Get the liveliness of the transfer thread. */
+	rv = os_c_connect(b->c_id);
+
+	return rv;
+}
+
+/**
  * os_bsync() - get the fill level of the output queue buffer.
  *
  * @u_id:  id of the entry point.

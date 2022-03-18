@@ -793,6 +793,27 @@ static void cab_create(void)
   EXPORTED FUNCTIONS
   ============================================================================*/
 /**
+ * os_c_connect() - test the connection status to the other peer.
+ *
+ * @id:  id of the entry point.
+ *
+ * Return:	0, if the connection exists.
+ **/
+int os_c_connect(int id)
+{
+	cab_dev_t *dev;
+	int rv;
+
+	/* Map the id to the device state. */
+	dev = cab_dev_get(id);
+
+	/* Get the liveliness of the transfer thread. */
+	rv = atomic_load(&dev->down);
+
+	return rv;
+}
+
+/**
  * os_c_sync() - get the number of the pending output bytes.
  *
  * @u_id:  id of the entry point.

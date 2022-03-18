@@ -158,37 +158,49 @@ namespace eval vd {
 
     # ds - battery display state
     #
-    # @p:       display prompt.
-    # @ep_id:   display end point of the controller display cable.
-    # @ctrl_b:  current state of the battery control button: B_STOP:
-    #           shutdown, B_ON: active battery, B_OFF: inactive battery,
-    #           B_EMPTY: discharged battery, therefor the control button has
-    #           been blocked. Nevertheless the battery is active
-    # @rech_b:  recharging state of the battery: 0: off, 1: on
-    #           and can be charged at any time.
-    # @cyc:     cycle value or time stamp.
-    # @vlt:     voltatage value
-    # @crt:     current value.
-    # @cha:     charge quantity.
-    # @lev:     fill level of the battery in percent.
-    # @d_rx_n:  number of the received messages by the display
-    # @d_tx_n:  number of the sent messages by the display
-    # @c_rx_n:  number of the received display messages by the controller
-    # @c_tx_n:  number of the sent display messages by the controller
+    # @p:        display prompt.
+    # @tries:    number of the attempts in any wait loop.
+    # @is_inet:  if 1, use the van OS inet interfaces.
+    # @ep_id:    display end point of the controller display cable.
+    # @d_ip_a:   ip address of the van display.
+    # @d_port:   inet port of the van display.
+    # @c_ip_a:   ip address of the van controller.
+    # @c_port:   inet port of the van controller.
+    # @ctrl_b:   current state of the battery control button: B_STOP:
+    #            shutdown, B_ON: active battery, B_OFF: inactive battery,
+    #            B_EMPTY: discharged battery, therefor the control button has
+    #            been blocked. Nevertheless the battery is active
+    # @rech_b:   recharging state of the battery: 0: off, 1: on
+    #            and can be charged at any time.
+    # @cyc:      cycle value or time stamp.
+    # @vlt:      voltage value
+    # @crt:      current value.
+    # @cha:      charge quantity.
+    # @lev:      fill level of the battery in percent.
+    # @d_rx_n:   number of the received messages by the display
+    # @d_tx_n:   number of the sent messages by the display
+    # @c_rx_n:   number of the received display messages by the controller
+    # @c_tx_n:   number of the sent display messages by the controller
     namespace eval ds {
-        variable  p       "D>"
-        variable  ep_id   -1
-	variable  ctrl_b  "B_OFF"
-	variable  rech_b  0  
-	variable  cyc     0
-	variable  vlt     0
-	variable  crt     0
-	variable  cha     0
-	variable  lev     0
-	variable  d_rx_n    0
-	variable  d_tx_n    0
-	variable  c_rx_n    0
-	variable  c_tx_n    0
+        variable  p        "D>"
+        variable  tries    99
+        variable  is_inet  0
+        variable  ep_id    -1
+	variable  d_ip_a   ""
+	variable  d_port   58062
+	variable  c_ip_a   ""
+	variable  d_port   62058
+	variable  ctrl_b   "B_OFF"
+	variable  rech_b   0  
+	variable  cyc      0
+	variable  vlt      0
+	variable  crt      0
+	variable  cha      0
+	variable  lev      0
+	variable  d_rx_n   0
+	variable  d_tx_n   0
+	variable  c_rx_n   0
+	variable  c_tx_n   0
     }
 }
 
@@ -203,16 +215,17 @@ proc disp_ctrl_write {} {
     # Update the send counter.
     incr vd::ds::d_tx_n
     
-    # Make a copy of the display actuators: controll and recharge button.
+    # Make a copy of the display actuators: transfer counters, controll and
+    # recharge button.
     set vd::co::rx_n    $vd::ds::d_rx_n
     set vd::co::tx_n    $vd::ds::d_tx_n
     set vd::co::ctrl_b  $vd::ds::ctrl_b
     set vd::co::rech_b  $vd::ds::rech_b
 
-    # Concatenate the signal elements to the controller.
+    # Concatenate the message elements to the controller.
     set buf  "rxno=$vd::co::rx_n\:\:txno=$vd::co::tx_n\:\:control_b=$vd::co::ctrl_b\:\:recharge_b=$vd::co::rech_b\:\:"
     
-    # Send the signal to the controller.
+    # Send the message to the controller.
     puts $vd::ds::ep_id  $buf
 
     # Prevent the buffering of the output signal to the controller.
@@ -231,8 +244,8 @@ proc disp_bstop_cb {} {
     disp_ctrl_write
     
     # Wait until the output queue is empty
-    set n 1
-    while { $n > 0 } {
+    set n  1
+    for { set i 0 } { $n > 0 && $i < $vd::ds::tries } { incr i } {
 	# Get the number of the pending output bytes.
 	set n [fconfigure $vd::ds::ep_id -sync]
 
@@ -241,7 +254,7 @@ proc disp_bstop_cb {} {
     }
 
     # Print the goodby notificaton.
-    puts "vdisplay done"
+    puts "$vd::ds::p done"
     
     # Pull out the display plug.
     close $vd::ds::ep_id
@@ -534,7 +547,7 @@ proc disp_input_wait {} {
 	# Evaluate the input from the controller and trap exceptional returns
 	if { [ catch { disp_input_parse $buf } ] } {
 	    set info $::errorInfo
-	    puts "Invalid input from the controller: $info"
+	    puts "$vd::ds::p invalid input from the controller: $info"
 
 	    # Propagate the termination request to the controller and battery.
 	    disp_bstop_cb 1
@@ -560,7 +573,7 @@ proc disp_input_wait {} {
 	set tx_n  $vd::ds::d_tx_n
 	$vd::bw::c itemconfigure $vd::bx::dtc -text "$rx_n / $tx_n"
 	
-	# Update the controller transfer counters..
+	# Update the controller transfer counters.
 	set rx_n  $vd::ds::c_rx_n
 	set tx_n  $vd::ds::c_tx_n
 	$vd::bw::c itemconfigure $vd::bx::ctc -text "$tx_n / $rx_n"
@@ -640,7 +653,7 @@ proc disp_sensor_create { y1_r y2_r label } {
 # Return:     None.
 #
 proc disp_sensors {} {
-    # Define the origion points of the sensor boxes on the vertical or y-axis.
+    # Define the origin point of the sensor boxes on the vertical or y-axis.
 
     # Top left y-coordinate.
     set y1_o    0
@@ -651,7 +664,7 @@ proc disp_sensors {} {
     # Distance between sensor boxes.
     set dy     50
 
-    # Initialize the multiplier for shift on the y-axis.
+    # Initialize the multiplier for the shift on the y-axis.
     set m  0
     
     # Create the cycle box.
@@ -1037,17 +1050,6 @@ proc disp_main_widget {} {
     bind . <Destroy> { disp_bstop_cb 0 }
 }
 
-# disp_cable{} - insert the display-controller cable.
-#
-# Return:     None.
-#
-proc disp_cable_insert {} {
-    # The controller has to be started before, otherwise the display plug cannot
-    # be inserted, to provide the controller display cable for the bidirectional
-    # message or signal tranfer between controller and display.
-    set vd::ds::ep_id [vcable /van/display]
-}
-
 # disp_specify{} - specify the looks of the GUI.
 #
 # Return:     None.
@@ -1069,6 +1071,88 @@ proc disp_looks_specify {} {
     disp_sensors
 }
 
+# disp_cable{} - insert the display-controller cable.
+#
+# Return:     None.
+#
+proc disp_cable_insert {} {
+    # The controller has to be started before, otherwise the display plug cannot
+    # be inserted, to provide the controller display cable for the bidirectional
+    # message or signal tranfer between controller and display.
+
+    # Test the interface type
+    if { $vd::ds::is_inet } {
+	# Activate the inet interfaces
+	set vd::ds::ep_id [vcable  /van/inet  $vd::ds::d_ip_a  $vd::ds::d_ip_a]
+    } else {
+	# Activate the shared memory interfaces
+	set vd::ds::ep_id [vcable  /van/display]
+    }
+
+    # Initialize the connection status.
+    set rv  1
+    
+    # Wait for the connection to the controller.
+    for { set i 0 } { $rv > 0 && $i < $vd::ds::tries } { incr i } {
+	# Get the connection status of the controller.
+	set rv [fconfigure $vd::ds::ep_id -connect]
+
+ 	# Wait a few milliseconds
+	after 100
+    }
+
+    # Test the connection status.
+    if { $i < $vd::ds::tries } {
+	# The connection to the controller exists.
+	puts "$vd::ds::p vdisplay and vcontroller are connected to each other."
+	return
+    }
+
+    
+    puts "$vd::ds::p the connection to the vcontroller has failed."
+    exit 1
+}
+
+# disp_usage{} - provide information about the vdisplay configuration.
+#
+# Return:     None.
+#
+proc disp_usage {} {
+    puts "vdisplay - van display battery contoller"
+    puts ""
+    puts "no args"
+    puts "  Use the shared memory cable to conncet vdisplay and vcontroller: e.g."
+    puts "  vdisplay"
+    puts ""
+    puts "vdisplay  vdisplay-ipv4-addr vcontroller-ipv4-addr"
+    puts "  Use the inet cable to connect vdisplay and vcontroller: e.g."
+    puts "  vdisplay 127.0.0.1 127.0.0.1"
+    puts "  and implicitly bound to the ports:"
+    puts "  vdisplay:    58062"
+    puts "  vcontroller: 62058"
+}
+
+# disp_ip_addr . get the IP address.
+#
+# @ip_str:  pointer to the IP string.
+#
+# Return:     the valid ip string.
+#
+proc disp_ip_addr { string } {
+    if {[regexp {^\d+\.\d+\.\d+\.\d+$} $string]
+	&& [scan $string %d.%d.%d.%d a b c d] == 4
+	&& 0 <= $a && $a <= 255 && 0 <= $b && $b <= 255
+	&& 0 <= $c && $c <= 255 && 0 <= $d && $d <= 255} {
+	return $string
+    } else {
+	# Provide information about the vdisplay configuration.
+	puts "$vd::ds::p error: invalid IPv4 format"
+	disp_usage
+	exit 1
+	return ""
+    }
+}
+
 # disp_argv{} - analyze the vdisplay arguments.
 #
 # Return:     None.
@@ -1077,15 +1161,40 @@ proc disp_argv {} {
     # $argc  - number items of arguments passed to a script.
     # $argv  - list of the arguments.
     # $argv0 - name of the script.
-    if { $::argc > 0 } {
-	set i 1
-	foreach arg $::argv {
-	    puts "argument $i is $arg"
-	    incr i
-	}
-    } else {
-	puts "no command line argument passed"
-    }    
+
+    # Test the number of the script arguments.
+    if { $::argc != 0 && $::argc != 2 } {
+	# Provide information about the vdisplay configuration.
+	disp_usage
+	exit 1
+    }
+
+    # Test the use of the shared memory cable.
+    if { $::argc == 0 } {
+	puts "$vd::ds::p shared memory communication cable"
+	return
+    }
+
+    # The inet cable shall be used to connect vdisplay and vcontroller.
+    puts "$vd::ds::p inet communication cable"
+
+    # Get the vdisplay IPv4 address.
+    set addr  [lindex $::argv 0]
+
+    # Analyze the IP address of the vdisplay.
+    set vd::ds::d_ip_a  [disp_ip_addr $addr]
+
+    # Get the vcontroller IPv4 address.
+    set addr  [lindex $::argv 1]
+    
+    # Analyze the IP address of the vcontroller.
+    set vd::ds::c_ip_a  [disp_ip_addr $addr]
+
+    # Use the inet interfaces.
+    set vd::ds::is_inet  1
+
+    # XXX
+    exit 1
 }
 
 #===============================================================================
@@ -1097,7 +1206,7 @@ proc disp_argv {} {
 #
 proc main {} {
     # Analyze the vdisplay arguments.
-    # disp_argv
+    disp_argv
 
     # Insert the display-controller cable.
     disp_cable_insert

@@ -40,10 +40,11 @@
  *                - buffered - or triggered by I/O interrupts directly.
  * @open:         open the neighbour entry point of the van controller.
  * @close:        the neighbour entry point of the van controller.
- * @read:         from a cable end point.
+ * @read:         from a cable end point. 
  * @write:        to a cable end point.
  * @writable:     get the size of the free output buffer.
  * @sync:         get the number of the pending output bytes.
+ * @connect:      get the connection status of the peers.
  * @van_ep_id:    van OS cable end point id.
  * @locked:       if 1, the end point is in use.
  * @inp_toggle:   if 1, read the current input message, otherwise ignore it. This
@@ -57,12 +58,13 @@ static struct cable_s {
 	char  *van_ep_name;
 	char  *tcl_ep_id;
 	char  *tcl_chn_id;
-	int   (*open)     (const char *ep_name, int mode);
-	void  (*close)    (int ep_id);
-	int   (*read)     (int ep_id, char *buf, int count);
-	int   (*write)    (int ep_id, char *buf, int count);
-	int   (*writable) (int ep_id);
-	int   (*sync) (int ep_id);
+	int   (*open)      (const char *ep_name, int mode);
+	void  (*close)     (int ep_id);
+	int   (*read)      (int ep_id, char *buf, int count);
+	int   (*write)     (int ep_id, char *buf, int count);
+	int   (*writable)  (int ep_id);
+	int   (*sync)      (int ep_id);
+	int   (*connect)   (int ep_id);
 	int   van_ep_id;
 	int   locked;
 	int   inp_toggle;
@@ -79,9 +81,10 @@ static struct cable_s {
 		os_bwrite,
 		os_bwritable,
 		os_bsync,
+		os_bconnect,
 		0
 	}, {
-		"/van//battery",
+		"/van/battery",
 		"van_batt_ctrl",
 		"van_irq_cable",
 		os_c_open,
@@ -90,6 +93,7 @@ static struct cable_s {
 		os_c_write,
 		os_c_writable,
 		os_c_sync,
+		os_c_connect,
 		0 }
 };
 
@@ -180,6 +184,19 @@ static int cab_getOptionProc(ClientData instanceData, Tcl_Interp *interp,
 		rv = c->sync(c->van_ep_id);
 
 		/* Convert the buffer size. */
+		len = snprintf(buf, 8, "%d", rv);
+	
+		/* Save the return value. */
+		Tcl_DStringAppend(optionValue, buf, len);
+		return  TCL_OK;
+	}
+
+	/* Test the option name. */
+	if (os_strcmp(optionName, "-connect") == 0) {
+		/* Get the connection status from vdisplay to vcontroller. */
+		rv = c->connect(c->van_ep_id);
+
+		/* Convert the connection status. */
 		len = snprintf(buf, 8, "%d", rv);
 	
 		/* Save the return value. */
@@ -405,7 +422,8 @@ static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
 	char *n;
 	int i;
 
-	if (objc != 2) {
+	/* Test the number of the arguments. */
+	if (objc != 2 && objc != 4) {
 		Tcl_WrongNumArgs(interp, 1, objv, "");
 		return TCL_ERROR;
 	}
