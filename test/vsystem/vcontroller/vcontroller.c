@@ -152,6 +152,7 @@ static struct ctrl_dc_s {
  *
  * @dc:        pointer to the wires of the display cable.
  * @is_inet:   if 1, vcontroller and vdisplay are connected over inet.
+ * @accepted:  if 1, the connection to the vdisplay is active.
  * @my_addr:   IPv4 address of the vcontroller.
  * @his_addr:  IPv4 address of the vdisplay.
  * @rx_cnt:    number of the received message from the display.
@@ -202,6 +203,7 @@ static struct ctrl_s {
 	struct ctrl_s_s {
 		struct ctrl_dc_s  *dc;
 		int   is_inet;
+		int   accepted;
 		char  my_addr[CTRL_IPv4_ADDR_LEN];
 		char  his_addr[CTRL_IPv4_ADDR_LEN];
 		int   rx_cnt;
@@ -300,9 +302,14 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 
 	/* Try to establish the shared memory or inet connection to the
 	 * display. */
-	rv = ctrl.s.dc->accept(id);
-	if (rv != 0)
-		return;
+	if (! ctrl.s.accepted) {
+		rv = ctrl.s.dc->accept(id);
+		if (rv != 0)
+			return;
+
+		/* The connection to the vdisplay is active. */
+		ctrl.s.accepted = 1;
+	}
 	
 	/* Generate the output to the display. */
 	n = snprintf(buf, OS_BUF_SIZE,
@@ -312,7 +319,7 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 	/* Include EOS. */
 	n++;
 
-	/* Trace the message to battery. */
+	/* Trace the message to the vdisplay. */
 	printf("%s OUTPUT-D %s", P, buf);
 	printf("\n");
 

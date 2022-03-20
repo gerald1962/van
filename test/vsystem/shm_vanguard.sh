@@ -23,4 +23,4 @@ xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdispl
 # Start the van battery program.
 xfce4-terminal --hold --geometry=120x25+1350+1000 --title=vbattery     -e "vbattery/out/vbattery" &
 
-# vanguard.sh
+# shm_vanguard.sh
