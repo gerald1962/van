@@ -17,7 +17,17 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define P "C>"  /* Controller prompt. */
+/* Controller prompt. */
+#define P "C>"
+
+/* Number of the display cable types. */
+#define CTRL_DC_COUNT 2
+
+/* Index of the shared memory cable to the vdisplay. */
+#define CTRL_DC_SHM 0
+
+/* Index of the inet cable to the vdisplay. */
+#define CTRL_DC_INET 1
 
 /* Max. length of an IPv4 string buffer. */
 #define CTRL_IPv4_ADDR_LEN  32
@@ -39,9 +49,6 @@
 /*============================================================================
   LOCAL TYPE DEFINITIONS
   ============================================================================*/
-/*============================================================================
-  LOCAL DATA
-  ============================================================================*/
 /**
  * cb_t - list of the battery control button actions requested from the display
  *        actuators.
@@ -56,35 +63,109 @@ typedef enum {
 	B_STOP
 } cb_t;
 
+/*============================================================================
+  LOCAL FUNCTION PROTOTYPES
+  ============================================================================*/
+static int ctrl_inet_open(const char *name, int mode);
+
+/*============================================================================
+  LOCAL DATA
+  ============================================================================*/
 /**
- * ctrl - controller status.
+ * ctrl_dc - state of the display cable I/O wires.
  *
- * @bi:  input from the battery.
- * @bo:  output to the battery
- * @pi:  input from the panel or display.
- * @po:  output to the panel or display.
- * @s:   current controller state.
+ * @name:    name of the van display cable end point, see os_c_open().
+ * @open:    open the display entry point.
+ * @close:   the display entry point.
+ * @read:    from the display cable end point. 
+ * @write:   to the display cable end point.
+ * @sync:    get the number of the pending output bytes.
+ * @accept:  wait for the connection request from the vdisplay.
+ **/
+static struct ctrl_dc_s {
+	char  *name;
+	int   (*open)    (const char *ep_name, int mode);
+	void  (*close)   (int ep_id);
+	int   (*read)    (int ep_id, char *buf, int count);
+	int   (*write)   (int ep_id, char *buf, int count);
+	int   (*sync)    (int ep_id);
+	int   (*accept)  (int ep_id);
+
+} ctrl_dc[CTRL_DC_COUNT] = {{
+		"/van/ctrl_disp",
+		os_c_open,
+		os_c_close,
+		os_c_read,
+		os_c_write,
+		os_c_sync,
+		os_c_accept
+	}, {
+		"/van/inet",
+		ctrl_inet_open,
+		os_inet_close,
+		os_inet_read,
+		os_inet_write,
+		os_inet_sync,
+		os_inet_accept
+	}
+};
+
+/**
+ * ctrl_s - controller status.
  *
- * @b_id:    end point of the battery cable.
- * @d_id:    end point of the display cable.
- * @t_id:    id of the periodic control timer.
- * @clock:   time intervall of the battery controller.
+ * ctrl_bi_s - input from the battery.
  *
- * @rx_cnt:  number of the receved controller messages from the display.
- * @tx_cnt:  number of the sent messages to the controller.
- * @cycle:   time stamp - battery.
- * @ctrl_b:  current contol button setting.
- * @rech_b:  current recharge button setting.
- * @vlt:     voltage - battery.
- * @crt:     current - battery.
- * @cha:     charge quantity - battery.
- * @lev:     fill leve of the battery.
+ * @cycle:     received time stamp from the battery.
+ * @vlt:       received voltage value from the battery.
+ * @crt:       receved current value from the battery.
+ * @cha:       received charge quantity from the battery.
  *
+ * ctrl_bo_s - output to the battery.
+ *
+ * @cycle:     sent controller time stamp to the battery.
+ * @ctrl_b:    on and off switch sent to the battery: currently controlled by
+ *             the GUI user. Later it shall be made by the vcontroller
+ *             autonomously with the algorithm of the control technology.
+ *             If it works, GUI is an optinal trace and debug tool like viewing
+ *             of any graphs.
+ * @rech_b:    currently the GUI sends the recharge request to the battery over
+ *             the controller.
+ * 
+ * ctrl_pi_s:  input from the panel or display.
+ *
+ * @rx_cnt:    number of the receved controller messages from the display.
+ * @tx_cnt:    number of the sent controller messages to the display.
+ * @cycle:     received time stamp from the display.
+ * @ctrl_b:    battery on and off switch sent from the display.
+ * @rech_b:    recharge request from the display.
+ * 
+ * ctrl_po_s:  output to the panel or display.
+ *
+ * @rx_cnt:    number of the receved display messages from the controller.
+ * @tx_cnt:    number of the sent conntroller messages to the display.
+ * @cycle:     sent controller time stamp to the display.
+ * @vlt:       re-calculated controller voltage value sent to the display.
+ * @crt:       routed current value from the battery.
+ * @cha:       received charge quantity from the battery.
+
+ * ctrl_s_s - current controller state.
+ *
+ * @dc:        pointer to the wires of the display cable.
  * @is_inet:   if 1, vcontroller and vdisplay are connected over inet.
  * @my_addr:   IPv4 address of the vcontroller.
  * @his_addr:  IPv4 address of the vdisplay.
  * @rx_cnt:    number of the received message from the display.
  * @tx_cnt:    number of the sent messages to the display.
+ * @b_id:      end point id of the battery cable.
+ * @d_id:      end point id of the display cable.
+ * @t_id:      id of the periodic control timer.
+ * @clock:     current time stamp stamp of the battery controller.
+ * @ctrl_b:    battery on and off switch sent from the display.
+ * @rech_b:    recharge request from the display.
+ * @vlt:       calculated battery voltage value of the control technology.
+ * @crt:       calculated battery current value of the control technology.
+ * @cha:       calculated battery quantity value of the control technology.
+ * @lev:       calculated batery fill level of the control technology.
  **/
 static struct ctrl_s {
 	struct ctrl_bi_s {
@@ -119,6 +200,7 @@ static struct ctrl_s {
 	} po;
 	
 	struct ctrl_s_s {
+		struct ctrl_dc_s  *dc;
 		int   is_inet;
 		char  my_addr[CTRL_IPv4_ADDR_LEN];
 		char  his_addr[CTRL_IPv4_ADDR_LEN];
@@ -141,11 +223,28 @@ static struct ctrl_s {
 } ctrl;
 
 /*============================================================================
-  LOCAL FUNCTION PROTOTYPES
-  ============================================================================*/
-/*============================================================================
   LOCAL FUNCTIONS
   ============================================================================*/
+/**
+ * ctrl_inet_open() - establish the inet connection between the vcontroller and
+ * the vdisplay.
+ *
+ * @name:  no use.
+ * @mode:  no use.
+ *
+ * Return:	return the connection id.
+ **/
+static int ctrl_inet_open(const char *name, int mode)
+{
+	struct ctrl_s_s *s = &ctrl.s;
+	int cid;
+
+	/* Activate the inet cable for the communication with the display. */
+	cid = os_inet_open(s->my_addr, OS_CTRL_PORT, s->his_addr, OS_DISP_PORT);
+
+	return cid;
+}
+
 /**
  * ctrl_read_int() - search for the pattern combined with the digit string and
  * convert the digit string to int.
@@ -189,16 +288,22 @@ static int ctrl_read_int(char *buf, int len, char *pat)
 /**
  * ctrl_disp_write() - set the output to the display.
  *
- * @id:  battery controller cable id.
- * bo:   pointer to the ouput to the battery.
+ * @id:  battery display cable id.
+ * bo:   pointer to the battery ouput.
  *
  * Return:	None.
  **/
 static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 {
 	char buf[OS_BUF_SIZE];
-	int n;
+	int rv, n;
 
+	/* Try to establish the shared memory or inet connection to the
+	 * display. */
+	rv = ctrl.s.dc->accept(id);
+	if (rv != 0)
+		return;
+	
 	/* Generate the output to the display. */
 	n = snprintf(buf, OS_BUF_SIZE,
 		     "rxno=%d::txno=%d::cycle=%d::voltage=%d::current=%d::charge=%d::level=%d:",
@@ -211,8 +316,8 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 	printf("%s OUTPUT-D %s", P, buf);
 	printf("\n");
 
-	/* Send the signal to the display. */
-	os_c_write(id, buf, n);
+	/* Send the message to the display. */
+	ctrl.s.dc->write(id, buf, n);
 }
 
 /**
@@ -228,8 +333,8 @@ static void ctrl_disp_read(int id, struct ctrl_pi_s *pi)
 	char buf[OS_BUF_SIZE], *s, *sep;
 	int b_len, m_len, e_len;
 
-	/* Wait for a display signal. */
-	b_len = os_c_read(id, buf, OS_BUF_SIZE);
+	/* Read the display message. */
+	b_len = ctrl.s.dc->read(id, buf, OS_BUF_SIZE);
 
 	/* Test the input state. */
 	if (b_len < 2)
@@ -467,9 +572,11 @@ static void ctrl_cleanup(void)
 	/* Stop the clock. */
 	os_clock_delete(s->t_id);
 	
-	/* Release the end points. */
+	/* Release the battery end points. */
 	os_c_close(s->b_id);
-	os_c_close(s->d_id);
+	
+	/* Release the display end points. */
+	ctrl.s.dc->close(s->d_id);
 	
 	/* Release the OS resources. */
 	os_exit();
@@ -501,24 +608,8 @@ static void ctrl_init(void)
 	/* Create the end point for the display cable: either the display shall
 	 * be connected with a shared memory or with an inet cable. */
 
-	/* XXX */
-#if 0
-	/* Test the user user request. */
-	if (xxx) {
-		/* Activate the shared memory cable for the communication with
-		 * the display. */
-		s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
-	}
-	else {
-		/* Activate the inet cable for the communication with
-		 * the display. */
-		d_id = os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
-	}
-#else
-	/* Activate the shared memory cable for the communication with
-	 * the display. */
-	s->d_id = os_c_open("/van/ctrl_disp", O_NBLOCK);
-#endif
+	/* Activate the end point for the communication with the display. */
+	s->d_id = ctrl.s.dc->open(ctrl.s.dc->name, O_NBLOCK);
 	
 	/* Initialize the controller. */
 	s->cap   = 10000;
@@ -684,6 +775,9 @@ static void ctrl_argv(int argc, char *argv[])
 		/* The vcontroller shall be called as follows: vcontroller. 
 		 * In this case the vcontroller and the vdisplay are connected
 		 * over shared memory. */
+
+		/* Get the pointer to the shared memory display interfaces. */
+		ctrl.s.dc = &ctrl_dc[CTRL_DC_SHM];
 		break;
 	case 2:
 		/* The vcontroller shall be called as follows: 
@@ -701,6 +795,9 @@ static void ctrl_argv(int argc, char *argv[])
 		
 		/* Get the IP addresses. */
 		ctrl_ip_addr(argc, argv);
+		
+		/* Get the pointer to the inet display interfaces. */
+		ctrl.s.dc = &ctrl_dc[CTRL_DC_INET];
 		break;
 	default:
 		/* Support the user. */

@@ -14,11 +14,11 @@
 # 2.1 man X 7
 
 # Start the van controller program.
-xfce4-terminal --hold --geometry=120x25+25+1000   --title=vcontroller -e "vcontroller/out/vcontroller" &
+xfce4-terminal --hold --geometry=120x25+25+1000   --title=vcontroller -e "vcontroller/out/vcontroller -c 127.0.0.1 -d 127.0.0.1" &
 
 # Start the van display program.
 sleep 0.500
-xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdisplay/vdisplay.tcl" &
+xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdisplay/vdisplay.tcl 127.0.0.1 127.0.0.1" &
 
 # Start the van battery program.
 xfce4-terminal --hold --geometry=120x25+1350+1000 --title=vbattery     -e "vbattery/out/vbattery" &

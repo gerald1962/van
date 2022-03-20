@@ -189,7 +189,7 @@ namespace eval vd {
 	variable  d_ip_a   ""
 	variable  d_port   58062
 	variable  c_ip_a   ""
-	variable  d_port   62058
+	variable  c_port   62058
 	variable  ctrl_b   "B_OFF"
 	variable  rech_b   0  
 	variable  cyc      0
@@ -625,7 +625,7 @@ proc disp_input_wait {} {
 #
 # Return:     the canvas item id.
 #
-proc disp_sensor_create { y1_r y2_r label } {
+proc disp_sensor_create { y1_r y2_r label text } {
     # All sensor boxes are located on the same hoizontal line or x-axis.
     # Here is the list of the reference points on the x-axis.
     set x1_r   30
@@ -645,7 +645,7 @@ proc disp_sensor_create { y1_r y2_r label } {
     set x1  [expr $x1_r + 45]
     
     # Return the box item id.
-    return [$vd::bw::c create text $x1 $y1 -justify center -text "0 / 0"]
+    return [$vd::bw::c create text $x1 $y1 -justify center -text $text ]
 }
 
 # disp_sensors{} - create the display sensors or input boxes.
@@ -671,43 +671,43 @@ proc disp_sensors {} {
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::cyc  [disp_sensor_create $y1 $y2 "Cycles"]
+    set vd::bx::cyc  [disp_sensor_create $y1 $y2 "Cycles" "0"]
 
     # Create the voltage box.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::vlt  [disp_sensor_create $y1 $y2 "Voltage"]
+    set vd::bx::vlt  [disp_sensor_create $y1 $y2 "Voltage" "0"]
 
     # Create the current box.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::crt  [disp_sensor_create $y1 $y2 "Current"]
+    set vd::bx::crt  [disp_sensor_create $y1 $y2 "Current" "0"]
 
     # Create the charge box.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::cha  [disp_sensor_create $y1 $y2 "Charge"]
+    set vd::bx::cha  [disp_sensor_create $y1 $y2 "Charge" "0"]
 
     # Create the fill level box.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::lev  [disp_sensor_create $y1 $y2 "Level"]
+    set vd::bx::lev  [disp_sensor_create $y1 $y2 "Level" "0"]
     
     # Create the display box for the transfer counters.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::dtc  [disp_sensor_create $y1 $y2 "D Rx/Tx"]
+    set vd::bx::dtc  [disp_sensor_create $y1 $y2 "D Rx/Tx" "0 / 0"]
     
     # Create the controller box for the transfer counters.
     incr  m
     set y1  [expr $y1_o + $dy * $m]
     set y2  [expr $y2_o + $dy * $m]
-    set vd::bx::ctc  [disp_sensor_create $y1 $y2 "C Tx/Rx"]
+    set vd::bx::ctc  [disp_sensor_create $y1 $y2 "C Tx/Rx" "0 / 0"]
 }
 
 # disp_charge_graph{} - create the charge graph.
@@ -1083,7 +1083,11 @@ proc disp_cable_insert {} {
     # Test the interface type
     if { $vd::ds::is_inet } {
 	# Activate the inet interfaces
-	set vd::ds::ep_id [vcable  /van/inet  $vd::ds::d_ip_a  $vd::ds::d_ip_a]
+	set a1  $vd::ds::d_ip_a
+	set a2  $vd::ds::d_port
+	set a3  $vd::ds::c_ip_a
+	set a4  $vd::ds::c_port
+	set vd::ds::ep_id [vcable  /van/inet $a1 $a2 $a3 $a4]
     } else {
 	# Activate the shared memory interfaces
 	set vd::ds::ep_id [vcable  /van/display]
@@ -1093,7 +1097,7 @@ proc disp_cable_insert {} {
     set rv  1
     
     # Wait for the connection to the controller.
-    for { set i 0 } { $rv > 0 && $i < $vd::ds::tries } { incr i } {
+    for { set i 0 } { $rv != 0 && $i < $vd::ds::tries } { incr i } {
 	# Get the connection status of the controller.
 	set rv [fconfigure $vd::ds::ep_id -connect]
 
@@ -1107,7 +1111,6 @@ proc disp_cable_insert {} {
 	puts "$vd::ds::p vdisplay and vcontroller are connected to each other."
 	return
     }
-
     
     puts "$vd::ds::p the connection to the vcontroller has failed."
     exit 1
@@ -1192,9 +1195,6 @@ proc disp_argv {} {
 
     # Use the inet interfaces.
     set vd::ds::is_inet  1
-
-    # XXX
-    exit 1
 }
 
 #===============================================================================

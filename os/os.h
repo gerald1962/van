@@ -57,7 +57,7 @@
 /* Limit of the van files with os_malloc calls. */
 #define OS_MALLOC_FILE_LIMIT  5
 
-/* Size of the UL/DL transfer buffer. */
+/* Size of the shared memory UL/DL transfer buffers. */
 #define OS_BUF_SIZE  2048
 
 /* Number of the supported timers. */
@@ -75,6 +75,12 @@
 
 /* Print the last timer trace. */
 #define OS_CT_LAST    3
+
+/* Port number of the van controller. */
+#define OS_CTRL_PORT  62058
+
+/* Port number of the van display. */
+#define OS_DISP_PORT  58062
 
 /*============================================================================
   MACROS
@@ -279,6 +285,7 @@ void os_c_wait_release(int id);
 void os_c_wait(int id);
 int os_c_writable(int id);
 int os_c_sync(int ep_id);
+int os_c_accept(int ep_id);
 int os_c_connect(int ep_id);
 
 /* Asynchronous cable I/O operations. */
@@ -321,23 +328,13 @@ void os_mq_delete(void *mq);
 void *os_mq_init(int size);
 
 /* Internet interfaces. */
-#if 0
-#define OS_ARG_LEN  32
-char argv[4][OS_ARG_LEN];
-os_strcpy(argv[0], OS_ARG_LEN, my_addr);
-os_strcpy(argv[1], OS_ARG_LEN, my_port);
-os_strcpy(argv[2], OS_ARG_LEN, his_addr);
-os_strcpy(argv[3], OS_ARG_LEN, his_port);
-int os_inet_open(4, argv);
-int os_inet_open(int argc, char **argv);
-#else
 int os_inet_open(const char *my_addr, int my_p, const char *his_addr, int his_p);
-#endif
 void os_inet_close(int cid);
 int os_inet_accept(int cid);
 int os_inet_connect(int cid);
 int os_inet_read(int cid, char *buf, int count);
 int os_inet_write(int cid, char *buf, int count);
+int os_inet_writable(int id);
 int os_inet_sync(int cid);
 
 #endif /* __os_h__ */

@@ -26,7 +26,7 @@
 #define INET_ADDR_LEN     32  /* Max. length of the IP address string. */
 #define INET_COUNT         2  /* Number of the peers. */
 #define INET_THR_QSIZE     1  /* Input queue size of the inet threads. */
-#define INET_MQ_SIZE    2048  /* SIze of the I/O queues. */
+#define INET_MQ_SIZE    8192  /* SIze of the I/O queues. */
 #define INET_MTU_SIZE    512  /* Max. size of a message. */
 #define INET_CE_SIZE     512  /* Buffer size for the connection establishment. */
 
@@ -546,6 +546,35 @@ int os_inet_sync(int cid)
 }
 
 /**
+ * os_inet_writable() - get the size of the free output message buffer.
+ * buffer.
+ *
+ * @cid:  socket communication id.
+ *
+ * Return:	the size of the free output message buffer.
+ **/
+int os_inet_writable(int cid)
+{
+	inet_t *ip;
+	int free;
+	
+	/* Entry conditon. */
+	OS_TRAP_IF(cid < 0 || cid >= INET_COUNT);
+
+	/* Map the cid to the inet state. */
+	ip = is.inet[cid];
+
+	/* Test the inet state. */
+	OS_TRAP_IF(ip == NULL);
+
+	/* Get the size of the free output message buffer for writing. */
+	free = os_mq_wmem(ip->out);
+	
+	return free;
+
+}
+
+/**
  * os_inet_write() - write to an internet socket. os_inet_write() writes up to
  * count bytes from the buffer starting at buf to the intnet socket referred to
  * by the communication id cid.
@@ -657,6 +686,8 @@ int os_inet_connect(int cid)
 	inet_t *ip;
 	int rv, len;
 
+	printf("%s: step 1: attempt\n", F);
+	
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
 
@@ -670,11 +701,15 @@ int os_inet_connect(int cid)
 	/* Analyze the vcontroller response. */
 	rv = os_inet_connect_rsp(ip);
 	if (rv == 0) {
+		printf("%s: step 3: success\n", F);
+	
 		/* Start the receiving and send thread. */
 		inet_threads_start(ip);
 		goto l_end;
 	}
 	
+	printf("%s: step 2: repetition\n", F);
+		
 	/* Increment the sequence number. */
 	ip->seqno++;
 

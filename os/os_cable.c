@@ -814,6 +814,27 @@ int os_c_connect(int id)
 }
 
 /**
+ * os_c_accept() - wait for the connection request from the other peer.
+ *
+ * @id:  id of the entry point.
+ *
+ * Return:	0, if the other peer is active.
+ **/
+int os_c_accept(int id)
+{
+	cab_dev_t *dev;
+	int rv;
+
+	/* Map the id to the device state. */
+	dev = cab_dev_get(id);
+
+	/* Get the liveliness of the transfer thread. */
+	rv = atomic_load(&dev->down);
+
+	return rv;
+}
+
+/**
  * os_c_sync() - get the number of the pending output bytes.
  *
  * @u_id:  id of the entry point.

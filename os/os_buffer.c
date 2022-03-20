@@ -401,7 +401,7 @@ void os_bclose(int u_id)
 
 /**
  * os_bopen() - open the display entry point with I/O buffering of the cable
- *  between controller and display e.g.
+ * between controller and display e.g.
  *
  * @ep_name:  name of the entry point: "/display" ...
  * @mode:     is not yet used.

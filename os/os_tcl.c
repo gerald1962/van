@@ -18,7 +18,7 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-#define CABLE_COUNT 2  /* Number of the system cables. */
+#define CABLE_COUNT 3  /* Number of the cable types. */
 
 /*============================================================================
   MACROS
@@ -26,6 +26,11 @@
 /*============================================================================
   LOCAL TYPE DEFINITIONS
   ============================================================================*/
+/*============================================================================
+  LOCAL FUNCTION PROTOTYPES
+  ============================================================================*/
+static int cab_inet_open(const char *name, int mode);
+
 /*============================================================================
   LOCAL DATA
   ============================================================================*/
@@ -94,7 +99,20 @@ static struct cable_s {
 		os_c_writable,
 		os_c_sync,
 		os_c_connect,
-		0 }
+		0
+	}, {
+		"/van/inet",
+		"",
+		"",
+		cab_inet_open,
+		os_inet_close,
+		os_inet_read,
+		os_inet_write,
+		os_inet_writable,
+		os_inet_sync,
+		os_inet_connect,
+		0
+	}
 };
 
 /**
@@ -102,18 +120,55 @@ static struct cable_s {
  *
  * @os_busy:  if 1, os_init() has already been executed.
  * @test:     if 1, we want to determine the code coverage.
+ * @objc:     giving the number of vcable_cmd() argument values.
+ * @objv:     array with pointers to the vcable_cmd() argument values.
  **/
 static struct cable_system_s {
-	int  os_busy;
-	int  test;
+	int        os_busy;
+	int        test;
+	int        objc;
+	Tcl_Obj  **objv;
 } cable_system;
 
 /*============================================================================
-  LOCAL FUNCTION PROTOTYPES
-  ============================================================================*/
-/*============================================================================
   LOCAL FUNCTIONS
   ============================================================================*/
+/**
+ * cab_inet_open() - establish the inet connection between the vdisplay and the
+ * vcontroller.
+ *
+ * @name:  no use.
+ * @mode:  no use.
+ *
+ * Return:	return the connection id.
+ **/
+static int cab_inet_open(const char *name, int mode)
+{
+	Tcl_Obj  **objv;
+	char *my_a, *his_a;
+	int objc, my_p, his_p, cid;
+
+	/* Get the pointer to the vcable_cmd() arguments. */
+	objc = cable_system.objc;
+	objv = cable_system.objv;
+
+	/* Entry condition. */
+	OS_TRAP_IF(objc != 6 || objv == NULL);
+
+	/* Get the pointer to the inet addresses. */
+	my_a  = objv[2]->bytes;
+	his_a = objv[4]->bytes;
+
+	/* Convert the port strings to int. */
+	my_p  = os_strtol_b10(objv[3]->bytes, objv[3]->length);
+	his_p = os_strtol_b10(objv[5]->bytes, objv[5]->length);
+	
+	/* Allocate the socket resources. */
+	cid = os_inet_open(my_a, my_p, his_a, his_p);
+
+	return cid;
+}
+
 /**
  * cab_watchProc() - called by the generic layer to initialize the event
  * notification mechanism to notice events of interest on this channel.
@@ -423,7 +478,7 @@ static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
 	int i;
 
 	/* Test the number of the arguments. */
-	if (objc != 2 && objc != 4) {
+	if (objc != 2 && objc != 6) {
 		Tcl_WrongNumArgs(interp, 1, objv, "");
 		return TCL_ERROR;
 	}
@@ -450,6 +505,10 @@ static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
 
 	/* The entry point is available. */
 	c->locked = 1;
+
+	/* Save the pointer to the command arguments. */
+	cable_system.objc = objc;
+	cable_system.objv = (Tcl_Obj **) objv;
 	
 	/* Insert the neighbour plug of the controller. */
 	cab_plug_insert(interp, c);

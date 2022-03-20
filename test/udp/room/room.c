@@ -19,9 +19,9 @@
   ============================================================================*/
 #define P         "R>"              /* Prompt of the room peer. */
 #define MY_ADDR   "192.168.178.96"  /* IP address of the room peer. */
-#define MY_PORT   62058             /* Port number of the room peer. */
+#define MY_PORT   OS_CTRL_PORT      /* Port number of the van controller peer. */
 #define HIS_ADDR  "192.168.178.1"   /* IP address of the box peer. */
-#define HIS_PORT  58062             /* Port number of the box peer. */
+#define HIS_PORT  OS_DISP_PORT      /* Port number of the van display peer. */
 #define BUF_SIZE  32                /* Size of the I/O buffer. */
 #define WR_FREQ   10                /* Relation between write and read. */
 #define WR_LIMIT  99999             /* Number of the send cycles. */
