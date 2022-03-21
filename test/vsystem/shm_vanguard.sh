@@ -16,8 +16,10 @@
 # Start the van controller program.
 xfce4-terminal --hold --geometry=120x25+25+1000   --title=vcontroller -e "vcontroller/out/vcontroller" &
 
-# Start the van display program.
+# Wait for the generation of the shared memory resources.
 sleep 0.500
+
+# Start the van display program.
 xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdisplay/vdisplay.tcl" &
 
 # Start the van battery program.

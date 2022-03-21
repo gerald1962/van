@@ -162,6 +162,7 @@ namespace eval vd {
     # @tries:    number of the attempts in any wait loop.
     # @is_inet:  if 1, use the van OS inet interfaces.
     # @ep_id:    display end point of the controller display cable.
+    # @net:      network type: lo - loopback interface - or lan.
     # @d_ip_a:   ip address of the van display.
     # @d_port:   inet port of the van display.
     # @c_ip_a:   ip address of the van controller.
@@ -186,6 +187,7 @@ namespace eval vd {
         variable  tries    99
         variable  is_inet  0
         variable  ep_id    -1
+	variable  net      ""
 	variable  d_ip_a   ""
 	variable  d_port   58062
 	variable  c_ip_a   ""
@@ -1082,12 +1084,16 @@ proc disp_cable_insert {} {
 
     # Test the interface type
     if { $vd::ds::is_inet } {
+	# Local copy of the network type and interface arguments for the van
+	# display socket.
+	set arg1  $vd::ds::net
+	set arg2  $vd::ds::d_ip_a
+	set arg3  $vd::ds::d_port
+	set arg4  $vd::ds::c_ip_a
+	set arg5  $vd::ds::c_port
+	
 	# Activate the inet interfaces
-	set a1  $vd::ds::d_ip_a
-	set a2  $vd::ds::d_port
-	set a3  $vd::ds::c_ip_a
-	set a4  $vd::ds::c_port
-	set vd::ds::ep_id [vcable  /van/inet $a1 $a2 $a3 $a4]
+	set vd::ds::ep_id [vcable  /van/inet $arg1 $arg2 $arg3 $arg4 $arg5]
     } else {
 	# Activate the shared memory interfaces
 	set vd::ds::ep_id [vcable  /van/display]
@@ -1125,35 +1131,68 @@ proc disp_usage {} {
     puts ""
     puts "no args"
     puts "  Use the shared memory cable to conncet vdisplay and vcontroller: e.g."
-    puts "  vdisplay"
+    puts "  1) user:~path\$ vdisplay &"
     puts ""
-    puts "vdisplay  vdisplay-ipv4-addr vcontroller-ipv4-addr"
+    puts "vdisplay x vdisplay-ipv4-addr vcontroller-ipv4-addr"
+    puts "  substitue the network type x with:"
+    puts "  lo   network loopback interface"
+    puts "  lan  local area network interace"
+    puts ""
     puts "  Use the inet cable to connect vdisplay and vcontroller: e.g."
-    puts "  vdisplay 127.0.0.1 127.0.0.1"
-    puts "  and implicitly bound to the ports:"
-    puts "  vdisplay:    58062"
-    puts "  vcontroller: 62058"
+    puts "  2) user:~/path\$ vdisplay lo  127.0.0.1 127.0.0.1 &"
+    puts "  3) user:~/path\$ vdisplay lan 10.0.2.15 192.168.178.96 &"
+    puts ""
+    puts "  Implicitly the IPv4 addresses are bound to the ports:"
+    puts "  vdisplay:    $vd::ds::d_port"
+    puts "  vcontroller: $vd::ds::c_port"
 }
 
-# disp_ip_addr . get the IP address.
+# disp_ip_addr{} - analyze the IPv4 address.
 #
-# @ip_str:  pointer to the IP string.
+# @string:  pointer to the IP address string.
 #
-# Return:     the valid ip string.
+# Return:     the valid IP string.
 #
 proc disp_ip_addr { string } {
+    # regexp - match a regular expression against an IPv4 string:
+    # ^   matches at the beginning of a string.
+    # \d  character class [[:digit:]]
+    # +   a sequence of 1 or more matches of the atom.
+    # $   matches at the end of a string.
+    #
+    # scan - parse string using conversion specifiers in the style of sscanf.
+    # d   the input substring must be a decimal integer. 
     if {[regexp {^\d+\.\d+\.\d+\.\d+$} $string]
 	&& [scan $string %d.%d.%d.%d a b c d] == 4
 	&& 0 <= $a && $a <= 255 && 0 <= $b && $b <= 255
 	&& 0 <= $c && $c <= 255 && 0 <= $d && $d <= 255} {
 	return $string
-    } else {
-	# Provide information about the vdisplay configuration.
-	puts "$vd::ds::p error: invalid IPv4 format"
-	disp_usage
-	exit 1
-	return ""
     }
+    
+    # Provide information about the vdisplay configuration.
+    puts "$vd::ds::p error: invalid IPv4 format"
+    disp_usage
+    exit 1
+    return ""
+}
+
+# disp_nw_type{} - analyze the network type.
+#
+# @string:  pointer to the network type string.
+#
+# Return:     the valid network name.
+#
+proc disp_nw_type { string } {
+    # Test the network type.
+    if { $string == "lo" || $string == "lan" } {
+	return $string
+    }
+
+    # Provide information about the vdisplay configuration.
+    puts "$vd::ds::p error: invalid network type"
+    disp_usage
+    exit 1
+    return ""
 }
 
 # disp_argv{} - analyze the vdisplay arguments.
@@ -1166,12 +1205,15 @@ proc disp_argv {} {
     # $argv0 - name of the script.
 
     # Test the number of the script arguments.
-    if { $::argc != 0 && $::argc != 2 } {
+    if { $::argc != 0 && $::argc != 3 } {
 	# Provide information about the vdisplay configuration.
 	disp_usage
 	exit 1
     }
 
+    # Initialize the argument counter.
+    set i  0
+    
     # Test the use of the shared memory cable.
     if { $::argc == 0 } {
 	puts "$vd::ds::p shared memory communication cable"
@@ -1181,14 +1223,20 @@ proc disp_argv {} {
     # The inet cable shall be used to connect vdisplay and vcontroller.
     puts "$vd::ds::p inet communication cable"
 
+    # Analyze the network type.
+    set n  [lindex $::argv $i]
+    set vd::ds::net  [disp_nw_type $n]
+
     # Get the vdisplay IPv4 address.
-    set addr  [lindex $::argv 0]
+    incr i
+    set addr  [lindex $::argv $i]
 
     # Analyze the IP address of the vdisplay.
     set vd::ds::d_ip_a  [disp_ip_addr $addr]
 
     # Get the vcontroller IPv4 address.
-    set addr  [lindex $::argv 1]
+    incr i
+    set addr  [lindex $::argv $i]
     
     # Analyze the IP address of the vcontroller.
     set vd::ds::c_ip_a  [disp_ip_addr $addr]

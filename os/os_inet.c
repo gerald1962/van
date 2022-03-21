@@ -686,8 +686,6 @@ int os_inet_connect(int cid)
 	inet_t *ip;
 	int rv, len;
 
-	printf("%s: step 1: attempt\n", F);
-	
 	/* Enter the critical section. */
 	os_cs_enter(&is.mutex);
 
@@ -701,15 +699,11 @@ int os_inet_connect(int cid)
 	/* Analyze the vcontroller response. */
 	rv = os_inet_connect_rsp(ip);
 	if (rv == 0) {
-		printf("%s: step 3: success\n", F);
-	
 		/* Start the receiving and send thread. */
 		inet_threads_start(ip);
 		goto l_end;
 	}
 	
-	printf("%s: step 2: repetition\n", F);
-		
 	/* Increment the sequence number. */
 	ip->seqno++;
 

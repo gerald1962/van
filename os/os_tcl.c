@@ -52,6 +52,7 @@ static int cab_inet_open(const char *name, int mode);
  * @connect:      get the connection status of the peers.
  * @van_ep_id:    van OS cable end point id.
  * @locked:       if 1, the end point is in use.
+ * @os_conf:      if 1, vdisplay shall be started on a remote network peer.
  * @inp_toggle:   if 1, read the current input message, otherwise ignore it. This
  *                toggle prevents Tcl, to buffer the input messages, until it has
  *                recognized end of file. 
@@ -72,6 +73,7 @@ static struct cable_s {
 	int   (*connect)   (int ep_id);
 	int   van_ep_id;
 	int   locked;
+	int   os_conf;
 	int   inp_toggle;
 	Tcl_ChannelType  chn_type;
 	Tcl_Channel      tcl_chn;
@@ -145,27 +147,56 @@ static struct cable_system_s {
 static int cab_inet_open(const char *name, int mode)
 {
 	Tcl_Obj  **objv;
-	char *my_a, *his_a;
-	int objc, my_p, his_p, cid;
+	char *my_a_str, *my_p_str, *his_a_str, *his_p_str;
+	int objc, i, my_p_int, my_p_len, his_p_int, his_p_len, cid;
 
 	/* Get the pointer to the vcable_cmd() arguments. */
 	objc = cable_system.objc;
 	objv = cable_system.objv;
 
 	/* Entry condition. */
-	OS_TRAP_IF(objc != 6 || objv == NULL);
+	OS_TRAP_IF(objc != 7 || objv == NULL);
+	
+	/* 7: the inet cable shall be used.
+	 * objv[1] describes the cable type: /van/display or /van/inet.
+	 * objv[2] describes the network type: lo or lan.
+	 * objv[3] describes the IPv4 address of vdisplay.
+	 * objv[4] describes the port of the vdisplay.
+	 * objv[5] describes the IPv4 address of the vcontroller.
+	 * objv[6] describes the port of the vcontroller. */
 
-	/* Get the pointer to the inet addresses. */
-	my_a  = objv[2]->bytes;
-	his_a = objv[4]->bytes;
+	/* Initialize the argument index. */
+	i = 2;
+
+	/* Get the pointer to the inet addresses and ports. */
+
+	/* vdisplay inet configuration. */
+	i++;
+	my_a_str  = objv[i]->bytes;
+	
+	i++;
+	my_p_str  = objv[i]->bytes;
+	my_p_len  = objv[i]->length;
+	
+	/* vcontroller inet configuration. */
+	i++;
+	his_a_str = objv[i]->bytes;
+	
+	i++;
+	his_p_str = objv[i]->bytes;
+	his_p_len = objv[i]->length;
 
 	/* Convert the port strings to int. */
-	my_p  = os_strtol_b10(objv[3]->bytes, objv[3]->length);
-	his_p = os_strtol_b10(objv[5]->bytes, objv[5]->length);
+	my_p_int  = os_strtol_b10(my_p_str, my_p_len);
+	his_p_int = os_strtol_b10(his_p_str, his_p_len);
 	
 	/* Allocate the socket resources. */
-	cid = os_inet_open(my_a, my_p, his_a, his_p);
+	cid = os_inet_open(my_a_str, my_p_int, his_a_str, his_p_int);
 
+	/* Reset the arguments. */
+	cable_system.objc = 0;
+	cable_system.objv = NULL;	
+	
 	return cid;
 }
 
@@ -442,11 +473,11 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
 	 * to Tcl_CreateChannel. */
 	Tcl_RegisterChannel(interp, c->tcl_chn);
 
-	/* Ensure the one time call and prepare IPC about shared memory.
+	/* Ensure the one time call and prepare IPC about shared memory or inet.
 	 * Make sure, that the cable controller is running. */
 	if (! cable_system.os_busy && ! cable_system.test) {
 		cable_system.os_busy = 1;
-		os_init(0);
+		os_init(c->os_conf);
 		
 		/* Deactivate the OS trace. */
 		os_trace_button(0);
@@ -460,7 +491,7 @@ static void cab_plug_insert(Tcl_Interp *interp, struct cable_s *c)
 }
 	
 /**
- * vcable_cmd() - invoked as a Tcl command, to establish a buffer link to
+ * vcable_cmd() - invoked as a Tcl command, to establish a connection to
  * the van cable controller.
  *
  * @cdata:   points to a data structure that describes what to do.
@@ -477,8 +508,18 @@ static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
 	char *n;
 	int i;
 
-	/* Test the number of the arguments. */
-	if (objc != 2 && objc != 6) {
+	/* Test the number of the arguments:
+	 * 2: the shared memory cable shall be used:
+	 * objv[1] describes the name of the vdisplay entry point.
+	 *
+	 * 7: the inet cable shall be used.
+	 * objv[1] describes the cable type: /van/display or /van/inet.
+	 * objv[2] describes the network type: lo or lan.
+	 * objv[3] describes the IPv4 address of vdisplay.
+	 * objv[4] describes the port of the vdisplay.
+	 * objv[5] describes the IPv4 address of the vcontroller.
+	 * objv[6] describes the port of the vcontroller. */
+	if (objc != 2 && objc != 7) {
 		Tcl_WrongNumArgs(interp, 1, objv, "");
 		return TCL_ERROR;
 	}
@@ -494,13 +535,25 @@ static int vcable_cmd(ClientData cdata, Tcl_Interp *interp, int objc,
 		/* Test the end point state and name. */
 		if (! c->locked && os_strcmp(c->van_ep_name, n) == 0)
 			break;
-			
 	}
 
 	/* Test the search result. */
 	if (i >= CABLE_COUNT) {
 		Tcl_WrongNumArgs(interp, 1, objv, "");
 		return TCL_ERROR;
+	}
+
+	/* Initialize the van OS configuration. */
+	c->os_conf = 0;
+	
+	/* Test the interface type. */
+	if (objc == 7) {
+		/* Get the pointer to the network type. */
+		n = objv[2]->bytes;
+		
+		/* Test the network type. */
+		if (os_strcmp(n, "lan") == 0)
+			c->os_conf = 1;
 	}
 
 	/* The entry point is available. */

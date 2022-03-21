@@ -15,6 +15,6 @@
 
 # Start the van display program.
 sleep 0.500
-xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdisplay/vdisplay.tcl 10.0.2.15 192.168.178.96" &
+xfce4-terminal --hold --geometry=120x25+25+0      --title=vdisply     -e "vdisplay/vdisplay.tcl lan 10.0.2.15 192.168.178.96" &
 
 # lan_vdisplay.sh

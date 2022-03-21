@@ -310,7 +310,11 @@ static void ctrl_disp_write(int id, struct ctrl_po_s* po)
 		/* The connection to the vdisplay is active. */
 		ctrl.s.accepted = 1;
 	}
-	
+
+	/* Update the send counter. */
+	ctrl.s.tx_cnt++;	
+	po->tx_cnt = ctrl.s.tx_cnt;
+
 	/* Generate the output to the display. */
 	n = snprintf(buf, OS_BUF_SIZE,
 		     "rxno=%d::txno=%d::cycle=%d::voltage=%d::current=%d::charge=%d::level=%d:",
@@ -529,12 +533,8 @@ static void ctrl_write(int cycle)
 	if (s->ctrl_b == B_STOP)
 		return;
 
-	/* Update the send counter. */
-	s->tx_cnt++;
-	
 	/* Set the output to the display. */
 	po->rx_cnt = s->rx_cnt;
-	po->tx_cnt = s->tx_cnt;
 	po->cycle  = cycle;
 	po->vlt    = s->vlt;
 	po->crt    = s->crt;

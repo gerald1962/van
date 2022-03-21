@@ -14,7 +14,10 @@
 # 2.1 man X 7
 
 # Start the van controller program.
-xfce4-terminal --hold --geometry=120x25+25+1000   --title=vcontroller -e "vcontroller/out/vcontroller 192.168.178.96 192.168.178.1" &
+xfce4-terminal --hold --geometry=120x25+25+1000   --title=vcontroller -e "vcontroller/out/vcontroller -c 192.168.178.96 -d 192.168.178.1" &
+
+# Wait for the generation of the shared memory resources.
+sleep 0.500
 
 # Start the van battery program.
 xfce4-terminal --hold --geometry=120x25+1350+1000 --title=vbattery     -e "vbattery/out/vbattery" &
