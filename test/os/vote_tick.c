@@ -93,7 +93,7 @@ static int tic_ctrl_read(int count, int limit)
 		return count + 1;
 			
 	/* Convert and test the received counter. */
-	n = strtol(buf, NULL, 10);
+	n = os_strtol_b10(buf, rv);
 	OS_TRAP_IF(n != count);
 
 	return count + 1;

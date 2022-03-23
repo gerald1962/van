@@ -144,7 +144,7 @@ static void tri_resume(atomic_int *done)
 static int tri_d_read(tri_ep_t *ep)
 {
 	char buf[OS_BUF_SIZE];
-	int done, n;
+	int done, len, n;
 	
 	/* Test the final condition of the consumer. */
 	done = atomic_load(&ep->rd_done);
@@ -152,11 +152,11 @@ static int tri_d_read(tri_ep_t *ep)
 		return 0;
 
 	/* Wait for data from the producer. */
-	n = os_bread(ep->dev_id, buf, OS_BUF_SIZE);
-	if (n < 1)
+	len = os_bread(ep->dev_id, buf, OS_BUF_SIZE);
+	if (len < 1)
 		return 1;
 		
-	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, n));
+	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, len));
 		       
 	/* Test the end condition of the test. */
 	if (os_strcmp(buf, "DONE") == 0) {
@@ -165,7 +165,7 @@ static int tri_d_read(tri_ep_t *ep)
 	}
 
 	/* Convert and test the received counter. */
-	n = strtol(buf, NULL, 10);
+	n = os_strtol_b10(buf, len);
 	OS_TRAP_IF(ep->rd_count != n);
 
 	/* Increment the receive counter. */
@@ -286,7 +286,7 @@ static void tri_disp_exec(os_queue_elem_t *msg)
 static int tri_read(tri_ep_t *ep, int *wait_cond)
 {
 	char buf[OS_BUF_SIZE];
-	int done, n;
+	int done, len, n;
 	
 	/* Initialize the return value. */
 	if (wait_cond != NULL)
@@ -298,14 +298,14 @@ static int tri_read(tri_ep_t *ep, int *wait_cond)
 		return 0;
 	
 	/* Wait for data from the producer. */
-	n = os_c_read(ep->dev_id, buf, OS_BUF_SIZE);
-	if (n < 1) {
+	len = os_c_read(ep->dev_id, buf, OS_BUF_SIZE);
+	if (len < 1) {
 		if (wait_cond != NULL)
 			*wait_cond = 1;
 		return 1;
 	}
 		
-	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, n));
+	TRACE(("%s rcvd: [e:%s, b:\"%s\", s:%d]\n", P, ep->name, buf, len));
 		       
 	/* Test the end condition of the test. */
 	if (os_strcmp(buf, "DONE") == 0) {
@@ -313,11 +313,11 @@ static int tri_read(tri_ep_t *ep, int *wait_cond)
 		return 0;
 	}
 	
-	/* XXX Terminate the message with EOS. */
-	buf[n] = '\0';
+	/* Terminate the message with EOS. */
+	buf[len] = '\0';
 
 	/* Convert and test the received counter. */
-	n = strtol(buf, NULL, 10);
+	n = os_strtol_b10(buf, len);
 	OS_TRAP_IF(ep->rd_count != n);
 
 	/* Increment the receive counter. */

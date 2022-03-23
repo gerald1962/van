@@ -13,7 +13,6 @@
 /*============================================================================
   IMPORTED INCLUDE REFERENCES
   ============================================================================*/
-#include <unistd.h>  /* Standard Unix lib: usleep(). */
 #include <time.h>    /* Get time in seconds: time(). */
 #include "os.h"      /* Van Operating system: os_clock_init(). */
 
@@ -103,5 +102,9 @@ void tic_run(void);
 /* Test the message queue interfaces. */
 void mq_init(test_stat_t *stat);
 void mq_run(void);
+
+/* Test the inte interfaces. */
+void inet_init(test_stat_t *stat);
+void inet_run(void);
 
 #endif /* __vote_h__ */

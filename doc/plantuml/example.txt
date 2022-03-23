@@ -1,0 +1,12 @@
+@startuml
+participant Inet
+actor User
+
+User -> Inet : search
+User -> Inet : load
+Inet -> User : send
+User -> Machine : install
+
+...
+
+@enduml

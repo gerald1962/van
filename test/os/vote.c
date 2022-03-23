@@ -124,6 +124,9 @@ static void vote_run(void)
 	/* Test the message queue interfaces. */
 	mq_run();
 
+	/* Test the inet interfaces. */
+	inet_run();
+
 	test_set_process(TEST_ADD(shutdown_system));
 }
 
@@ -242,6 +245,9 @@ int main(void)
 
 	/* Initialize the message queue test. */
 	mq_init(&test_stat);
+
+	/* Initialize the inet test. */
+	inet_init(&test_stat);
 
 	/* Run through all test system. */
 	vote_run();

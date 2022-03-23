@@ -52,6 +52,7 @@ ALL_FILES =  \
 	vote_but.c \
 	vote_clock.c \
 	vote_cob.c \
+	vote_inet.c \
 	vote_mq.c \
 	vote_tick.c \
 	vote_triad.c

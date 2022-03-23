@@ -1,0 +1,66 @@
+# 72 Markdown
+
+## 72.1 Lexicon
+
+https://de.wikipedia.org/wiki/Markdown
+
+## 72.2 Download
+
+sudo apt-get install retext 
+
+## 72.3 Installation
+
+sudo apt-get install retext
+
+## 72.4 Test
+
+retext
+
+## 72.5 Example
+
+retext &
+
+Datei->Speichern unter->Dateiname
+
+see
+
+https://github.com/gerald1962/van/doc/markdown/example.mkd
+
+## 72.6 PDF
+
+Datei->Exportieen->PDF
+
+see example.pdf
+
+![alt text](../plantuml/example.png "Title")
+
+
+# 74 PlantUML
+
+## 74.1 Lexicon
+
+https://en.wikipedia.org/wiki/PlantUML
+
+## 74.2 Installation
+
+sudo apt install plantuml
+
+sudo apt install w3m
+
+## 74.3 Test
+
+plantuml
+
+## 74.4 Example
+
+cd ~/github/van/doc/plantuml
+
+java -jar /usr/share/plantuml/plantuml.jar -verbose example.txt
+
+see
+
+https://github.com/gerald1962/van/doc/markdown/example.mkd
+
+## 74.5 PNG Image
+
+w3m example.png
