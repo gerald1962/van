@@ -57,9 +57,11 @@ cd ~/github/van/doc/plantuml
 
 java -jar /usr/share/plantuml/plantuml.jar -verbose example.txt
 
+java -jar /usr/share/plantuml/plantuml.jar -gui example.txt
+
 see
 
-https://github.com/gerald1962/van/doc/markdown/example.mkd
+https://github.com/gerald1962/van/doc/plantuml/example.mkd
 
 ## 74.5 PNG Image
 
