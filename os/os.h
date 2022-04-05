@@ -336,4 +336,7 @@ int os_inet_write(int cid, char *buf, int count);
 int os_inet_writable(int id);
 int os_inet_sync(int cid);
 
+/* C sharp test. */
+void os_mcs_hello(void);
+
 #endif /* __os_h__ */

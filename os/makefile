@@ -9,6 +9,7 @@ ${BUILD_LIB}_FILES +=  \
     os_cable.c \
     os_clock.c \
     os_inet.c \
+    os_mcs.c \
     os_mem.c \
     os_mq.c \
     os_pthread.c \

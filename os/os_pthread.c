@@ -311,8 +311,7 @@ static void os_thread_save(os_thread_t *thread)
 	key = os_thread_list.key;
 
 	/* Get the reference to the os_thread. */
-	if (pthread_getspecific(key) == NULL)
-	{
+	if (pthread_getspecific(key) == NULL) {
 		/* Associate the os_thread with key. */
 		ret = pthread_setspecific(key, thread);
 		OS_TRAP_IF(ret != 0);
