@@ -166,7 +166,7 @@ static int os_queue_loop(os_thread_t *thread, int count)
 
 		/* Test the fill level of the input queue. */
 		if (q->anchor.next == &q->stopper) {
-			/* The input queue is empty. */
+			/* As of now, the input queue is empty. */
 			q->stopper.next = &q->anchor;
 		}
 
@@ -472,7 +472,7 @@ static void os_queue_init(os_thread_t *thread, int q_size)
 	q->anchor.next  = &q->stopper;
 	q->stopper.next = &q->anchor;
 
-	/* Initialize the queue element counter. */
+	/* Initialize the boundary conditions of a thread input queue. */
 	q->limit = q_size;
 	q->count = 0;
 

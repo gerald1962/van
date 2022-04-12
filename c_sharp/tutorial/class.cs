@@ -24,8 +24,8 @@ namespace Class {
 			/* Spefify a Van OS thread. */
 			Vos.Thd thd_1;
 
-			/* To create an object, specify the class name, followed
-			 * by the object name, and use the keyword new: */
+			/* To create a Van OS thread object, specify the class
+			 * name, followed by the object name, and use the keyword new: */
 			thd_1 = new Vos.Thd("thd_1");
 
 			/* Print the current state of the Van OS thread. */

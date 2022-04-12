@@ -36,7 +36,7 @@ namespace Vos {
 		 * will be terminated and we don’t need to worry about it. */
 		public Thread  t; 
 
-		/* A semaphore, that shall suspend the Main() thread. */
+		/* XXX A semaphore, that shall suspend the Main() thread. */
 		public Semaphore  main_wait;
 		
 		/* A semaphore, that shall suspend the thread, started by the Main() thread. */
@@ -77,12 +77,12 @@ namespace Vos {
 			/* Create a semaphore that can satisfy up to 1
 			 * concurrent request. Use an initial count of zero, so
 			 * that the entire semaphore count is initially owned by
-			 * the Main() thread. */
-			main_wait = new Semaphore(0, 1);
+			 * this thread. */
+			this_wait = new Semaphore(0, 1);
 
 			/* Create the a semaphore to control the thread started
 			 * by the Main() thread. */
-			this_wait = new Semaphore(0, 1);
+			main_wait = new Semaphore(0, 1);
 			
 			/* Allocate a C sharp thread object. */
 			t = new Thread(new ThreadStart(T_cb));
