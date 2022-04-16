@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-run id="0" runstate="Runnable" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="1" engine-version="3.12.0.0" clr-version="4.0.30319.42000" start-time="2022-04-15 12:38:36Z" end-time="2022-04-15 12:38:37Z" duration="0.560555">
+  <command-line><![CDATA[/home/gerald/van_development/van/c_sharp/van/unit_test/NUnit.ConsoleRunner.3.12.0/tools/nunit3-console.exe OnlyTest.dll]]></command-line>
+  <test-suite type="Assembly" id="1-1002" name="OnlyTest.dll" fullname="/home/gerald/van_development/van/c_sharp/van/unit_test/OnlyTest.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-04-15T12:38:37.4871370Z" end-time="2022-04-15T12:38:37.5386910Z" duration="0.051386" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+    <environment framework-version="3.13.3.0" clr-version="4.0.30319.42000" os-version="Unix 5.4.0.107" platform="Unix" cwd="/home/gerald/van_development/van/c_sharp/van/unit_test" machine-name="gerald" user="gerald" user-domain="gerald" culture="de-DE" uiculture="de-DE" os-architecture="x64" />
+    <settings>
+      <setting name="DisposeRunners" value="True" />
+      <setting name="WorkDirectory" value="/home/gerald/van_development/van/c_sharp/van/unit_test" />
+      <setting name="ImageRuntimeVersion" value="4.0.30319" />
+      <setting name="ImageRequiresX86" value="False" />
+      <setting name="ImageRequiresDefaultAppDomainAssemblyResolver" value="False" />
+      <setting name="TargetRuntimeFramework" value="mono-4.0" />
+      <setting name="NumberOfTestWorkers" value="8" />
+    </settings>
+    <properties>
+      <property name="_PID" value="857415" />
+      <property name="_APPDOMAIN" value="domain-" />
+    </properties>
+    <test-suite type="TestFixture" id="1-1000" name="OnlyTest" fullname="OnlyTest" classname="OnlyTest" runstate="Runnable" testcasecount="1" result="Passed" start-time="2022-04-15T12:38:37.4977130Z" end-time="2022-04-15T12:38:37.5377630Z" duration="0.040051" total="1" passed="1" failed="0" warnings="0" inconclusive="0" skipped="0" asserts="1">
+      <test-case id="1-1001" name="MyTest" fullname="OnlyTest.MyTest" methodname="MyTest" classname="OnlyTest" runstate="Runnable" seed="839482629" result="Passed" start-time="2022-04-15T12:38:37.5015340Z" end-time="2022-04-15T12:38:37.5334140Z" duration="0.032043" asserts="1" />
+    </test-suite>
+  </test-suite>
+</test-run>

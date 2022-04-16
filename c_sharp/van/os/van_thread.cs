@@ -13,9 +13,15 @@ using System.Threading;
 /* The namespace VOS - Van OS - is used to organize its code, and it is a
  * container for VOS classes. Namespace also solves the problem of naming
  * conflict. */
-namespace VOS {
-	/* Static class to hold global members, etc. */
-	static class Globals {
+namespace VanOS {
+	/* Structs are similar to classes in that they represent data structures
+	 * that can contain data members and function members. However, unlike
+	 * classes, structs are value types and do not require heap
+	 * allocation. */
+	public struct Sys {
+		/* Van OS max. number of the queue elements. */
+		public const int  Tq_limit = 1024;
+
 		/* Use the static modifier to declare a static member, which
 		 * belongs to the type itself rather than to a specific
 		 * object. */
@@ -24,7 +30,7 @@ namespace VOS {
 		 * thrown. */
 		public static void Assert(bool cond) {
 			/* Test the exception condition. */
-			if (! cond)
+			if (cond)
 				return;
 
 			/* Raised when a method call is invalid in an object's
@@ -36,18 +42,18 @@ namespace VOS {
 	/* Everything in C# VOS is associated with thread or thread input queue
 	 * classes and objects, along with its attributes and methods. */
 	
-	/* T_msg is the message class of a Van OS thread input queue with
+	/* Tm_msg is the message class of a Van OS thread input queue with
 	 * i class members: j fields and k methods. */
-	class T_msg  {
+	public class Tm_msg  {
 		/* A delegate is an object which refers to a method or you can
 		 * say it is a reference type variable that can hold a reference
 		 * to the methods. Delegates in C# are similar to the function
 		 * pointer in C/C++. It provides a way which tells which method
 		 * is to be called when an event is triggered. */
-                public delegate void Tm_cb(T_msg msg);
+                public delegate void Tm_cb(Tm_msg msg);
 		
 		/* Successor of the thread input queue. */
-		public T_msg  next;
+		public Tm_msg  next;
 
 		/* Callback or reference to a function to process the input
 		 * message. It is expected to execute this field at a given time
@@ -59,14 +65,20 @@ namespace VOS {
 		 * containing just the type object and then cast your
 		 * results. */
 		public Dictionary<string, object>  param;
+		
+		/* You stop referencing them and let the garbage collector take
+		 * them. When you want to free the object, add the following
+		 * line: obj = null; The the garbage collector if free to delete
+		 * the object (provided there are no other pointer to the object
+		 * that keeps it alive.) */
 
-		/* The constructor T_msg() is a special method that is used
-		 * to initialize the T_msg object implicitely associated with
-		 * the new VOS.T_msg(() method. */
-		public T_msg(Tm_cb msg_cb) {
+		/* The constructor Tm_msg() is a special method that is used
+		 * to initialize the Tm_msg object implicitely associated with
+		 * the new VanOS.Tm_msg(() method. */
+		public Tm_msg(Tm_cb msg_cb) {
 			/* Save the  reference to a function to process the input
 			 * message in the thread context. */
-			cb   = msg_cb;
+			cb = msg_cb;
 
 			/* Create the Dictionary object, to extend the input
 			 * message with any key value pair optinally: e.g.
@@ -74,35 +86,32 @@ namespace VOS {
 			 * msg.param.Add("count", 0); ... */
 			param = new Dictionary<string, object>();
 		}
-
-		/* You stop referencing them and let the garbage collector take
-		 * them. When you want to free the object, add the following
-		 * line: obj = null; The the garbage collector if free to delete
-		 * the object (provided there are no other pointer to the object
-		 * that keeps it alive.) */
 	}
 
-	/* T_queue is the input queue class of a Van OS thread with i class
+	/* Tq_queue is the input queue class of a Van OS thread with i class
 	 * members: j fields and k methods. */
-	class T_queue {
+	public class Tq_queue {
 		/* Synchronize the access to the protected message queue. */
 		public Mutex  mutex;
 
 		/* First empty queue element. */		
-		private T_msg  anchor;
+		private Tm_msg  anchor;
 		
 		/* Last empty queue element. */
-		private T_msg  stopper;
+		private Tm_msg  stopper;
+		
+		/* Current max. number of the queue elements. */
+		private int  limit;
 
 		/* Current number of the input queue elements. */
-		public int    count;
+		public int  count;
 
 		/* If 1, a client executes Tq_send(). */
-		public int    busy_send;
+		public int  busy_send;
 
 		/* Calculate the next message from the thread input queue. */
-		public T_msg Tq_receive() {
-			T_msg  msg;
+		public Tm_msg Tq_receive() {
+			Tm_msg  msg;
 			
 			/* Wait until it is safe to enter the critical section. */
 			this.mutex.WaitOne();
@@ -129,7 +138,7 @@ namespace VOS {
 			 * queue. */
 			if (this.count < 1) {
 				/* Test the queue state. */
-				Globals.Assert(this.anchor.next != this.stopper);
+				Sys.Assert(this.anchor.next == this.stopper);
 
 				/* As of now, the input queue is empty. */
 				this.stopper.next = this.anchor;
@@ -143,12 +152,12 @@ namespace VOS {
 		}
 		
 		/* Extend the input queue of a Van OS thread and resume it. */
-		public void Tq_send(Thd t, T_msg msg) {
+		public void Tq_send(Tu_thread t, Tm_msg msg) {
 			int is_running;
 
 			/* Entry condition. */
-			Globals.Assert(t == null || msg == null ||
-					 msg.cb == null);
+			Sys.Assert(! (t == null || msg == null || msg.cb == null ||
+				      t.exec_s != Tu_thread.Exec_s.VOS_THD_READY));
 			
 			/* Change the state of this operation. */
 			this.busy_send = 1;
@@ -157,13 +166,16 @@ namespace VOS {
 			 * of the input queue. */
 			this.mutex.WaitOne();
 
+			/* Update the number of the queue elements. */
+			this.count++;
+
+			/* Test the fill level of the message queue. */
+			Sys.Assert(this.count <= this.limit);
+
 			/* Insert the new message at the end of the queue. */
 			this.stopper.next.next = msg;
 			msg.next = this.stopper;
 			this.stopper.next = msg;
-
-			/* Update the number of the queue elements. */
-			this.count++;
 
 			/* Change the execution state of the thread. */
 			is_running = t.is_running;
@@ -176,17 +188,35 @@ namespace VOS {
 			if (is_running == 0) {
 				/* Resume this thread blocked in the thread
 				 * control semaphore. */
-				t.suspend_this.Release();
+				t.suspend_c.Release();
 			}
 			
 			/* Change the state of this operation. */
 			this.busy_send = 0;
 		}
+
+		/* Free the queue ressources. */
+		public void Tq_destroy() {
+			/* Free the first queue message. */
+			this.anchor.param = null;
+			this.anchor = null;
+			
+			/* Free the last queue message. */
+			this.stopper.param = null;
+			this.stopper = null;
+			
+			this.mutex = null;
+		}
 		
-		/* The constructor T_queue() is a special method that is used
-		 * to initialize the T_queue object implicitely associated with
-		 * the new VOS.T_queue() method. */
-	        public T_queue() {
+		/* The constructor Tq_queue() is a special method that is used
+		 * to initialize the Tq_queue object implicitely associated with
+		 * the new VanOS.Tq_queue() method. */
+	        public Tq_queue(int queue_limit) {
+			/* Entry condition. */
+			Sys.Assert(queue_limit < Sys.Tq_limit);
+			
+			/* Save the maximum number of the queue elements. */
+			this.limit = queue_limit + 2;
 
 			/* Create the mutex, to synchronize the access to the
 			 * protected message queue. */
@@ -200,8 +230,8 @@ namespace VOS {
 			 * Van OS thread input queue. Note: these messages shall
 			 * never be consumed, therefore the new argument
 			 * callback is null. */
-			this.anchor = new VOS.T_msg(null);
-			this.stopper = new VOS.T_msg(null);
+			this.anchor  = new VanOS.Tm_msg(null);
+			this.stopper = new VanOS.Tm_msg(null);
 
 			/* Link the first and last input queue element. */
 			this.anchor.next  = this.stopper;
@@ -213,9 +243,9 @@ namespace VOS {
 		}
 	}
 
-	/* Thd is the Van OS thread class with i class members: j fields and k
-	 * methods. */
-	class Thd {
+	/* Tu_thread is the Van OS user thread class with i class members:
+	 * j fields and k methods. */
+	public class Tu_thread {
 		/* The public keyword is called an access modifier, which
 		 * specifies that the fields are accessible for other classes. */
 
@@ -228,7 +258,7 @@ namespace VOS {
 		
 		/* Synchronize the access to the multi thread access to the
 		 * thread state. */
-		public Mutex  mutex;
+		private Mutex  mutex;
 
 		/* Name of a Van OS thread. */
 		public string  name;
@@ -236,24 +266,24 @@ namespace VOS {
 		/* Reference to a C sharp thread object. 
 		 * Once the task assigned to a Thread is completed, that thread
 		 * will be terminated and we don’t need to worry about it. */
-		public Thread  thd; 
+		private Thread  thread; 
 		
 		/* Input queue of a Van OS thread. */
-		public T_queue  queue;
+		private Tq_queue  queue;
 
-		/* A semaphore, that shall suspend this thread, installed by the
-		 * superordinate thread. */
-		public Semaphore  suspend_this;
+		/* A semaphore, that shall suspend this child thread, installed
+		 * by the superordinate or parent thread. */
+		public Semaphore  suspend_c;
 
-		/* The parent shall be blocked until this thread has been
+		/* The parent shall be blocked until the child thread has been
 		 * started. */
-		public Semaphore  suspend_p;
+		private Semaphore  suspend_p;
 
 		/* 1, if this thread is running on any CPU. */
 		public int is_running;
 		
 		/* Extend the input queue of a Van OS thread and resume it. */
-		public void Thd_send(T_msg msg) {
+		public void Tu_send(Tm_msg msg) {
 			/* Extend the input queue of a Van OS thread and resume it. */
 			this.queue.Tq_send(this, msg);
 		}
@@ -262,8 +292,8 @@ namespace VOS {
 		 * class or the struct in which they are declared. */
 
 		/* Process all current messages. */
-		private void Thd_receive() {
-			T_msg  msg;
+		private void Tu_receive() {
+			Tm_msg  msg;
 			
 			/* Process the received messages. */
 			for (;;) {
@@ -275,9 +305,11 @@ namespace VOS {
 					break;
 				
 				/* Execute the message actions. */
+				Sys.Assert(msg.cb != null);
 				msg.cb(msg);
 				
 				/* Free the consumed message. */
+				msg.param = null;
 				msg = null;
 			}
 		}
@@ -285,8 +317,8 @@ namespace VOS {
 		
 		/* Suspend the thread, if the message queue is empty or it is
 		 * alive. */
-		private bool Thd_suspend() {
-			T_queue  q;
+		private bool Tu_suspend() {
+			Tq_queue  q;
 			int  count;
 
 			/* Get the reference to the thread input queue. */
@@ -300,7 +332,7 @@ namespace VOS {
 			 * operation for this thread. */
 			this.is_running = 0;
 
-			/* Copy the filling level of the queue. */
+			/* Copy the filling level of the input queue. */
 			count = q.count;
 
 			/* Leave the critical section. */
@@ -315,7 +347,7 @@ namespace VOS {
 
 				/* Suspend this thread, until it is resumed by a
 				 * input message or shutdown trigger. */
-				this.suspend_this.WaitOne();
+				this.suspend_c.WaitOne();
 			}
 
 			/* Precondition: either at least there is a pending
@@ -334,12 +366,13 @@ namespace VOS {
 		}
 		
 		/* A new thread shall execute the callback method Tm_cb(). */
-		public void Thd_cb() {
+		private void Tu_cb() {
 			/* Update the Van OS thread state. */
 			exec_s = Exec_s.VOS_THD_READY;
 
-			/* Resume the parent thread, which has created and
-			 * started this thread. */			
+			/* Resume the parent thread in the constructor
+			 * Tu_thread(), which has created and started this child
+			 * thread. */			
 			this.suspend_p.Release();
 
 			/* Process all received messages or accept the shutdown
@@ -347,179 +380,95 @@ namespace VOS {
 			for (;;) {
 				/* Suspend the thread, if the message queue is
 				 * empty or the thread is alive. */
-				if (! Thd_suspend()) {
+				if (! Tu_suspend()) {
 					/* This thread shall be killed. */
 					break;
 				}
 
 				/* Process all current messages. */
-				Thd_receive();
+				Tu_receive();
 			}
+
+			/* This child thread shall be removed. */
+
+			/* Resume the parent thread in Tu_destroy(). */
+			this.suspend_p.Release();
 		}
 
-		/* Shutdown a Van OS thread. */
-		public void Thd_destroy() {
+		/* Shutdown a Van OS user thread. */
+		public void Tu_destroy() {
 			/* Get, modify and test the thread state. */
 			this.mutex.WaitOne();
 
 			/* Entry condition. */
-			Globals.Assert(this.exec_s != Exec_s.VOS_THD_READY);
+			Sys.Assert(this.exec_s == Exec_s.VOS_THD_READY &&
+				   this.queue.busy_send != 1);
 
 			/* Change the thread state. */
 			this.exec_s = Exec_s.VOS_THD_KILL;
 
-			/* Test the state of the send operation. */
-			Globals.Assert(this.queue.busy_send != 0);
-			
 			/* Leave the critical section. */
 			this.mutex.ReleaseMutex();
 
-			/* Resume this Van OS thread in Thd_suspend(). */
-			this.suspend_this.Release();
-			
+			/* Resume this Van OS thread in Tu_suspend(). */
+			this.suspend_c.Release();
+
+			/* The parent thread waits for the termination of the
+			 * child thread in Tu_cb(). */
+			this.suspend_p.WaitOne();
+
+			/* Free the input queue ressources. */
+			this.queue.Tq_destroy();
+
+			/* Free the thread ressources. */
+			this.queue     = null;
+			this.thread    = null;
+			this.suspend_p = null;
+			this.suspend_c = null;
+			this.mutex     = null;
 		}
 		
 		/* A constructor is a special method that is used to initialize
 		 * objects. The advantage of a constructor, is that it is called
 		 * when an object of a class is created. It can be used to set
 		 * initial values for fields: */
-		public Thd(string n) {
-			/* Initial the execution state of a Van OS thread. */
+		public Tu_thread(string thd_name, int queue_limit) {
+			/* Initialize the execution state of a Van OS user
+			 * thread. */
 			exec_s = Exec_s.VOS_THD_BOOT;
 
-			/* Define the thread name. */
-			name = n;
+			/* Copy the thread name. */
+			name = thd_name;
 
-			/* Create the mutex to Synchronize the access to the
+			/* Create the mutex to synchronize the access to the
 			 * multi thread access to the thread state. */
 			mutex = new Mutex();
 
 			/* Create a semaphore that can satisfy up to 1
 			 * concurrent request. Use an initial count of zero, so
 			 * that the entire semaphore count is initially owned by
-			 * this thread. */
-			suspend_this = new Semaphore(0, 1);
+			 * this child thread. */
+			suspend_c = new Semaphore(0, 1);
 
-			/* Create a semaphore to suspend the parent thread. */
+			/* Create a semaphore to control the parent thread. */
 			suspend_p = new Semaphore(0, 1);
 			
 			/* Allocate a C sharp thread object. */
-			thd = new Thread(new ThreadStart(Thd_cb));
-			Console.WriteLine("{0}: exec_s = {1}", this.name, this.exec_s);
+			thread = new Thread(new ThreadStart(Tu_cb));
 			
 			/* Allocate the input queue for this thread. */
-			queue = new T_queue();
+			queue = new Tq_queue(queue_limit);
 
-			/* Start the thread, which shall execute the callback
-			 * method Thd_cb(). */
-			thd.Start();
+			/* Start the user thread, which shall execute the callback
+			 * method Tu_cb(). */
+			thread.Start();
 
-			/* The parent thread shall be blocked until this thread
-			 * has been started. */
+			/* The parent thread shall be blocked until this child
+			 * thread has been started. */
 			suspend_p.WaitOne();
 
 			/* Exit condition. */
-			Globals.Assert(this.exec_s != Exec_s.VOS_THD_READY);
+			Sys.Assert(this.exec_s == Exec_s.VOS_THD_READY);
 		}
-	}
-	
-	/* Test the thread concept. */
-	class Prg {
-		/* A semaphore, that shall suspend the Main() thread. */
-		private static Semaphore  suspend;
-
-		/* Max. number of the generated test messages. */
-		private const int limit = 4;
-
-		/* Current number of the generated test messages. */
-		private static int count;
-		
-                /* Define the method to process a thread input message. */
-                private static void msg_cb(T_msg msg) {
-			string  s;
-			int  i;
-			
-			/* Use the Dictionary key as index to get the value, but
-			 * then you need to cast the results. */
-			s = (string) msg.param["name"];
-			i = (int)    msg.param["count"];
-
-			Console.WriteLine("msg_cb: name = {0}, count = {1}", s, i);
-
-			/* Update the message counter. */
-			count++;
-			
-			/* Test the exit condition for the main thread. */
-			if (count < limit)
-				return;
-
-			/* Resume the main thread. */
-			suspend.Release();
-                }
-
-		/* The Main method is the entry point of a C# application. When the
-		 * application is started, the Main method is the first method that is
-		 * invoked. */
-		static void Main() {
-			/* Spefify a Van OS thread. */
-			Thd thd_x;
-
-			/* Current message counter. */
-			int  i;
-			
-			/* Spefify a Van OS thread input message. */
-			T_msg  msg;
-
-			/* Message name. */
-			string  n;
-			
-			/* Create the thread control semaphore. */
-			suspend = new Semaphore(0, 1);
-
-			/* Initialize the message counter. */
-			count = 0;
-			
-			/* To create a Van OS thread object, specify the class
-			 * name, followed by the object name, and use the keyword new: */
-			thd_x = new Thd("thd_x");
-			
-			/* Produce some messages for the thread input queue. */
-			for (i = 0; i < limit; i++) {
-				/* Create the input message for the Van OS
-				 * thread with the message processing method
-				 * msg_cb(), see above. */
-				msg = new T_msg(msg_cb);
-				
-				/* String.Format performs the same operation a C
-				 * snprintf(), but do note that the format
-				 * strings are in a different format. */
-				n = string.Format("msg-{0}", i);
-
-				/* Extend the Van OS input message with generic
-				 * parameters: add further message fields or
-				 * key/value pairs to the message Dictionary
-				 * using the Dictionary Add() method. */
-				msg.param.Add("name",  n);
-				msg.param.Add("count", i);
-				
-				/* Extend the input queue of a Van OS thread and resume it. */
-				thd_x.Thd_send(msg);
-			}
-
-			/* Suspend the main thread, until the test thread has
-			 * done its job. */
-			suspend.WaitOne();
-
-			/* Shutdown the test thread. */
-			thd_x.Thd_destroy();
-			
-			/* Force garbage collector to run. */
-			GC.Collect();
-
-			/* Suspends the current thread until the thread that is
-			 * processing the queue of finalizers has emptied that
-			 * queue. */
-			GC.WaitForPendingFinalizers();
-		}		
 	}
 }
