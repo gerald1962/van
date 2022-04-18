@@ -1,0 +1,497 @@
+In file included from ./arch/x86/include/asm/pgtable_types.h:367,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/asm-generic/pgtable-nopud.h:18: warning: "PUD_SHIFT" redefined
+   18 | #define PUD_SHIFT P4D_SHIFT
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:264,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/pgtable_64_types.h:83: note: this is the location of the previous definition
+   83 | #define PUD_SHIFT 30
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:367,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/asm-generic/pgtable-nopud.h:19: warning: "PTRS_PER_PUD" redefined
+   19 | #define PTRS_PER_PUD 1
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:264,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/pgtable_64_types.h:84: note: this is the location of the previous definition
+   84 | #define PTRS_PER_PUD 512
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:367,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/asm-generic/pgtable-nopud.h:20: warning: "PUD_SIZE" redefined
+   20 | #define PUD_SIZE   (1UL << PUD_SHIFT)
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:264,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/pgtable_64_types.h:100: note: this is the location of the previous definition
+  100 | #define PUD_SIZE (_AC(1, UL) << PUD_SHIFT)
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:367,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/asm-generic/pgtable-nopud.h:21: warning: "PUD_MASK" redefined
+   21 | #define PUD_MASK   (~(PUD_SIZE-1))
+      | 
+In file included from ./arch/x86/include/asm/pgtable_types.h:264,
+                 from ./arch/x86/include/asm/processor.h:20,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/pgtable_64_types.h:101: note: this is the location of the previous definition
+  101 | #define PUD_MASK (~(PUD_SIZE - 1))
+      | 
+In file included from ./include/linux/bug.h:5,
+                 from ./include/linux/jump_label.h:257,
+                 from ./arch/x86/include/asm/string_64.h:6,
+                 from ./arch/x86/include/asm/string.h:5,
+                 from ./include/linux/string.h:20,
+                 from ./include/linux/bitmap.h:11,
+                 from ./include/linux/cpumask.h:12,
+                 from ./arch/x86/include/asm/cpumask.h:5,
+                 from ./arch/x86/include/asm/msr.h:11,
+                 from ./arch/x86/include/asm/processor.h:22,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/linux/jump_label.h: In function ‘static_key_slow_inc’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:3: note: in expansion of macro ‘__WARN_FLAGS’
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:285:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  285 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:24: note: each undeclared identifier is reported only once for each function it appears in
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:3: note: in expansion of macro ‘__WARN_FLAGS’
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:285:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  285 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:16: error: ‘BUGFLAG_NO_CUT_HERE’ undeclared (first use in this function)
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |                ^~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:285:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  285 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:38: error: implicit declaration of function ‘BUGFLAG_TAINT’ [-Werror=implicit-function-declaration]
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |                                      ^~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:285:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  285 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/linux/jump_label.h: In function ‘static_key_slow_dec’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:3: note: in expansion of macro ‘__WARN_FLAGS’
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:291:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  291 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:16: error: ‘BUGFLAG_NO_CUT_HERE’ undeclared (first use in this function)
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |                ^~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:291:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  291 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/linux/jump_label.h: In function ‘static_key_enable’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:3: note: in expansion of macro ‘__WARN_FLAGS’
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:313:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  313 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:16: error: ‘BUGFLAG_NO_CUT_HERE’ undeclared (first use in this function)
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |                ^~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:313:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  313 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/jump_label.h:316:3: note: in expansion of macro ‘WARN_ON_ONCE’
+  316 |   WARN_ON_ONCE(atomic_read(&key->enabled) != 1);
+      |   ^~~~~~~~~~~~
+./include/linux/jump_label.h: In function ‘static_key_disable’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:3: note: in expansion of macro ‘__WARN_FLAGS’
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:324:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  324 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:100:16: error: ‘BUGFLAG_NO_CUT_HERE’ undeclared (first use in this function)
+  100 |   __WARN_FLAGS(BUGFLAG_NO_CUT_HERE | BUGFLAG_TAINT(taint));\
+      |                ^~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/asm-generic/bug.h:132:3: note: in expansion of macro ‘__WARN_printf’
+  132 |   __WARN_printf(TAINT_WARN, format);   \
+      |   ^~~~~~~~~~~~~
+./include/linux/jump_label.h:81:35: note: in expansion of macro ‘WARN’
+   81 | #define STATIC_KEY_CHECK_USE(key) WARN(!static_key_initialized,        \
+      |                                   ^~~~
+./include/linux/jump_label.h:324:2: note: in expansion of macro ‘STATIC_KEY_CHECK_USE’
+  324 |  STATIC_KEY_CHECK_USE(key);
+      |  ^~~~~~~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/jump_label.h:327:3: note: in expansion of macro ‘WARN_ON_ONCE’
+  327 |   WARN_ON_ONCE(atomic_read(&key->enabled) != 0);
+      |   ^~~~~~~~~~~~
+In file included from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/processor.h: In function ‘load_cr3’:
+./arch/x86/include/asm/processor.h:262:12: error: implicit declaration of function ‘__sme_pa’ [-Werror=implicit-function-declaration]
+  262 |  write_cr3(__sme_pa(pgdir));
+      |            ^~~~~~~~
+In file included from ./arch/x86/include/asm/preempt.h:7,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:55,
+                 from ./include/linux/kref.h:16,
+                 from ./include/linux/mm_types.h:8,
+                 from ./include/linux/buildid.h:5,
+                 from ./include/linux/module.h:14,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/linux/thread_info.h: At top level:
+./include/linux/thread_info.h:183:19: error: redefinition of ‘arch_within_stack_frames’
+  183 | static inline int arch_within_stack_frames(const void * const stack,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./include/linux/thread_info.h:60,
+                 from ./arch/x86/include/asm/preempt.h:7,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:55,
+                 from ./include/linux/kref.h:16,
+                 from ./include/linux/mm_types.h:8,
+                 from ./include/linux/buildid.h:5,
+                 from ./include/linux/module.h:14,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/thread_info.h:169:19: note: previous definition of ‘arch_within_stack_frames’ was here
+  169 | static inline int arch_within_stack_frames(const void * const stack,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~
+In file included from ./include/linux/bug.h:5,
+                 from ./include/linux/jump_label.h:257,
+                 from ./arch/x86/include/asm/string_64.h:6,
+                 from ./arch/x86/include/asm/string.h:5,
+                 from ./include/linux/string.h:20,
+                 from ./include/linux/bitmap.h:11,
+                 from ./include/linux/cpumask.h:12,
+                 from ./arch/x86/include/asm/cpumask.h:5,
+                 from ./arch/x86/include/asm/msr.h:11,
+                 from ./arch/x86/include/asm/processor.h:22,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/linux/thread_info.h: In function ‘check_copy_size’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:3: note: in expansion of macro ‘__WARN_FLAGS’
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |   ^~~~~~~~~~~~
+./include/linux/thread_info.h:233:6: note: in expansion of macro ‘WARN_ON_ONCE’
+  233 |  if (WARN_ON_ONCE(bytes > INT_MAX))
+      |      ^~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/thread_info.h:233:6: note: in expansion of macro ‘WARN_ON_ONCE’
+  233 |  if (WARN_ON_ONCE(bytes > INT_MAX))
+      |      ^~~~~~~~~~~~
+./include/linux/rcupdate.h: In function ‘rcu_head_after_call_rcu’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:3: note: in expansion of macro ‘__WARN_FLAGS’
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |   ^~~~~~~~~~~~
+./include/linux/rcupdate.h:1007:2: note: in expansion of macro ‘WARN_ON_ONCE’
+ 1007 |  WARN_ON_ONCE(func != (rcu_callback_t)~0L);
+      |  ^~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/rcupdate.h:1007:2: note: in expansion of macro ‘WARN_ON_ONCE’
+ 1007 |  WARN_ON_ONCE(func != (rcu_callback_t)~0L);
+      |  ^~~~~~~~~~~~
+./include/linux/ktime.h: In function ‘ktime_divns’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:96:19: note: in expansion of macro ‘__WARN_FLAGS’
+   96 | #define __WARN()  __WARN_FLAGS(BUGFLAG_TAINT(TAINT_WARN))
+      |                   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:123:3: note: in expansion of macro ‘__WARN’
+  123 |   __WARN();      \
+      |   ^~~~~~
+./include/linux/ktime.h:154:2: note: in expansion of macro ‘WARN_ON’
+  154 |  WARN_ON(div < 0);
+      |  ^~~~~~~
+./include/linux/srcu.h: In function ‘srcu_read_unlock’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:3: note: in expansion of macro ‘__WARN_FLAGS’
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |   ^~~~~~~~~~~~
+./include/linux/srcu.h:189:2: note: in expansion of macro ‘WARN_ON_ONCE’
+  189 |  WARN_ON_ONCE(idx & ~0x1);
+      |  ^~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/srcu.h:189:2: note: in expansion of macro ‘WARN_ON_ONCE’
+  189 |  WARN_ON_ONCE(idx & ~0x1);
+      |  ^~~~~~~~~~~~
+In file included from ./arch/x86/include/asm/preempt.h:7,
+                 from ./include/linux/preempt.h:78,
+                 from ./include/linux/spinlock.h:55,
+                 from ./include/linux/kref.h:16,
+                 from ./include/linux/mm_types.h:8,
+                 from ./include/linux/buildid.h:5,
+                 from ./include/linux/module.h:14,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/elf.h: In function ‘mmap_is_ia32’:
+./include/linux/thread_info.h:141:22: error: implicit declaration of function ‘current_thread_info’ [-Werror=implicit-function-declaration]
+  141 |  test_ti_thread_flag(current_thread_info(), flag)
+      |                      ^~~~~~~~~~~~~~~~~~~
+./arch/x86/include/asm/elf.h:325:3: note: in expansion of macro ‘test_thread_flag’
+  325 |   test_thread_flag(TIF_ADDR32));
+      |   ^~~~~~~~~~~~~~~~
+./include/linux/thread_info.h:141:22: warning: passing argument 1 of ‘test_ti_thread_flag’ makes pointer from integer without a cast [-Wint-conversion]
+  141 |  test_ti_thread_flag(current_thread_info(), flag)
+      |                      ^~~~~~~~~~~~~~~~~~~~~
+      |                      |
+      |                      int
+./arch/x86/include/asm/elf.h:325:3: note: in expansion of macro ‘test_thread_flag’
+  325 |   test_thread_flag(TIF_ADDR32));
+      |   ^~~~~~~~~~~~~~~~
+./include/linux/thread_info.h:116:59: note: expected ‘struct thread_info *’ but argument is of type ‘int’
+  116 | static inline int test_ti_thread_flag(struct thread_info *ti, int flag)
+      |                                       ~~~~~~~~~~~~~~~~~~~~^~
+In file included from ./include/linux/bug.h:5,
+                 from ./include/linux/jump_label.h:257,
+                 from ./arch/x86/include/asm/string_64.h:6,
+                 from ./arch/x86/include/asm/string.h:5,
+                 from ./include/linux/string.h:20,
+                 from ./include/linux/bitmap.h:11,
+                 from ./include/linux/cpumask.h:12,
+                 from ./arch/x86/include/asm/cpumask.h:5,
+                 from ./arch/x86/include/asm/msr.h:11,
+                 from ./arch/x86/include/asm/processor.h:22,
+                 from ./arch/x86/include/asm/timex.h:5,
+                 from ./include/linux/timex.h:65,
+                 from ./include/linux/time32.h:13,
+                 from ./include/linux/time.h:60,
+                 from ./include/linux/stat.h:19,
+                 from ./include/linux/module.h:13,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/linux/xarray.h: In function ‘xa_mk_value’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:96:19: note: in expansion of macro ‘__WARN_FLAGS’
+   96 | #define __WARN()  __WARN_FLAGS(BUGFLAG_TAINT(TAINT_WARN))
+      |                   ^~~~~~~~~~~~
+./include/asm-generic/bug.h:123:3: note: in expansion of macro ‘__WARN’
+  123 |   __WARN();      \
+      |   ^~~~~~
+./include/linux/xarray.h:55:2: note: in expansion of macro ‘WARN_ON’
+   55 |  WARN_ON((long)v < 0);
+      |  ^~~~~~~
+./include/linux/kernfs.h: In function ‘kernfs_enable_ns’:
+./arch/x86/include/asm/bug.h:81:24: error: ‘BUGFLAG_WARNING’ undeclared (first use in this function)
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                        ^~~~~~~~~~~~~~~
+./include/asm-generic/bug.h:106:3: note: in expansion of macro ‘__WARN_FLAGS’
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |   ^~~~~~~~~~~~
+./include/linux/kernfs.h:319:2: note: in expansion of macro ‘WARN_ON_ONCE’
+  319 |  WARN_ON_ONCE(kernfs_type(kn) != KERNFS_DIR);
+      |  ^~~~~~~~~~~~
+./include/asm-generic/bug.h:106:16: error: ‘BUGFLAG_ONCE’ undeclared (first use in this function)
+  106 |   __WARN_FLAGS(BUGFLAG_ONCE |   \
+      |                ^~~~~~~~~~~~
+./arch/x86/include/asm/bug.h:81:41: note: in definition of macro ‘__WARN_FLAGS’
+   81 |  __auto_type __flags = BUGFLAG_WARNING|(flags);  \
+      |                                         ^~~~~
+./include/linux/kernfs.h:319:2: note: in expansion of macro ‘WARN_ON_ONCE’
+  319 |  WARN_ON_ONCE(kernfs_type(kn) != KERNFS_DIR);
+      |  ^~~~~~~~~~~~
+In file included from ./include/linux/module.h:33,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./arch/x86/include/asm/module.h: At top level:
+./arch/x86/include/asm/module.h:8:8: error: redefinition of ‘struct mod_arch_specific’
+    8 | struct mod_arch_specific {
+      |        ^~~~~~~~~~~~~~~~~
+In file included from ./arch/x86/include/asm/module.h:5,
+                 from ./include/linux/module.h:33,
+                 from /home/gerald/van_development/van/linux/hello.c:10:
+./include/asm-generic/module.h:10:8: note: originally defined here
+   10 | struct mod_arch_specific
+      |        ^~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[1]: *** [scripts/Makefile.build:288: /home/gerald/van_development/van/linux/hello.o] Fehler 1
+make: *** [Makefile:1834: /home/gerald/van_development/van/linux] Fehler 2

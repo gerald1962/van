@@ -1,0 +1,3963 @@
+cd
+mkkdir github
+git clone https://github.com/gerald1962/van
+
+
+
+github:
+Accout:
+https://github.com/gerald1962/van
+
+Password:
+=Logisch2022
+
+Token:
+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
+
+
+88 Stdout Test
+==============
+x.c File
+--------
+#include <stdio.h>
+
+void main(void) {
+	printf("X\n");
+}
+
+Build
+-----
+gcc x.c
+
+Test
+----
+$ ./a.out
+$ X
+
+
+92 Linux School
+===============
+-> /home/gerald/uml/linux-5.18-rc3/samples
+--> training
+
+
+91 Linux Device Driver
+======================
+https://embetronicx.com/tutorials/linux/device-drivers/linux-device-driver-tutorial-part-2-first-device-driver/#Prerequisites
+
+Working Directory
+-----------------
+cd /home/gerald/van_development/van/linux
+
+Compile
+-------
+Linux Version
+.............
+uname -r
+
+make all
+
+Output
+------
+ tree linux/
+linux/
+├── hello_world.c
+├── hello_world.ko
+├── hello_world.mod
+├── hello_world.mod.c
+├── hello_world.mod.o
+├── hello_world.o
+├── Makefile
+├── modules.order
+├── Module.symvers
+└── README
+
+0 directories, 11 files
+
+Driver Test
+-----------
+sudo insmod hello_world.ko
+sudo rmmod hello_world.ko
+
+Kernel Log
+----------
+$ dmesg
+.......
+...
+[98615.892022] hello_world: module license 'GPL-2.0' taints kernel.
+[98615.892024] Disabling lock debugging due to kernel taint
+[98615.893125] "Hello world" inserted.
+[98641.604598] "Hello world" removed.
+
+
+90 CPU and MEM Info
+===================
+cat /proc/cpuinfo
+cat /proc/meminfo
+
+
+89 Micro GNU emacs mg
+=====================
+sudo apt install mg
+
+
+88 User Mode Linux
+==================
+
+88.1 Latest Kernel
+------------------
+https://github.com/torvalds/linux
+
+88.2 The Linux Kernel documentation
+-----------------------------------
+https://www.kernel.org/doc/html/latest/index.html
+
+88.3 Recipe
+-----------
+see:
+https://christine.website/blog/howto-usermode-linux-2019-07-07
+
+88.4 Archive
+------------
+https://www.kernel.org
+mainline:	5.18-rc2	2022-04-11
+stable:		5.17.3		2022-04-13
+
+88.5 Navigate
+-------------
+https://elixir.bootlin.com/linux/latest/source
+FIXME
+v5
+ v5.18
+ v5.17
+v5.17.3
+
+88.6 Download
+--------------
+https://www.kernel.org
+and select:
+mainline:	5.18-rc2	2022-04-11	[tarball]
+
+Ubuntu:
+Click on tarball, which is saved in ~/Downloads.
+
+88.7 Tools
+----------
+sudo apt install flex
+sudo apt install bison
+sudo apt install uml-utilities
+sudo apt install xfsprogs
+sudo apt install libncurses-dev
+
+wget -O tini https://github.com/krallin/tini/releases/download/v0.18.0/tini-static
+
+88.8 Working Directory
+----------------------
+cd
+mkdir uml
+cd uml
+mv ~/Downloads/linux-5.18-rc3.tar.gz .
+tar xfv linux-5.18-rc3.tar.gz
+cd linux-5.18-rc3
+make ARCH=um menuconfig
+make config ARCH=um
+make linux ARCH=um
+./linux --help
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash ./tini
+
+
+XXX
+---
+mkdir linux
+mkdir demo
+cd linux
+
+mv ~/Downloads/linux-5.17.3.tar.xz .
+tar xvf linux-5.17.3.tar.xz
+cd linux-5.17.3
+make modules ARCH=um
+
+88.9 Fiĺe System
+----------------
+see:
+https://alpinelinux.org
+Download->MINI ROOT FILE SYSTEM -> x86_64: tarball
+
+see
+https://www.kernel.org/doc/html/v5.8/virt/uml/user_mode_linux.html
+
+sudo apt install flex
+sudo apt install bison
+sudo apt libncurses-dev
+sudo apt install uml-utilities
+sudo apt install xfsprogs
+
+cd
+mkdir uml
+cd uml
+
+mv ~/Downloads/linux-5.18-rc3.tar.gz .
+tar xfv linux-5.18-rc3.tar.gz
+
+mv ~/Downloads/linux-5.17.3.tar.xz .
+tar xvf linux-5.17.3.tar.xz
+cd linux-5.17.3
+make modules ARCH=um menuconfig
+
+
+87 C Unit Test Check
+====================
+see:
+https://libcheck.github.io/check/
+
+Check features a simple interface for defining unit tests, putting little in the
+way of the developer. Tests are run in a separate process, so Check can catch
+both assertion failures and code errors that cause segmentation faults or other
+signals. The output from unit tests can be used within source code editors and
+IDEs. Can output to multiple formats, like the TAP format, JUnit XML or SubUnit.
+Supported on Linux, OS X, FreeBSD, and Windows.
+
+87.1 Check Preconditions
+------------------------
+Ubuntu and Debian both provide a Check package that can be installed. To
+install, in a terminal, type:
+
+The sudo apt-get update command is used to download package information from all
+configured sources. The sources often defined in /etc/apt/sources. List file
+and other files located in /etc/apt/sources.
+$ sudo apt-get update
+
+Texinfo is the official documentation format of the GNU project.
+$ sudo apt install -y texinfo
+
+Autoconf is an extensible package of M4 macros that produce shell scripts to
+automatically configure software source code packages.
+$ sudo apt install autoconf
+
+The libtool package contains the GNU libtool, a set of shell scripts which
+automatically configure UNIX and UNIX-like architectures to generically build
+#shared libraries. Libtool provides a consistent, portable interface which
+simplifies the process of using shared libraries.
+see:
+https://www.gnu.org/software/libtool/manual/libtool.html
+$ sudo apt install libtool-bin
+
+87.1 Check Installation
+-----------------------
+$ cd
+$ cd github
+$ git clone https://github.com/libcheck/check.git
+$ cd check
+
+$ autoreconf --install
+$ ./configure
+$ make
+$ sudo make check
+$ sudo make install
+$ sudo ldconfig
+
+87.2 Check Documentation
+------------------------
+see:
+https://libcheck.github.io/check/doc/check_html
+
+87.3 Calc Example
+-----------------
+see:
+http://diego-pacheco.blogspot.com/2018/05/c-unit-testing-with-check.html
+
+see
+https://www.github.com/gerald1962/van/test/check
+
+gcc -g calc.c testcalc.c /usr/local/lib/libcheck.so -lsubunit -lm -lrt -lpthread -o testcalc
+->
+$ ./build.sh
+$ ./testcal 
+CKPT-1: calc_suite: ...
+CKPT-2: main: runner=0x55e383e5e900
+Running suite(s): CalcTest
+CKPT-3: test_new_calc: ...
+ [PASS] Test: 1 + 1 == 2 
+ [PASS] Test: 1 - 1 == 0 
+ [PASS] Test: 5 * 5 == 25 
+ [PASS] Test: 5 / 5 == 1 
+100%: Checks: 1, Failures: 0, Errors: 0
+testcalc.c:33:P:Core:test_new_calc:0: Passed
+CKPT-4: main: ...
+
+
+86 C Sharp Unit Test
+====================
+NuGet is the package manager for .NET. The NuGet client tools provide the
+ability to produce and consume packages, see:
+https://www.nuget.org/
+
+86.1 Install NUnit
+------------------
+sudo apt install nuget
+nuget
+
+$ mono /usr/lib/nuget/NuGet.exe install NUnit
+The 'NUnit 3.13.3' package requires NuGet client version '2.12' or above, but the current NuGet version is '2.8.7.0'
+
+Install the latest version of NuGet.exe CLI.
+sudo /usr/lib/nuget/NuGet.exe update -self
+
+I've run NuGet to install NUnit
+$ mono /usr/lib/nuget/NuGet.exe install NUnit
+
+$ mono /usr/lib/nuget/NuGet.exe install NUnit.Runners
+
+86.2 Test
+---------
+export MONO_PATH=/home/gerald/van_development/van/c_sharp/van/unit_test/NUnit.ConsoleRunner.3.12.0/tools:/home/gerald/van_development/van/c_sharp/van/unit_test/NUnit.3.13.3/lib/net45
+mcs OnlyTest.cs -target:library -r:NUnit.3.13.3/lib/net45/nunit.framework.dll -out:OnlyTest.dll
+mono ./NUnit.ConsoleRunner.3.12.0/tools/nunit3-console.exe OnlyTest.dll -noresult
+
+
+85 Garabage Collection
+======================
+85.1 C# GC
+----------
+Mehrere Dinge habe ich heute untersucht von C#, u.a. Garbage Collector,
+der von vielen Programmiersprachen eingesetzt wird, weil anscheinend
+die meisten Software-Entwicklicker zu blöd, schlampig, sorglos,
+ungeduldig .... sind, Ressource wie den dynamischen Speicher verantwortungsvoll
+zu verwalten.
+GC deute ich so: wie räumt man den Dreck von solchen Typen weg?
+Mit einem Gargabe Collector, deshalb heisst er so.
+
+85.2 GC Kosten
+--------------
+siehe Wikipedia: https://de.wikipedia.org/wiki/Garbage_Collection
+
+Die Garbage Collection, kurz GC (englisch für Müllabfuhr, ...
+
+Deterministich oder echtzeitfähig kann eine solche Programmiersprache nicht
+sein, wie formal bewiesen von https://de.wikipedia.org/wiki/Satz_von_Rice.
+
+Interessant ist diese Aspekt:
+.. .
+Eine Veröffentlichung von 2005 gibt an, dass die Leistungsfähigkeit von Garbage
+Collection nur dann gleich gut wie oder leicht besser als beim expliziten
+Speichermanagement sein, wenn der Garbage Collection fünfmal so viel Speicher
+zusteht, wie tatsächlich benötigt wird. 
+
+85.3 C# Experiments
+-------------------
+Den Code habe ich noch verschönert, um herauszufinden, wie er funktioniert:
+
+$ sudo apt install enscript
+$ enscript --color --highlight=c -o queue.ps queue.cs
+$ ps2pdf queue.ps
+$ evince queue.pdf
+
+
+84 C# Assertion
+===============
+84.1 C# Program
+---------------
+Die Struktur sieht so aus:
+
+x.cs
+....
+using System;
+namespace X {
+    class Y {
+        static void Main() {
+	    Console.WriteLine("XXX");
+        }
+    }
+}
+
+84.1.1 Execution
+................
+gerald@gerald:~/van_development/van/c_sharp/tutorial$ mcs -debug queue.cs
+gerald@gerald:~/van_development/van/c_sharp/tutorial$ mono --debug ./queue.exe 
+thd_x: exec_s = VOS_THD_BOOT
+msg_cb: name = msg-0, count = 0
+msg_cb: name = msg-1, count = 1
+msg_cb: name = msg-2, count = 2
+msg_cb: name = msg-3, count = 3
+
+84.2 Design
+-----------
+tbd.
+
+84.2.1 Documentation Tool
+.........................
+sudo apt install pandoc
+
+pandoc queue.cs -o queue.pdf
+
+84.2.2 PDF Test
+...............
+erald@gerald:~/van_development/van/c_sharp/tutorial$ evince queue.pdf
+
+84.2 Test
+.........
+mcs -debug queue.cs
+mono --debug ./queue.exe
+
+
+83 Stackoverflow
+================
+83.1 Anmeldung
+--------------
+https://stackoverflow.com/users/signup
+
+display name:
+gs
+
+Email:
+gerald.schueller@web.de
+
+Password:
+=Logisch2022
+
+83.2 Frage
+----------
+Linux mon C Sharp System Interfaces
+Do you know all speficied interfaces in
+using System;
+and where and how can I get it ?
+Sources on github like
+https://github.com/dotnet/roslyn
+are not productive after a series of searches.
+Dead end is Microsoft.
+see
+https://stackoverflow.com/questions/71729443/linux-mon-c-sharp-system-interfaces
+
+
+82 C Sharp Hello World
+======================
+(1) Start tilix - Tiling GTK3 terminal emulator for GNOME
+
+(2) Install mono - Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
+
+sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+sudo apt install mono-complete
+
+(3) Test program e.g. with emacs ...
+Source code: hello_world.cs
+
+using System;
+
+class X {
+	static void Main() {
+		Console.Write("Hello world\n");
+	}
+}
+
+(4) Translation
+mcs hello_world.cs
+
+(5) Test
+./hello_world.exe
+
+
+81 Eclipse aCute - C#
+=====================
+https://projects.eclipse.org/proposals/eclipse-acute-c-and-.net-core-development-tools-eclipse-ide
+
+Eclipse aCute - C# and .NET Core development tools in Eclipse IDE
+
+
+80 Atomic Operation In C#
+=========================
+see
+https://medium.com/@wayneye/atomic-operation-in-c-a40590a4d2
+
+What are Atomic operations and what are not?
+In C# Specification, the stamement about atomic operation is:
+“Reads and writes of the following data types shall be atomic: bool, char, byte,
+sbyte, short, ushort, uint, int, float, and reference types.” Also: “…there is
+no guarantee of atomic read-modify-write, such as in the case of increment or
+decrement.”.
+
+Threading In C# by Joseph Albahari described:
+“Read/write on a field of 32-bit or less is always atomic, operations on 64-bit
+are guaranteed to be atomic only in 64-bit OS, statements that combine more than
+one read/write operation are never atomic.”
+
+
+80 C Sharp Project
+==================
+80.1 Compile many files
+-----------------------
+mcs -debug -platform:x86 class.cs thd.cs
+
+The program name is derived from the first source file name:
+class.exe
+
+
+79 C Sharp Sources
+==================
+cd
+cd github
+
+gerald@gerald:~/github$ git clone https://github.com/dotnet/csharplang/
+Klone nach 'csharplang' …
+remote: Enumerating objects: 9073, done.
+remote: Counting objects: 100% (851/851), done.
+remote: Compressing objects: 100% (373/373), done.
+remote: Total 9073 (delta 569), reused 703 (delta 474), pack-reused 8222
+Empfange Objekte: 100% (9073/9073), 6.05 MiB | 646.00 KiB/s, fertig.
+Löse Unterschiede auf: 100% (6300/6300), fertig.
+
+erald@gerald:~/github$ ls
+csharplang  van
+gerald@gerald:~/github$ cd csharplang/
+gerald@gerald:~/github/csharplang$ 
+
+cd csharplang/
+ls -alRt|less
+
+gerald@gerald:~/github$ git clone https://github.com/ ... roslyn ...
+
+
+78 MCS Debugging
+================
+
+CIL
+
+Common Intermediate Language
+https://en.wikipedia.org/wiki/Common_Intermediate_Language
+
+
+https://www.mono-project.com/docs/debug+profile/debug/
+
+mcs -debug -platform:x86 class.cs
+
+mcs -debug -unsafe hello_van.cs
+
+.gdbinit
+
+gdb
+---
+r --debug --break Libc.Program:Main hello_van.exe
+mono_stack
+mono_backtrace
+
+
+(1) mcs -debug -platform:x86 class.cs
+-> class.exe, class.exe.mdb
+
+(2) r --aot --debug=gdb --break Vos.Thd:Main class.exe
+-> class.exe.so
+
+man mono
+--aot, --aot[=options]
+              This option is used to precompile the CIL code in the specified assembly to native code.
+	      
+(3) r --debug=gdb --break Vos.Thd:Main class.exe
+
+
+
+
+mcs -unsafe -debug -platform:x86 hello_van.cs
+
+gdb mono
+
+r  --aot --debug --break Libc.Program:Main hello_van.exe
+r  --debug --break Libc.Program:Main hello_van.exe
+
+mcs -debug -platform:x86 class.cs
+
+gdb mono
+
+r  --aot --debug --break Vos.Thd:Main class.exe
+r  --debug --break Vos.Thd:Main class.exe
+
+
+Compile many files
+------------------
+mcs -debug -platform:x86 class.cs thd.cs
+
+The program name is derived from the first source file name.
+
+
+
+77 LIVA Github
+==============
+gerald@gerald:~/github$ git clone https://github.com/LIVA-PMS/Liva.Work
+Klone nach 'Liva.Work' …
+Username for 'https://github.com': gerald1962
+Password for 'https://gerald1962@github.com': 
+remote: Enumerating objects: 12, done.
+remote: Counting objects: 100% (12/12), done.
+remote: Compressing objects: 100% (11/11), done.
+remote: Total 12 (delta 2), reused 7 (delta 0), pack-reused 0
+Entpacke Objekte: 100% (12/12), 10.22 KiB | 1.02 MiB/s, fertig.
+gerald@gerald:~/github$ 
+
+77.1 Knowledge
+..............
+https://github.com/LIVA-PMS/Liva.Work
+
+77.2 Findings
+.............
+cd
+cd github 
+git clone https://github.com/LIVA-PMS/Liva.Work
+
+gerald@gerald:~/github$ git clone https://github.com/LIVA-PMS/Liva.Work
+Klone nach 'Liva.Work' …
+Username for 'https://github.com': gerald1962
+Password for 'https://gerald1962@github.com': 
+remote: Enumerating objects: 12, done.
+remote: Counting objects: 100% (12/12), done.
+remote: Compressing objects: 100% (11/11), done.
+remote: Total 12 (delta 2), reused 7 (delta 0), pack-reused 0
+Entpacke Objekte: 100% (12/12), 10.22 KiB | 697.00 KiB/s, fertig.
+gerald@gerald:~/github$ ls
+Liva.Work
+gerald@gerald:~/github$ cd Liva.Work
+ls -al
+insgesamt 52
+drwxrwxr-x  3 gerald gerald  4096 Mär 28 17:47 .
+drwxrwxr-x 12 gerald gerald  4096 Mär 28 17:43 ..
+drwxrwxr-x  8 gerald gerald  4096 Mär 28 17:47 .git
+-rw-rw-r--  1 gerald gerald  6044 Mär 28 17:47 .gitignore
+-rw-rw-r--  1 gerald gerald  2144 Mär 28 17:47 Next-Steps.puml
+-rw-rw-r--  1 gerald gerald 23306 Mär 28 17:47 Next-Steps.svg
+-rw-rw-r--  1 gerald gerald   100 Mär 28 17:47 README.md
+
+77.3 UML
+.........
+plantuml
+Load Next-Steps.puml
+
+
+
+Next-Steps.puml
+Next-Steps.puml
+Tool: plantUtml
+  -> Next-Steps.png
+  -> w3m Next-Steps.png
+
+or
+
+cp Next-Steps.puml Next-Steps.plantuml
+emacs Next-Steps.plantuml
+
+Here is the result, see appendix 1
+
+77.4 SVG - Scalable Vector Graphics
+...................................
+sudo apt install inkscape
+inkscape Next-Steps.svg
+
+77.5 Markdown
+-------------
+retext
+
+
+
+76 Van OS and C#
+================
+We have solved all concerns.
+
+
+
+
+
+75 C function from C#
+=====================
+
+75.1 How does it work?
+----------------------
+see https://stackoverflow.com/questions/11425202/is-it-possible-to-call-a-c-function-from-c-net
+
+75.2 How can it be explained?
+-----------------------------
+see https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.dllimportattribute?view=net-6.0
+
+75.3 Sources
+------------
+https://github.com/gerald1962/van/c_sharp/tutorial/libc
+
+75.4 Make it workably!
+----------------------
+cd ~
+mkdir github
+cd github
+git pull https://gerald1962/van
+cd van/c_sharp/tutorial/libc
+make all
+./libc.exe
+
+
+75.5 How did I do that?
+-----------------------
+
+75.5.1 Build
+............
+makefile:
+
+.PHONY: all lib exe
+
+all: lib exe
+
+lib: libc.c
+	gcc libc.c -g -shared -o libc.so
+
+exe: libc.cs
+	mcs libc.cs
+
+
+75.5.2 Libc Example
+...................
+libc.c
+
+/** 
+ * incr() - the sucessor of an integer shall be calculated und returned.
+ *
+ * @i: is the current integer value.
+ *
+ * Return:	the sucessor of an integer.
+ **/
+int incr(int i)
+{
+	/* Calculate the successor. */
+	i++;
+	
+	return i;
+}
+
+75.5.3 Combining Results
+------------------------
+see libc.cs
+
+
+74 C#
+=====
+74.1 Emacs
+----------
+M-x package-install csharp-mode
+
+;; This is a mode for editing C# in emacs. 
+(defun my-csharp-mode-hook ()
+  ;; enable the stuff you want for C# here
+  (electric-pair-mode 1)       ;; Emacs 24
+  (electric-pair-local-mode 1) ;; Emacs 25
+  )
+(add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
+
+74.2 Einführung
+---------------
+https://www.uni-trier.de/fileadmin/urt/doku/csharp/v90/csharp90.pdf
+
+74.3 Linux
+-----------
+https://www.tutorialspoint.com/executing-chash-code-in-linux
+sudo apt  install mono-mcs
+
+74.4 Quelltext
+--------------
+// Hello World! program
+namespace HelloWorld
+{
+    class Hello {         
+        static void Main(string[] args)
+        {
+            System.Console.WriteLine("Hello World!");
+        }
+    }
+}
+
+74.5 Test
+---------
+gerald@gerald:~$ mcs x.cs
+gerald@gerald:~$ ./x.exe 
+Hello World!
+
+74.6 Makefile
+-------------
+PHONY : clean build
+
+build: x.exe
+
+x.exe: x.cs
+	mcs x.cs
+
+clean :
+	rm -f x.exe
+
+74.7 Test
+---------
+gerald@gerald:~$ make
+rm -f x.exe
+mcs x.cs
+
+74.8 Execution
+--------------
+gerald@gerald:~$ ./x.exe 
+Hello World!
+
+74.9 Mono Project
+-----------------
+https://www.mono-project.com
+
+74.10 Installation
+------------------
+sudo apt install gnupg ca-certificates
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+sudo apt install mono-complete
+
+74.11 Tutorial
+--------------
+https://www.w3schools.com/cs/index.php
+
+74.12 hello.cs
+--------------
+gerald@gerald:~/van_development/van/c_sharp/tutorial$ mcs hello.cs 
+gerald@gerald:~/van_development/van/c_sharp/tutorial$ ./hello.exe 
+Hello World!
+
+
+73 PlantUML
+===========
+73.1 Lexicon
+------------
+https://en.wikipedia.org/wiki/PlantUML
+
+73.2 Installation
+-----------------
+sudo apt install plantuml
+sudo apt install w3m
+
+73.3 Test
+---------
+plantuml
+
+73.4 Example
+------------
+cd ~/github
+java -jar /usr/share/plantuml/plantuml.jar -verbose example.txt
+java -jar /usr/share/plantuml/plantuml.jar -gui example.txt
+
+Online Server
+https://www.plantuml.com/plantuml/uml/SyfFKj2rKt3CoKnELR1Io4ZDoSa70000
+
+73.5 PNG Image
+-------------
+w3m example.png
+
+73.5 Emacs
+----------
+Install
+.......
+M-x package-install plantuml-mode
+
+73.5.1 .emacs
+.............
+;; Sample jar configuration
+(setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+(setq plantuml-default-exec-mode 'jar)
+
+;; Sample executable configuration
+(setq plantuml-executable-path "plantuml") 
+(setq plantuml-default-exec-mode 'executable)
+
+;; Enable plantuml-mode for PlantUML files
+(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+
+;; Change the colors for the plantuml mode
+(defun plantuml-colors ()
+  "Foreground and background colors for plantuml-mode"
+  (interactive)
+  (set-foreground-color "black")
+  (set-background-color "LightGrey"))
+
+(add-hook 'plantuml-mode-hook 'plantuml-colors)
+
+73.5.2 Commands
+...............
+M-x plantuml-preview
+
+76.6 Sprachreferenz
+-------------------
+https://plantuml.com/de/guide
+
+
+72 MarkDown
+===========
+72.1 Lexicon
+-------------
+https://de.wikipedia.org/wiki/Markdown
+
+72.2 Download
+-------------
+sudo apt-get install retext 
+
+72.3 Installation
+-----------------
+sudo apt-get install retext
+
+72.4 Test
+---------
+retext
+
+72.5 Example
+------------
+retext &
+
+Datei->Speichern unter->Dateiname
+
+see
+https://github.com/gerald1962//van/doc/markdown/example.mkd
+
+## 72.6 PDF
+
+Datei->Exportieen->PDF
+
+see example.pdf
+
+![alt text](x.png "Title")
+
+72.6 Emacs
+----------
+
+72.6.1 Install
+..............
+sudo apt install elpa-markdown-mode
+
+72.6.2 Preview
+..............
+M-x markdown-live-preview-mode
+
+
+71 Screen Recording
+===================
+https://wiki.ubuntuusers.de/SimpleScreenRecorder/
+sudo apt-get install simplescreenrecorder 
+simplescreenrecorder 
+
+sudo apt install ffmpeg
+
+cd ~/Videos
+ffmpeg -i simplescreenrecorder-2022-01-22_15.22.01.mkv gui.mp4
+
+ffmpeg -i input.mkv -codec copy output.mp4
+
+ffmpeg -i simplescreenrecorder-2022-03-21_14.53.59.mkv van_2022_03_21_14_53-59.mp4
+
+
+70 Netstat
+==========
+https://linux-tips.com/t/udp-packet-drops-and-packet-receive-error-difference/237
+
+int size = 2 * 1024 * 1024;
+setsockopt(socket, SOL_SOCKET, SO_RCVBUF, &size, (socklen_t)sizeof(int));
+
+70.1 Udp Packet Drops
+---------------------
+To get the information about statictics of udp stack, you can use netstat with
+-anus parameter like that:
+netstat -anus
+
+
+69 TCP-IP Server
+================
+https://www.cs.dartmouth.edu/~campbell/cs60/socketprogramming.html
+
+68 C-D Connection Establishment
+===============================
+Wie verbindet sich die Batterie mit der Anzeige?
+D stands for Display
+C stands for Battery Controller
+
+Wenn der Batterie-Contoller erkennt, dass er angerufen,
+antwortet er mit:
+"seqno=i::mode=calling::peer=vcontroller:"
+
+D                   C
+|--  connect-req --> |
+|<-- accept      --  |
+
+67 D-C Connection Establishment
+===============================
+Wie verbindet sich die Batterie-Anzeige mit der Battiere übers das Internet?
+D stands for Display
+C stands for Battery Controller
+
+D                    C
+|-- connect-ind -->  |
+|--< connect-rsp --  |
+
+D: Display oder Anzeige:
+Die Anzeige ruft in einer Warteschleife mit Auszeit dauernd die Batterie an:
+(1) Wie oft habe ich angerufen?
+(2) Was will ich?
+(3) Wer bin ich?
+Der gesendete Text sieht so aus:
+"seqno=i::mode=calling::peer=vcontroller:"
+
+C: Controller der Batterie
+Die Gegenstelle antwortet: ich hebe ab.
+":peer=vcontroller:"
+
+
+66 Internet Trace
+=================
+Wie erreicht Amazon oder Google?
+
+Installiert habe ich wireshark:
+sudo apt install wireshark
+sudo wireshark
+...
+und
+sudo apt install traceroute
+und rufe auf:
+su
+traceroute -d www.google.com
+root@gerald:/home/gerald/van_development/van/test/udp/store# traceroute -T -p 80 www.google.com
+traceroute to www.google.com (142.250.181.228), 30 hops max, 60 byte packets
+ 1  fritz.box (192.168.178.1)  4.145 ms  4.063 ms  4.359 ms
+ 2  p3e9bf3c4.dip0.t-ipconnect.de (62.155.243.196)  33.945 ms  33.917 ms  33.889 ms
+ 3  m-ef1-i.M.DE.NET.DTAG.DE (217.5.94.86)  33.858 ms  35.883 ms  35.856 ms
+ 4  m-ef1-i.M.DE.NET.DTAG.DE (217.5.94.86)  36.210 ms  37.364 ms  37.337 ms
+ 5  62.157.251.234 (62.157.251.234)  37.308 ms  37.280 ms  37.237 ms
+ 6  74.125.244.100 (74.125.244.100)  37.205 ms 74.125.244.83 (74.125.244.83)  25.605 ms  25.497 ms
+ 7  172.253.71.134 (172.253.71.134)  25.375 ms  23.987 ms  24.449 ms
+ 8  * * 209.85.241.42 (209.85.241.42)  27.182 ms
+ 9  108.170.238.61 (108.170.238.61)  27.093 ms  28.138 ms  29.129 ms
+10  108.170.251.193 (108.170.251.193)  29.101 ms  29.074 ms 108.170.252.65 (108.170.252.65)  32.050 ms
+11  142.250.237.177 (142.250.237.177)  29.802 ms 142.250.229.59 (142.250.229.59)  31.050 ms 142.250.237.177 (142.250.237.177)  30.136 ms
+12  fra16s56-in-f4.1e100.net (142.250.181.228)  32.530 ms  32.552 ms  34.148 ms
+
+und sehe nicht, wie sie mich erreichen.
+
+
+65 FritzBox Wlan
+================
+siehe
+https://avm.de/service/wissensdatenbank/dok/FRITZ-Box-7590/1471_VPN-Verbindung-zur-FRITZ-Box-unter-Linux-einrichten/
+https://avm.de/service/wissensdatenbank/dok/FRITZ-Box-7490/1_Benutzeroberflache-der-FRITZ-Box-aufrufen/
+
+Die IP-Adresse 192.168.178.1 wird hauptsächlich für die FritzBox verwendet.
+Es spielt dann keine Rolle, ob das neuste Modell FRITZ!Box 7590 oder ein älteres
+Modell ist, bei allen kann man das Routermenü mit die IP-Adresse 192.168.178.1 aufrufen.
+
+Über den FritzBox Router oder über den Telekom Router Speedport kann man einen Fernzugriff auf ein Internet-Device erlauben.
+Das würde ich nicht empfehlen, wenn man nicht weiss, was man eigentlich tut.
+
+
+64 Eclipse
+===========
+https://linuxconfig.org/eclipse-ide-for-c-c-developers-installation-on-ubuntu-20-04
+
+
+Hello World
+
+offen ist:
+**********
+dotnet
+dotnet mit raider
+docker
+
+63 Docker
+=========
+Docker habe ich installiert, aber noch nicht ausprobiert.
+sudo apt  install docker.io
+Der Aufruf funktioniert:
+gerald@gerald:~$ docker
+
+Usage:  docker [OPTIONS] COMMAND
+...
+
+https://docker-curriculum.com/
+
+63.1 Internet-Addresse
+----------------------
+https://www.docker.com/
+
+63.2 Sign-in
+------------
+Docker-ID: 04121962
+Password:  =Logisch2022
+
+-> Create a Repository:
+
+docker tag local-image:tagname new-repo:tagname
+docker push new-repo:tagname
+
+Repository:
+04121962/van
+
+
+
+
+
+
+1. Virtual Box or VB
+====================
+sudo apt-get update
+sudo apt-get install virtualbox
+
+1.1 Debian
+------------------
+Download
+https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.2.0-amd64-netinst.iso
+or
+search for debin iso
+
+1.2 Network Tools
+-------------------
+su
+apt install net-tools
+
+ip addr show
+10.0.2.15
+
+1.2 Git
+-------
+su
+apt update
+apt install git
+
+
+1.3 Integration-Tools
+---------------------
+su
+apt update
+apt install build-essential
+
+1.4 GUI
+-------
+su
+apt install tcl-dev
+apt install tklib
+apt install xfce4-terminal
+
+1.5 Van Download
+----------------
+cd
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+cd van
+,/vrun.sh
+
+1.6 Emacs
+---------
+su
+apt update
+apt install emacs
+
+1.7 Van over IP
+---------------
+Server: 192.168.178.96
+Client: 10.0.2.15
+
+1.8 Wireshark
+-------------
+su
+apt install wireshark
+wireshark &
+Van UDP port fiter: (udp.port == 58062) || (udp.port == 62058)
+
+
+Tasks
+=====
+1. Oracle Virtual Box
+2. dotnet
+3. docker
+4. https://www.jetbrains.com/rider/
+
+
+cd ~/github/van/test/vsystem/vbattery
+make all
+
+cd ~/github/van/test/vsystem/vcontrol
+make all
+
+
+64 Puppy Linux
+==============
+https://puppylinux.com/
+
+
+62 Dotnet
+=========
+cd /home/gerald/.dotnet
+./dotnet new console --force --framework net6.0
+gerald@gerald:~/.dotnet$ ./dotnet run
+
+https://docs.microsoft.com/de-de/dotnet/core/install/linux-scripted-manual#scripted-install
+cp ~/Downloads/dotnet-install.sh .
+chmod +x dotnet-install.sh
+./dotnet-install.sh -c Current
+
+61 Virtual Box
+==============
+VB habe ich installiert, aber noch nicht ausprobiert:
+https://phoenixnap.com/kb/install-virtualbox-on-ubuntu
+sudo apt-get update
+sudo apt-get install virtualbox
+virtualbox
+gerald@gerald:~$ virtualbox
+Das GUI sieht so aus wie bei dir.
+...
+morgen werde ich was installieren
+
+
+
+60 GDB Basics
+=============
+emacs -name gdb
+M-x gdb
+M-x gdb-many-windows
+file out/vine
+b os_inet_close
+r
+set print pretty on
+p *is.inet[0]
+
+
+59 Van OS Inet Specification
+============================
+
+/* The van control server listens to incoming signals from one specific client.
+ * Provisionally only one cable connection is allowed between controller and
+ * display. */
+int os_inet_sopen(char *clt_addr);
+
+/* The van client like display establishes a connection to the van control
+ * server, to interfere and watch a battery. */
+int os_inet_copen(char *srv_addr);
+
+/* Non blocking read of internet messages. */
+int os_inet_read(int cid, char *buf, int count);
+
+/* Non blocking write of internet messages. */
+int os_inet_write(int cid, char *buf, int count);
+
+/* The van server or client say goodbye. */
+void os_inet_close(int cid);
+
+
+58 My IP Address
+================
+ifconfig
+        inet 192.168.178.96  netmask 255.255.255.0  broadcast 192.168.178.255
+        inet6 fe80::91d1:acb5:15bd:79ec  prefixlen 64  scopeid 0x20<link>
+
+
+57 Wireshark
+============
+https://linuxhint.com/install_configure_wireshark_ubuntu
+sudo apt update
+sudo apt install wireshark
+sudo wireshark
+Aufzeichnen->Optionen:Loopback:lo
+
+
+56 UDP
+======
+Zum Beispiel: Möchten Sie den UDP-Port 33333 in der Firewall freigeben, nutzen
+Sie den Befehl:
+iptables -A INPUT -p udp –dport 33333 -j ACCEPT
+iptables -A OUTPUT -p udp –dport 33333 -j ACCEPT
+
+https://de.wikihow.com/In-der-Linux-Server-Firewall-Ports-%C3%B6ffnen
+
+
+55 Rust
+=======
+sudo apt-get install curl build-essential make gcc -y
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
+source ~/.profile
+source ~/.cargo/env
+
+git clone https://github.com/rksm/emacs-rust-config
+emacs -q --load ./emacs-rust-config/standalone.el
+
+git clone https://github.com/rust-analyzer/rust-analyzer.git
+cd rust-analyzer
+cargo xtask install --server
+
+55.1 Project
+------------
+cargo new hello_cargo
+cd hello_cargo
+cargo build
+./target/debug/hello_cargo
+cargo run
+cargo check
+
+
+54 UDP Client and Server example
+================================
+54.1 Google Search Pattern
+--------------------------
+linux C udp local server example
+
+54.2 Hits
+---------
+https://www.binarytides.com/programming-udp-sockets-c-linux/
+
+54.2 ServerGithub:
+=Logisch2022
+
+git clone https://github.com/gerald1962/van
+
+
+
+Man braucht für Prototypen nicht mal ein Makefile.
+
+54 UDP Client and Server example
+================================
+54.1 Google Search Pattern
+--------------------------
+linux C udp local server example
+
+54.2 Hits
+---------
+https://www.binarytides.com/programming-udp-sockets-c-linux/
+
+54.2 Server
+-----------
+cd .../van/test/udp/server
+gcc udp_server.c && ./a.out
+
+54.4 Test the server with netcat
+--------------------------------
+sudo apt install ncat
+
+ncat -vv localhost 8888 -u
+
+54.5 Check open port with netstat
+---------------------------------
+netstat -u -a
+
+54.6 Client
+-----------
+cd .../van/test/udp/client
+gcc udp_client.c && ./a.out
+
+
+
+53 Git Ignore
+=============
+see ~/github/van/.gitignore
+
+
+52 Battery measurement devices
+==============================
+https://www.rohde-schwarz.com/de/produkte/messtechnik/dc-netzgeraete/rs-ngm200-netzgeraeteserie_63493-652229.html
+
+
+51 Canvas Example
+=================
+https://wiki.tcl-lang.org/page/Canvas+Object+Movement+Example
+
+SPS Taster Symbol
+-----------------
+https://www.google.com/search?q=SPS+taster+symbol&oq=SPS+taster+symbol&aqs=chrome..69i57j33i160.8450j0j15&client=ubuntu&sourceid=chrome&ie=UTF-8
+
+https://de.wikipedia.org/wiki/Tasterschaltung
+
+
+SPS Taster Schaltplan
+---------------------
+http://dieelektronikerseite.de/Lections/Schliesser,%20Oeffner%20-%20Auch%20fuer%20Wachleute.htm
+
+https://www.google.com/search?q=sps+visualisierung&client=ubuntu&hs=eGE&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjxjuDh_NT1AhU057sIHUlrD_IQ_AUoAXoECAEQAw&biw=2544&bih=1560&dpr=1#imgrc=Q25mHLd2leQG4M
+
+https://www.google.com/search?q=sps+visualisierung&client=ubuntu&hs=eGE&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjxjuDh_NT1AhU057sIHUlrD_IQ_AUoAXoECAEQAw&biw=2544&bih=1560&dpr=1#imgrc=B8EKn4K5fULzpM
+
+
+
+50 Tcltk Plotchart
+==================
+sudo apt install tklib
+
+https://github.com/tcltk/tklib/blob/master/examples/plotchart/scope.tcl
+
+cd  ~/van_development/van/test/tcl_c_interfac/plotchart
+./scope.tcl
+
+Screen Recording
+----------------
+https://wiki.ubuntuusers.de/SimpleScreenRecorder/
+sudo apt-get install simplescreenrecorder 
+simplescreenrecorder 
+
+sudo apt install ffmpeg
+
+cd ~/Videos
+ffmpeg -i simplescreenrecorder-2022-01-22_15.22.01.mkv gui.mp4
+
+
+cd
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+cd van/lib
+make lib
+cd ../van/test/tcl_c_interfac/tide
+
+50 Tcl-Test
+===========
+Start the cop program without display:
+cd ~/van_development/van/test/shared_memory/cop
+out/cop -e d -cbc 1 -bcc 1 -cdc 1 -bw -t
+
+oder
+
+./cop_prototype.sh 999 999 999 no_display &
+
+
+49 Tk Docs
+==========
+https://tkdocs.com/tutorial/index.html
+
+
+48 Tcl/Tk: A Developer's Guide by Clif Flynt
+============================================
+https://cpentalk.com/drive/uploads/Software%20Engineering%20Books/Books(%20CPENTalk.com%20)/Tcl%20Tk,%20Second%20Edition%20:%20A%20Developer's%20Guide%20(The%20Morgan%20Kaufmann%20Series%20in%20Software%20Engineering%20and%20Programming)%20(%20CPENTalk.com%20).pdf
+
+
+47 Darstellung von Formeln
+==========================
+http://www.inwap.com/pdp10/hbaker/hakmem/geometry.html#item6
+
+
+47 Darstellung von Formeln
+==========================
+http://www.inwap.com/pdp10/hbaker/hakmem/geometry.html#item6
+
+
+45 Tcl Cable Driver
+===================
+set c_id [cable -open controller]
+cable -close $c_id
+
+
+set sock [socket -async 127.0.0.1 33000]
+
+45.1 Tcl Design Tool
+--------------------
+Example:
+https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug835-vivado-tcl-commands.pdf
+
+
+44 Elektrizitätslehre
+=====================
+https://www.leifiphysik.de/elektrizitaetslehre
+
+
+43 Display Buffering
+====================
+Test
+----
+Start the cop thread system wihout display:
+out/cop -e d -cbc 999 -bcc 999 -cdc 999 -bw -t -cc 20
+
+Start the display simulation:
+out/dice
+
+or
+
+Start the cop process system wihout display:
+./cop_prototype.sh 999 999 999 no_d &
+
+Start the display simulation:
+out/dice
+
+
+Fehlersuche
+-----------
+out/cop -e d -cbc 1 -bcc 1 -cdc 666 -bw -t -cc 1
+
+dice:
+sleep time: 5ms
+
+BUF_Q_SIZE 32
+.............
+out/cop -e d -cbc 1 -bcc 1 -cdc 99 -bw -t -cc 1
+
+dice:
+sleepe time: 5ms
+
+printf in:
+buf_q_wm_objective_set
+
+
+43.1 os_buffer.c
+----------------
+Cable operations about I/O buffering.
+
+see Bip Buffer:
+https://www.codeproject.com/Articles/3479/The-Bip-Buffer-The-Circular-Buffer-with-a-Twist
+
+43.2 dice.c
+-----------
+Display cable entry points about I/O buffering.
+
+44.3 Controller Platform
+------------------------
+-e x  exclude a controller platform module: substitue x with:
+      d  display
+
+cop -e d ...
+
+Start the cop program without display:
+out/cop -e d -cbc 1 -bcc 1 -cdc 1 -bw -t
+
+Start the cop script wihout display:
+./cop_prototype.sh 1 1 1 no_d &
+
+
+42 Clock Release
+================
+42.1 Souces
+-----------
+~/github/van/os/os_clock.c
+
+42.1.1 Algorithm
+---------------
+Consider os_clock_barrier() ...
+
+42.2 Coverage
+--------------
+~/github/van/test/os
+make can
+./vote
+
+42.2.1 Algorithm
+----------------
+Consider clk_all_clocks() ...
+
+42.3 In Use
+-----------
+~/github/van/os/shared_memory/cop
+make all
+./cop_prototype.sh 987 789 1341 1432 &
+
+Consider cop_ctrl_exec() ...
+
+
+41 Clock Test
+-------------
+./cop_prototype.sh 987 789 2341 1432 &
+
+
+40 POSIX Timer
+--------------
+U.a als Referenz habe ich verwendet:
+
+https://riptutorial.com/posix/example/16306/posix-timer-with-sigev-thread-notification
+https://katastrophos.net/symbian-dev/GUID-B4039418-6499-555D-AC24-9B49161299F2.html
+
+#include <time.h>
+
+struct timespec ts;
+
+clock_gettime(CLOCK_MONOTONIC, &ts);
+
+
+/// Computes the elapsed time, in milliseconds, between two 'timespec'.
+inline uint32_t TimeElapsedMs(const struct timespec& tStartTime, const struct timespec& tEndTime)
+{
+   return 1000*(tEndTime.tv_sec - tStartTime.tv_sec) +
+          (tEndTime.tv_nsec - tStartTime.tv_nsec)/1000000;
+}
+
+os_timer_init()
+os_timer_start()
+os_timer_wait()
+
+#include <stdio.h>
+#include <stdint.h>
+#include <time.h>
+
+int64_t timespecDiff(struct timespec *timeA_p, struct timespec *timeB_p)
+{
+  return ((timeA_p->tv_sec * 1000000000) + timeA_p->tv_nsec) -
+           ((timeB_p->tv_sec * 1000000000) + timeB_p->tv_nsec);
+}
+
+int main(int argc, char **argv)
+{
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // Some code I am interested in measuring 
+
+  clock_gettime(CLOCK_MONOTONIC, &end);
+
+  uint64_t timeElapsed = timespecDiff(&end, &start);
+}
+
+#include <sys/time.h>
+
+long long current_timestamp() {
+    struct timeval te; 
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
+    return milliseconds;
+}
+
+
+
+struct timeval tval_before, tval_after, tval_result;
+
+gettimeofday(&tval_before, NULL);
+
+// Some code you want to time, for example:
+sleep(1);
+
+gettimeofday(&tval_after, NULL);
+
+timersub(&tval_after, &tval_before, &tval_result);
+
+printf("Time elapsed: %ld.%06ld
+", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+
+
+38 Cop Test - Control Technology Platform
+=========================================
+38.1 Quick Start
+----------------
+Start with 38.3-4,12 and try out 38.13.
+
+38.1  Lessons Learned
+---------------------
+It is easier for me to develope, test and transfer the algorithm Shared Memory Cables
+from one to many processes.
+
+38.2 Theory
+-----------
+Battery <-> Controller <-> Display
+
+<-> is a shared memory cable with non blocking
+synchronous or asynchronous operations.
+
+Unfinished tasks:
+o Missing timer in the cable logic
+
+Any subsequent development steps I describe when you call
+out/cob -h
+
+cop - control technology platform
+  -h      show this usage
+  -t      print the cop trace information
+Test cycle settings:
+  -dcc n  display generator cycles towards controller
+  -cbc n  controller generator cycles towards battery
+  -bcc n  battery generator cycles towards controller
+  -cdc n  controller generator cycles towards display
+Setting of the wait conditions:
+  -dw     display cycles with wait condition
+  -cw     controller cycles with wait condition
+  -bw     battery cycles with wait condition
+
+Programm configuration:
+  -s x    execute cop as stand-alone program: substitue x with:
+          c  controller
+          b  battery
+          d  display
+
+Default settings:
+  Cop trace:                off
+  Display cycles:           0
+  Ctrl->battery cycles:     0
+  Battery cycles:           0
+  Ctrl->display cycles:     0
+  Display wait condition:   off
+  Ctrl wait conditions:     off
+  Battery wait condition:   off
+  Stand-alone disp program: no
+  Stand-alone ctrl program: no
+  Stand-alone batt program: no
+
+38.3 Delivery
+-------------
+cd ~
+rm -fr github
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+
+38.4 Build
+----------
+cd ~/github/van/test/shared_memory/cop
+make
+
+38.5 Display Generator towards Controller
+-----------------------------------------
+1. out/cop -dcc 1
+
+38.6 Controller Generator towards Battery
+-----------------------------------------
+1. out/cop -cbc 1
+2. out/cop -dcc 1 -cbc 1
+
+38.7 Battery Generator towards Controller
+-----------------------------------------
+1. out/cop -bcc 1
+2. out/cop -dcc 1 -cbc 1 -bcc 1
+3. out/cop -dcc 1 -bcc 1
+4. out/cop -cbc 1 -bcc 1
+
+38.8 Controller Generator towards Display
+-----------------------------------------
+1. out/cop -cdc 1
+2. out/cop -dcc 1 -cbc 1 -bcc 1 -cdc 1
+
+38.9 Settings of the Wait Conditions
+------------------------------------
+1. out/cop -dcc 1 -cbc 1 -bcc 1 -cdc 1 -dw -cw -bw
+
+time out/cop -dcc 9999 -cbc 999 -bcc 9999 -cdc 999 -dw -bw
+time out/cop -dcc 9999 -cbc 999 -bcc 9999 -cdc 999
+
+38.10 Stand-alone Program Configuration
+---------------------------------------
+1. No Data Transfer
+...................
+Controller: out/cop -s c -cw -t
+Battery:    out/cop -s b -bw -t
+Display:    out/cop -s d -dw -t
+
+2. Circulate 1 Packet
+.....................
+Controller: out/cop -cbc 1 -cdc 1 -s c -cw -t
+Battery:    out/cop -bcc 1        -s b -bw -t
+Display:    out/cop -dcc 1        -s d -dw -t
+
+2. Circulate n Packets
+......................
+Controller: out/cop -cbc 4 -cdc 4 -s c -cw -t
+Battery:    out/cop -bcc 4        -s b -bw -t
+Display:    out/cop -dcc 4        -s d -dw -t
+
+38.12 Prerequistes
+------------------
+Install the xfc-Termain because of the hold attribute:
+sudo apt install xfce4-terminal
+
+38.13 Final Test
+----------------
+1. Circulate n Packets
+......................
+./cop_prototype.sh
+
+Have fun,
+Gerald
+
+
+37 Leightweight Desktop
+=======================
+1. xfc4 Terminal
+----------------
+sudo apt install xfce4-terminal
+
+2. xfc4
+-------
+https://wiki.ubuntuusers.de/Xfce/
+
+sudo apt-get install xfce4
+
+
+36 Tcl/Tk
+=========
+36.1 Event-Driven Programming
+-----------------------------
+http://www.beedub.com/book/2nd/event.doc.html
+
+36.2 Tcl_CreateChannel - tkConsole.c
+------------------------------------
+https://core.tcl-lang.org/tk/artifact/e52bb3c52e11275b846db29191c6209fa49d39a8
+
+36.3 asynchronous file IO in Tcl
+--------------------------------
+https://stackoverflow.com/questions/21063316/asynchronous-file-io-in-tcl
+
+36.4 Input & output
+-------------------
+https://zetcode.com/lang/tcl/io/
+
+37.5 Channel I/O: socket, fileevent, vwait
+------------------------------------------
+https://wiki.tcl-lang.org/page/Tcl+Tutorial+Lesson+40
+
+37.6 Tcl Basics
+---------------
+https://www.ee.columbia.edu/~shane/projects/sensornet/part1.pdf
+
+37.7 Tcl IO Drivers
+-------------------
+https://wiki.tcl-lang.org/page/Tcl+IO+Drivers
+
+
+35. Non Blocking Synchronous Data Transfer
+------------------------------------------
+1. Ctrl. Tech. Output with Copy Read
+out/site -d 1 -u 0 -t -v nc -n nc
+
+2. Neighbour Output with Copy Read
+out/site -d 0 -u 1 -t -v nc -n nc
+
+3. Ctrl. Tech. and Neighbour Output with Copy Read
+out/site -d 1 -u 1 -t -v nc -n nc
+out/site -d 1 -u 1 -t -v bc -n nc
+
+4. Ctrl. Tech. Output with Zero Copy Read
+out/site -d 1 -u 0 -t -v nz -n nz
+
+5. Neighbour Output with Zero Copy Read
+out/site -d 0 -u 1 -t -v nz -n nz
+
+6. Ctrl. Tech. and Neighbour Output with Zero Copy Read
+out/site -d 1 -u 1 -t -v nz -n nz
+
+
+34. Van Snapshot
+================
+
+1. Abstract
+-----------
+o New cable theory, see ~/github/van/os/os_cable.c
+
+In detail I will present it later, since it is not complete.
+
+1.1 Motivation
+--------------
+Connect any device like battery or display with a controller.
+
+You can do it with with a certain vision:
+o What is a van cable ?
+o How does work a van cable ?
+
+If I am pleased with the outcome, there is a power point presentation.
+
+2. Download
+-----------
+cd ~
+rm -fr github
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+
+3. Delivery Test
+----------------
+cd ~/github/van/test/shared_memory/site
+make all
+./site_test.sh 11
+
+4. Van Lib
+----------
+cd ~/github/van/lib
+make lib
+
+4. IPC Test
+-----------
+Open 2 terminals
+
+4.1. 1. Terminal
+................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+4.1. 2. Terminal
+................
+cd ~/github/van/test/shared_memory/pot
+make
+./pot
+
+5. Python Test
+--------------
+Open 2 terminals.
+
+5.1. 1. Terminal
+................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+5.3. 2. Terminal
+................
+cd ~/github/van/test/python_c_interface
+./van.py
+
+6. Coverage
+-----------
+cd ~/github/van/test/os
+make can
+./vote
+
+
+33. Datenbunker
+
+https://datenbunker.dyn.ddnss.de/login
+
+Gerald
+68UzwzTDkHtGjhN3
+
+
+Herbert
+OSuYy7L1vpUhbqcD
+
+
+
+Information for developer
+=========================
+github
+
+setting->devoloper settings->
+Personal access tokens
+
+
+.. tokens-> ...new token
+Repo
+x
+...
+Username for 'https://github.com': gerald1962
+Password for 'https://gerald1962@github.com': <token> see above
+
+
+Van sandbox
+===========
+Since van is not mature, the installation procedure is cumbersome.
+My development enviromnet is called van_development.
+
+1. Install van
+cd ~
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+    
+2. Build the shared library
+cd van/lib
+
+
+31 Asynchronour I/O
+
+https://titanwolf.org/Network/Articles/Article?AID=cc3ad12f-1f90-43b6-b2f3-29d29f8e59da
+https://man7.org/linux/man-pages/man7/sigevent.7.html
+http://davmac.org/davpage/linux/async-io.html
+https://man7.org/linux/man-pages/man7/signal.7.html
+
+
+30 AR-VR Standardisierung
+
+https://www.khronos.org/
+
+
+29 Linux Atomic-Operations
+
+C atomic_exchange(volatile A *object, C desired)
+https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/atomic_exchange.html
+
+
+28 IPC - Shared Memory
+
+28.4 Shm File
+
+ dd - convert and copy a file
+
+dd if=/dev/zero of=shm.txt bs=8192 count=1
+
+
+28.3 Named Semaphores
+
+lsof - list open files
+
+gerald@gerald:~$ lsof /dev/shm/sem.*
+COMMAND    PID   USER  FD   TYPE DEVICE SIZE/OFF NODE NAME
+sac     399626 gerald DEL    REG   0,26           594 /dev/shm/sem.py_int
+sac     399626 gerald DEL    REG   0,26           589 /dev/shm/sem.van_int
+
+Remove named semaphore:
+rm /dev/shm/sem.*
+
+28.2 shm_open
+
+man shm_open
+
+28.1 ipcs
+
+man ipcs
+--------
+ipcs -s
+
+NAME
+       ipcs - show information on IPC facilities
+
+SYNOPSIS
+       ipcs [options]
+
+DESCRIPTION
+       ipcs  shows  information on the inter-process communication facilities for which the calling process
+       has read access.  By default it shows information about all three resources: shared memory segments,
+       message queues, and semaphore arrays.
+
+
+
+27 Shared Library
+
+https://www.cprogramming.com/tutorial/shared-libraries-linux-gcc.html
+
+
+
+26 Linux
+
+26.1 Sources
+
+https://github.com/torvalds/linux
+
+26.2 Documentation
+
+https://www.kernel.org/doc/html/latest/
+
+
+
+git config -l
+
+25 Github
+
+=van2021
+gerald1962
+
+
+Token
+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
+
+
+https://stackoverflow.com/questions/68775869/support-for-password-authentication-was-removed-please-use-a-personal-access-to
+
+git config --global user.name "your_github_username"
+git config --global user.email "your_github_email"
+git config -l
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+Username for 'https://github.com' : username
+Password for 'https://github.com' : give your personal access token here
+git config --global credential.helper cache
+git config --global --unset credential.helper
+
+git clone https://github.com/gerald1962/van
+git pull -v
+
+
+24 Root
+
+sudo -i
+
+
+23 Interfacing Python and C code
+
+23.1 Tutorial
+
+https://reptate.readthedocs.io/developers/python_c_interface.html
+
+hat mich erst ziemlich verunsichert, aber ich habe es erfolgreich in etwas
+umgewandelt, was mich interessiert:
+
+23.2 VAN Shared Library
+
+van.c
+-----
+#include <stdio.h>
+void hello(void)
+{
+	printf("Hello python, here is Gerald.\n");
+}
+
+makefile:
+---------
+all:
+	gcc -o van.so -shared -fPIC -O2 van.c
+
+
+23.3 Python Link to VAN
+
+from ctypes import *
+
+c_char *
+c_int
+
+s = "Hello, van"
+c_s = c_char_p(s)
+print(c_s.value)
+
+n = len(s)
+c_n = c_int(n)
+print(c_n.value)
+
+
+van.py:
+------
+from ctypes import *
+lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+van = CDLL(lib_path)
+van.hello.restype = None
+van.hello()
+
+23.4 Test
+
+gerald@gerald:~/van/test/python_c_interface$ python
+Python 2.7.18 (default, Mar  8 2021, 13:02:45) 
+[GCC 9.3.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from ctypes import *
+>>> lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+>>> van = CDLL(lib_path)
+>>> van.hello.restype = None
+>>> van.hello()
+Hello python, here is Gerald.
+>>> quit()
+gerald@gerald:~/van/test/python_c_interface$ 
+
+23.5 GDB
+
+sudo -i
+gdb
+cd /home/gerald/van/test/python_c_interface
+attach <pid>
+b hello
+c
+
+23.6 OS
+
+os_python_shm.c
+os_van_shm.c
+
+
+22 Save colored emacs text from shell
+
+C-u M-x ps-print-buffer-with-faces
+
+
+21 Python
+
+https://py-tutorial-de.readthedocs.io/de/python-3.3/interpreter.html
+
+21.1 Die interaktive Startup-Datei
+
+import os
+filename = os.environ.get('PYTHONSTARTUP')
+if filename and os.path.isfile(filename):
+    exec(open(filename).read())
+
+21.2 Die Customization Module
+
+>>> import site
+>>> site.getusersitepackages()
+
+'/home/gerald/.local/lib/python2.7/site-packages'
+
+
+20 DVI to PDF
+
+dvipdf [ options ] input.dvi [ output.pdf ] ...
+
+
+19 Latex C-Style
+
+google: C code nach Latex
+
+https://tex.stackexchanghttps://tex.stackexchange.com/questions/348651/c-code-to-add-in-the-document/348653
+
+Problems with the xcolor style.
+Die Farben kommentiere ich aus, dann sieht das Ergebnis ganz passabel aus.
+
+Include all sources in csd.ex
+latex csd.tex
+dvipdf csd.dvi
+
+
+18 Eclipse
+
+sudo apt install snap
+sudo snap install --classic eclipse
+eclipse&
+
+https://www.edv-buchversand.de/productinfo.php?replace=false&cnt=productinfo&mode=2&type=2&id=dp-196&index=2&nr=0&art=Blick%20ins%20Buch&preload=false&page=1&view=fit&Toolbar=1&pagemode=none
+
+
+17 Shared Memory
+
+How to use shared memory in python and C/C++
+https://stackoverflow.com/questions/49103709/how-to-use-shared-memory-in-python-and-c-c/49118076
+
+Share memory between C/C++ and Python
+https://pretagteam.com/question/share-memory-between-cc-and-python
+
+https://realpython.com/python-mmap/
+
+Python mmap: Improved File I/O With Memory Mapping
+
+
+16 Multi Thread Test
+
+gerald@gerald:~/van/test$ ./cost|grep -E 'test_system|TEST|MISMATCH|FAILURE'
+
+
+15 Code Coverage
+
+fatal error: sys/cdefs.h: No such file or directory
+apt install gcc-multilib
+
+
+14 Documents
+
+file:///home/gerald/Downloads/energies-14-00176.pdf
+http://ermak.cs.nstu.ru/Understanding.Linux.Kernel.pdf
+https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf
+
+
+13 Git Difftool
+
+.gitconfig
+
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+
+12 System Load
+
+12.1 glances
+
+12.2 monitorix
+
+http://localhost:8080/monitorix
+
+https://de.wikihow.com/In-Ubuntu-Root-werden
+
+
+https://kifarunix.com/install-monitorix-on-ubuntu/
+
+https://idroot.us/install-monitorix-ubuntu-20-04/
+
+12.3 Saidar
+
+Saidar also allows to monitor system device activities via the command line.
+
+enter image description here
+
+You can install is with this command:
+
+sudo apt-get install saidar
+To start monitoring, run this command:
+
+saidar -c -d 1
+Stats will be refreshed every second.
+
+12.4 Conky
+sudo apt install conky-all
+
+11 Thread Tool
+
+ps
+top
+htop
+
+There's also another option which is true CLI ps -e -T | grep <application name or pid>
+
+-e shows all processes
+-T lists all threads
+| pipes the output to the next command
+grep this filters the contents
+
+
+10. Error names
+
+sudo apt install moreutils
+errno -l or
+errno ESRCH or
+errno 3
+
+
+9. Git
+
+9.1 Git installieren
+git --version
+
+9.2 Git konfigurieren
+
+git config --global user.name "Gerald Schueller"
+git config --global user.email "gerald.schueller@web.de"
+
+git config --list
+
+emacs ~/.gitconfig
+
+9.3 Ein neues Repository erstellen
+git init
+Leeres Git-Repository in /home/gerald/van/.git/ initialisiert
+
+git add .
+
+Creating a commit message
+git commit -m "Initial Commit" -a
+or
+git commit -m "Initial Commit" file
+
+Pushing changes to a remote server
+git push origin master
+
+Viewing branches
+git branch -a
+
+
+Creating branches
+git checkout -b develop
+
+git checkout master
+git checkout develop
+
+git add faq.txt
+git commit -m "faq.txt file" faq.txt
+
+Merging code between branches
+git checkout master
+git merge develop --no-ff
+
+9.4 Status des Repositorys
+git status
+
+9.5 Staging
+git add .
+or
+git add faq.txt
+git commit -m "Git information" .
+
+9.6 Branches
+git branch develop
+
+9.7 Branches weckseln
+git checkout devlop
+
+9.8 Branches zusammenführen
+git checkout master
+git merge develop
+
+Branch entfernen
+git branch -d develop
+
+9.9 Unterschied zwischen Commits prüfen
+git log
+
+Inhalt des Commit
+git show ID
+
+9.10 Frühere Version
+git checkout ID file
+
+9.11 Commit rückgängig machen
+git revert HEAD
+git revert <commit-id>
+
+9.12 Dateien ignorieren
+.gitignore
+
+9.13 Dateien wiederherstellen
+git checkout -- *
+
+
+8. RFC Editor
+
+https://www.rfc-editor.org/
+
+apt-file search datetime2.sty
+
+sudo apt install groff
+
+groff -t -mandoc -Tascii rfc_template.nroff > rfc_template.txt
+groff -t -mandoc -Tascii van.nroff > van.txt
+
+groff -t -mandoc -Tascii van.nroff > van.txt
+
+
+7. GDB configuration
+
+Manual:
+https://sourceware.org/gdb/current/onlinedocs/gdb/
+
+If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
+
++--------------------------------+--------------------------------+
+|   GUD interaction buffer       |   Locals/Registers buffer      |
+|--------------------------------+--------------------------------+
+|   Primary Source buffer        |   I/O buffer for debugged pgm  |
+|--------------------------------+--------------------------------+
+|   Stack buffer                 |   Breakpoints/Threads buffer   |
++--------------------------------+--------------------------------+
+
+You also have an option to display the struct in an indentation and new line.
+For that you need to set the pretty print:
+
+set print pretty on
+
+
+6. Tag file for emacs
+
+find /home/gerald/van -name "*.[ch]" -print | etags -
+
+M-x visit-tags-tables TAGS
+
+Some of the useful "Tags" functions are:
+
+M-.              Find first definition of a tag.
+M-x tags-search  Search for a specified regular expression through the files in the selected tag table.
+M-,              Find next definition of previous tag, next occurrence of specified regular expression.
+q
+
+5. Core Dump
+
+If you type
+
+ulimit -c unlimited
+
+then that will tell bash that its programs can dump cores of any size.
+
+You can use the core file in the following way:
+
+gdb <executable> <core-file>
+
+For example:
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./out/zinc 
+Z> zinc copper battery
+^Ctrap_signal_handler: received SIGINT, generate a core dump.
+Abgebrochen (Speicherabzug geschrieben)
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ gdb out/zinc core
+
+bt  Backtrace: display the program stack.
+
+Load the core dump file:
+core-file core 
+
+
+4. Common Makefile
+
+The common makefile is located in ...
+
+5. Packagesp
+
+5.1 Emacs
+
+5.2 Linux
+
+
+3. Emacs-Konfiguration in .emacs
+
+(defun linux-c-mode ()
+ "C mode with adjusted defaults for use with the Linux kernel."
+ (interactive)
+ (c-mode)
+ (setq c-indent-level 8)
+ (setq c-brace-imaginary-offset 0)
+ (setq c-brace-offset -8)
+ (setq c-argdecl-indent 8)
+ (setq c-label-offset -8)
+ (setq c-continued-statement-offset 8)
+ (setq indent-tabs-mode nil)
+ (setq tab-width 8))
+
+; This will define the M-x linux-c-mode command. When hacking on a module, if
+; you put the string -*- linux-c -*- somewhere on the first two lines, this mode
+; will be automatically invoked. Also, you may want to add
+(setq auto-mode-alist (cons '("/usr/src/linux.*/.*\\.[ch]$" . linux-c-mode)  auto-mode-alist)) 
+
+(setq-default c-default-style "linux")
+
+
+2. Linux Kernel Sources
+
+https://elixir.bootlin.com/linux/latest/source
+
+
+1.build-essential
+
+Ich: Wieso funktionieren solche elementare Präprozessor-Aktionen nicht ?
+
+bgerald@gerald:~/van/battery/zinc_copper_battery/test$ make
+gcc zinc.c -o zinc
+zinc.c:2:10: fatal error: stdio.h: Datei oder Verzeichnis nicht gefunden
+ #include <stdio.h>  /* Standard C library. */
+          ^~~~~~~~~
+compilation terminated.
+makefile:2: recipe for target 'zinc' failed
+make: *** [zinc] Error 1
+
+Du: Rege dich nicht auf: gooogle und  es gibt eine einfache Lösung:
+Hast du vielleicht build-essential nicht installiert?
+
+Ich: Toll, jetzt geht es nach der Installierung mit
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ sudo apt install build-essential
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./zinc
+zinc copper batter
+
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
+
+-----------
+cd .../van/test/udp/server
+gcc udp_server.c && ./a.out
+
+54.4 Test the server with netcat
+--------------------------------
+sudo apt install ncat
+
+ncat -vv localhost 8888 -u
+
+54.5 Check open port with netstat
+---------------------------------
+netstat -u -a
+
+54.6 Client
+-----------
+cd .../van/test/udp/client
+gcc udp_client.c && ./a.out
+
+
+
+53 Git Ignore
+=============
+see ~/github/van/.gitignore
+
+
+52 Battery measurement devices
+==============================
+https://www.rohde-schwarz.com/de/produkte/messtechnik/dc-netzgeraete/rs-ngm200-netzgeraeteserie_63493-652229.html
+
+
+51 Canvas Example
+=================
+https://wiki.tcl-lang.org/page/Canvas+Object+Movement+Example
+
+SPS Taster Symbol
+-----------------
+https://www.google.com/search?q=SPS+taster+symbol&oq=SPS+taster+symbol&aqs=chrome..69i57j33i160.8450j0j15&client=ubuntu&sourceid=chrome&ie=UTF-8
+
+https://de.wikipedia.org/wiki/Tasterschaltung
+
+
+SPS Taster Schaltplan
+---------------------
+http://dieelektronikerseite.de/Lections/Schliesser,%20Oeffner%20-%20Auch%20fuer%20Wachleute.htm
+
+https://www.google.com/search?q=sps+visualisierung&client=ubuntu&hs=eGE&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjxjuDh_NT1AhU057sIHUlrD_IQ_AUoAXoECAEQAw&biw=2544&bih=1560&dpr=1#imgrc=Q25mHLd2leQG4M
+
+https://www.google.com/search?q=sps+visualisierung&client=ubuntu&hs=eGE&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjxjuDh_NT1AhU057sIHUlrD_IQ_AUoAXoECAEQAw&biw=2544&bih=1560&dpr=1#imgrc=B8EKn4K5fULzpM
+
+
+
+50 Tcltk Plotchart
+==================
+sudo apt install tklib
+
+https://github.com/tcltk/tklib/blob/master/examples/plotchart/scope.tcl
+
+cd  ~/van_development/van/test/tcl_c_interfac/plotchart
+./scope.tcl
+
+Screen Recording
+----------------
+https://wiki.ubuntuusers.de/SimpleScreenRecorder/
+sudo apt-get install simplescreenrecorder 
+simplescreenrecorder 
+
+sudo apt install ffmpeg
+
+cd ~/Videos
+ffmpeg -i simplescreenrecorder-2022-01-22_15.22.01.mkv gui.mp4
+
+
+cd
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+cd van/lib
+make lib
+cd ../van/test/tcl_c_interfac/tide
+
+50 Tcl-Test
+===========
+Start the cop program without display:
+cd ~/van_development/van/test/shared_memory/cop
+out/cop -e d -cbc 1 -bcc 1 -cdc 1 -bw -t
+
+oder
+
+./cop_prototype.sh 999 999 999 no_display &
+
+
+49 Tk Docs
+==========
+https://tkdocs.com/tutorial/index.html
+
+
+48 Tcl/Tk: A Developer's Guide by Clif Flynt
+============================================
+https://cpentalk.com/drive/uploads/Software%20Engineering%20Books/Books(%20CPENTalk.com%20)/Tcl%20Tk,%20Second%20Edition%20:%20A%20Developer's%20Guide%20(The%20Morgan%20Kaufmann%20Series%20in%20Software%20Engineering%20and%20Programming)%20(%20CPENTalk.com%20).pdf
+
+
+47 Darstellung von Formeln
+==========================
+http://www.inwap.com/pdp10/hbaker/hakmem/geometry.html#item6
+
+
+47 Darstellung von Formeln
+==========================
+http://www.inwap.com/pdp10/hbaker/hakmem/geometry.html#item6
+
+
+45 Tcl Cable Driver
+===================
+set c_id [cable -open controller]
+cable -close $c_id
+
+
+set sock [socket -async 127.0.0.1 33000]
+
+45.1 Tcl Design Tool
+--------------------
+Example:
+https://www.xilinx.com/support/documentation/sw_manuals/xilinx2019_1/ug835-vivado-tcl-commands.pdf
+
+
+44 Elektrizitätslehre
+=====================
+https://www.leifiphysik.de/elektrizitaetslehre
+
+
+43 Display Buffering
+====================
+Test
+----
+Start the cop thread system wihout display:
+out/cop -e d -cbc 999 -bcc 999 -cdc 999 -bw -t -cc 20
+
+Start the display simulation:
+out/dice
+
+or
+
+Start the cop process system wihout display:
+./cop_prototype.sh 999 999 999 no_d &
+
+Start the display simulation:
+out/dice
+
+
+Fehlersuche
+-----------
+out/cop -e d -cbc 1 -bcc 1 -cdc 666 -bw -t -cc 1
+
+dice:
+sleep time: 5ms
+
+BUF_Q_SIZE 32
+.............
+out/cop -e d -cbc 1 -bcc 1 -cdc 99 -bw -t -cc 1
+
+dice:
+sleepe time: 5ms
+
+printf in:
+buf_q_wm_objective_set
+
+
+43.1 os_buffer.c
+----------------
+Cable operations about I/O buffering.
+
+see Bip Buffer:
+https://www.codeproject.com/Articles/3479/The-Bip-Buffer-The-Circular-Buffer-with-a-Twist
+
+43.2 dice.c
+-----------
+Display cable entry points about I/O buffering.
+
+44.3 Controller Platform
+------------------------
+-e x  exclude a controller platform module: substitue x with:
+      d  display
+
+cop -e d ...
+
+Start the cop program without display:
+out/cop -e d -cbc 1 -bcc 1 -cdc 1 -bw -t
+
+Start the cop script wihout display:
+./cop_prototype.sh 1 1 1 no_d &
+
+
+42 Clock Release
+================
+42.1 Souces
+-----------
+~/github/van/os/os_clock.c
+
+42.1.1 Algorithm
+---------------
+Consider os_clock_barrier() ...
+
+42.2 Coverage
+--------------
+~/github/van/test/os
+make can
+./vote
+
+42.2.1 Algorithm
+----------------
+Consider clk_all_clocks() ...
+
+42.3 In Use
+-----------
+~/github/van/os/shared_memory/cop
+make all
+./cop_prototype.sh 987 789 1341 1432 &
+
+Consider cop_ctrl_exec() ...
+
+
+41 Clock Test
+-------------
+./cop_prototype.sh 987 789 2341 1432 &
+
+
+40 POSIX Timer
+--------------
+U.a als Referenz habe ich verwendet:
+
+https://riptutorial.com/posix/example/16306/posix-timer-with-sigev-thread-notification
+https://katastrophos.net/symbian-dev/GUID-B4039418-6499-555D-AC24-9B49161299F2.html
+
+#include <time.h>
+
+struct timespec ts;
+
+clock_gettime(CLOCK_MONOTONIC, &ts);
+
+
+/// Computes the elapsed time, in milliseconds, between two 'timespec'.
+inline uint32_t TimeElapsedMs(const struct timespec& tStartTime, const struct timespec& tEndTime)
+{
+   return 1000*(tEndTime.tv_sec - tStartTime.tv_sec) +
+          (tEndTime.tv_nsec - tStartTime.tv_nsec)/1000000;
+}
+
+os_timer_init()
+os_timer_start()
+os_timer_wait()
+
+#include <stdio.h>
+#include <stdint.h>
+#include <time.h>
+
+int64_t timespecDiff(struct timespec *timeA_p, struct timespec *timeB_p)
+{
+  return ((timeA_p->tv_sec * 1000000000) + timeA_p->tv_nsec) -
+           ((timeB_p->tv_sec * 1000000000) + timeB_p->tv_nsec);
+}
+
+int main(int argc, char **argv)
+{
+  struct timespec start, end;
+  clock_gettime(CLOCK_MONOTONIC, &start);
+
+  // Some code I am interested in measuring 
+
+  clock_gettime(CLOCK_MONOTONIC, &end);
+
+  uint64_t timeElapsed = timespecDiff(&end, &start);
+}
+
+#include <sys/time.h>
+
+long long current_timestamp() {
+    struct timeval te; 
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
+    return milliseconds;
+}
+
+
+
+struct timeval tval_before, tval_after, tval_result;
+
+gettimeofday(&tval_before, NULL);
+
+// Some code you want to time, for example:
+sleep(1);
+
+gettimeofday(&tval_after, NULL);
+
+timersub(&tval_after, &tval_before, &tval_result);
+
+printf("Time elapsed: %ld.%06ld
+", (long int)tval_result.tv_sec, (long int)tval_result.tv_usec);
+
+
+38 Cop Test - Control Technology Platform
+=========================================
+38.1 Quick Start
+----------------
+Start with 38.3-4,12 and try out 38.13.
+
+38.1  Lessons Learned
+---------------------
+It is easier for me to develope, test and transfer the algorithm Shared Memory Cables
+from one to many processes.
+
+38.2 Theory
+-----------
+Battery <-> Controller <-> Display
+
+<-> is a shared memory cable with non blocking
+synchronous or asynchronous operations.
+
+Unfinished tasks:
+o Missing timer in the cable logic
+
+Any subsequent development steps I describe when you call
+out/cob -h
+
+cop - control technology platform
+  -h      show this usage
+  -t      print the cop trace information
+Test cycle settings:
+  -dcc n  display generator cycles towards controller
+  -cbc n  controller generator cycles towards battery
+  -bcc n  battery generator cycles towards controller
+  -cdc n  controller generator cycles towards display
+Setting of the wait conditions:
+  -dw     display cycles with wait condition
+  -cw     controller cycles with wait condition
+  -bw     battery cycles with wait condition
+
+Programm configuration:
+  -s x    execute cop as stand-alone program: substitue x with:
+          c  controller
+          b  battery
+          d  display
+
+Default settings:
+  Cop trace:                off
+  Display cycles:           0
+  Ctrl->battery cycles:     0
+  Battery cycles:           0
+  Ctrl->display cycles:     0
+  Display wait condition:   off
+  Ctrl wait conditions:     off
+  Battery wait condition:   off
+  Stand-alone disp program: no
+  Stand-alone ctrl program: no
+  Stand-alone batt program: no
+
+38.3 Delivery
+-------------
+cd ~
+rm -fr github
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+
+38.4 Build
+----------
+cd ~/github/van/test/shared_memory/cop
+make
+
+38.5 Display Generator towards Controller
+-----------------------------------------
+1. out/cop -dcc 1
+
+38.6 Controller Generator towards Battery
+-----------------------------------------
+1. out/cop -cbc 1
+2. out/cop -dcc 1 -cbc 1
+
+38.7 Battery Generator towards Controller
+-----------------------------------------
+1. out/cop -bcc 1
+2. out/cop -dcc 1 -cbc 1 -bcc 1
+3. out/cop -dcc 1 -bcc 1
+4. out/cop -cbc 1 -bcc 1
+
+38.8 Controller Generator towards Display
+-----------------------------------------
+1. out/cop -cdc 1
+2. out/cop -dcc 1 -cbc 1 -bcc 1 -cdc 1
+
+38.9 Settings of the Wait Conditions
+------------------------------------
+1. out/cop -dcc 1 -cbc 1 -bcc 1 -cdc 1 -dw -cw -bw
+
+time out/cop -dcc 9999 -cbc 999 -bcc 9999 -cdc 999 -dw -bw
+time out/cop -dcc 9999 -cbc 999 -bcc 9999 -cdc 999
+
+38.10 Stand-alone Program Configuration
+---------------------------------------
+1. No Data Transfer
+...................
+Controller: out/cop -s c -cw -t
+Battery:    out/cop -s b -bw -t
+Display:    out/cop -s d -dw -t
+
+2. Circulate 1 Packet
+.....................
+Controller: out/cop -cbc 1 -cdc 1 -s c -cw -t
+Battery:    out/cop -bcc 1        -s b -bw -t
+Display:    out/cop -dcc 1        -s d -dw -t
+
+2. Circulate n Packets
+......................
+Controller: out/cop -cbc 4 -cdc 4 -s c -cw -t
+Battery:    out/cop -bcc 4        -s b -bw -t
+Display:    out/cop -dcc 4        -s d -dw -t
+
+38.12 Prerequistes
+------------------
+Install the xfc-Termain because of the hold attribute:
+sudo apt install xfce4-terminal
+
+38.13 Final Test
+----------------
+1. Circulate n Packets
+......................
+./cop_prototype.sh
+
+Have fun,
+Gerald
+
+
+37 Leightweight Desktop
+=======================
+1. xfc4 Terminal
+----------------
+sudo apt install xfce4-terminal
+
+2. xfc4
+-------
+https://wiki.ubuntuusers.de/Xfce/
+
+sudo apt-get install xfce4
+
+
+36 Tcl/Tk
+=========
+36.1 Event-Driven Programming
+-----------------------------
+http://www.beedub.com/book/2nd/event.doc.html
+
+36.2 Tcl_CreateChannel - tkConsole.c
+------------------------------------
+https://core.tcl-lang.org/tk/artifact/e52bb3c52e11275b846db29191c6209fa49d39a8
+
+36.3 asynchronous file IO in Tcl
+--------------------------------
+https://stackoverflow.com/questions/21063316/asynchronous-file-io-in-tcl
+
+36.4 Input & output
+-------------------
+https://zetcode.com/lang/tcl/io/
+
+37.5 Channel I/O: socket, fileevent, vwait
+------------------------------------------
+https://wiki.tcl-lang.org/page/Tcl+Tutorial+Lesson+40
+
+37.6 Tcl Basics
+---------------
+https://www.ee.columbia.edu/~shane/projects/sensornet/part1.pdf
+
+37.7 Tcl IO Drivers
+-------------------
+https://wiki.tcl-lang.org/page/Tcl+IO+Drivers
+
+
+35. Non Blocking Synchronous Data Transfer
+------------------------------------------
+1. Ctrl. Tech. Output with Copy Read
+out/site -d 1 -u 0 -t -v nc -n nc
+
+2. Neighbour Output with Copy Read
+out/site -d 0 -u 1 -t -v nc -n nc
+
+3. Ctrl. Tech. and Neighbour Output with Copy Read
+out/site -d 1 -u 1 -t -v nc -n nc
+out/site -d 1 -u 1 -t -v bc -n nc
+
+4. Ctrl. Tech. Output with Zero Copy Read
+out/site -d 1 -u 0 -t -v nz -n nz
+
+5. Neighbour Output with Zero Copy Read
+out/site -d 0 -u 1 -t -v nz -n nz
+
+6. Ctrl. Tech. and Neighbour Output with Zero Copy Read
+out/site -d 1 -u 1 -t -v nz -n nz
+
+
+34. Van Snapshot
+================
+
+1. Abstract
+-----------
+o New cable theory, see ~/github/van/os/os_cable.c
+
+In detail I will present it later, since it is not complete.
+
+1.1 Motivation
+--------------
+Connect any device like battery or display with a controller.
+
+You can do it with with a certain vision:
+o What is a van cable ?
+o How does work a van cable ?
+
+If I am pleased with the outcome, there is a power point presentation.
+
+2. Download
+-----------
+cd ~
+rm -fr github
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+
+3. Delivery Test
+----------------
+cd ~/github/van/test/shared_memory/site
+make all
+./site_test.sh 11
+
+4. Van Lib
+----------
+cd ~/github/van/lib
+make lib
+
+4. IPC Test
+-----------
+Open 2 terminals
+
+4.1. 1. Terminal
+................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+4.1. 2. Terminal
+................
+cd ~/github/van/test/shared_memory/pot
+make
+./pot
+
+5. Python Test
+--------------
+Open 2 terminals.
+
+5.1. 1. Terminal
+................
+cd ~/github/van/test/shared_memory/vat
+make
+./vat
+
+5.3. 2. Terminal
+................
+cd ~/github/van/test/python_c_interface
+./van.py
+
+6. Coverage
+-----------
+cd ~/github/van/test/os
+make can
+./vote
+
+
+33. Datenbunker
+
+https://datenbunker.dyn.ddnss.de/login
+
+Gerald
+68UzwzTDkHtGjhN3
+
+
+Herbert
+OSuYy7L1vpUhbqcD
+
+
+
+Information for developer
+=========================
+github
+
+setting->devoloper settings->
+Personal access tokens
+
+
+.. tokens-> ...new token
+Repo
+x
+...
+Username for 'https://github.com': gerald1962
+Password for 'https://gerald1962@github.com': <token> see above
+
+
+Van sandbox
+===========
+Since van is not mature, the installation procedure is cumbersome.
+My development enviromnet is called van_development.
+
+1. Install van
+cd ~
+mkdir github
+cd github
+git clone https://github.com/gerald1962/van
+    
+2. Build the shared library
+cd van/lib
+
+
+31 Asynchronour I/O
+
+https://titanwolf.org/Network/Articles/Article?AID=cc3ad12f-1f90-43b6-b2f3-29d29f8e59da
+https://man7.org/linux/man-pages/man7/sigevent.7.html
+http://davmac.org/davpage/linux/async-io.html
+https://man7.org/linux/man-pages/man7/signal.7.html
+
+
+30 AR-VR Standardisierung
+
+https://www.khronos.org/
+
+
+29 Linux Atomic-Operations
+
+C atomic_exchange(volatile A *object, C desired)
+https://www.khronos.org/registry/OpenCL/sdk/2.2/docs/man/html/atomic_exchange.html
+
+
+28 IPC - Shared Memory
+
+28.4 Shm File
+
+ dd - convert and copy a file
+
+dd if=/dev/zero of=shm.txt bs=8192 count=1
+
+
+28.3 Named Semaphores
+
+lsof - list open files
+
+gerald@gerald:~$ lsof /dev/shm/sem.*
+COMMAND    PID   USER  FD   TYPE DEVICE SIZE/OFF NODE NAME
+sac     399626 gerald DEL    REG   0,26           594 /dev/shm/sem.py_int
+sac     399626 gerald DEL    REG   0,26           589 /dev/shm/sem.van_int
+
+Remove named semaphore:
+rm /dev/shm/sem.*
+
+28.2 shm_open
+
+man shm_open
+
+28.1 ipcs
+
+man ipcs
+--------
+ipcs -s
+
+NAME
+       ipcs - show information on IPC facilities
+
+SYNOPSIS
+       ipcs [options]
+
+DESCRIPTION
+       ipcs  shows  information on the inter-process communication facilities for which the calling process
+       has read access.  By default it shows information about all three resources: shared memory segments,
+       message queues, and semaphore arrays.
+
+
+
+27 Shared Library
+
+https://www.cprogramming.com/tutorial/shared-libraries-linux-gcc.html
+
+
+
+26 Linux
+
+26.1 Sources
+
+https://github.com/torvalds/linux
+
+26.2 Documentation
+
+https://www.kernel.org/doc/html/latest/
+
+
+
+git config -l
+
+25 Github
+
+=van2021
+gerald1962
+
+
+Token
+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
+
+
+https://stackoverflow.com/questions/68775869/support-for-password-authentication-was-removed-please-use-a-personal-access-to
+
+git config --global user.name "your_github_username"
+git config --global user.email "your_github_email"
+git config -l
+git clone https://github.com/YOUR-USERNAME/YOUR-REPOSITORY
+Username for 'https://github.com' : username
+Password for 'https://github.com' : give your personal access token here
+git config --global credential.helper cache
+git config --global --unset credential.helper
+
+git clone https://github.com/gerald1962/van
+git pull -v
+
+
+24 Root
+
+sudo -i
+
+
+23 Interfacing Python and C code
+
+23.1 Tutorial
+
+https://reptate.readthedocs.io/developers/python_c_interface.html
+
+hat mich erst ziemlich verunsichert, aber ich habe es erfolgreich in etwas
+umgewandelt, was mich interessiert:
+
+23.2 VAN Shared Library
+
+van.c
+-----
+#include <stdio.h>
+void hello(void)
+{
+	printf("Hello python, here is Gerald.\n");
+}
+
+makefile:
+---------
+all:
+	gcc -o van.so -shared -fPIC -O2 van.c
+
+
+23.3 Python Link to VAN
+
+from ctypes import *
+
+c_char *
+c_int
+
+s = "Hello, van"
+c_s = c_char_p(s)
+print(c_s.value)
+
+n = len(s)
+c_n = c_int(n)
+print(c_n.value)
+
+
+van.py:
+------
+from ctypes import *
+lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+van = CDLL(lib_path)
+van.hello.restype = None
+van.hello()
+
+23.4 Test
+
+gerald@gerald:~/van/test/python_c_interface$ python
+Python 2.7.18 (default, Mar  8 2021, 13:02:45) 
+[GCC 9.3.0] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from ctypes import *
+>>> lib_path = "/home/gerald/van/test/python_c_interface/van.so"
+>>> van = CDLL(lib_path)
+>>> van.hello.restype = None
+>>> van.hello()
+Hello python, here is Gerald.
+>>> quit()
+gerald@gerald:~/van/test/python_c_interface$ 
+
+23.5 GDB
+
+sudo -i
+gdb
+cd /home/gerald/van/test/python_c_interface
+attach <pid>
+b hello
+c
+
+23.6 OS
+
+os_python_shm.c
+os_van_shm.c
+
+
+22 Save colored emacs text from shell
+
+C-u M-x ps-print-buffer-with-faces
+
+
+21 Python
+
+https://py-tutorial-de.readthedocs.io/de/python-3.3/interpreter.html
+
+21.1 Die interaktive Startup-Datei
+
+import os
+filename = os.environ.get('PYTHONSTARTUP')
+if filename and os.path.isfile(filename):
+    exec(open(filename).read())
+
+21.2 Die Customization Module
+
+>>> import site
+>>> site.getusersitepackages()
+
+'/home/gerald/.local/lib/python2.7/site-packages'
+
+
+20 DVI to PDF
+
+dvipdf [ options ] input.dvi [ output.pdf ] ...
+
+
+19 Latex C-Style
+
+google: C code nach Latex
+
+https://tex.stackexchanghttps://tex.stackexchange.com/questions/348651/c-code-to-add-in-the-document/348653
+
+Problems with the xcolor style.
+Die Farben kommentiere ich aus, dann sieht das Ergebnis ganz passabel aus.
+
+Include all sources in csd.ex
+latex csd.tex
+dvipdf csd.dvi
+
+
+18 Eclipse
+
+sudo apt install snap
+sudo snap install --classic eclipse
+eclipse&
+
+https://www.edv-buchversand.de/productinfo.php?replace=false&cnt=productinfo&mode=2&type=2&id=dp-196&index=2&nr=0&art=Blick%20ins%20Buch&preload=false&page=1&view=fit&Toolbar=1&pagemode=none
+
+
+17 Shared Memory
+
+How to use shared memory in python and C/C++
+https://stackoverflow.com/questions/49103709/how-to-use-shared-memory-in-python-and-c-c/49118076
+
+Share memory between C/C++ and Python
+https://pretagteam.com/question/share-memory-between-cc-and-python
+
+https://realpython.com/python-mmap/
+
+Python mmap: Improved File I/O With Memory Mapping
+
+
+16 Multi Thread Test
+
+gerald@gerald:~/van/test$ ./cost|grep -E 'test_system|TEST|MISMATCH|FAILURE'
+
+
+15 Code Coverage
+
+fatal error: sys/cdefs.h: No such file or directory
+apt install gcc-multilib
+
+
+14 Documents
+
+file:///home/gerald/Downloads/energies-14-00176.pdf
+http://ermak.cs.nstu.ru/Understanding.Linux.Kernel.pdf
+https://tldp.org/LDP/lkmpg/2.6/lkmpg.pdf
+
+
+13 Git Difftool
+
+.gitconfig
+
+[diff]
+    tool = meld
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+
+12 System Load
+
+12.1 glances
+
+12.2 monitorix
+
+http://localhost:8080/monitorix
+
+https://de.wikihow.com/In-Ubuntu-Root-werden
+
+
+https://kifarunix.com/install-monitorix-on-ubuntu/
+
+https://idroot.us/install-monitorix-ubuntu-20-04/
+
+12.3 Saidar
+
+Saidar also allows to monitor system device activities via the command line.
+
+enter image description here
+
+You can install is with this command:
+
+sudo apt-get install saidar
+To start monitoring, run this command:
+
+saidar -c -d 1
+Stats will be refreshed every second.
+
+12.4 Conky
+sudo apt install conky-all
+
+11 Thread Tool
+
+ps
+top
+htop
+
+There's also another option which is true CLI ps -e -T | grep <application name or pid>
+
+-e shows all processes
+-T lists all threads
+| pipes the output to the next command
+grep this filters the contents
+
+
+10. Error names
+
+sudo apt install moreutils
+errno -l or
+errno ESRCH or
+errno 3
+
+
+9. Git
+
+9.1 Git installieren
+git --version
+
+9.2 Git konfigurieren
+
+git config --global user.name "Gerald Schueller"
+git config --global user.email "gerald.schueller@web.de"
+
+git config --list
+
+emacs ~/.gitconfig
+
+9.3 Ein neues Repository erstellen
+git init
+Leeres Git-Repository in /home/gerald/van/.git/ initialisiert
+
+git add .
+
+Creating a commit message
+git commit -m "Initial Commit" -a
+or
+git commit -m "Initial Commit" file
+
+Pushing changes to a remote server
+git push origin master
+
+Viewing branches
+git branch -a
+
+
+Creating branches
+git checkout -b develop
+
+git checkout master
+git checkout develop
+
+git add faq.txt
+git commit -m "faq.txt file" faq.txt
+
+Merging code between branches
+git checkout master
+git merge develop --no-ff
+
+9.4 Status des Repositorys
+git status
+
+9.5 Staging
+git add .
+or
+git add faq.txt
+git commit -m "Git information" .
+
+9.6 Branches
+git branch develop
+
+9.7 Branches weckseln
+git checkout devlop
+
+9.8 Branches zusammenführen
+git checkout master
+git merge develop
+
+Branch entfernen
+git branch -d develop
+
+9.9 Unterschied zwischen Commits prüfen
+git log
+
+Inhalt des Commit
+git show ID
+
+9.10 Frühere Version
+git checkout ID file
+
+9.11 Commit rückgängig machen
+git revert HEAD
+git revert <commit-id>
+
+9.12 Dateien ignorieren
+.gitignore
+
+9.13 Dateien wiederherstellen
+git checkout -- *
+
+
+8. RFC Editor
+
+https://www.rfc-editor.org/
+
+apt-file search datetime2.sty
+
+sudo apt install groff
+
+groff -t -mandoc -Tascii rfc_template.nroff > rfc_template.txt
+groff -t -mandoc -Tascii van.nroff > van.txt
+
+groff -t -mandoc -Tascii van.nroff > van.txt
+
+
+7. GDB configuration
+
+Manual:
+https://sourceware.org/gdb/current/onlinedocs/gdb/
+
+If gdb-many-windows is non-nil, then M-x gdb displays the following frame layout:
+
++--------------------------------+--------------------------------+
+|   GUD interaction buffer       |   Locals/Registers buffer      |
+|--------------------------------+--------------------------------+
+|   Primary Source buffer        |   I/O buffer for debugged pgm  |
+|--------------------------------+--------------------------------+
+|   Stack buffer                 |   Breakpoints/Threads buffer   |
++--------------------------------+--------------------------------+
+
+You also have an option to display the struct in an indentation and new line.
+For that you need to set the pretty print:
+
+set print pretty on
+
+
+6. Tag file for emacs
+
+find /home/gerald/van -name "*.[ch]" -print | etags -
+
+M-x visit-tags-tables TAGS
+
+Some of the useful "Tags" functions are:
+
+M-.              Find first definition of a tag.
+M-x tags-search  Search for a specified regular expression through the files in the selected tag table.
+M-,              Find next definition of previous tag, next occurrence of specified regular expression.
+q
+
+5. Core Dump
+
+If you type
+
+ulimit -c unlimited
+
+then that will tell bash that its programs can dump cores of any size.
+
+You can use the core file in the following way:
+
+gdb <executable> <core-file>
+
+For example:
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./out/zinc 
+Z> zinc copper battery
+^Ctrap_signal_handler: received SIGINT, generate a core dump.
+Abgebrochen (Speicherabzug geschrieben)
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ gdb out/zinc core
+
+bt  Backtrace: display the program stack.
+
+Load the core dump file:
+core-file core 
+
+
+4. Common Makefile
+
+The common makefile is located in ...
+
+5. Packagesp
+
+5.1 Emacs
+
+5.2 Linux
+
+
+3. Emacs-Konfiguration in .emacs
+
+(defun linux-c-mode ()
+ "C mode with adjusted defaults for use with the Linux kernel."
+ (interactive)
+ (c-mode)
+ (setq c-indent-level 8)
+ (setq c-brace-imaginary-offset 0)
+ (setq c-brace-offset -8)
+ (setq c-argdecl-indent 8)
+ (setq c-label-offset -8)
+ (setq c-continued-statement-offset 8)
+ (setq indent-tabs-mode nil)
+ (setq tab-width 8))
+
+; This will define the M-x linux-c-mode command. When hacking on a module, if
+; you put the string -*- linux-c -*- somewhere on the first two lines, this mode
+; will be automatically invoked. Also, you may want to add
+(setq auto-mode-alist (cons '("/usr/src/linux.*/.*\\.[ch]$" . linux-c-mode)  auto-mode-alist)) 
+
+(setq-default c-default-style "linux")
+
+
+2. Linux Kernel Sources
+
+https://elixir.bootlin.com/linux/latest/source
+
+
+1.build-essential
+
+Ich: Wieso funktionieren solche elementare Präprozessor-Aktionen nicht ?
+
+bgerald@gerald:~/van/battery/zinc_copper_battery/test$ make
+gcc zinc.c -o zinc
+zinc.c:2:10: fatal error: stdio.h: Datei oder Verzeichnis nicht gefunden
+ #include <stdio.h>  /* Standard C library. */
+          ^~~~~~~~~
+compilation terminated.
+makefile:2: recipe for target 'zinc' failed
+make: *** [zinc] Error 1
+
+Du: Rege dich nicht auf: gooogle und  es gibt eine einfache Lösung:
+Hast du vielleicht build-essential nicht installiert?
+
+Ich: Toll, jetzt geht es nach der Installierung mit
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ sudo apt install build-essential
+
+gerald@gerald:~/van/battery/zinc_copper_battery/test$ ./zinc
+zinc copper batter
+
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
+=logisch2021
+
+A. Manifest
+
+Our first idea is to put in place a rapid prototype to design a vanadium redox flow battery.
+
+Open issues:
+o State of the art
+o Theory behind the simulation
+o What does the simulation show?
+o A simulation shall refer to potential customers.
+...
+
+And we are doing that with a battery simulation defined with the programming language C.
+The executable program runs on a Linux PC.
+
+
+B. Battery Integration
+
+Compile and link from scratch:
+make all
+
+Compile and link continuously:
+make van
+
+Update the dependencies:
+make depend
+
+
+C. Meeting Minutes - Mo 15. Nov
+
+Ruth likes to kwnow, how was our meeting. So my first question is, how can we reconstruct actions:
+
+Present: Holger, Adrain, Simon, Herbert, Gerald
+
+Historic droll stories, I will skip them here.
+
+Furthermore is Holger's overview picture on the whiteboard.
+
+
+D. Research, Development, Integration, Test and Delivery
+
+If one looks at what is required, no matter how small or large: such key feature you should consider.
+
+D.1 Research
+
+Action Item:
+e.g with Presentation with Linux LibreOffice Impress
+e.g Current state as LaTeX paper
+
+D.2 Development
+
+If you want I am able to present the current state of the tool devepment.
+
+D.3 Integration
+
+My primary hobbyhore is emamcs and Linux with many extension like helm and schemes.
+
+D.4 Test
+
+XXX
+
+D.5 Delivery
+
+XXX
+ww
+
+
