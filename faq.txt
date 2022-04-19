@@ -2,19 +2,6 @@ cd
 mkkdir github
 git clone https://github.com/gerald1962/van
 
-
-
-github:
-Accout:
-https://github.com/gerald1962/van
-
-Password:
-=Logisch2022
-
-Token:
-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
-
-
 88 Stdout Test
 ==============
 x.c File
@@ -35,11 +22,58 @@ $ ./a.out
 $ X
 
 
+93 Makefile for an external kernel module
+=========================================
+see
+https://www.kernel.org/doc/Documentation/kbuild/modules.txt
+
+93.1 Kbuild File
+----------------
+The file may be as simple as a single line:
+
+	obj-m := <module_name>.o
+
+The kbuild system will build <module_name>.o from <module_name>.c,
+and, after linking, will result in the kernel module <module_name>.ko.
+
+
+93.2 Command Syntax
+-------------------
+The command to build an external module is:
+
+$ make -C <path_to_kernel_src> M=$PWD
+
+man make:
+...
+-C dir, --directory=dir
+            Change  to  directory dir before reading the makefile.
+
+93.3 Targets
+------------
+	modules
+		The default target for external modules. It has the
+		same functionality as if no target was specified. See
+		description above.
+
+94.4 User Mode Linux
+--------------------
+ARCH=um
+
+94.5 Example
+------------
+obj-m := hello.o
+
+# Linux kernel version.
+KVER = linux-5.18-rc3
+
+all: 
+	make -C $(HOME)/uml/$(KVER) ARCH=um M=$(PWD) modules
+
+
 92 Linux School
 ===============
 -> /home/gerald/uml/linux-5.18-rc3/samples
 --> training
-
 
 91 Linux Device Driver
 ======================

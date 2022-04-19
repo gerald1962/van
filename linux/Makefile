@@ -1,7 +1,10 @@
 obj-m := hello.o
 
-EXTRA_CFLAGS=-I$(PWD)/inc
+# Linux kernel version.
+KVER = linux-5.18-rc3
 
+all: 
+	make -C $(HOME)/uml/$(KVER) ARCH=um M=$(PWD) modules
 
-all:
-	make -C /home/gerald/uml/linux-5.18-rc3 ARCH=i386 M=`pwd` modules
+clean:
+	@rm -f *~ *.ko *.mod.* *.mod modules.* Module.*
