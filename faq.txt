@@ -1,6 +1,3 @@
-cd
-mkkdir github
-git clone https://github.com/gerald1962/van
 
 88 Stdout Test
 ==============
@@ -20,6 +17,20 @@ Test
 ----
 $ ./a.out
 $ X
+
+
+94 Github Access Token
+======================
+https://github.com/settings/tokens
+->
+https://github.com/gerald1962/van
+-> Click on orange circle->settings
+-> Developer settings
+-> Personal access tokens
+-> Generate new token
+Note: x
+Select all scopes
+-> Copy the generated token.
 
 
 93 Makefile for an external kernel module
