@@ -1,1 +1,0 @@
-cmd_/home/gerald/van_development/van/linux/Module.symvers := sed 's/\.ko$$/\.o/' /home/gerald/van_development/van/linux/modules.order | scripts/mod/modpost    -o /home/gerald/van_development/van/linux/Module.symvers -e -i Module.symvers   -T -

@@ -1,1 +1,0 @@
-cmd_/home/gerald/van_development/van/linux/hello.ko := ld -r  -m elf_x86_64  --build-id=sha1  -T scripts/module.lds -o /home/gerald/van_development/van/linux/hello.ko /home/gerald/van_development/van/linux/hello.o /home/gerald/van_development/van/linux/hello.mod.o;  true

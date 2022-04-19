@@ -7,4 +7,4 @@ all:
 	make -C $(HOME)/uml/$(KVER) ARCH=um M=$(PWD) modules
 
 clean:
-	@rm -f *~ *.ko *.mod.* *.mod modules.* Module.*
+	@rm -f *~ *.o *.ko *.mod.* *.mod modules.* Module.* .*.cmd
