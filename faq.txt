@@ -19,10 +19,149 @@ $ ./a.out
 $ X
 
 
+97 C Standard
+=============
+
+97.1 C99 Standad
+----------------
+see
+https://en.wikipedia.org/wiki/C99
+
+gcc -Wall -std=c99 -o outputfile sourcefile.c
+
+Documents
+.........
+http://www.open-std.org/jtc1/sc22/WG14/www/docs/n1256.pdf
+http://www.open-std.org/jtc1/sc22/wg14/www/docs/n897.pdf
+
+97.2 C99 Features
+-----------------
+see
+https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
+
+97.3 C11 - Latest Standard
+--------------------------
+https://en.wikipedia.org/wiki/C11_(C_standard_revision)
+
+
+96 Linux Kernel Test
+====================
+
+96.2 KUnit Documentation
+------------------------
+https://www.kernel.org/doc/html/latest/dev-tools/kunit/api/test.html#c.kunit_suite
+
+96.1 KUnit Use
+--------------
+see
+/home/gerald/van_development/van/linux/hello.c
+based on
+https://www.kernel.org/doc/html/latest/dev-tools/kunit/api/test.html#c.kunit_suite
+
+Study the interfaces e.g. here:
+<linux-kernel-version>/include/kunit/test.h
+
+And consider the implementation here:
+<linux-kernel-version>/lib/kunit/test.c
+
+96.1 KUnit Linux Kernel
+-----------------------
+Goto: The Linux Kernel Archives, see
+https://www.kernel.org/
+
+Klick on the latest tarball:
+mainline:	5.18-rc3	2022-04-17
+
+Make working the Linux Kernel:
+cd
+mkdir uml
+cd uml
+mv ~/Downloads/linux-5.18-rc3.tar.gz .
+tar xfv linux-5.18-rc3.tar.gz
+cd linux-5.18-rc3
+make ARCH=um menuconfig
+make config ARCH=um
+make linux ARCH=um
+./linux --help
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash
+
+96.2 KUnit Example
+------------------
+cd $HOME/van_development/van/linux
+$ ./first.sh 
+  CALL    scripts/checksyscalls.sh
+  CALL    scripts/atomic/check-atomics.sh
+  MODPOST modules-only.symvers
+  GEN     Module.symvers
+  CC [M]  /home/gerald/van_development/van/linux/hello.mod.o
+  LD [M]  /home/gerald/van_development/van/linux/hello.ko
+
+96.1 KUnit Test
+---------------
+cd /home/gerald/uml/linux-5.18-rc
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash
+
+cd $HOME/van_development/van/linux
+
+# insmod hello.ko
+Hello, world.
+    # Subtest: hello_test
+    1..1
+    ok 1 - hello_add_test_basic
+ok 8 - hello_test
+
+# insmod hello.ko
+Hello, world.
+    # Subtest: hello_test
+    1..1
+    ok 1 - hello_add_test_basic
+ok 8 - hello_test
+
+# rmmod -f hello.ko
+Goodbye.
+
+
+95 Linux Torvards Linux Latest
+==============================
+A
+-
+cd $HOME/github
+rm -fr linux
+git clone https://github.com/torvalds/linux
+Klone nach 'linux' …
+remote: Enumerating objects: 8716629, done.
+Empfange Objekte:   0% (49219/8716629), 25.73 MiB | 244.00 KiB/s
+...
+cd linux
+make ARCH=um menuconfig
+make config ARCH=um
+make linux ARCH=um
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash
+make $HOME/van_development/van/linux/hello.ko ARCH=um
+
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash
+cd /home/gerald/van_development/van/linux
+insmod hello.ko
+Hello, world.
+rmmod -f hello.ko
+
+$ dmesg
+...
+[    0.230000]     mem=1024M
+[   77.140000] hello: loading out-of-tree module taints kernel.
+[   77.140000] Hello, world.
+
+B
+-
+cd $HOME/van_development/van/linux
+make -f Latest.mk clean
+make -f Latest.mk
+
+
 94 Github Access Token
 ======================
 https://github.com/settings/tokens
-->
+-> 
 https://github.com/gerald1962/van
 -> Click on orange circle->settings
 -> Developer settings
