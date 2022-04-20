@@ -19,6 +19,18 @@ $ ./a.out
 $ X
 
 
+Hi Herbert,
+
+1. C; 2. Test
+
+1.
+Mit dem C-Standard habe ich mich beschäftigt wegen des
+Linux-Kernels: 97
+
+2.
+Das Testkonzept interessiert mich und war anstrengend
+lauffähig zu machen: 96
+
 97 C Standard
 =============
 
@@ -43,6 +55,7 @@ https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 --------------------------
 https://en.wikipedia.org/wiki/C11_(C_standard_revision)
 
+2.
 
 96 Linux Kernel Test
 ====================
