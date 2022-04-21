@@ -1,35 +1,58 @@
-
-88 Stdout Test
-==============
-x.c File
---------
-#include <stdio.h>
-
-void main(void) {
-	printf("X\n");
-}
-
-Build
------
-gcc x.c
-
-Test
-----
-$ ./a.out
-$ X
-
-
 Hi Herbert,
 
-1. C; 2. Test
+das Linux Kernel Testsystem möchte ich gerne verstehen.
 
-1.
-Mit dem C-Standard habe ich mich beschäftigt wegen des
-Linux-Kernels: 97
+Der Erfinder ist:
+Brendan Higgins <brendanhiggins@google.com>
 
-2.
-Das Testkonzept interessiert mich und war anstrengend
-lauffähig zu machen: 96
+Diese Erfindung interessant, denn alle Linux Kernel
+Entwickler verwenden sie seit 2019 und Linus integegriert
+das alles fleissig.
+
+Schrittweise rekonstruiere ich seine Erfindung in vu_main.c.
+
+Besonders weit bin noch nicht gekommen, aber ich bin zufrieden:
+das Reengineering ist anstrengend:
+siehe unten.
+
+LG,
+Gerald
+
+98 KUnit -> VUnit
+=================
+van_development/van/vunit$ tree
+.
+├── include
+│   ├── kunit
+│   │   ├── assert.h
+│   │   ├── test-bug.h
+│   │   ├── test.h
+│   │   └── try-catch.h
+│   └── linux
+│       ├── completion.h
+│       ├── list.h
+│       ├── swait.h
+│       └── types.h
+├── lib
+│   └── kunit
+│       ├── assert.c
+│       ├── debugfs.c
+│       ├── debugfs.h
+│       ├── executor.c
+│       ├── executor_test.c
+│       ├── Kconfig
+│       ├── kunit-example-test.c
+│       ├── kunit-test.c
+│       ├── Makefile
+│       ├── string-stream.c
+│       ├── string-stream.h
+│       ├── string-stream-test.c
+│       ├── test.c
+│       ├── try-catch.c
+│       └── try-catch-impl.h
+├── makefile
+└── vu_main.c
+
 
 97 C Standard
 =============
@@ -55,7 +78,6 @@ https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html
 --------------------------
 https://en.wikipedia.org/wiki/C11_(C_standard_revision)
 
-2.
 
 96 Linux Kernel Test
 ====================
