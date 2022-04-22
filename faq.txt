@@ -1,22 +1,3 @@
-Hi Herbert,
-
-das Linux Kernel Testsystem möchte ich gerne verstehen.
-
-Der Erfinder ist:
-Brendan Higgins <brendanhiggins@google.com>
-
-Diese Erfindung interessant, denn alle Linux Kernel
-Entwickler verwenden sie seit 2019 und Linus integegriert
-das alles fleissig.
-
-Schrittweise rekonstruiere ich seine Erfindung in vu_main.c.
-
-Besonders weit bin noch nicht gekommen, aber ich bin zufrieden:
-das Reengineering ist anstrengend:
-siehe unten.
-
-LG,
-Gerald
 
 98 KUnit -> VUnit
 =================
