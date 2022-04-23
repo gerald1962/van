@@ -1,3 +1,43 @@
+HI Herbert,
+
+Über Elixir kann man den Linux-Kernel gut untersuchen, siehe unten.
+
+Wie schon früher erwähnt: wahrscheinlich hat Google die klügsten
+Linux-Entwickler: über ein Reengenierung von dem Linux Test Tool des
+Entwicklers:
+Brendan Higgins <brendanhiggins@google.com>
+
+Der programmiert ziemlich viel über den Präprozessor mit Code-Genererierung.
+
+Wahrscheinlich will der alles mit wenig Text und möglichst wenig
+umständlich hinschreiben und lauffähig machen.
+
+100 Elixir
+==========
+Elixir Cross Referencer - Explore source code in your browser - Particularly
+useful for the Linux kernel: see
+https://elixir.bootlin.com/linux/latest/source/kernel
+
+Besonders viel von Brendans Ideen habe ich noch nicht verstanden,
+see
+/home/gerald/van_development/van/vunit/vu_main.c
+
+Wie immer speichere ich das auf github ab, damit es nicht
+verlorengeht:
+siehe 
+
+
+
+99 Linux Acronyms
+=================
+gfp  -  Get Free Pages = __get_free_pages; see
+These flags are flags passed to functions that allocate memory, ...
+https://github.com/torvalds/linux/blob/master/include/linux/gfp.h
+
+rcu  -  Read, Copy, Update; see:
+RCU is a synchronization mechanism ...
+https://www.kernel.org/doc/html/latest/RCU/whatisRCU.html
+
 
 98 KUnit -> VUnit
 =================
