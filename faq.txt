@@ -25,6 +25,20 @@ see
 Wie immer speichere ich das auf github ab, damit es nicht
 verlorengeht:
 siehe 
+gerald@gerald:~/van_development/van/vunit$ git commit -a -m "vunit"
+[linux 6a45d70] vunit
+ 2 files changed, 520 insertions(+), 6 deletions(-)
+ 
+gerald@gerald:~/van_development/van/vunit$ git branch
+  c_sharp
+* linux
+  main
+  
+gerald@gerald:~/van_development/van/vunit$ git checkout main
+..
+
+git add .
+
 
 
 
