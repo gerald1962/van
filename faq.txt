@@ -1,16 +1,3 @@
-HI Herbert,
-
-Über Elixir kann man den Linux-Kernel gut untersuchen, siehe unten.
-
-Wie schon früher erwähnt: wahrscheinlich hat Google die klügsten
-Linux-Entwickler: über ein Reengenierung von dem Linux Test Tool des
-Entwicklers:
-Brendan Higgins <brendanhiggins@google.com>
-
-Der programmiert ziemlich viel über den Präprozessor mit Code-Genererierung.
-
-Wahrscheinlich will der alles mit wenig Text und möglichst wenig
-umständlich hinschreiben und lauffähig machen.
 
 100 Elixir
 ==========
@@ -39,7 +26,42 @@ gerald@gerald:~/van_development/van/vunit$ git checkout main
 
 git add .
 
+erald@gerald:~/van_development/van/vunit$ git status
+Auf Branch linux
+nichts zu committen, Arbeitsverzeichnis unverändert
+gerald@gerald:~/van_development/van/vunit$ git branch
+  c_sharp
+* linux
+  main
+  
+gerald@gerald:~/van_development/van/vunit$ git checkout main
+Zu Zweig »main« gewechselt
+Ihr Branch ist 1 Commit vor 'origin/main'.
+  (benutzen Sie "git push", um lokale Commits zu publizieren)
+gerald@gerald:~/van_development/van/vunit$ git merge linux
+Aktualisiere 879c7fd..359ae96
+Fast-forward
+ faq.txt         |  54 ++++++++++++++
+ vunit/vu_main.c | 486 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 534 insertions(+), 6 deletions(-)
+gerald@gerald:~/van_development/van/vunit$ 
 
+gerald@gerald:~/van_development/van/vunit$ git branch
+  c_sharp
+  linux
+* main
+gerald@gerald:~/van_development/van/vunit$ git push
+Username for 'https://github.com': gerald1962
+Password for 'https://gerald1962@github.com': 
+Objekte aufzählen: 15, fertig.
+Zähle Objekte: 100% (15/15), fertig.
+Delta-Kompression verwendet bis zu 8 Threads.
+Komprimiere Objekte: 100% (11/11), fertig.
+Schreibe Objekte: 100% (11/11), 8.17 KiB | 4.08 MiB/s, fertig.
+Gesamt 11 (Delta 7), Wiederverwendet 0 (Delta 0)
+remote: Resolving deltas: 100% (7/7), completed with 3 local objects.
+To https://github.com/gerald1962/van
+   f6696a9..359ae96  main -> main
 
 
 99 Linux Acronyms
