@@ -1,0 +1,1 @@
+cmd_/home/gerald/van_development/van/uml/Module.symvers := sed 's/\.ko$$/\.o/' /home/gerald/van_development/van/uml/modules.order | scripts/mod/modpost    -o /home/gerald/van_development/van/uml/Module.symvers -e -i Module.symvers   -T -
