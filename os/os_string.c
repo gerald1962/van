@@ -163,6 +163,18 @@ int os_strcmp(const char *s1, const char *s2)
 	return strcmp(s1, s2);
 }
 
+/**
+ * os_strncat() - strncat with additional assertions.
+ *
+ * man strncat
+ **/
+char *os_strncat(char *dest, const char *src, size_t n)
+{
+	/* Entry condition. */
+	OS_TRAP_IF(dest == NULL || src == NULL || n > OS_MAX_STRING_LEN);
+
+	return strncat(dest, src, n);
+}
 
 /**
  * os_strstr() - strstr with additional assertions.

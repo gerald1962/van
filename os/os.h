@@ -241,6 +241,7 @@ size_t os_strlen(const char *s);
 char *os_strcpy(char *dest, int dest_n, const char *src);
 int os_strncmp(const char *s1, const char *s2, int n);
 int os_strcmp(const char *s1, const char *s2);
+char *os_strncat(char *dest, const char *src, size_t n);
 char *os_strstr(const char *haystack, int haystack_len, const char *needle);
 char *os_strchr(const char *s, int s_len, int c);
 long int os_strtol_b10(const char *nptr, int n_len);
