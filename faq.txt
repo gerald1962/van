@@ -26,6 +26,17 @@ Linux-Kernel kann ich konfigurieren, kompilieren und installieren.
 Das Buch habe ich heute bekommen:
 
 
+git commit -a -m "vu"
+[vunit acee347] vu
+ 9 files changed, 1691 insertions(+), 185 deletions(-)
+ delete mode 100644 linux/Latest.mk
+ delete mode 100644 linux/Makefile
+ delete mode 100755 linux/build.sh
+ delete mode 100755 linux/first.sh
+ delete mode 100644 linux/hello.c
+
+
+
 
 1. LateX
 
