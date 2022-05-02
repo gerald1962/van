@@ -126,6 +126,93 @@ see
 https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
 
 
+
+104 Elexir
+==========
+Sources
+-------
+see
+https://github.com/bootlin/elixir
+
+Install
+-------
+
+103 C to Latex
+==============
+Question
+--------
+see
+https://tex.stackexchange.com/questions/348651/c-code-to-add-in-the-document
+
+Template
+--------
+https://github.com/gerald1962/van/latex/c_template.tex
+
+Viewer
+-----
+evince c_template.dvi&
+
+Kurs
+----
+https://www.latex-kurs.de/index.html
+
+
+102 User Mode Linux Update
+==========================
+see:
+https://en.wikipedia.org/wiki/User-mode_Linux
+
+102.1 Build 5.18-rc4
+--------------------
+https://www.kernel.org/-> 
+mainline:	5.18-rc4	2022-04-24	[tarball]
+-> Double click on tarball
+
+cd ~/uml
+mv ~/Downloads/linux-5.18-rc4.tar.gz .
+tar xfv linux-5.18-rc4.tar.gz
+cd linux-5.18-rc4
+make ARCH=um menuconfig
+make linux ARCH=um
+./linux   root=/dev/root   rootfstype=hostfs   rw   mem=1024M init=/bin/bash ./tini
+
+102.2 Test Driver 5.18-rc4
+--------------------------
+cd ~/van_development/van/linux/hello.c
+hello.sh 5.18-rc4
+...
+insmod hello.ko
+...
+rmmod -f hello.ko
+...
+
+
+102 Emacs Buffer as PS / PDF
+============================
+102.1 Emacs Command
+-------------------
+Set pretty formatting of an Emacs buffer:
+C-u M-x ps-print-buffer-with-faces
+
+102.2 Shell Command
+-------------------
+ps2pdf - konvertiert PostScript nach PDF mittels ghostscript:
+ps2pdf vu_main.ps
+
+102.3 PDF Viewer
+----------------
+evince vu_main.pdf
+
+
+101 VUnit
+=========
+101.1 Atomic
+============
+see
+/usr/lib/gcc/x86_64-linux-gnu/9/include/stdatomic.h
+https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
+
+
 100 Elixir
 ==========
 Elixir Cross Referencer - Explore source code in your browser - Particularly
