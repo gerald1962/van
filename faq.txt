@@ -1,44 +1,60 @@
 Hi Herbert,
 
-1. My Inet; 2. UML
+1. Blackbox-Test; 2. Testreferenz im Scheduler 3. Search-Tool
 
-1.
-Wahrscheinlich muss ich mir einen neuen Linux-PC
-kaufen, weil die WLAN-Karte defekt ist und
-der Lautsprecher auch. Deshalb bin ich etwas blind
-und taub.
+1. Blackbox-Test
 
-Alles geht langsam wegen der vielen Timeout und es
-es gibt noch andere Pappnasen:
-Linux-PC, Kernel, Fritzbox, Telekom, Inet-Protokolle,
-...
-Das habe ich auch schon untersucht und schaut fragil
-aus.
+Seit heute bin ich mir sicher,
+dass die Blackbox-Theorie falsch ist mit intereressanten
+Implikationen.
+Das entspricht meiner Erfahrung und wird bestätigt, wie
+durch das Testsystem im Linux-Kernel, das Linus Thorvalds, see
+https://de.wikipedia.org/wiki/Linus_Torvalds
+abgesegnet hat.
 
-Momentan interessiert mich:
+2. Testreferenz im Scheduler
 
-Linux-Testsytem
-https://github.com/gerald1962/van/vunit
+Im Kernel gibt es die Test-Infrastruktur, siehe 106.
 
-Nebenbei verfolge ich UML - User Mode Linux:
-Linux-Kernel kann ich konfigurieren, kompilieren und installieren.
+3. Search-Tool
 
-Das Buch habe ich heute bekommen:
+Falls ihr nicht möchtet, dass alles von Google oder Apple
+aufgezeichnet möchtet, was ihr auf irgendeinem Device
+eingibt wie Telephon, Tablet, ...
+empfehle ich  105.
 
 
-git commit -a -m "vu"
-[vunit acee347] vu
- 9 files changed, 1691 insertions(+), 185 deletions(-)
- delete mode 100644 linux/Latest.mk
- delete mode 100644 linux/Makefile
- delete mode 100755 linux/build.sh
- delete mode 100755 linux/first.sh
- delete mode 100644 linux/hello.c
+106 Linux Scheduler
+===================
+https://duckduckgo.com
+
+Search for the linux kernel data base:
+elixir bootlin
+
+and choose:
+Linux source code (v5.17.4) - Bootlin
+
+see e.g.
+https://elixir.bootlin.com/linux/v5.18-rc5/source/include/linux/sched.h#L728
+
+Move your mouse to: Search Identifier
+and type: task_struct
+
+I was really suprised, that the test system is a member of an OS process or
+thread:
+
+Use the Search-Shortcut Ctrl-S in this page:
+
+#if IS_ENABLED(CONFIG_KUNIT)
+	struct kunit			*kunit_test;
+#endif
 
 
+105 DuckDuckGo
+==============
+It is a goolge alternative without tracking:
+https://duckduckgo.com/
 
-
-1. LateX
 
 104 Elexir
 ==========

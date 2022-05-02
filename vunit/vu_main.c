@@ -68,6 +68,71 @@
 /*============================================================================
   MACROS
   ============================================================================*/
+/*
+ * Some subsystems have their own custom printk that applies a va_format to a
+ * generic format, for example, to include a device number or other metadata
+ * alongside the format supplied by the caller.
+ *
+ * In order to store these in the way they would be emitted by the printk
+ * infrastructure, the subsystem provides us with the start, fixed string, and
+ * any subsequent text in the format string.
+ *
+ * We take a variable argument list as pr_fmt/dev_fmt/etc are sometimes passed
+ * as multiple arguments (eg: `"%s: ", "blah"`), and we must only take the
+ * first one.
+ *
+ * subsys_fmt_prefix must be known at compile time, or compilation will fail
+ * (since this is a mistake). If fmt or level is not known at compile time, no
+ * index entry will be made (since this can legitimately happen).
+ */
+#define __printk_index_emit(...) do {} while (0)
+
+#define printk_index_wrap(_p_func, _fmt, ...)				\
+	({								\
+		__printk_index_emit(_fmt, NULL, NULL);			\
+		_p_func(_fmt, ##__VA_ARGS__);				\
+	})
+
+
+/**
+ * printk - print a kernel message
+ * @fmt: format string
+ *
+ * This is printk(). It can be called from any context. We want it to work.
+ *
+ * If printk indexing is enabled, _printk() is called from printk_index_wrap.
+ * Otherwise, printk is simply #defined to _printk.
+ *
+ * We try to grab the console_lock. If we succeed, it's easy - we log the
+ * output and call the console drivers.  If we fail to get the semaphore, we
+ * place the output into the log buffer and return. The current holder of
+ * the console_sem will notice the new output in console_unlock(); and will
+ * send it to the consoles before releasing the lock.
+ *
+ * One effect of this deferred printing is that code which calls printk() and
+ * then changes console_loglevel may break. This is because console_loglevel
+ * is inspected when the actual printing occurs.
+ *
+ * See also:
+ * printf(3)
+ *
+ * See the vsnprintf() documentation for format string extensions over C99.
+ */
+#define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+
+/**
+ * pr_info - Print an info-level message
+ * @fmt: format string
+ * @...: arguments for the format string
+ *
+ * This macro expands to a printk with KERN_INFO loglevel. It uses pr_fmt() to
+ * generate the format string.
+ */
+#define pr_fmt(fmt) "VUnit: " fmt
+
+#define pr_info(fmt, ...) \
+	printk(pr_fmt(fmt), ##__VA_ARGS__)
+
 #define __WARN_printf(arg...)	do { fprintf(stderr, arg); } while (0)
 
 #define WARN_ON(condition) ({					\
@@ -527,8 +592,7 @@ enum refcount_saturation_type {
 	REFCOUNT_DEC_LEAK,
 };
 
-/**
- * typedef refcount_t - variant of atomic_t specialized for reference counts
+/** typedef refcount_t - variant of atomic_t specialized for reference counts
  * @refs: atomic_t counter field
  *
  * The counter saturates at REFCOUNT_SATURATED and will not move once
@@ -798,6 +862,12 @@ struct kunit_try_catch {
 	void *context;
 };
 
+struct kunit_try_catch_context {
+	struct kunit *test;
+	struct kunit_suite *suite;
+	struct kunit_case *test_case;
+};
+
 /**
  * struct kunit - represents a running instance of a test.
  *
@@ -958,6 +1028,18 @@ static struct kunit_suite vu_test_suite = {
 /*============================================================================
   LOCAL FUNCTIONS
   ============================================================================*/
+static int _printk(const char *fmt, ...)
+{
+	va_list args;
+	int r;
+
+	va_start(args, fmt);
+	r = vprintf(fmt, args);
+	va_end(args);
+
+	return r;
+}
+
 /**
  * strlcat - Append a length-limited, C-string to another
  * @dest: The string to be appended to
@@ -1882,6 +1964,18 @@ static void  kunit_binary_assert_format(const struct kunit_assert *assert,
 	kunit_assert_print_msg(message, stream);
 }
 
+static char *kunit_status_to_ok_not_ok(enum kunit_status status)
+{
+	switch (status) {
+	case KUNIT_SKIPPED:
+	case KUNIT_SUCCESS:
+		return "ok";
+	case KUNIT_FAILURE:
+		return "not ok";
+	}
+	return "invalid";
+}
+
 static void kunit_print_ok_not_ok(void *test_or_suite,
 				  bool is_test,
 				  enum kunit_status status,
@@ -1889,7 +1983,7 @@ static void kunit_print_ok_not_ok(void *test_or_suite,
 				  const char *description,
 				  const char *directive)
 {
-#if 0
+#if 1
 	struct kunit_suite *suite = is_test ? NULL : test_or_suite;
 	struct kunit *test = is_test ? test_or_suite : NULL;
 	const char *directive_header = (status == KUNIT_SKIPPED) ? " # SKIP " : "";
@@ -1908,7 +2002,7 @@ static void kunit_print_ok_not_ok(void *test_or_suite,
 			test_number, description, directive_header,
 			(status == KUNIT_SKIPPED) ? directive : "");
 	else
-		kunit_log(KERN_INFO, test,
+		kunit_log(test,
 			  KUNIT_SUBTEST_INDENT "%s %zd - %s%s%s",
 			  kunit_status_to_ok_not_ok(status),
 			  test_number, description, directive_header,
@@ -1986,6 +2080,222 @@ static size_t kunit_suite_num_test_cases(struct kunit_suite *suite)
 	return len;
 }
 
+static void kunit_update_stats(struct kunit_result_stats *stats,
+			       enum kunit_status status)
+{
+	switch (status) {
+	case KUNIT_SUCCESS:
+		stats->passed++;
+		break;
+	case KUNIT_SKIPPED:
+		stats->skipped++;
+		break;
+	case KUNIT_FAILURE:
+		stats->failed++;
+		break;
+	}
+
+	stats->total++;
+}
+
+static void kunit_catch_run_case(void *data)
+{
+#if 0
+	struct kunit_try_catch_context *ctx = data;
+	struct kunit *test = ctx->test;
+	struct kunit_suite *suite = ctx->suite;
+	int try_exit_code = kunit_try_catch_get_result(&test->try_catch);
+
+	if (try_exit_code) {
+		kunit_set_failure(test);
+		/*
+		 * Test case could not finish, we have no idea what state it is
+		 * in, so don't do clean up.
+		 */
+		if (try_exit_code == -ETIMEDOUT) {
+			kunit_err(test, "test case timed out\n");
+		/*
+		 * Unknown internal error occurred preventing test case from
+		 * running, so there is nothing to clean up.
+		 */
+		} else {
+			kunit_err(test, "internal error occurred preventing test case from running: %d\n",
+				  try_exit_code);
+		}
+		return;
+	}
+
+	/*
+	 * Test case was run, but aborted. It is the test case's business as to
+	 * whether it failed or not, we just need to clean up.
+	 */
+	kunit_run_case_cleanup(test, suite);
+#endif
+}
+
+static void kunit_cleanup(struct kunit *test)
+{
+	struct kunit_resource *res;
+
+	/*
+	 * test->resources is a stack - each allocation must be freed in the
+	 * reverse order from which it was added since one resource may depend
+	 * on another for its entire lifetime.
+	 * Also, we cannot use the normal list_for_each constructs, even the
+	 * safe ones because *arbitrary* nodes may be deleted when
+	 * kunit_resource_free is called; the list_for_each_safe variants only
+	 * protect against the current node being deleted, not the next.
+	 */
+	while (true) {
+		os_spin_lock(&test->lock);
+		if (list_empty(&test->resources)) {
+			os_spin_unlock(&test->lock);
+			break;
+		}
+		res = list_last_entry(&test->resources,
+				      struct kunit_resource,
+				      node);
+		/*
+		 * Need to unlock here as a resource may remove another
+		 * resource, and this can't happen if the test->lock
+		 * is held.
+		 */
+		os_spin_unlock(&test->lock);
+		kunit_remove_resource(test, res);
+	}
+#if 0
+	/* see linux-xxx/./include/linux/sched.h:
+	   struct task_struct { ...
+	   #if IS_ENABLED(CONFIG_KUNIT)
+	   struct kunit                    *kunit_test;
+	   #endif
+	   ...*/
+	current->kunit_test = NULL;
+#endif
+}
+
+static void kunit_case_internal_cleanup(struct kunit *test)
+{
+	kunit_cleanup(test);
+}
+
+/*
+ * Performs post validations and cleanup after a test case was run.
+ * XXX: Should ONLY BE CALLED AFTER kunit_run_case_internal!
+ */
+static void kunit_run_case_cleanup(struct kunit *test,
+				   struct kunit_suite *suite)
+{
+	if (suite->exit)
+		suite->exit(test);
+
+	kunit_case_internal_cleanup(test);
+}
+
+/*
+ * Initializes and runs test case. Does not clean up or do post validations.
+ */
+static void kunit_run_case_internal(struct kunit *test,
+				    struct kunit_suite *suite,
+				    struct kunit_case *test_case)
+{
+	if (suite->init) {
+		int ret;
+
+		ret = suite->init(test);
+		if (ret) {
+			kunit_err(test, "failed to initialize: %d\n", ret);
+			kunit_set_failure(test);
+			return;
+		}
+	}
+
+	test_case->run_case(test);
+}
+
+static void kunit_try_run_case(void *data)
+{
+	struct kunit_try_catch_context *ctx = data;
+	struct kunit *test = ctx->test;
+	struct kunit_suite *suite = ctx->suite;
+	struct kunit_case *test_case = ctx->test_case;
+
+	/* XXX */
+#if 0
+	/* see linux-xxx/./include/linux/sched.h:
+	   struct task_struct { ...
+	   #if IS_ENABLED(CONFIG_KUNIT)
+	   struct kunit                    *kunit_test;
+	   #endif
+	   ...*/
+	current->kunit_test = test;
+#endif
+
+	/*
+	 * kunit_run_case_internal may encounter a fatal error; if it does,
+	 * abort will be called, this thread will exit, and finally the parent
+	 * thread will resume control and handle any necessary clean up.
+	 */
+	kunit_run_case_internal(test, suite, test_case);
+
+	/* This line may never be reached. */
+	kunit_run_case_cleanup(test, suite);
+}
+
+static void kunit_try_catch_init(struct kunit_try_catch *try_catch,
+				 struct kunit *test,
+				 kunit_try_catch_func_t try,
+				 kunit_try_catch_func_t catch)
+{
+	try_catch->test = test;
+	try_catch->try = try;
+	try_catch->catch = catch;
+}
+
+static void kunit_init_test(struct kunit *test, const char *name, char *log)
+{
+	os_spin_init(&test->lock);
+	INIT_LIST_HEAD(&test->resources);
+	test->name = name;
+	test->log = log;
+	if (test->log)
+		test->log[0] = '\0';
+	test->status = KUNIT_SUCCESS;
+	test->status_comment[0] = '\0';
+}
+
+/*
+ * Performs all logic to run a test case. It also catches most errors that
+ * occur in a test case and reports them as failures.
+ */
+static void kunit_run_case_catch_errors(struct kunit_suite *suite,
+					struct kunit_case *test_case,
+					struct kunit *test)
+{
+	struct kunit_try_catch_context context;
+	struct kunit_try_catch *try_catch;
+
+	kunit_init_test(test, test_case->name, test_case->log);
+	try_catch = &test->try_catch;
+
+	kunit_try_catch_init(try_catch,
+			     test,
+			     kunit_try_run_case,
+			     kunit_catch_run_case);
+	context.test = test;
+	context.suite = suite;
+	context.test_case = test_case;
+#if 0
+	kunit_try_catch_run(try_catch, &context);
+
+	/* Propagate the parameter result to the test case. */
+	if (test->status == KUNIT_FAILURE)
+		test_case->status = KUNIT_FAILURE;
+	else if (test_case->status != KUNIT_FAILURE && test->status == KUNIT_SUCCESS)
+		test_case->status = KUNIT_SUCCESS;
+#endif
+}
+
 static void kunit_print_subtest_start(struct kunit_suite *suite)
 {
 	kunit_log(suite, KUNIT_SUBTEST_INDENT "# Subtest: %s",
@@ -2008,13 +2318,15 @@ static int kunit_run_tests(struct kunit_suite *suite)
 		struct kunit test = { .param_value = NULL, .param_index = 0 };
 		struct kunit_result_stats param_stats = { 0 };
 		test_case->status = KUNIT_SKIPPED;
-#if 0
 
 		if (! test_case->generate_params) {
+#if 0
 			/* Non-parameterised test. */
 			kunit_run_case_catch_errors(suite, test_case, &test);
 			kunit_update_stats(&param_stats, test.status);
+#endif
 		} else {
+#if 0
 			/* Get initial param. */
 			param_desc[0] = '\0';
 			test.param_value = test_case->generate_params(NULL, param_desc);
@@ -2042,9 +2354,10 @@ static int kunit_run_tests(struct kunit_suite *suite)
 
 				kunit_update_stats(&param_stats, test.status);
 			}
+#endif
 		}
 
-
+#if 0
 		kunit_print_test_stats(&test, param_stats);
 
 		kunit_print_ok_not_ok(&test, true, test_case->status,
