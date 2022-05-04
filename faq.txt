@@ -1,27 +1,123 @@
 Hi Herbert,
 
-1. Blackbox-Test; 2. Testreferenz im Scheduler 3. Search-Tool
+insgesamt komme gut veran.
 
-1. Blackbox-Test
+1. Idee: Linux-Kernel; 2: Programm: Dokumentation; 3: Symbiose: Verständnis
 
-Seit heute bin ich mir sicher,
-dass die Blackbox-Theorie falsch ist mit intereressanten
-Implikationen.
-Das entspricht meiner Erfahrung und wird bestätigt, wie
-durch das Testsystem im Linux-Kernel, das Linus Thorvalds, see
-https://de.wikipedia.org/wiki/Linus_Torvalds
-abgesegnet hat.
+Das lade ich wie immer nach github/gerald1962/van hoch, weil mich
+das interessiert.
 
-2. Testreferenz im Scheduler
+1. Idee: Linux-Kernel
+---------------------
+Den Linux Kernel habe ich durchleuchtet mit
+/home/gerald/van_development/van/vunit/vu_main.c
 
-Im Kernel gibt es die Test-Infrastruktur, siehe 106.
+CWeb von D.E. Knuth läuft bei mir wieder, mit
+dem man zeigen kann, dass Programmieren, Mathematik
+und Logik ein und dasselbe sind, siehe 107.
 
-3. Search-Tool
+Sein Beispiel habe ich vereinfacht mit einfacheren
+Klammeraffen @.
 
-Falls ihr nicht möchtet, dass alles von Google oder Apple
-aufgezeichnet möchtet, was ihr auf irgendeinem Device
-eingibt wie Telephon, Tablet, ...
-empfehle ich  105.
+Die Anleitung liegt hier:
+/home/gerald/van_development/van/cweb/examples
+
+Und der Source Code ist da auch
+
+LG,
+Gerald
+
+Btw:
+Ich habe noch nie etwas behauptet und verschickt,
+was nicht nicht funktioniert, weil ich das vorher
+selbst ausprobiere habe: praktisch oder gedanklich,
+der Unterschied ist klein.
+
+Aus verschiedenen Gründen könnt ihr gar nichts
+verifizieren, aber das ist mir wurscht.
+
+
+
+107 Donald Knuth - cweb-latex
+=============================
+see
+https://en.wikipedia.org/wiki/Donald_Knuth
+
+107.1 Literate Programming
+--------------------------
+https://en.wikipedia.org/wiki/Literate_programming
+http://www.literateprogramming.com/knuthweb.pdf
+
+107.1 Search Result
+-------------------
+https://ctan.org/pkg/cweb-latex?lang=en
+
+107.2 Further Reading
+---------------------
+see
+https://www.amazon.com/CWEB-System-Structured-Documentation-Version/dp/0201575698
+
+The CWEB System of Structured Documentation Version 3.0 Taschenbuch – 1. Januar 1994
+
+Herausgeber ‏ : ‎ Addison-Wesley Longman, Amsterdam; 1. Edition (1. Januar 1994)
+Sprache ‏ : ‎ Englisch
+Taschenbuch ‏ : ‎ 242 Seiten
+ISBN-10 ‏ : ‎ 0201575698
+ISBN-13 ‏ : ‎ 978-0201575699
+
+107.3 Install TeX Live
+------------ ----------
+sudo apt-get install texlive-full 
+
+107.4 Sources
+-------------
+https://github.com/ascherer/cweb
+https://github.com/ascherer/cwebbin
+
+107.5 Documentation
+-------------------
+https://www.ctan.org/pkg/cweb
+
+107.6 Install
+-------------
+cd ~/<x-dev>/van
+mkdir cweb
+cd cweb
+mv ~/Downloads/cweb-4.7.tar.gz
+
+tar xfvz cweb-4.7.tar.gu
+make all
+sudo make install
+
+107.7 Example
+-------------
+cd example
+make wc
+
+cp ../cwebmac.tex .
+cweave wc.w
+pdftex wc.tex
+evince wc.pdf
+
+107.8 The Point - Hello
+-----------------------
+
+107.8.1 Source Text
+...................
+hello.w
+
+107.8.2 Translation
+...................
+cweave hello.w
+
+107.8.3 Execution
+.................
+gcc hello.c
+
+107.8.4 Documentation
+.....................
+pdftex hello.tex
+evince hello.pdf
 
 
 106 Linux Scheduler
@@ -77,9 +173,17 @@ Template
 --------
 https://github.com/gerald1962/van/latex/c_template.tex
 
+Build
+-----
+latex c_template.tex
+or
+latex vunit.tex
+
 Viewer
 -----
 evince c_template.dvi&
+or
+eviince vunit.dvi
 
 Kurs
 ----

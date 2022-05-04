@@ -405,6 +405,34 @@ static struct resword {
 	     ! list_entry_is_head(pos, head, member); 			\
 	     pos = n, n = list_next_entry(n, member))
 
+#define __SWAIT_QUEUE_HEAD_INITIALIZER(name) {				\
+	.lock		= os_spin_init(name.lock),		\
+	.task_list	= LIST_HEAD_INIT((name).task_list),		\
+}
+
+#define COMPLETION_INITIALIZER(work) \
+	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
+
+/**
+ * DECLARE_COMPLETION - declare and initialize a completion structure
+ * @work:  identifier for the completion structure
+ *
+ * This macro declares and initializes a completion structure. Generally used
+ * for static declarations. You should use the _ONSTACK variant for automatic
+ * variables.
+ */
+#define DECLARE_COMPLETION(work) \
+	struct completion work = COMPLETION_INITIALIZER(work)
+
+/**
+ * DECLARE_COMPLETION_ONSTACK - declare and initialize a completion structure
+ * @work:  identifier for the completion structure
+ *
+ * This macro declares and initializes a completion structure on the kernel
+ * stack.
+ */
+#define DECLARE_COMPLETION_ONSTACK(work) DECLARE_COMPLETION(work)
+
 
 #define kunit_suite_for_each_test_case(suite, test_case)		\
 	for (test_case = suite->test_cases; test_case->run_case; test_case++)
@@ -623,6 +651,23 @@ struct swait_queue_head {
 	struct list_head  task_list;
 };
 
+/*
+ * struct completion - structure used to maintain state for a "completion"
+ *
+ * This is the opaque structure used to maintain the state for a "completion".
+ * Completions currently use a FIFO to queue threads that have to wait for
+ * the "completion" event.
+ *
+ * See also:  complete(), wait_for_completion() (and friends _timeout,
+ * _interruptible, _interruptible_timeout, and _killable), init_completion(),
+ * reinit_completion(), and macros DECLARE_COMPLETION(),
+ * DECLARE_COMPLETION_ONSTACK().
+ */
+struct completion {
+	unsigned int done;
+	struct swait_queue_head wait;
+};
+
 struct kunit_kmalloc_array_params {
 	size_t n;
 	size_t size;
@@ -793,23 +838,6 @@ struct kunit_binary_assert {
 enum kunit_assert_type {
 	KUNIT_ASSERTION,
 	KUNIT_EXPECTATION,
-};
-
-/*
- * struct completion - structure used to maintain state for a "completion"
- *
- * This is the opaque structure used to maintain the state for a "completion".
- * Completions currently use a FIFO to queue threads that have to wait for
- * the "completion" event.
- *
- * See also:  complete(), wait_for_completion() (and friends _timeout,
- * _interruptible, _interruptible_timeout, and _killable), init_completion(),
- * reinit_completion(), and macros DECLARE_COMPLETION(),
- * DECLARE_COMPLETION_ONSTACK().
- */
-struct completion {
-	unsigned int done;
-	struct swait_queue_head wait;
 };
 
 /**
@@ -1627,6 +1655,48 @@ static void kunit_log_append(char *log, const char *fmt, ...)
 	os_strncat(log, line, len_left);
 }
 
+static unsigned int kunit_test_case_num(struct kunit_suite *suite,
+					struct kunit_case *test_case)
+{
+	struct kunit_case *tc;
+	unsigned int i = 1;
+
+	kunit_suite_for_each_test_case(suite, tc) {
+		if (tc == test_case)
+			return i;
+		i++;
+	}
+
+	return 0;
+}
+
+static bool kunit_should_print_stats(struct kunit_result_stats stats)
+{
+	if (kunit_stats_enabled == 0)
+		return false;
+
+	if (kunit_stats_enabled == 2)
+		return true;
+
+	return (stats.total > 1);
+}
+
+static void kunit_print_test_stats(struct kunit *test,
+				   struct kunit_result_stats stats)
+{
+	if (! kunit_should_print_stats(stats))
+		return;
+
+	kunit_log(test,
+		  KUNIT_SUBTEST_INDENT
+		  "# %s: pass:%lu fail:%lu skip:%lu total:%lu",
+		  test->name,
+		  stats.passed,
+		  stats.failed,
+		  stats.skipped,
+		  stats.total);
+}
+
 static void kunit_print_string_stream(struct kunit *test,
 				      struct string_stream *stream)
 {
@@ -1983,7 +2053,6 @@ static void kunit_print_ok_not_ok(void *test_or_suite,
 				  const char *description,
 				  const char *directive)
 {
-#if 1
 	struct kunit_suite *suite = is_test ? NULL : test_or_suite;
 	struct kunit *test = is_test ? test_or_suite : NULL;
 	const char *directive_header = (status == KUNIT_SKIPPED) ? " # SKIP " : "";
@@ -2007,7 +2076,6 @@ static void kunit_print_ok_not_ok(void *test_or_suite,
 			  kunit_status_to_ok_not_ok(status),
 			  test_number, description, directive_header,
 			  (status == KUNIT_SKIPPED) ? directive : "");
-#endif
 }
 
 static enum kunit_status kunit_suite_has_succeeded(struct kunit_suite *suite)
@@ -2034,17 +2102,6 @@ static void kunit_print_subtest_end(struct kunit_suite *suite)
 			      suite->status_comment);
 }
 
-static bool kunit_should_print_stats(struct kunit_result_stats stats)
-{
-	if (kunit_stats_enabled == 0)
-		return false;
-
-	if (kunit_stats_enabled == 2)
-		return true;
-
-	return (stats.total > 1);
-}
-
 static void kunit_print_suite_stats(struct kunit_suite *suite,
 				    struct kunit_result_stats suite_stats,
 				    struct kunit_result_stats param_stats)
@@ -2067,6 +2124,15 @@ static void kunit_print_suite_stats(struct kunit_suite *suite,
 			  param_stats.skipped,
 			  param_stats.total);
 	}
+}
+
+static void kunit_accumulate_stats(struct kunit_result_stats *total,
+				   struct kunit_result_stats add)
+{
+	total->passed += add.passed;
+	total->skipped += add.skipped;
+	total->failed += add.failed;
+	total->total += add.total;
 }
 
 static size_t kunit_suite_num_test_cases(struct kunit_suite *suite)
@@ -2096,41 +2162,6 @@ static void kunit_update_stats(struct kunit_result_stats *stats,
 	}
 
 	stats->total++;
-}
-
-static void kunit_catch_run_case(void *data)
-{
-#if 0
-	struct kunit_try_catch_context *ctx = data;
-	struct kunit *test = ctx->test;
-	struct kunit_suite *suite = ctx->suite;
-	int try_exit_code = kunit_try_catch_get_result(&test->try_catch);
-
-	if (try_exit_code) {
-		kunit_set_failure(test);
-		/*
-		 * Test case could not finish, we have no idea what state it is
-		 * in, so don't do clean up.
-		 */
-		if (try_exit_code == -ETIMEDOUT) {
-			kunit_err(test, "test case timed out\n");
-		/*
-		 * Unknown internal error occurred preventing test case from
-		 * running, so there is nothing to clean up.
-		 */
-		} else {
-			kunit_err(test, "internal error occurred preventing test case from running: %d\n",
-				  try_exit_code);
-		}
-		return;
-	}
-
-	/*
-	 * Test case was run, but aborted. It is the test case's business as to
-	 * whether it failed or not, we just need to clean up.
-	 */
-	kunit_run_case_cleanup(test, suite);
-#endif
 }
 
 static void kunit_cleanup(struct kunit *test)
@@ -2190,6 +2221,90 @@ static void kunit_run_case_cleanup(struct kunit *test,
 		suite->exit(test);
 
 	kunit_case_internal_cleanup(test);
+}
+
+/* This function executes the test. */
+static void kunit_try_catch_run(struct kunit_try_catch *try_catch, void *context)
+{
+#if 0
+	DECLARE_COMPLETION_ONSTACK(try_completion);
+#endif
+#if 0
+	struct kunit *test = try_catch->test;
+	struct task_struct *task_struct;
+	int exit_code, time_remaining;
+
+	try_catch->context = context;
+	try_catch->try_completion = &try_completion;
+	try_catch->try_result = 0;
+	task_struct = kthread_run(kunit_generic_run_threadfn_adapter,
+				  try_catch,
+				  "kunit_try_catch_thread");
+	if (IS_ERR(task_struct)) {
+		try_catch->catch(try_catch->context);
+		return;
+	}
+
+	time_remaining = wait_for_completion_timeout(&try_completion,
+						     kunit_test_timeout());
+	if (time_remaining == 0) {
+		kunit_err(test, "try timed out\n");
+		try_catch->try_result = -ETIMEDOUT;
+		kthread_stop(task_struct);
+	}
+
+	exit_code = try_catch->try_result;
+
+	if (!exit_code)
+		return;
+
+	if (exit_code == -EFAULT)
+		try_catch->try_result = 0;
+	else if (exit_code == -EINTR)
+		kunit_err(test, "wake_up_process() was never called\n");
+	else if (exit_code)
+		kunit_err(test, "Unknown error: %d\n", exit_code);
+
+	try_catch->catch(try_catch->context);
+#endif
+}
+
+static int kunit_try_catch_get_result(struct kunit_try_catch *try_catch)
+{
+	return try_catch->try_result;
+}
+
+static void kunit_catch_run_case(void *data)
+{
+	struct kunit_try_catch_context *ctx = data;
+	struct kunit *test = ctx->test;
+	struct kunit_suite *suite = ctx->suite;
+	int try_exit_code = kunit_try_catch_get_result(&test->try_catch);
+
+	if (try_exit_code) {
+		kunit_set_failure(test);
+		/*
+		 * Test case could not finish, we have no idea what state it is
+		 * in, so don't do clean up.
+		 */
+		if (try_exit_code == -ETIMEDOUT) {
+			kunit_err(test, "test case timed out\n");
+		/*
+		 * Unknown internal error occurred preventing test case from
+		 * running, so there is nothing to clean up.
+		 */
+		} else {
+			kunit_err(test, "internal error occurred preventing test case from running: %d\n",
+				  try_exit_code);
+		}
+		return;
+	}
+
+	/*
+	 * Test case was run, but aborted. It is the test case's business as to
+	 * whether it failed or not, we just need to clean up.
+	 */
+	kunit_run_case_cleanup(test, suite);
 }
 
 /*
@@ -2285,7 +2400,7 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
 	context.test = test;
 	context.suite = suite;
 	context.test_case = test_case;
-#if 0
+	
 	kunit_try_catch_run(try_catch, &context);
 
 	/* Propagate the parameter result to the test case. */
@@ -2293,7 +2408,6 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
 		test_case->status = KUNIT_FAILURE;
 	else if (test_case->status != KUNIT_FAILURE && test->status == KUNIT_SUCCESS)
 		test_case->status = KUNIT_SUCCESS;
-#endif
 }
 
 static void kunit_print_subtest_start(struct kunit_suite *suite)
@@ -2320,17 +2434,14 @@ static int kunit_run_tests(struct kunit_suite *suite)
 		test_case->status = KUNIT_SKIPPED;
 
 		if (! test_case->generate_params) {
-#if 0
 			/* Non-parameterised test. */
 			kunit_run_case_catch_errors(suite, test_case, &test);
 			kunit_update_stats(&param_stats, test.status);
-#endif
 		} else {
-#if 0
 			/* Get initial param. */
 			param_desc[0] = '\0';
 			test.param_value = test_case->generate_params(NULL, param_desc);
-			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+			kunit_log(&test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
 				  "# Subtest: %s", test_case->name);
 
 			while (test.param_value) {
@@ -2341,7 +2452,7 @@ static int kunit_run_tests(struct kunit_suite *suite)
 						 "param-%d", test.param_index);
 				}
 
-				kunit_log(KERN_INFO, &test,
+				kunit_log(&test,
 					  KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
 					  "%s %d - %s",
 					  kunit_status_to_ok_not_ok(test.status),
@@ -2354,10 +2465,8 @@ static int kunit_run_tests(struct kunit_suite *suite)
 
 				kunit_update_stats(&param_stats, test.status);
 			}
-#endif
 		}
 
-#if 0
 		kunit_print_test_stats(&test, param_stats);
 
 		kunit_print_ok_not_ok(&test, true, test_case->status,
@@ -2367,7 +2476,6 @@ static int kunit_run_tests(struct kunit_suite *suite)
 
 		kunit_update_stats(&suite_stats, test_case->status);
 		kunit_accumulate_stats(&total_stats, param_stats);
-#endif
 	}
 
 	kunit_print_suite_stats(suite, suite_stats, total_stats);
