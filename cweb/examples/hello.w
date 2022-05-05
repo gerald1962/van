@@ -1,23 +1,21 @@
 % wc: An example of CWEB-
 
-@ Here is the file \.{hello.c} that is defined
-by this \.{CWEB} source text \.{hello.w}:
+@ Here is the file \.{hello.c}.
 
 @c
-@<Header files to include@>@/
+@<Header files@>@/
 @<The main program@>
 
 @ We include the standard I/O declarations, since we send output to |stdout|.
 
-@<Header files...@>=
+@<Header files@>=
 #include <stdio.h>
 
-@ Now we come to the general layout of the |main| function. 
-
+@ Now we come to the layout of the |main| function. 
 @<The main...@>=
 void main (void)
 {
-  printf("Hello.\n");
+	printf("Hello.\n");
 }
 
 @* Index.

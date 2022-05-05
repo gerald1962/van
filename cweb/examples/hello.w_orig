@@ -17,7 +17,7 @@ by this \.{CWEB} source text \.{hello.w}:
 @<The main...@>=
 void main (void)
 {
-  printf("Hello\n");
+  printf("Hello.\n");
 }
 
 @* Index.

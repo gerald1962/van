@@ -1,41 +1,61 @@
 Hi Herbert,
 
-insgesamt komme gut veran.
+1. Inet speed; 2. Communicaton
 
-1. Idee: Linux-Kernel; 2: Programm: Dokumentation; 3: Symbiose: Verständnis
+1. Inet speed
+=============
+The inet problem in Stolzenroth, I have solved this problem with iPad
+Pro and 5G Sim card and connect Linux PC with iPad. 
 
-Das lade ich wie immer nach github/gerald1962/van hoch, weil mich
-das interessiert.
+2. Communication
+================
+Today's performance ist quite limited.
 
-1. Idee: Linux-Kernel
----------------------
-Den Linux Kernel habe ich durchleuchtet mit
-/home/gerald/van_development/van/vunit/vu_main.c
+Years ago, Martin Scherbaum und Achim Sievers asked me:
+why are you doing all that.
 
-CWeb von D.E. Knuth läuft bei mir wieder, mit
-dem man zeigen kann, dass Programmieren, Mathematik
-und Logik ein und dasselbe sind, siehe 107.
+Just like Herberts mother I replied;
+I did not hear that.
 
-Sein Beispiel habe ich vereinfacht mit einfacheren
-Klammeraffen @.
+108 Associate file extension with Emacs mode?
+=============================================
 
-Die Anleitung liegt hier:
-/home/gerald/van_development/van/cweb/examples
+108.1 Hint
+----------
+see
+https://emacs.stackexchange.com/questions/17887/how-do-i-associate-a-file-extension-with-a-specific-mode
+(add-to-list 'auto-mode-alist '("\\.g\\'" . gnuplot-mode))
 
-Und der Source Code ist da auch
+108.2 Deducation
+----------------
+; Use Linux C mode in literate programming with cweb file extension x.w
+; The full syntax for specifying file extensions for linux-c-mode is:
+(add-to-list 'auto-mode-alist '("\\.w\\'" . linux-c-mode))
 
-LG,
-Gerald
+108.3 My Emacs Configuration
+----------------------------
+cd
+emacs .emacs
+Add:
+see 108.3
 
-Btw:
-Ich habe noch nie etwas behauptet und verschickt,
-was nicht nicht funktioniert, weil ich das vorher
-selbst ausprobiere habe: praktisch oder gedanklich,
-der Unterschied ist klein.
+108.4 Publication
+-----------------
+Type the Inet address in your favorite browser like Chrome:
+https://github.com/gerald1962
 
-Aus verschiedenen Gründen könnt ihr gar nichts
-verifizieren, aber das ist mir wurscht.
+Fix your attention on - one of the first lines in this page:
+van
 
+Visit dot.emacs with 3 mouse clicks
+doc/emacs/dot.emacs
+
+108.5 Test
+----------
+Enter the Inet address:
+https://github.com/gerald1962/van/cweb/examples
+
+And click on hello.pdf
 
 
 107 Donald Knuth - cweb-latex

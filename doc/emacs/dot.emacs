@@ -30,6 +30,10 @@
 ; will be automatically invoked. Also, you may want to add
 (setq auto-mode-alist (cons '("/usr/src/linux.*/.*\\.[ch]$" . linux-c-mode)  auto-mode-alist))
 
+; Use Linux C mode in literate programming with cweb file extension x.w
+; The full syntax for specifying file extensions for linux-c-mode is:
+(add-to-list 'auto-mode-alist '("\\.w\\'" . linux-c-mode))
+
 (setq-default c-default-style "linux")
 
 (setq column-number-mode t)
@@ -56,7 +60,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(plantuml-mode ob-napkin dap-mode exec-path-from-shell yasnippet company lsp-ui helm-company lsp-mode rustic rust-auto-use flycheck-rust rust-playground rust-mode magit melancholy-theme helm)))
+   '(csharp-mode plantuml-mode ob-napkin dap-mode exec-path-from-shell yasnippet company lsp-ui helm-company lsp-mode rustic rust-auto-use flycheck-rust rust-playground rust-mode magit melancholy-theme helm)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -82,9 +86,18 @@
 
 ;; Change the colors for the plantuml mode
 (defun plantuml-colors ()
-  "Foreground and background colors for plantuml-mode"
+  "Foreground and background colors for the plantuml-mode"
   (interactive)
   (set-foreground-color "black")
   (set-background-color "LightGrey"))
 
-(add-hook 'plantuml-mode-hook 'platuml-colors)
+(add-hook 'plantuml-mode-hook 'plantuml-colors)
+
+
+;; This is a mode for editing C# in emacs. 
+(defun my-csharp-mode-hook ()
+  ;; enable the stuff you want for C# here
+  (electric-pair-mode 1)       ;; Emacs 24
+  (electric-pair-local-mode 1) ;; Emacs 25
+  )
+(add-hook 'csharp-mode-hook 'my-csharp-mode-hook)
