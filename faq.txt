@@ -17,6 +17,7 @@ why are you doing all that.
 Just like Herberts mother I replied;
 I did not hear that.
 
+<<<<<<< HEAD
 108 Associate file extension with Emacs mode?
 =============================================
 
@@ -34,10 +35,31 @@ https://emacs.stackexchange.com/questions/17887/how-do-i-associate-a-file-extens
 
 108.3 My Emacs Configuration
 ----------------------------
+=======
+
+108 Associate file extension with Emacs mode?
+=============================================
+
+108.1 Hint
+----------
+see
+https://emacs.stackexchange.com/questions/17887/how-do-i-associate-a-file-extension-with-a-specific-mode
+(add-to-list 'auto-mode-alist '("\\.g\\'" . gnuplot-mode))
+
+108.2 Deducation
+----------------
+; Use Linux C mode in literate programming with cweb file extension x.w
+; The full syntax for specifying file extensions for linux-c-mode is:
+(add-to-list 'auto-mode-alist '("\\.w\\'" . linux-c-mode))
+
+108.3 My Emacs Configuration
+----------------------------yes
+>>>>>>> main
 cd
 emacs .emacs
 Add:
 see 108.3
+<<<<<<< HEAD
 
 108.4 Publication
 -----------------
@@ -50,12 +72,30 @@ van
 Visit dot.emacs with 3 mouse clicks
 doc/emacs/dot.emacs
 
+=======
+
+108.4 Publication
+-----------------
+Type the Inet address in your favorite browser like Chrome:
+https://github.com/gerald1962
+
+Fix your attention on - one of the first lines in this page:yes
+van
+
+Visit dot.emacs with 3 mouse clicks
+doc/emacs/dot.emacs
+
+>>>>>>> main
 108.5 Test
 ----------
 Enter the Inet address:
 https://github.com/gerald1962/van/cweb/examples
 
+<<<<<<< HEAD
 And click on hello.pdf
+=======
+And click on hello.pdfyes
+>>>>>>> main
 
 
 107 Donald Knuth - cweb-latex
