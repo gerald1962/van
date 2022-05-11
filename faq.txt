@@ -1,23 +1,34 @@
 Hi Herbert,
 
-1. Inet speed; 2. Communicaton
+Über Versuch und Irrtum untersuche ich eine Programmiersprache TeX, mit
+dem man das Layout eines Textes programmieren oder ziemlich flexibel
+gestalten kann.
 
-1. Inet speed
-=============
-The inet problem in Stolzenroth, I have solved this problem with iPad
-Pro and 5G Sim card and connect Linux PC with iPad. 
 
-2. Communication
-================
-Today's performance ist quite limited.
 
-Years ago, Martin Scherbaum und Achim Sievers asked me:
-why are you doing all that.
+109 TeX
+=======
+$ tree 
+.
+├── hello.dvi
+├── hello.log
+├── hello.tex
+├── story.dvi
+├── story_intp.dvi
+├── story_intp.log
+├── story_intp.tex
+├── story.log
+├── story.tex
+├── texbuch
+│   ├── a4.sty
+│   ├── readme
+│   ├── texbuch.dvi
+│   ├── texbuch.pdf
+│   └── texbuch.tex
+├── tex.doc
+├── texput.dvi
+└── texput.log
 
-Just like Herberts mother I replied;
-I did not hear that.
-
-<<<<<<< HEAD
 108 Associate file extension with Emacs mode?
 =============================================
 
@@ -35,7 +46,8 @@ https://emacs.stackexchange.com/questions/17887/how-do-i-associate-a-file-extens
 
 108.3 My Emacs Configuration
 ----------------------------
-=======
+see
+
 
 108 Associate file extension with Emacs mode?
 =============================================

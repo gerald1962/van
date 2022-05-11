@@ -19,13 +19,13 @@
 /*============================================================================
   LOCAL NAME CONSTANTS DEFINITIONS
   ============================================================================*/
-/* Controller prompt. */
+/* Van unit prompt. */
 #define P "U>"
 
 /* Architectures might want to move the poison pointer offset
  * into some well-recognized area such as 0xdead000000000000,
  * that is also not mappable by user-space exploits: */
-#define POISON_POINTER_DELTA 0
+#define POISON_POINTER_DELTA  0
 
 /* These are non-NULL pointers that will result in page faults
  * under normal circumstances, used to verify that nobody uses
@@ -2195,7 +2195,7 @@ static void kunit_cleanup(struct kunit *test)
 		kunit_remove_resource(test, res);
 	}
 #if 0
-	/* see linux-xxx/./include/linux/sched.h:
+	/* see linux-x/include/linux/sched.h:
 	   struct task_struct { ...
 	   #if IS_ENABLED(CONFIG_KUNIT)
 	   struct kunit                    *kunit_test;
@@ -2337,7 +2337,7 @@ static void kunit_try_run_case(void *data)
 
 	/* XXX */
 #if 0
-	/* see linux-xxx/./include/linux/sched.h:
+	/* see linux-x/include/linux/sched.h:
 	   struct task_struct { ...
 	   #if IS_ENABLED(CONFIG_KUNIT)
 	   struct kunit                    *kunit_test;
