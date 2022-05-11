@@ -1,0 +1,106 @@
+\input cwebmac
+
+\M{1}Here is the experimental prototype of the Van unit test system.
+
+\Y\B\X3:Header files\X\6
+\X7:The main program\X\par
+\fi
+
+\M{2}License \hfil\break
+The GNU General Public License (GPL) is designed for engineers shipping
+products with GPL-licensed software:
+\vskip 8pt
+\noindent {\tt SPDX-License-Identifier: GPL-2.0} \hfil\break
+Van unit test system. \hfil\break
+Copyright (C) 2022 Gerald Schueller {\tt <gerald.schueller@web.de>}
+
+\fi
+
+\M{3}We include declarations from Van OS - os.h - and Unix.
+Below there is some evidence, why we need these interfaces with
+justification.
+
+\Y\B\4\X3:Header files\X${}\E{}$\6
+\8\#\&{include} \.{"os.h"}\6
+\8\#\&{include} \.{<stddef.h>}\6
+\8\#\&{include} \.{<stdbool.h>}\6
+\8\#\&{include} \.{<errno.h>}\6
+\8\#\&{include} \.{<limits.h>}\par
+\U1.\fi
+
+\M{4}Header file grounds:
+\vskip 8pt
+\halign{\indent\tt # \hfil&\quad # \hfil\cr
+os.h      & Van Operating system: printf(). \cr
+stddef.h  & Standard type definitions: offsetof(). \cr
+stdbool.h & C99 allows bool. true is 1 and false is 0. \cr
+errno.h   & OS interface errors like ENOMEM=12 or EFAULT=14. \cr
+limits.h  & Sizes of integral or integer types: INT\_MIN. \cr}
+
+\fi
+
+\M{5}Constants Definitions.
+\vskip 8pt
+\Y\B\4\D\|P\5
+\.{"U>"}\par
+\B\4\D\.{POISON\_POINTER\_DELTA}\5
+\T{0}\par
+\B\4\D\.{LIST\_POISON1}\5
+((\&{void} ${}{*}){}$ \T{\^100}${}+\.{POISON\_POINTER\_DELTA}{}$)\par
+\B\4\D\.{LIST\_POISON2}\5
+((\&{void} ${}{*}){}$ \T{\^200}${}+\.{POISON\_POINTER\_DELTA}{}$)\par
+\B\4\D\\{\_\_noreturn}\5
+\\{\_\_attribute\_\_}((\\{\_\_noreturn\_\_}))\par
+\B\4\D\\{\_\_must\_check}\5
+\\{\_\_attribute\_\_}((\\{\_\_warn\_unused\_result\_\_}))\par
+\B\4\D\.{REFCOUNT\_SATURATED}\5
+$(\.{INT\_MIN}/\T{2}{}$)\par
+\B\4\D\.{KUNIT\_LOG\_SIZE}\5
+\T{512}\par
+\B\4\D\.{KUNIT\_STATUS\_COMMENT\_SIZE}\5
+\T{256}\par
+\B\4\D\.{KUNIT\_PARAM\_DESC\_SIZE}\5
+\T{128}\par
+\B\4\D\.{KUNIT\_SUBTEST\_INDENT}\5
+\.{"\ \ \ \ "}\par
+\B\4\D\.{KUNIT\_SUBSUBTEST\_INDENT}\5
+\.{"\ \ \ \ \ \ \ \ "}\par
+\B\4\D\.{KUNIT\_CURRENT\_LOC}\5
+$\{$ $.$ $\\{file}\K\.{\_\_FILE\_\_}$ $,$ $.$ \&{line} $\K$ \.{\_\_LINE\_\_} $%
+\}{}$\par
+\fi
+
+\M{6}Constants Explanations.
+\vskip 8pt
+\noindent {\sl P:} \hfil\break\indent
+Van unit prompt. \hfil\break
+
+\noindent {\sl POISON\_POINTER\_DELTA:} \hfil\break\indent
+Architectures might want to move the poison pointer offset
+into some well-recognized area such as \hfil\break\indent
+0xdead000000000000, that is also not mappable by user-space exploits. \hfil%
+\break
+
+\noindent {\sl LIST\_POISON1:} \hfil\break
+\noindent {\sl LIST\_POISON2:} \hfil\break\indent
+These are non-NULL pointers that will result in page faults
+under normal circumstances, used to verify \hfil\break\indent
+that nobody uses non-initialized list entries. \hfil\break
+
+\fi
+
+\M{7}Now we come to the layout of the \PB{\\{main}} function.
+\Y\B\4\X7:The main program\X${}\E{}$\6
+\1\1\&{void} \\{main}(\&{void})\2\2\6
+${}\{{}$\1\6
+\\{printf}(\.{"Hello.\\n"});\6
+\4${}\}{}$\2\par
+\U1.\fi
+
+\N{1}{8}Index.
+Here is the list of the identifiers used.
+\fi
+
+\inx
+\fin
+\con
