@@ -1,0 +1,98 @@
+\input cwebmac
+
+\M{1}This constant defines the van unit prompt.
+
+\Y\B\4\D\|P\5
+\.{"U>"}\par
+\fi
+
+\M{2}Architectures might want to move the poison pointer offset into some
+well-recognized area such as 0xdead000000000000, that is also not mappable by
+user-space exploits.
+
+\Y\B\4\D\.{POISON\_POINTER\_DELTA}\5
+\T{0}\par
+\fi
+
+\M{3}These are non-NULL pointers that will result in page faults under normal
+circumstances, used to verify that nobody uses non-initialized list entries.
+
+\Y\B\4\D\.{LIST\_POISON1}\5
+((\&{void} ${}{*}){}$ \T{\^100}${}+\.{POISON\_POINTER\_DELTA}{}$)\par
+\B\4\D\.{LIST\_POISON2}\5
+((\&{void} ${}{*}){}$ \T{\^200}${}+\.{POISON\_POINTER\_DELTA}{}$)\par
+\fi
+
+\M{4}The noreturn function specifier is used to tell to the compiler that the
+function will not return anything. If the program uses some return statement
+inside it, the compiler will generate compile time error.
+
+\Y\B\4\D\\{\_\_noreturn}\5
+\\{\_\_attribute\_\_}((\\{\_\_noreturn\_\_}))\par
+\fi
+
+\M{5}The compiler supports the ability to diagnose when the results of a
+function
+call expression are discarded under suspicious circumstances. A diagnostic
+is generated when a function or its return type is marked with the macro below.
+
+\Y\B\4\D\\{\_\_must\_check}\5
+\\{\_\_attribute\_\_}((\\{\_\_warn\_unused\_result\_\_}))\par
+\fi
+
+\M{6}The counter saturates at REFCOUNT\_SATURATED and will not move once
+there. This avoids wrapping the counter and causing \lq spurious\rq\
+use-after-free bugs.
+
+\Y\B\4\D\.{REFCOUNT\_SATURATED}\5
+$(\.{INT\_MIN}/\T{2}{}$)\par
+\fi
+
+\M{7}This constant defines the size of a test log line in
+{\sl struct kunit $\lbrace$ \dots log; \dots $\rbrace$ }.
+
+\Y\B\4\D\.{KUNIT\_LOG\_SIZE}\5
+\T{512}\par
+\fi
+
+\M{8}This constant defines the size of the kunit status\_comment element in
+{\sl struct kunit $\lbrace$ \dots status\_comment; \dots $\rbrace$ }.
+
+\Y\B\4\D\.{KUNIT\_STATUS\_COMMENT\_SIZE}\5
+\T{256}\par
+\fi
+
+\M{9}This constant defines the size of the test parameter buffer in {\sl kunit%
+\_run\_tests()},
+to store them in {\sl struct kunit $\lbrace$ \dots log; \dots $\rbrace$ }.
+
+\Y\B\4\D\.{KUNIT\_PARAM\_DESC\_SIZE}\5
+\T{128}\par
+\fi
+
+\M{10}TAP - \pdfURL{Test Anything
+Protocol}{https://en.wikipedia.org/wiki/Test_Anything_Protocol} -
+specifies subtest stream indentation of 4 spaces, 8 spaces for a
+sub-subtest.  See the ''Subtests'' section at the inet page
+\pdfURL{TAP}{https://node-tap.org/tap-protocol}
+
+\Y\B\4\D\.{KUNIT\_SUBTEST\_INDENT}\5
+\.{"\ \ \ \ "}\par
+\B\4\D\.{KUNIT\_SUBSUBTEST\_INDENT}\5
+\.{"\ \ \ \ \ \ \ \ "}\par
+\fi
+
+\M{11}This constant saves the source location of a line of code, see
+{\sl struct kunit\_loc}.
+
+\Y\B\4\D\.{KUNIT\_CURRENT\_LOC}\5
+$\{$ $.$ $\\{file}\K\.{\_\_FILE\_\_}$ $,$ $.$ \&{line} $\K$ \.{\_\_LINE\_\_} $%
+\}{}$\par
+\fi
+
+\N{1}{12}Index.
+\fi
+
+\inx
+\fin
+\con

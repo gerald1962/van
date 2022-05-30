@@ -1,0 +1,18 @@
+\I\\{container\_of}, 1.
+\I\\{head}, 6, 7, 8, 9.
+\I\\{list\_entry}, \[1], 2, 3, 4, 5.
+\I\\{list\_entry\_is\_head}, \[6], 7, 8, 9.
+\I\\{list\_first\_entry}, \[5], 7, 9.
+\I\\{list\_for\_each\_entry}, \[7].
+\I\\{list\_for\_each\_entry\_reverse}, \[8].
+\I\\{list\_for\_each\_entry\_safe}, \[9].
+\I\\{list\_last\_entry}, \[4], 8.
+\I\\{list\_next\_entry}, \[3], 7, 9.
+\I\\{list\_prev\_entry}, \[2], 8.
+\I\\{member}, 1, 2, 3, 4, 5, 6, 7, 8, 9.
+\I\\{next}, 3, 5.
+\I\\{pos}, 2, 3, 6, 7, 8, 9.
+\I\\{prev}, 2, 4.
+\I\\{ptr}, 1, 4, 5.
+\I\\{type}, 1, 4, 5.
+\I\\{typeof}, 2, 3, 7, 8, 9.

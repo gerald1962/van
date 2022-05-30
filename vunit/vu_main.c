@@ -95,7 +95,7 @@
 
 
 /**
- * printk - print a kernel message
+ * printk() - print a kernel message
  * @fmt: format string
  *
  * This is printk(). It can be called from any context. We want it to work.
@@ -133,6 +133,11 @@
 #define pr_info(fmt, ...) \
 	printk(pr_fmt(fmt), ##__VA_ARGS__)
 
+/* WARN_ON() and so on can be used to report
+ * significant kernel issues that need prompt attention if they should ever
+ * appear at runtime.
+ *
+ * Do not use these macros when checking for invalid external inputs. */
 #define __WARN_printf(arg...)	do { fprintf(stderr, arg); } while (0)
 
 #define WARN_ON(condition) ({					\
@@ -143,6 +148,15 @@
 	unlikely(__ret_warn_on);				\
 })
 
+/* Don't use BUG() or BUG_ON() unless there's really no way out; one
+ * example might be detecting data structure corruption in the middle
+ * of an operation that can't be backed out of.  If the (sub)system
+ * can somehow continue operating, perhaps with reduced functionality,
+ * it's probably not BUG-worthy.
+ *
+ * If you're tempted to BUG(), think again:  is completely giving up
+ * really the *only* solution?  There are usually better options, where
+ * users don't need to reboot ASAP and can mostly shut down cleanly. */
 #define BUG_ON(cond)  OS_TRAP_IF(! (cond))
 #define BUG()	      BUG_ON(1)
 
@@ -206,7 +220,7 @@
  * with an explicit memory barrier or atomic instruction that provides the
  * required ordering. */
 #define READ_ONCE(x)					\
-({							\
+({    						        \
 	union { typeof(x) __val; char __c[1]; } __u =	\
 		{ .__c = { 0 } };			\
 	__read_once_size(&(x), __u.__c, sizeof(x));	\
@@ -221,6 +235,7 @@
 	__u.__val;					\
 })
 
+/* Print a refcount warning like "underflow; use-after-free". */
 #define REFCOUNT_WARN(str)  WARN_ONCE(1, "refcount_t: " str ".\n")
 
 /*

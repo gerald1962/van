@@ -1,0 +1,20 @@
+\I\\{\_\_attribute\_\_}, 4, 5.
+\I\.{\_\_FILE\_\_}, 11.
+\I\.{\_\_LINE\_\_}, 11.
+\I\\{\_\_must\_check}, \[5].
+\I\\{\_\_noreturn}, \[4].
+\I\\{\_\_noreturn\_\_}, 4.
+\I\\{\_\_warn\_unused\_result\_\_}, 5.
+\I\\{file}, 11.
+\I\.{INT\_MIN}, 6.
+\I\.{KUNIT\_CURRENT\_LOC}, \[11].
+\I\.{KUNIT\_LOG\_SIZE}, \[7].
+\I\.{KUNIT\_PARAM\_DESC\_SIZE}, \[9].
+\I\.{KUNIT\_STATUS\_COMMENT\_SIZE}, \[8].
+\I\.{KUNIT\_SUBSUBTEST\_INDENT}, \[10].
+\I\.{KUNIT\_SUBTEST\_INDENT}, \[10].
+\I\.{LIST\_POISON1}, \[3].
+\I\.{LIST\_POISON2}, \[3].
+\I\|{P}, \[1].
+\I\.{POISON\_POINTER\_DELTA}, \[2], 3.
+\I\.{REFCOUNT\_SATURATED}, \[6].

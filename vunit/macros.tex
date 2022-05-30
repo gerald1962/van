@@ -1,0 +1,487 @@
+\input cwebmac
+
+\M{1}printk infrastructure
+
+\vskip 2pt\noindent
+\noindent Some subsystems have their own custom printk that applies a va%
+\_format to a
+generic format, for example, to include a device number or other metadata
+alongside the format supplied by the caller.
+
+\vskip 2pt\noindent
+In order to store these in the way they would be emitted by the printk
+infrastructure, the subsystem provides us with the start, fixed string, and
+any subsequent text in the format string.
+
+\vskip 2pt\noindent
+We take a variable argument list as pr\_fmt/dev\_fmt/etc are sometimes passed
+as multiple arguments (eg: ''\%s: '', ''blah''), and we must only take the
+first one.
+
+\vskip 2pt\noindent
+subsys\_fmt\_prefix must be known at compile time, or compilation will fail
+(since this is a mistake). If fmt or level is not known at compile time, no
+index entry will be made (since this can legitimately happen).
+
+\Y\B\4\D\\{\_\_printk\_index\_emit}$(\,\ldots\, )$\5
+\&{do} $\{\,\}$ \&{while} (\T{0})\par
+\B\4\D\\{printk\_index\_wrap}$(\\{\_p\_func},\\{\_fmt},\,\ldots\, )$\5
+(\6
+${}\{{}$\1\6
+${}\\{\_\_printk\_index\_emit}(\\{\_fmt},\39\NULL,\39\NULL){}$;\6
+${}\\{\_p\_func}(\\{\_fmt},\39{\#}{\#}\.{\_\_VA\_ARGS\_\_});{}$\6
+\4${}\}{}$\2\6
+\,)\par
+\fi
+
+\M{2}printk()
+
+\vskip 2pt\noindent
+printk() - print a kernel message.
+
+% Macro or function format:
+\vskip 2pt\noindent
+\vbox{\settabs\+\indent & fmt: \ \  & \cr % sample line
+\+& \sl fmt: & format string. \cr
+\+& \dots:   & arguments for the format string. \cr}
+
+\vskip 2pt\noindent
+This is printk(). It can be called from any context. We want it to work.
+
+\vskip 2pt\noindent
+If printk indexing is enabled, \_printk() is called from printk\_index\_wrap.
+Otherwise, printk is simply
+
+\vskip 2pt\noindent
+\#defined to \_printk.
+
+\vskip 2pt\noindent
+We try to grab the console\_lock. If we succeed, it\rq s easy - we log the
+output and call the console drivers. If we fail to get the semaphore, we
+place the output into the log buffer and return. The current holder
+of the console\_sem will notice the new output in console\_unlock(); and will
+send it to the consoles before releasing the lock.
+
+\vskip 2pt\noindent
+One effect of this deferred printing is that code which calls printk() and
+then changes console\_loglevel may break. This is because console\_loglevel
+is inspected when the actual printing occurs.
+
+\vskip 2pt\noindent
+See also:
+
+\vskip 2pt\noindent
+printf(3)
+
+\vskip 2pt\noindent
+See the vsnprintf() documentation for format string extensions over C99.
+
+\Y\B\4\D\\{printk}$(\\{fmt},\,\ldots\, )$\5
+$\\{printk\_index\_wrap}(\\{\_printk},\39\\{fmt},\39{\#}{\#}\.{\_\_VA\_ARGS\_%
+\_}{}$)\par
+\B\4\D\\{pr\_fmt}$(\\{fmt})$\5
+\.{"VUnit:\ "}\\{fmt}\par
+\B\4\D\\{pr\_info}$(\\{fmt},\,\ldots\, )$\5
+$\\{printk}(\\{pr\_fmt}(\\{fmt}),\39{\#}{\#}\.{\_\_VA\_ARGS\_\_}{}$)\par
+\fi
+
+\M{3}WARN(),  WARN\_ON() and so on can be used to report
+significant kernel issues that need prompt attention if they should ever
+appear at runtime.
+
+\vskip 2pt\noindent
+Do not use these macros when checking for invalid external inputs.
+
+\Y\B\4\D\\{\_\_WARN\_printf}$(\\{arg}\,\ldots\, )$\5
+\&{do} \6
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\\{arg});{}$\6
+\4${}\}{}$\2\6
+\&{while} (\T{0})\par
+\B\4\D\.{WARN}$(\\{condition},\\{format}\,\ldots\, )$\5
+(\6
+${}\{{}$\1\6
+\&{int} \\{\_\_ret\_warn\_on}${}\K\R\R(\\{condition}){}$;\7
+\&{if} (\\{unlikely}(\\{\_\_ret\_warn\_on}))\1\6
+\\{printf}(\\{format});\2\6
+\\{unlikely}(\\{\_\_ret\_warn\_on});\6
+\4${}\}{}$\2\6
+\,)\par
+\B\4\D\.{WARN\_ONCE}$(\\{condition},\\{format}\,\ldots\, )$\5
+$\.{WARN}(\\{condition},\39\\{format}{}$)\par
+\B\4\D\.{WARN\_ON}$(\\{condition})$\5
+(\6
+${}\{{}$\1\6
+\&{int} \\{\_\_ret\_warn\_on}${}\K\R\R(\\{condition}){}$;\7
+\&{if} (\\{unlikely}(\\{\_\_ret\_warn\_on}))\1\6
+${}\\{\_\_WARN\_printf}(\.{"assertion\ failed\ at}\)\.{\ \%s:\%d\\n"},{}$\6
+\.{\_\_FILE\_\_}${},\39\.{\_\_LINE\_\_}){}$;\2\6
+\\{unlikely}(\\{\_\_ret\_warn\_on});\6
+\4${}\}{}$\2\6
+\,)\par
+\fi
+
+\M{4}Don\rq t use BUG() or BUG\_ON() unless there\rq s really no way out; one
+example might be detecting data structure corruption in the middle
+of an operation that can\rq t be backed out of.  If the (sub)system
+can somehow continue operating, perhaps with reduced functionality,
+it\rq s probably not BUG-worthy.
+
+\vskip 2pt\noindent
+If you\rq re tempted to BUG(), think again: is completely giving up
+really the {\bf only} solution?  There are usually better options, where
+users don\rq t need to reboot ASAP and can mostly shut down cleanly.
+
+\Y\B\4\D\.{BUG\_ON}$(\\{cond})$\5
+$\.{OS\_TRAP\_IF}(\R(\\{cond}){}$)\par
+\B\4\D\.{BUG}$()$\5
+\.{BUG\_ON}(\T{1})\par
+\fi
+
+\M{5}Comparing types.
+
+\vskip 2pt\noindent
+Are two types/vars the same type (ignoring qualifiers)?
+
+\Y\B\4\D\\{\_\_same\_type}$(\|a,\|b)$\5
+$\\{\_\_builtin\_types\_compatible\_p}(\\{typeof}(\|a),\39\\{typeof}(\|b){}$)%
+\par
+\fi
+
+\M{6}Multiplication with overflow.
+
+\Y\B\4\D\\{check\_mul\_overflow}$(\|a,\|b,\|d)$\5
+\\{\_\_must\_check\_overflow}((\6
+${}\{{}$\1\6
+${}\\{typeof}(\|a)\\{\_\_a}\K(\|a){}$;\6
+${}\\{typeof}(\|b)\\{\_\_b}\K(\|b){}$;\6
+${}\\{typeof}(\|d)\\{\_\_d}\K(\|d){}$;\6
+${}(\&{void})({\AND}\\{\_\_a}\E{\AND}\\{\_\_b}){}$;\6
+${}(\&{void})({\AND}\\{\_\_a}\E\\{\_\_d}){}$;\6
+${}\\{\_\_builtin\_mul\_overflow}(\\{\_\_a},\39\\{\_\_b},\39\\{\_\_d});{}$\6
+\4${}\}{}$\2\6
+\,))\par
+\fi
+
+\M{7}The {\bf volatile} is due to gcc bugs: see
+\pdfURL{Extended Asm}{https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html}
+
+\vskip 2pt\noindent
+With extended asm you can read and write C variables from assembler and
+perform jumps from assembler code to C labels. Extended asm syntax uses
+colons (:) to delimit the operand parameters after the assembler template.
+See
+\pdfURL{Assembly with
+C}{https://gcc.gnu.org/onlinedocs/gcc/Using-Assembly-Language-with-C.html}
+
+\vskip 2pt\noindent
+In it find recommondations:
+\pdfURL{Barrier Sync}{https://stackoverflow.com/questions/19965076/gcc-memory-
+barrier-sync-synchronize-vs-asm-volatile-memory}
+
+\vskip 2pt\noindent
+The first barriers does nothing at runtime. It\rq s called a SW barrier.
+The second barrier would translate into a HW barrier, probably a fence
+(mfence/sfence) operations if you\rq re on x86.
+This instruction tells the micro code of a CPU network to make sure that
+loads or stores can\rq t pass this point and must be observed in the correct
+side of the sync point.
+
+\Y\B\4\D\\{barrier}$()$\5
+\\{\_\_asm\_\_}\\{\_\_volatile\_\_} ( \.{""}: : : \.{"memory"} )\par
+\fi
+
+\M{8}Prevent the compiler from merging or refetching reads or writes. The
+compiler is also forbidden from reordering successive instances of
+READ\_ONCE and WRITE\_ONCE, but only when the compiler is aware of some
+particular ordering. One way to make the compiler aware of ordering is to
+put the two invocations of READ\_ONCE or WRITE\_ONCE in different C
+statements.
+
+\vskip 2pt\noindent
+These two macros will also work on aggregate data types like structs or
+unions. If the size of the accessed data type exceeds the word size of
+the machine (e.g., 32 bits or 64 bits) READ\_ONCE() and WRITE\_ONCE() will
+fall back to memcpy and print a compile-time warning.
+
+\vskip 2pt\noindent
+Their two major use cases are: (1) Mediating communication between
+process-level code and irq/NMI handlers, all running on the same CPU,
+and (2) Ensuring that the compiler does not fold, spindle, or otherwise
+mutilate accesses that either do not require ordering or that interact
+with an explicit memory barrier or atomic instruction that provides the
+required ordering.
+
+\Y\B\4\D\.{READ\_ONCE}$(\|x)$\5
+( $\{{}$\6
+\&{union} ${}\{{}$\1\6
+\\{typeof}(\|x)\\{\_\_val};\7
+\&{char} \\{\_\_c}[\T{1}];\2\6
+${}\}{}$ \\{\_\_u} $\K{}$\6
+$\{$ $.$ $\\{\_\_c}\K\{\T{0}\}$ $\}$  ;\6
+${}\\{\_\_read\_once\_size}({\AND}(\|x),\39\\{\_\_u}.\\{\_\_c},\39{}$\&{sizeof}
+(\|x));\6
+${}\\{\_\_u}.\\{\_\_val}{}$;\6
+$\}$ )\par
+\B\4\D\.{WRITE\_ONCE}$(\|x,\\{val})$\5
+( $\{{}$\6
+\&{union} ${}\{{}$\1\6
+\\{typeof}(\|x)\\{\_\_val};\7
+\&{char} \\{\_\_c}[\T{1}];\2\6
+${}\}{}$ \\{\_\_u} $\K{}$\6
+$\{$ $.$ $\\{\_\_val}\K(\\{val})$ $\}$  ;\6
+${}\\{\_\_write\_once\_size}({\AND}(\|x),\39\\{\_\_u}.\\{\_\_c},\39{}$%
+\&{sizeof} (\|x));\6
+${}\\{\_\_u}.\\{\_\_val}{}$;\6
+$\}$ )\par
+\fi
+
+\M{9}Print a refcount warning like ''underflow; use-after-free''.
+
+\Y\B\4\D\.{REFCOUNT\_WARN}$(\\{str})$\5
+$\.{WARN\_ONCE}(\T{1},\39\.{"refcount\_t:\ "}\\{str}\.{".\\n"}{}$)\par
+\fi
+
+\M{10}Built-in Function: {\sl long \_\_builtin\_expect (long exp, long c)}
+
+\vskip 2pt\noindent
+See
+\pdfURL{Builtin%
+\_Expect}{https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html}
+
+\vskip 2pt\noindent
+You may use \_\_builtin\_expect to provide the compiler with branch prediction
+information. In general, you should prefer to use actual profile feedback for
+this (-fprofile-arcs), as programmers are notoriously bad at predicting how
+their programs actually perform. However, there are applications in which
+this data is hard to collect.
+
+\vskip 2pt\noindent
+3The return value is the value of exp, which should be an integral expression.
+The semantics of the built-in are that it is expected that $exp == c$. For
+example:
+
+\vskip 4pt\indent
+\vbox{ \settabs\+ ''        '' & \cr % sample line
+\+ \bf if $(\_\_builtin\_expect(x, 0))$ \cr
+\+ & $foo()$ \cr }
+
+\vskip 2pt\noindent
+indicates that we do not expect to call foo, since we expect x to be zero.
+Since you are limited to integral expressions for exp, you should use
+constructions such as
+
+\vskip 4pt\indent
+\vbox{ \settabs\+ ''        '' & \cr % sample line
+\+ \bf if $(\_\_builtin\_expect(ptr != NULL, 1))$ \cr
+\+ & $foo(*ptr)$ \cr }
+
+\vskip 2pt\noindent
+when testing pointer or floating-point values.
+
+\vskip 2pt\noindent
+For the purposes of branch prediction optimizations, the probability that a
+--builtinexpect expression is true is controlled by GCCs
+builtin-expect-probability parameter, which defaults to 90%.
+
+\vskip 2pt\noindent
+You can also use --builtin-expect-with-probability to explicitly assign a
+probability value to individual expressions. If the built-in is used in a
+loop construct, the provided probability will influence the expected number
+of iterations made by loop optimizations.
+
+\fi
+
+\M{11}The attributes likely and unlikely may be applied to labels and
+statements
+(other than declaration-statements). They may not be simultaneously applied
+to the same label or statement.
+
+\vskip 2pt\noindent
+\item{1} Applies to a statement to allow the compiler to optimize for the case
+where paths of execution including that statement are more likely than any
+alternative path of execution that does not include such a statement.
+
+\item{2} Applies to a statement to allow the compiler to optimize for the case
+where paths of execution including that statement are less likely than any
+alternative path of execution that does not include such a statement.
+
+\Y\B\4\D\\{unlikely}$(\|x)$\5
+$\\{\_\_builtin\_expect}(\R\R(\|x),\39\T{0}{}$)\par
+\fi
+
+\M{12}static\_assert - check integer constant expression at build time
+
+\vskip 2pt\noindent
+{\sl static\_assert()} is a wrapper for the C11 \_Static\_assert, with a
+little macro magic to make the message optional (defaulting to the
+stringification of the tested expression).
+
+\vskip 2pt\noindent
+Contrary to {\sl BUILD\_BUG\_ON()}, {\sl static\_assert()} can be used at
+global
+scope, but requires the expression to be an integer constant
+expression (i.e., it is not enough that {\sl \_\_builtin\_constant\_p()} is
+true for expr).
+
+\vskip 2pt\noindent
+Also note that {\sl BUILD\_BUG\_ON()} fails the build if the condition is
+true, while {\sl static\_assert()} fails the build if the expression is
+false.
+
+\Y\B\4\D\&{static\_assert}$(\\{expr},\,\ldots\, )$\5
+$\\{\_\_static\_assert}(\\{expr},\39{\#}{\#}\.{\_\_VA\_ARGS\_\_},\39{\#}%
+\\{expr}{}$)\par
+\B\4\D\\{\_\_static\_assert}$(\\{expr},\\{msg},\,\ldots\, )$\5
+$\\{\_Static\_assert}(\\{expr},\39\\{msg}{}$)\par
+\fi
+
+\M{13}container\_of - cast a member of a structure out to the containing
+structure.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl ptr:    & the pointer to the member. \cr
+\+ & \sl type:   & the type of the container struct this is embedded in. \cr
+\+ & \sl member: & the name of the member within the struct. \cr}
+
+\Y\B\4\D\\{container\_of}$(\\{ptr},\\{type},\\{member})$\5
+( $\{{}$\6
+\&{void} ${}{*}\\{\_\_mptr}\K{}$(\&{void} ${}{*})(\\{ptr}){}$;\6
+\&{static\_assert} ( \\{\_\_same\_type} $({*}(\\{ptr}),\39$ ( ( \\{type} $*$ ) %
+\T{0} ) $\MG$ \\{member} ) $\V{}$\6
+$\\{\_\_same\_type}({*}(\\{ptr}),\39\&{void}),{}$\6
+\.{"pointer\ type\ mismat}\)\.{ch\ in\ container\_of()}\)\.{"} )  ;\6
+( ( \\{type} $*$ ) $(\\{\_\_mptr}-\&{offsetof}(\\{type},\39\\{member}))$ )  ; $%
+\}$ )\par
+\fi
+
+\M{14}list\_entry - get the struct for this entry.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+% The code for the C address operation is 38: see Ascii table: mam ascii
+\+ & \sl ptr:    & the {\sl \char38 struct list\_head} pointer. \cr
+\+ & \sl type:   & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{container\_of}(\\{ptr},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{15}list\_prev\_entry - get the prev element in list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_prev\_entry}$(\\{pos},\\{member})$\6
+$\\{list\_entry}((\\{pos})\MG\\{member}.\\{prev},\39\\{typeof}({*}(\\{pos})),%
+\39\\{member}{}$)\par
+\fi
+
+\M{16} list\_next\_entry - get the next element in list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_next\_entry}$(\\{pos},\\{member})$\6
+$\\{list\_entry}((\\{pos})\MG\\{member}.\\{next},\39\\{typeof}({*}(\\{pos})),%
+\39\\{member}{}$)\par
+\fi
+
+\M{17}list\_last\_entry - get the last element from a list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl ptr:	 & the list head to take the element from. \cr
+\+ & \sl type:	 & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_last\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{list\_entry}((\\{ptr})\MG\\{prev},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{18}list\_first\_entry - get the first element from a list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl ptr:	 & the list head to take the element from. \cr
+\+ & \sl type:	 & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_first\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{list\_entry}((\\{ptr})\MG\\{next},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{19}list\_entry\_is \_head - test if the entry points to the head of the
+list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_entry\_is\_head}$(\\{pos},\\{head},\\{member})$\6
+$({\AND}\\{pos}\MG\\{member}\E(\\{head}){}$)\par
+\fi
+
+\M{20}list\_for\_each\_entry - iterate over list of given type.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry}$(\\{pos},\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_first\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\\{list\_next\_entry}(\\{pos},\39\\{member}){}$)\par
+\fi
+
+\M{21}list\_for\_each\_entry\_reverse - iterate backwards over list of given
+type.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry\_reverse}$(\\{pos},\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_last\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\\{list\_prev\_entry}(\\{pos},\39\\{member}){}$)\par
+\fi
+
+\M{22}list\_for\_each\_entry\_safe - iterate over list of given type safe
+against removal of list entry.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to use as a loop cursor. \cr
+\+ & \sl n:	 & another type * to use as temporary storage. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry\_safe}$(\\{pos},\|n,\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_first\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}),{}$\6
+${}\|n\K\\{list\_next\_entry}(\\{pos},\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\|n,\39\|n\K\\{list\_next\_entry}(\|n,\39\\{member}){}$)\par
+\fi
+
+\N{1}{23}Index.
+\fi
+
+\inx
+\fin
+\con

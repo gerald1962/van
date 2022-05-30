@@ -1,0 +1,13 @@
+This is TeX, Version 3.14159265 (TeX Live 2019/Debian) (preloaded format=tex 2021.12.2)  8 MAY 2022 15:31
+**hello.tex
+(./hello.tex
+> 32.
+l.43 \showthe\count1
+                    
+? 
+! Emergency stop.
+l.43 \showthe\count1
+                    
+End of file on the terminal!
+
+No pages of output.

@@ -1,9 +1,266 @@
-Hi Herbert,
 
-Über Versuch und Irrtum untersuche ich eine Programmiersprache TeX, mit
-dem man das Layout eines Textes programmieren oder ziemlich flexibel
-gestalten kann.
+119 Bewerbung
+=============
+see
+https://github.com/dee-dw/bewerbung-latex
 
+119.1 Install
+-------------
+cd
+cd github
+git clone https://github.com/dee-dw/bewerbung-latex
+cp -r bewerbung-latex ~/van_development/van/job-application
+
+119.2 Trial and error
+---------------------
+cd ~/van_development/van/job-application
+$ latex bewerbung.tex
+
+E: ! LaTeX Error: File `tgpagella.sty' not found.
+A: % \SetzeSchrift ...
+
+E: ! LaTeX Error: Cannot determine size of graphic in signatur-bewerber.png
+A: The DVI producing latex doesn't support reading the size of PNG, JPG or PDF
+images. You need to use pdflatex for this. 
+
+$ pdflatex bewerbung.tex
+
+E: !pdfTeX error: pdflatex (file ts1-lmr12): Font ts1-lmr12 at 600 not found
+ ==> Fatal error occurred, no output PDF file produced!
+A: 
+
+119.2 Style
+-----------
+A .sty file is just a regular package. Make sure it is in the same folder as
+your thesis and include it via \usepackage{UNI-LJ-FE-Diploma} in the
+preamble: see
+~/github/bewerbung-gerald/bewerbung-latex.sty
+
+118 LIP
+=======
+LIP stands for Literate Programming, see
+https://de.wikipedia.org/wiki/Literate_programming
+
+
+117 Wichtige Film
+=================
+Pathfinder - Die Rache des Fährtensuchers
+Per Anhalter durch die Galaxis
+Das Leben des Brian
+
+116 Frequently used inet addresses
+=================================
+https://www.linguee.de/
+
+
+115 Cweb file structure
+=======================
+115.1 Control codes
+-------------------
+A CWEB control code is a two-character combination of which the first is ‘@’. We’ve already seen the meaning
+of several control codes; it’s time to list them more methodically.
+In the following list, the letters in brackets after a control code indicate in what contexts that code is
+allowed. L indicates that the code is allowed in limbo; T (for TEX), M (for middle), and C (for C ) mean
+that the code is allowed in each of the three parts of a section, at top level—that is, outside such constructs
+as ‘|...|’ and section names. An arrow -> means that the control code terminates the present part of the
+CWEB file, and inaugurates the part indicated by the letter following the arrow. Thus [LTMC -> T] next to
+@ indicates that this control code can occur in limbo, or in any of the three parts of a section, and that it
+starts the (possibly empty) TEX part of the following section.
+
+115.2 Major section
+-------------------
+Here is the minor section code that introduce the TEX part.
+
+115.2.1 Rule
+............
+@* [LTMC -> T ] This denotes the beginning of a new starred section, i.e., a section that begins a new
+major group. The title of the new group should appear after the @*, followed by a period.
+
+115.2.2 Use
+...........
+@* Index.
+Here is the list of the identifiers used.
+
+115.3 Minor section
+-------------------
+Here is the minor section code that introduce the TEX part.
+
+115.3.1 Rule
+............
+@ [LTMC -> T] This denotes the beginning of a new section.
+
+115.3.2 Use
+...........
+@ Include the printf declaration.
+
+115.4 C code
+------------
+Next come the codes that govern the C part of a section.
+
+115.4.1 Rule
+............
+@c [TM -> C] The C part of an unnamed section begins with @c
+
+115.4.2 Use
+...........
+@c
+void main(void)
+{
+        printf("Hello cweb.\n");
+}
+
+
+114 Hello cweb
+==============
+Test directory
+--------------
+van/vunit
+
+Source code
+-----------
+hello.w
+
+Cweb to Tex
+-----------
+cweave hello.w
+see
+@* Hello CWEB.
+
+@ Include the printf declaration.
+@c
+#include <stdio.h>
+
+@ Send the test string to standard output.
+@c
+void main(void)
+{
+        printf("Hello cweb.\n");
+}
+
+@* Index.
+
+
+Tex to pdf
+----------
+pdftex hello.tex
+
+Pdf viewer:
+-----------
+evince hello.pdf
+
+Cweb to C
+---------
+ctangle hello.w
+
+C to program
+------------
+gcc hello.c
+./a.out
+
+
+113 AMG
+=======
+https://amg-v.com
+
+
+112 Linux Kernel Test
+=====================
+
+ACM, the world's largest educational and scientific computing society.
+
+Hier ein Beispiel:
+xxx
+
+3. Hello cweb
+-------------
+Der Scheisstyp setzt ziemlich hohe Hürden: D. E. Knuth, wie man das anwendet.
+
+Seine Hinweise sind abstrakt und man muss sich selbst was ausdenken,
+bis man ein Ergebnis bekommt.Hi Herbert,
+
+4. Transfer
+-----------
+Ein Beispiel ist ein Testsystem für Linux,
+mit dem man zeigt, ob man etwas gelernt, verstanden, anwenden und weiter
+entwickeln kann.
+
+LG,
+Gerald
+
+
+115 Cweb file structure
+=======================
+115.1 File headline
+--------------------
+Rule
+....
+@ [LTMC -> T ] This denotes the beginning of a new section.
+
+115.2 Use
+.........
+@ Summarize the file contents.
+
+
+114 Hello cweb
+==============
+Test directory
+--------------
+van/vunit
+
+Source code
+-----------
+hello.w
+
+Cweb to Tex
+-----------
+cweave hello.w
+
+Tex to pdf
+----------
+pdftex hello.tex
+
+Pdf viewer:
+-----------
+evince hello.pdf
+
+Cweb to C
+---------
+ctangle hello.w
+
+C to program
+------------
+gcc hello.c
+./a.out
+
+
+113 AMG
+=======
+https://amg-v.com
+
+
+112 Linux Kernel Test
+=====================
+112.1 Autor
+-----------
+Brendan Higgins <brendanhiggins@google.com>
+
+
+111 PDF Reader with URL Resolution
+==================================
+chromium macros.pdf
+
+
+110 PDF Decoder
+===============
+see:
+https://unix.stackexchange.com/questions/17220/how-to-view-and-edit-the-code-of-a-pdf-file
+
+$ qpdf --qdf --object-streams=disable macros.pdf expanded.pdf
+WARNING: macros.pdf object stream 15 (object 17 0, offset 1529): dictionary has duplicated key /Type; last occurrence overrides earlier ones
+qpdf: operation succeeded with warnings; resulting file may have some problems
+
+more expanded.pdf
+-> search for: https
 
 
 109 TeX

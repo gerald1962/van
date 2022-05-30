@@ -1,22 +1,93 @@
-\I\\{\_\_attribute\_\_}, 5.
-\I\.{\_\_FILE\_\_}, 5.
-\I\.{\_\_LINE\_\_}, 5.
-\I\\{\_\_must\_check}, \[5].
-\I\\{\_\_noreturn}, \[5].
-\I\\{\_\_noreturn\_\_}, 5.
-\I\\{\_\_warn\_unused\_result\_\_}, 5.
-\I\\{file}, 5.
-\I\.{INT\_MIN}, 5.
-\I\.{KUNIT\_CURRENT\_LOC}, \[5].
-\I\.{KUNIT\_LOG\_SIZE}, \[5].
-\I\.{KUNIT\_PARAM\_DESC\_SIZE}, \[5].
-\I\.{KUNIT\_STATUS\_COMMENT\_SIZE}, \[5].
-\I\.{KUNIT\_SUBSUBTEST\_INDENT}, \[5].
-\I\.{KUNIT\_SUBTEST\_INDENT}, \[5].
-\I\.{LIST\_POISON1}, \[5].
-\I\.{LIST\_POISON2}, \[5].
-\I\\{main}, \[7].
+\I\\{\_\_a}, 22.
+\I\\{\_\_asm\_\_}, 23.
+\I\\{\_\_attribute\_\_}, 8, 9.
+\I\\{\_\_b}, 22.
+\I\\{\_\_builtin\_expect}, 27.
+\I\\{\_\_builtin\_mul\_overflow}, 22.
+\I\\{\_\_builtin\_types\_compatible\_p}, 21.
+\I\\{\_\_c}, \[24].
+\I\\{\_\_d}, 22.
+\I\.{\_\_FILE\_\_}, 15, 19.
+\I\.{\_\_LINE\_\_}, 15, 19.
+\I\\{\_\_mptr}, \[29].
+\I\\{\_\_must\_check}, \[9].
+\I\\{\_\_must\_check\_overflow}, 22.
+\I\\{\_\_noreturn}, \[8].
+\I\\{\_\_noreturn\_\_}, 8.
+\I\\{\_\_printk\_index\_emit}, \[17].
+\I\\{\_\_read\_once\_size}, 24.
+\I\\{\_\_ret\_warn\_on}, \[19].
+\I\\{\_\_same\_type}, \[21], 29.
+\I\\{\_\_static\_assert}, \[28].
+\I\\{\_\_u}, \[24].
+\I\.{\_\_VA\_ARGS\_\_}, 17, 18, 28.
+\I\\{\_\_val}, 24.
+\I\\{\_\_volatile\_\_}, 23.
+\I\\{\_\_WARN\_printf}, \[19].
+\I\\{\_\_warn\_unused\_result\_\_}, 9.
+\I\\{\_\_write\_once\_size}, 24.
+\I\\{\_fmt}, 17.
+\I\\{\_p\_func}, 17.
+\I\\{\_printk}, 18.
+\I\\{\_Static\_assert}, 28.
+\I\\{arg}, 19.
+\I\\{barrier}, \[23].
+\I\.{BUG}, \[20].
+\I\.{BUG\_ON}, \[20].
+\I\\{check\_mul\_overflow}, \[22].
+\I\\{cond}, 20.
+\I\\{condition}, 19.
+\I\\{container\_of}, \[29], 30.
+\I\\{expr}, 28.
+\I\\{file}, 15.
+\I\\{fmt}, 18.
+\I\\{format}, 19.
+\I\\{fprintf}, 19.
+\I\\{head}, 35, 36, 37, 38.
+\I\.{INT\_MIN}, 10.
+\I\.{KUNIT\_CURRENT\_LOC}, \[15].
+\I\.{KUNIT\_LOG\_SIZE}, \[11].
+\I\.{KUNIT\_PARAM\_DESC\_SIZE}, \[13].
+\I\.{KUNIT\_STATUS\_COMMENT\_SIZE}, \[12].
+\I\.{KUNIT\_SUBSUBTEST\_INDENT}, \[14].
+\I\.{KUNIT\_SUBTEST\_INDENT}, \[14].
+\I\\{list\_entry}, \[30], 31, 32, 33, 34.
+\I\\{list\_entry\_is\_head}, \[35], 36, 37, 38.
+\I\\{list\_first\_entry}, \[34], 36, 38.
+\I\\{list\_for\_each\_entry}, \[36].
+\I\\{list\_for\_each\_entry\_reverse}, \[37].
+\I\\{list\_for\_each\_entry\_safe}, \[38].
+\I\\{list\_last\_entry}, \[33], 37.
+\I\\{list\_next\_entry}, \[32], 36, 38.
+\I\.{LIST\_POISON1}, \[7].
+\I\.{LIST\_POISON2}, \[7].
+\I\\{list\_prev\_entry}, \[31], 37.
+\I\\{main}, \[16].
+\I\\{member}, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38.
+\I\\{msg}, 28.
+\I\\{next}, 32, 34.
+\I\.{OS\_TRAP\_IF}, 20.
 \I\|{P}, \[5].
-\I\.{POISON\_POINTER\_DELTA}, \[5].
-\I\\{printf}, 7.
-\I\.{REFCOUNT\_SATURATED}, \[5].
+\I\.{POISON\_POINTER\_DELTA}, \[6], 7.
+\I\\{pos}, 31, 32, 35, 36, 37, 38.
+\I\\{pr\_fmt}, \[18].
+\I\\{pr\_info}, \[18].
+\I\\{prev}, 31, 33.
+\I\\{printf}, 16, 19.
+\I\\{printk}, \[18].
+\I\\{printk\_index\_wrap}, \[17], 18.
+\I\\{ptr}, 29, 30, 33, 34.
+\I\.{READ\_ONCE}, \[24].
+\I\.{REFCOUNT\_SATURATED}, \[10].
+\I\.{REFCOUNT\_WARN}, \[25].
+\I\&{static\_assert}, \[28].
+\I\\{stderr}, 19.
+\I\\{str}, 25.
+\I\\{type}, 29, 30, 33, 34.
+\I\\{typeof}, 21, 22, 24, 31, 32, 36, 37, 38.
+\I\\{unlikely}, 19, \[27].
+\I\\{val}, 24.
+\I\.{WARN}, \[19].
+\I\.{WARN\_ON}, \[19].
+\I\.{WARN\_ONCE}, \[19], 25.
+\I\.{WRITE\_ONCE}, \[24].

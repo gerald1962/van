@@ -1,0 +1,13 @@
+Im vorliegenden Paket erhalten sie eine deutsche Uebersetzung des TeXbook
+von D. Knuth als LaTeX-Dokument. Das Paket enthaelt folgende Files:
+
+texbuch.tex : Den LaTeX-Source zum Buch
+texbuch.ind : Index-File zum Texbuch
+texbuch.dvi : Den zugehoerigen DVI-File
+              Achtung! Vor dem Ausdruck ist zu ueberpruefen, ob die benoetigten
+              Files vorhanden sind!
+a4.sty      : Eine Anpassung fuer DIN A4-Papier
+readme      : dieser File
+
+Mit den beiliegenden Files ist eine Uebersetzung des Source ohne weiteres
+moeglich. Beachten sie bitte die Hinweise im Vorwort.

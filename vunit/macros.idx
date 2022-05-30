@@ -1,0 +1,74 @@
+\I\\{\_\_a}, 6.
+\I\\{\_\_asm\_\_}, 7.
+\I\\{\_\_b}, 6.
+\I\\{\_\_builtin\_expect}, 11.
+\I\\{\_\_builtin\_mul\_overflow}, 6.
+\I\\{\_\_builtin\_types\_compatible\_p}, 5.
+\I\\{\_\_c}, \[8].
+\I\\{\_\_d}, 6.
+\I\.{\_\_FILE\_\_}, 3.
+\I\.{\_\_LINE\_\_}, 3.
+\I\\{\_\_mptr}, \[13].
+\I\\{\_\_must\_check\_overflow}, 6.
+\I\\{\_\_printk\_index\_emit}, \[1].
+\I\\{\_\_read\_once\_size}, 8.
+\I\\{\_\_ret\_warn\_on}, \[3].
+\I\\{\_\_same\_type}, \[5], 13.
+\I\\{\_\_static\_assert}, \[12].
+\I\\{\_\_u}, \[8].
+\I\.{\_\_VA\_ARGS\_\_}, 1, 2, 12.
+\I\\{\_\_val}, 8.
+\I\\{\_\_volatile\_\_}, 7.
+\I\\{\_\_WARN\_printf}, \[3].
+\I\\{\_\_write\_once\_size}, 8.
+\I\\{\_fmt}, 1.
+\I\\{\_p\_func}, 1.
+\I\\{\_printk}, 2.
+\I\\{\_Static\_assert}, 12.
+\I\\{arg}, 3.
+\I\\{barrier}, \[7].
+\I\.{BUG}, \[4].
+\I\.{BUG\_ON}, \[4].
+\I\\{check\_mul\_overflow}, \[6].
+\I\\{cond}, 4.
+\I\\{condition}, 3.
+\I\\{container\_of}, \[13], 14.
+\I\\{expr}, 12.
+\I\\{fmt}, 2.
+\I\\{format}, 3.
+\I\\{fprintf}, 3.
+\I\\{head}, 19, 20, 21, 22.
+\I\\{list\_entry}, \[14], 15, 16, 17, 18.
+\I\\{list\_entry\_is\_head}, \[19], 20, 21, 22.
+\I\\{list\_first\_entry}, \[18], 20, 22.
+\I\\{list\_for\_each\_entry}, \[20].
+\I\\{list\_for\_each\_entry\_reverse}, \[21].
+\I\\{list\_for\_each\_entry\_safe}, \[22].
+\I\\{list\_last\_entry}, \[17], 21.
+\I\\{list\_next\_entry}, \[16], 20, 22.
+\I\\{list\_prev\_entry}, \[15], 21.
+\I\\{member}, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22.
+\I\\{msg}, 12.
+\I\\{next}, 16, 18.
+\I\.{OS\_TRAP\_IF}, 4.
+\I\\{pos}, 15, 16, 19, 20, 21, 22.
+\I\\{pr\_fmt}, \[2].
+\I\\{pr\_info}, \[2].
+\I\\{prev}, 15, 17.
+\I\\{printf}, 3.
+\I\\{printk}, \[2].
+\I\\{printk\_index\_wrap}, \[1], 2.
+\I\\{ptr}, 13, 14, 17, 18.
+\I\.{READ\_ONCE}, \[8].
+\I\.{REFCOUNT\_WARN}, \[9].
+\I\&{static\_assert}, \[12].
+\I\\{stderr}, 3.
+\I\\{str}, 9.
+\I\\{type}, 13, 14, 17, 18.
+\I\\{typeof}, 5, 6, 8, 15, 16, 20, 21, 22.
+\I\\{unlikely}, 3, \[11].
+\I\\{val}, 8.
+\I\.{WARN}, \[3].
+\I\.{WARN\_ON}, \[3].
+\I\.{WARN\_ONCE}, \[3], 9.
+\I\.{WRITE\_ONCE}, \[8].

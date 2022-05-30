@@ -1,0 +1,130 @@
+\input cwebmac
+
+\M{1}list\_entry - get the struct for this entry.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+% The code for the C address operation is 38: see Ascii table: mam ascii
+\+ & \sl ptr:    & the {\sl \char38 struct list\_head} pointer. \cr
+\+ & \sl type:   & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{container\_of}(\\{ptr},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{2}list\_prev\_entry - get the prev element in list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_prev\_entry}$(\\{pos},\\{member})$\6
+$\\{list\_entry}((\\{pos})\MG\\{member}.\\{prev},\39\\{typeof}({*}(\\{pos})),%
+\39\\{member}{}$)\par
+\fi
+
+\M{3} list\_next\_entry - get the next element in list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_next\_entry}$(\\{pos},\\{member})$\6
+$\\{list\_entry}((\\{pos})\MG\\{member}.\\{next},\39\\{typeof}({*}(\\{pos})),%
+\39\\{member}{}$)\par
+\fi
+
+\M{4}list\_last\_entry - get the last element from a list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl ptr:	 & the list head to take the element from. \cr
+\+ & \sl type:	 & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_last\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{list\_entry}((\\{ptr})\MG\\{prev},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{5}list\_first\_entry - get the first element from a list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl ptr:	 & the list head to take the element from. \cr
+\+ & \sl type:	 & the type of the struct this is embedded in. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_first\_entry}$(\\{ptr},\\{type},\\{member})$\6
+$\\{list\_entry}((\\{ptr})\MG\\{next},\39\\{type},\39\\{member}{}$)\par
+\fi
+
+\M{6}list\_entry\_is \_head - test if the entry points to the head of the list.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_entry\_is\_head}$(\\{pos},\\{head},\\{member})$\6
+$({\AND}\\{pos}\MG\\{member}\E(\\{head}){}$)\par
+\fi
+
+\M{7}list\_for\_each\_entry - iterate over list of given type.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry}$(\\{pos},\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_first\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\\{list\_next\_entry}(\\{pos},\39\\{member}){}$)\par
+\fi
+
+\M{8}list\_for\_each\_entry\_reverse - iterate backwards over list of given
+type.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to cursor. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry\_reverse}$(\\{pos},\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_last\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\\{list\_prev\_entry}(\\{pos},\39\\{member}){}$)\par
+\fi
+
+\M{9}list\_for\_each\_entry\_safe - iterate over list of given type safe
+against removal of list entry.
+
+\vskip 4pt\noindent
+\vbox{\settabs\+ \indent & member: \ \  & \cr % sample line
+\+ & \sl pos:	 & the type * to use as a loop cursor. \cr
+\+ & \sl n:	 & another type * to use as temporary storage. \cr
+\+ & \sl head:	 & the head for your list. \cr
+\+ & \sl member: & the name of the list\_head within the struct. \cr}
+
+\Y\B\4\D\\{list\_for\_each\_entry\_safe}$(\\{pos},\|n,\\{head},\\{member})$\6
+\&{for} ${}(\\{pos}\K\\{list\_first\_entry}(\\{head},\39\\{typeof}({*}\\{pos}),%
+\39\\{member}),{}$\6
+${}\|n\K\\{list\_next\_entry}(\\{pos},\39\\{member}){}$;\6
+${}\R\\{list\_entry\_is\_head}(\\{pos},\39\\{head},\39\\{member}){}$;\6
+${}\\{pos}\K\|n,\39\|n\K\\{list\_next\_entry}(\|n,\39\\{member}){}$)\par
+\fi
+
+\N{1}{10}Index.
+\fi
+
+\inx
+\fin
+\con

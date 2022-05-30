@@ -1,0 +1,5 @@
+\catcode `\@=11\relax 
+\ZZ {Hello CWEB}{1}{1}{1}{Hello CWEB}
+\ZZ {Index}{1}{4}{2}{Index}
+
+\catcode `\@=12\relax 
