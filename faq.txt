@@ -1,6 +1,4 @@
 
-
-
 119 Bewerbung
 =============
 see
@@ -12,11 +10,23 @@ cd
 cd github
 git clone https://github.com/dee-dw/bewerbung-latex
 cp -r bewerbung-latex ~/van_development/van/job-application
+cd ~/van_development/van/job-application
 
-119.2 Trial and error
+119.2 PDF
+---------
+pdflatex bewerbung.tex
+
+119.3 Style
+-----------
+A .sty file is just a regular package. Make sure it is in the same folder as
+your thesis and include it via \usepackage{UNI-LJ-FE-Diploma} in the
+preamble: see
+~/van_development/van/job-applicationbewerbung-latex.sty
+
+119.4 Trial and error
 ---------------------
 cd ~/van_development/van/job-application
-$ latex bewerbung.tex
+$ pdflatex latex bewerbung.tex
 
 E: ! LaTeX Error: File `tgpagella.sty' not found.
 A: % \SetzeSchrift ...
@@ -26,17 +36,32 @@ A: The DVI producing latex doesn't support reading the size of PNG, JPG or PDF
 images. You need to use pdflatex for this. 
 
 $ pdflatex bewerbung.tex
+!pdfTeX error: pdflatex (file ts1-lmr12): Font ts1-lmr12 at 600 not found
+$ emacs bewerbung-latex.sty &
+Disable loading of fonts.
 
-E: !pdfTeX error: pdflatex (file ts1-lmr12): Font ts1-lmr12 at 600 not found
- ==> Fatal error occurred, no output PDF file produced!
-A: 
+$ pdflatex bewerbung.tex
+LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
 
-119.2 Style
------------
-A .sty file is just a regular package. Make sure it is in the same folder as
-your thesis and include it via \usepackage{UNI-LJ-FE-Diploma} in the
-preamble: see
-~/github/bewerbung-gerald/bewerbung-latex.sty
+The error/warning is fairly self explanatory if you know what to look at.
+
+T1/lmr/bx/sc refers to a specific font declaration:
+
+T1 — so-called ‘Cork’ font encoding
+lmr — ‘Latin Modern Roman’ font family~/van_development/van/job-applicationv
+bx — bold
+sc — small caps
+
+By saying this font shape is "undefined" simply means that the Latin Modern
+Roman doesn't have bold small caps. As a fall-back, the default bold font is
+chosen instead.
+
+$ emacs bewerbung-latex.sty &
+Replace
+{\normalfont\Large\bfseries\scshape\textcolor{\DefAbschnittFarbe}{#1}}
+with
+{\normalfont\Large\bfseries\textcolor{\DefAbschnittFarbe}{#1}}
+
 
 118 LIP
 =======
