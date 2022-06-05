@@ -1,10 +1,110 @@
 
-119 Bewerbung
+119 Frequently used inet addresses
+=================================
+https://www.linguee.de/
+
+119 LIT primitives
+
+
+119 CWEB makefile support
+=========================
+Then, by change, I find cweb settings in the make documentaton:
+see
+https://www.gnu.org/software/make/manual/make.pdf
+
+or
+
+WEAVE Program to translate Web into TEX; default ‘weave’.
+CWEAVE Program to translate C Web into TEX; default ‘cweave’.
+
+see page 120-121.
+
+
+118 COG
+=======
+
+118.1 Definition
+----------------
+COG stands for LIT C code generator.
+
+118.2 Working directory
+-----------------------
+~/van_development/van/cweb/lit
+
+117.3 TeX macros
+----------------
+~/van_development/van/cweb/lit/cwebmac.tex
+
+117.4 Source code
+-----------------
+~/van_development/van/cweb/lit/cog.w
+
+117.5 TeX
+---------
+cweave cog.w
+tex cog.tex
+evince cog.dvi
+
+117.6 C
+-------
+ctangle cog.w
+gcc cog.c -o cog
+./cog
+
+
+117 LIT
+=======
+
+117.1 Definition
+----------------
+LIT stands for Literate Programming, see
+
+(1) https://de.wikipedia.org/wiki/Literate_programming
+(2) ~/van_development/van/cweb/lit/knuthweb_literate_prgramming.pdf
+
+117.2 Working directory
+-----------------------
+~/van_development/van/cweb/lit
+
+117.3 TeX macros
+----------------
+~/van_development/van/cweb/lit/cwebmac.tex
+
+117.4 Source code
+-----------------
+~/van_development/van/cweb/lit/lit.w
+
+117.5 TeX
+---------
+cweave spacer.w lit.w
+tex spacer.tex lit.tex
+evince lit.dvi
+
+117.6 C
+-------
+ctangle lit.w
+gcc lit.c -o lit
+./lit
+
+
+117 CWEB basics
+===============
+
+117.1 Tractatus logico philosophicus or tlp
+------------------------------------
+https://people.umass.edu/klement/tlp/tlp.pdf
+
+117.1 Tlp location
+------------------
+~/van_development/van/cweb/lit/tlp.pdf
+
+
+116 Bewerbung
 =============
 see
 https://github.com/dee-dw/bewerbung-latex
 
-119.1 Install
+116.1 Install
 -------------
 cd
 cd github
@@ -12,18 +112,18 @@ git clone https://github.com/dee-dw/bewerbung-latex
 cp -r bewerbung-latex ~/van_development/van/job-application
 cd ~/van_development/van/job-application
 
-119.2 PDF
+116.2 PDF
 ---------
 pdflatex bewerbung.tex
 
-119.3 Style
+116.3 Style
 -----------
 A .sty file is just a regular package. Make sure it is in the same folder as
 your thesis and include it via \usepackage{UNI-LJ-FE-Diploma} in the
 preamble: see
 ~/van_development/van/job-applicationbewerbung-latex.sty
 
-119.4 Trial and error
+116.4 Trial and error
 ---------------------
 cd ~/van_development/van/job-application
 $ pdflatex latex bewerbung.tex
@@ -61,23 +161,6 @@ Replace
 {\normalfont\Large\bfseries\scshape\textcolor{\DefAbschnittFarbe}{#1}}
 with
 {\normalfont\Large\bfseries\textcolor{\DefAbschnittFarbe}{#1}}
-
-
-118 LIP
-=======
-LIP stands for Literate Programming, see
-https://de.wikipedia.org/wiki/Literate_programming
-
-
-117 Wichtige Film
-=================
-Pathfinder - Die Rache des Fährtensuchers
-Per Anhalter durch die Galaxis
-Das Leben des Brian
-
-116 Frequently used inet addresses
-=================================
-https://www.linguee.de/
 
 
 115 Cweb file structure

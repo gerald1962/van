@@ -17,6 +17,9 @@
 # Read the README file, then edit this file to reflect local conditions
 #
 
+# Generate pdf files directly.
+PDF= pdf
+
 # directory for TeX inputs (cwebmac.tex goes here)
 MACROSDIR= /usr/share/texmf/tex/generic
 
@@ -65,15 +68,17 @@ CP= /bin/cp
 # uncomment the second line if you use pdftex to bypass .dvi files
 # uncomment the third line if you use xetex to bypass .dvi files
 # uncomment the forth line if you use hitex for HINT output
-PDFTEX = dvipdfm
-#PDFTEX = pdftex
+# PDFTEX = dvipdfm
+PDFTEX = pdftex
 #PDFTEX = xetex
 #PDFTEX = hitex
 
 ##########  You shouldn't have to change anything after this point #######
 
-CWEAVE = ./cweave
-CTANGLE = ./ctangle
+# CWEAVE = ./cweave
+# CTANGLE = ./ctangle
+CWEAVE = cweave
+CTANGLE = ctangle
 SOURCES = cweave.w common.w ctangle.w
 ALL =  common.w ctangle.w cweave.w prod.w \
 	Makefile README common.c common.h ctangle.c \
