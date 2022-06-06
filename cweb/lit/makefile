@@ -9,6 +9,12 @@
 # names. It describes how a target may depend on a file with a name similar to
 # the target and gives a recipe to create or update such a target.
 #
+
+# %.tex is a target that matches any file ending in .tex. "%.tex: %.w" means
+# that any file ending in .tex depends on the same filename ending in .w to be
+# present. The following line, starting with a tab, is the rule to use whenever
+# you are generating a file of the form %.tex.
+
 # Here is a table of automatic variables:
 #
 # $* - The stem with which an implicit rule matches. The target %.tex corresponds
