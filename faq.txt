@@ -1,47 +1,10 @@
-Hi Herbert,
 
-1. Literate Programming;
-
-1. Literate Programming;
-
-Vereinfacht: es ist schwierig, zu sagen, was ich tue, weil ich gern programmiere:
-Ratschläge von dir und Renate sind veraltete:
-Momentan interessierenm mich grad für ich Krimi-Autoren,
-weil das den Wittgenstein und sich auch dafür interessiert hat.
-
-aber wie
-ich das tue, ist intuitiv und delantisch. Ununterbrochen
-lese ich alles: ganz viele Bücher schwedischen Autor
-
-
-
-119 Frequently used inet addresses
-=================================
-https://www.linguee.de/
-
-119 LIT primitives
-
-
-119 CWEB makefile support
-=========================
-Then, by change, I find cweb settings in the make documentaton:
-see
-https://www.gnu.org/software/make/manual/make.pdf
-
-or
-
-WEAVE Program to translate Web into TEX; default ‘weave’.
-CWEAVE Program to translate C Web into TEX; default ‘cweave’.
-
-see page 120-121.
-
-
-118 COG
+118 LOG
 =======
 
 118.1 Definition
 ----------------
-COG stands for LIT C code generator.
+LOG stands for LIT C code generator.
 
 118.2 Working directory
 -----------------------
@@ -50,22 +13,21 @@ COG stands for LIT C code generator.
 117.3 TeX macros
 ----------------
 ~/van_development/van/cweb/lit/cwebmac.tex
-
 117.4 Source code
 -----------------
-~/van_development/van/cweb/lit/cog.w
+~/van_development/van/cweb/lit/log.w
 
 117.5 TeX
 ---------
-cweave cog.w
-tex cog.tex
-evince cog.dvi
+cweave log.w
+tex log.tex
+evince log.dvi
 
 117.6 C
 -------
-ctangle cog.w
-gcc cog.c -o cog
-./cog
+ctangle log.w
+gcc log.c -o log
+./log
 
 
 117 LIT
@@ -74,7 +36,6 @@ gcc cog.c -o cog
 117.1 Definition
 ----------------
 LIT stands for Literate Programming, see
-
 (1) https://de.wikipedia.org/wiki/Literate_programming
 (2) ~/van_development/van/cweb/lit/knuthweb_literate_prgramming.pdf
 
