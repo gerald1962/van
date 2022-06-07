@@ -11,7 +11,7 @@ possible changes from this \.{COMMON} interface consistently.
 @c
 void main(void)
 {
-        printf("Hi Herbert and Renate.\n");
+        printf("Hi Ludwig.\n");
 }
 
 @* Index.

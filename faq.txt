@@ -1,52 +1,54 @@
-Hi Herbert,
 
-hier gibt es ein Zwischenergebnis:
-siehe unten:
+120 Lit structure
+=================
 
-1. Working directory; 2. Interests; 3. Outlook;
-
-1. Working directory
-====================
-~/github/van/cweb/lit
-
-2. Interests
-============
-Momentan habe ich folgende Bücher archiviert:
-
-2.1 Used
---------
+120.1 Had not been thought
+--------------------------
+gerald@gerald:~/van_development/van/cweb/lit$ ls -1
+cwebmac.tex
 cwebman.pdf
-make.pdf
-texbook.pdf
-texbuch.pdf
-lelem.pdf
-lextern.pdf
-
-2.2 Against sitting
--------------------
 elisp.pdf
 emacs-cheatsheet.pdf
 emacs_man.pdf
-
-2.3 Intent
-----------
 knuth_lit.pdf
-the_c_pl.pdf
-tlp.pdf
-vim-1.0.pdf
-vim-cheatsheet.pdf
+lcommon.h
+lcommon.pdf
+lcommon.w
+lelem.pdf
+lelem.w
+lextern.h
+lextern.pdf
+lextern.w
+lit.pdf
+lit.w
+log.w
 
-Z.B. heute habe ich nur gebraucht:
-cwebman.pdf
+120.2 Recurring activities
+--------------------------
+makefile
 make.pdf
 
-3. Outlook
-----------
-...
+120.3 TeX
+---------
+Might I need some information to improve the layout:
+texbook.pdf
+texbuch.pdf
 
-LG,
-Gerald
+120.4 Pirate copy K&R
+---------------------
+Before now, that is a beautiful butterfly:
+the_c_pl.pdf
 
+120.5 Flexible tractatus document
+---------------------------------
+One could get a new idea, when you read this:
+tlp.pdf
+
+120.6 Low level editor
+----------------------
+I am going to hold which here at a later time:
+vim-1.0.pdf
+vim-cheatsheet.pdf
 
 
 119 Emacs
