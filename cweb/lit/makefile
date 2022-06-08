@@ -10,10 +10,10 @@
 # the target and gives a recipe to create or update such a target.
 #
 
-# %.tex is a target that matches any file ending in .tex. "%.tex: %.w" means
-# that any file ending in .tex depends on the same filename ending in .w to be
-# present. The following line, starting with a tab, is the rule to use whenever
-# you are generating a file of the form %.tex.
+# %.tex is a target that matches any single file ending in .tex.
+# "%.tex: %.w" means that any file ending in .tex depends on the same filename
+# ending in .w to be present. The following line, starting with a tab, is the
+# rule to use whenever you are generating a file of the form %.tex.
 
 # Here is a table of automatic variables:
 #
@@ -32,6 +32,9 @@
 # $< - The name of the first prerequisite. If the target got its recipe from an
 # implicitrule, this will be the first prerequisite added by the implicit rule.
 # 
+lit: lit.c lcommon.c
+	gcc -g -o $@ $<
+
 lelem: lelem.c lextern.c
 	gcc -g -o $@ $<
 
@@ -45,6 +48,10 @@ lelem: lelem.c lextern.c
 # the prerequisites of the target, and may also give a recipe to use to create
 # or update the targets.
 #
+mlit: lcommon.tex lit.tex
+	pdftex lcommon.tex
+	pdftex lit.tex
+
 melem: lextern.tex lelem.tex
 	pdftex lextern.tex
 	pdftex lelem.tex
@@ -53,5 +60,7 @@ melem: lextern.tex lelem.tex
 # the target ‘clean’ does not have prerequisites.
 #
 clean:
-	rm -f *~ lelem lextern.tex lelem.tex \
-	   *.c *.idx *.log *.o *.scn *.toc
+	rm -f \
+	lit lcommon.tex lit.tex \
+	lelem lextern.tex lelem.tex \
+	*~ *.c *.idx *.log *.o *.scn *.toc

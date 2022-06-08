@@ -1,4 +1,62 @@
 
+120 Lit structure
+=================
+
+120.1 Had not been thought
+--------------------------
+gerald@gerald:~/van_development/van/cweb/lit$ ls -1
+cwebmac.tex
+cwebman.pdf
+elisp.pdf
+emacs-cheatsheet.pdf
+emacs_man.pdf
+knuth_lit.pdf
+lcommon.h
+lcommon.pdf
+lcommon.w
+lelem.pdf
+lelem.w
+lextern.h
+lextern.pdf
+lextern.w
+lit.pdf
+lit.w
+log.w
+
+120.2 Recurring activities
+--------------------------
+makefile
+make.pdf
+
+120.3 TeX
+---------
+Might I need some information to improve the layout:
+texbook.pdf
+texbuch.pdf
+
+120.4 Pirate copy K&R
+---------------------
+Before now, that is a beautiful butterfly:
+the_c_pl.pdf
+
+120.5 Flexible tractatus document
+---------------------------------
+One could get a new idea, when you read this:
+tlp.pdf
+
+120.6 Low level editor
+----------------------
+I am going to hold which here at a later time:
+vim-1.0.pdf
+vim-cheatsheet.pdf
+
+
+119 Emacs
+=========
+C-j is a newline.
+
+
+>>>>>>> cweb
 118 LOG
 =======
 
