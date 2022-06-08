@@ -1,4 +1,62 @@
 
+122 Schulbegleitung Forchheim
+=============================
+
+Internet Auftritt
+-----------------
+https://www.schulbegleitung-forchheim.de/
+
+Visit group
+-----------
+https://www.visit-gruppe.de
+
+Inhaber
+-------
+visit Soziale Dienste
+Peter König
+Würzburger Str. 65
+96049 Bamberg
+Telefon: 0951/96532-0ls
+E-Mail: info@visit-gruppe.de
+
+Aktuelle Stellenausschreibungen
+-------------------------------
+https://www.backinjob.de/Firma/Bamberg/96049/Peter-Koenig-VISIT--Soziale-Dienste/120dcae1dd515e895cab96c747005def.html
+
+Hilfskraft-Schulbegleitung / Integrationshilfe (w/m/d) - Schulbegleiter/in
+VISIT - Soziale Dienste Peter König  06.0.2022
+Ihr Profil
+Sie benötigen keine speziellen Kenntnisse, haben aber Interesse an der Tätigkeit
+und Spaß an der Arbeit mit besonderen Kindern und Jugendlichen Ausgeprägtes
+Verantwortungsbewusstsein.
+Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
+Bewerbung am besten ...
+
+
+121 Glossary
+============
+
+121.1 Working directory
+-----------------------
+gerald@gerald:~/van_development/van/glossary$
+
+121.2 Guide
+-----------
+
+
+121.2 Experiment
+----------------
+gerald@gerald:~/van_development/van/glossary$
+exp.tex
+
+121.3 Build
+-----------
+pdflatex exp.tex 
+makeglossaries exp
+pdflatex exp.tex 
+evince exp.pdf
+
+
 120 Lit structure
 =================
 

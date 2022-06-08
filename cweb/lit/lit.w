@@ -5,8 +5,10 @@ possible changes from this \.{COMMON} interface consistently.
 
 @i lextern.h
 
-@ Propositions are truth-functions of elementary propositions.
-(An elementary proposition is a truth-function of itself.)
+@ \.{LIT} has a fairly straightforward outline.  It operates in
+three phases: First it inputs the source file and stores cross-reference
+data, then it inputs the source once again and produces the \TEX/ output
+file, finally it sorts and outputs the index.
         
 @c
 void main(void)
