@@ -1,18 +1,22 @@
 \documentclass{article}
+
 \newcommand*{\glossaryname}{Dictionary}
+
 \usepackage[nonumberlist]{glossaries}
+
 \newcommand{\dictentry}[2]{%
-  \newglossaryentry{#1}{name=#1,description={#2}}%
+  \newglossaryentry{#1}{name=#1, description={#2}}%
   \glslink{#1}{}%
 }
+
 \makeglossaries
 
 \begin{document}
-\dictentry{aardvark}{an animal}%
-\dictentry{lion}{another animal, but with
-  a really long description that spills over many, many, many, many, many, 
-  many, many, many, many, many, many, many, many, many, many, many, many, 
-  many, many, many, many, many, many, many, many, many, many lines}
-\dictentry{zebra}{yet another animal}%
+
+\dictentry{fairly} {ziemlich }%
+\dictentry{straitforward} {einfach}%
+\dictentry{outline} {Gliederung}%
+
 \printglossary[style=list]%
+
 \end{document}

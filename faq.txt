@@ -1,3 +1,29 @@
+Hi Herbert,
+
+1. Standard
+
+Momentan sammle ich viele historische Dokument, die elektronsich lesbar sind
+im Format PDF, weil ich die durchsuchen kann und irgendwas herauskopieren kann.
+Beispiele gibt es unten.
+
+Wie immer lade ich alles nach github hoch und man muss nur auf die Namen klicken,
+die mit .pdf enden.
+
+1. Standard
+
+Ein Standard ist z.B. C über C99, siehe
+
+gerald@gerald:~/van_development/van/cweb/lit$ C99.pdf 
+
+Keiner will es zugeben, aber die Leute in Ken Thompson Team mit
+Richie
+
+https://de.wikipedia.org/wiki/Ken_Thompson
+
+haben ziemlich fix herausgefunden, wie ein normaler Mensch wie
+ich Programme schreiben kann für Rechenmaschine mit ziemlich
+vielen Freiheitsgraden.
+
 
 122 Schulbegleitung Forchheim
 =============================
@@ -42,14 +68,14 @@ gerald@gerald:~/van_development/van/glossary$
 
 121.2 Guide
 -----------
+gerald@gerald:~/van_development/van/glossary$ glossariesbegin.pdf 
 
-
-121.2 Experiment
+121.3 Experiment
 ----------------
 gerald@gerald:~/van_development/van/glossary$
 exp.tex
 
-121.3 Build
+121.4 Build
 -----------
 pdflatex exp.tex 
 makeglossaries exp
