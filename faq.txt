@@ -18,14 +18,10 @@ Würzburger Str. 65
 96049 Bamberg
 Telefon: 0951/96532-0ls
 E-Mail: info@visit-gruppe.de
-
-Aktuelle Stellenausschreibungen
--------------------------------
-https://www.backinjob.de/Firma/Bamberg/96049/Peter-Koenig-VISIT--Soziale-Dienste/120dcae1dd515e895cab96c747005def.html
+https://www.backinjob.de/Fir/Bamberg/96049/Peter-Koenig-VISIT--Soziale-Dienste/120dcae1dd515e895cab96c747005def.html
 
 Hilfskraft-Schulbegleitung / Integrationshilfe (w/m/d) - Schulbegleiter/in
-VISIT - Soziale Dienste Peter König  06.0.2022
-Ihr Profil
+VISIT - Soziale Dienste Peter König  06.0.2022Ihr Profil
 Sie benötigen keine speziellen Kenntnisse, haben aber Interesse an der Tätigkeit
 und Spaß an der Arbeit mit besonderen Kindern und Jugendlichen Ausgeprägtes
 Verantwortungsbewusstsein.
@@ -42,14 +38,13 @@ gerald@gerald:~/van_development/van/glossary$
 
 121.2 Guide
 -----------
+gerald@gerald:~/van_development/van/glossary$ glossariesbegin.pdf 
 
-
-121.2 Experiment
-----------------
+121.3 Experiment----------------
 gerald@gerald:~/van_development/van/glossary$
 exp.tex
 
-121.3 Build
+121.4 Build
 -----------
 pdflatex exp.tex 
 makeglossaries exp
@@ -60,7 +55,6 @@ evince exp.pdf
 120 Lit structure
 =================
 
-120.1 Had not been thought
 --------------------------
 gerald@gerald:~/van_development/van/cweb/lit$ ls -1
 cwebmac.tex
@@ -164,8 +158,7 @@ LIT stands for Literate Programming, see
 ~/van_development/van/cweb/lit/cwebmac.tex
 
 117.4 Source code
------------------
-~/van_development/van/cweb/lit/lit.w
+-----------------~/van_development/van/cweb/lit/lit.w
 
 117.5 TeX
 ---------
