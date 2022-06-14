@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  8 JUN 2022 17:51
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  11 JUN 2022 18:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -254,7 +254,7 @@ Package: glossary-tree 2020/02/13 v4.45 (NLCT)
 \glo@main@file=\write4
 \openout4 = `eggs.glo'.
 
-Package glossaries Info: Writing glossary file eggs.glo on input line 8.
+Package glossaries Info: Writing glossary file eggs.glo on input line 12.
 
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
@@ -264,45 +264,45 @@ File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
 (./eggs.aux)
 \openout1 = `eggs.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 10.
-LaTeX Font Info:    ... okay on input line 10.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
+LaTeX Font Info:    ... okay on input line 14.
  (./eggs.glsdefs)
 \@gls@deffile=\write5
 \openout5 = `eggs.glsdefs'.
 
-
-No file eggs.gls.
-[1
+ (./eggs.gls) [1
 
 \openout3 = `eggs.ist'.
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./eggs.aux) ) 
 Here is how much of TeX's memory you used:
- 5093 strings out of 481239
- 76197 string characters out of 5920377
- 372683 words of memory out of 5000000
- 20309 multiletter control sequences out of 15000+600000
- 532338 words of font info for 24 fonts, out of 8000000 for 9000
+ 5161 strings out of 481239
+ 77556 string characters out of 5920377
+ 369882 words of memory out of 5000000
+ 20372 multiletter control sequences out of 15000+600000
+ 533251 words of font info for 27 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 51i,4n,37p,1012b,101s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 51i,4n,37p,984b,237s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on eggs.pdf (1 page, 8182 bytes).
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
+Output written on eggs.pdf (1 page, 34542 bytes).
 PDF statistics:
- 12 PDF objects out of 1000 (max. 8388607)
- 7 compressed objects within 1 object stream
+ 20 PDF objects out of 1000 (max. 8388607)
+ 13 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,3 +1,27 @@
+Hi Herbert,
+
+Status
+
+https://github.com/gerald1962/van/cweb/lit
+
+LG,
+Gerald
+
+P.S:
+das geht so:
+gerald@gerald:~/van_development/van/cweb/lit$ ls
+erald@gerald:~/van_development/van/cweb/lit$ git commit -a -m "lit"
+git status
+
+git branch
+  c_sharp
+* cweb
+  linux
+  main
+  vunit
+
+
+
 
 122 Schulbegleitung Forchheim
 =============================

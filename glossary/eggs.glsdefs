@@ -1,16 +1,16 @@
-\ifglsentryexists{aardvark}{}%
+\ifglsentryexists{fairly}{}%
 {%
-\gls@defglossaryentry{aardvark}%
+\gls@defglossaryentry{fairly}%
 {%
-name={aardvark},%
-sort={aardvark},%
+name={fairly},%
+sort={fairly},%
 type={main},%
-first={aardvark},%
-firstplural={aardvarks},%
-text={aardvark},%
-plural={aardvarks},%
-description={an animal},%
-descriptionplural={an animal},%
+first={fairly},%
+firstplural={fairlys},%
+text={fairly},%
+plural={fairlys},%
+description={ziemlich},%
+descriptionplural={ziemlich},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -28,19 +28,19 @@ parent={},%
 %
 }%
 }%
-\ifglsentryexists{lion}{}%
+\ifglsentryexists{outline}{}%
 {%
-\gls@defglossaryentry{lion}%
+\gls@defglossaryentry{outline}%
 {%
-name={lion},%
-sort={lion},%
+name={outline},%
+sort={outline},%
 type={main},%
-first={lion},%
-firstplural={lions},%
-text={lion},%
-plural={lions},%
-description={another animal, but with a really long description that spills over many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many lines},%
-descriptionplural={another animal, but with a really long description that spills over many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many, many lines},%
+first={outline},%
+firstplural={outlines},%
+text={outline},%
+plural={outlines},%
+description={Gliederung},%
+descriptionplural={Gliederung},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
@@ -58,19 +58,79 @@ parent={},%
 %
 }%
 }%
-\ifglsentryexists{zebra}{}%
+\ifglsentryexists{straitforward}{}%
 {%
-\gls@defglossaryentry{zebra}%
+\gls@defglossaryentry{straitforward}%
 {%
-name={zebra},%
-sort={zebra},%
+name={straitforward},%
+sort={straitforward},%
 type={main},%
-first={zebra},%
-firstplural={zebras},%
-text={zebra},%
-plural={zebras},%
-description={yet another animal},%
-descriptionplural={yet another animal},%
+first={straitforward},%
+firstplural={straitforwards},%
+text={straitforward},%
+plural={straitforwards},%
+description={einfach},%
+descriptionplural={einfach},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{tangle}{}%
+{%
+\gls@defglossaryentry{tangle}%
+{%
+name={tangle},%
+sort={tangle},%
+type={main},%
+first={tangle},%
+firstplural={tangles},%
+text={tangle},%
+plural={tangles},%
+description={Gewirr},%
+descriptionplural={Gewirr},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{weave}{}%
+{%
+\gls@defglossaryentry{weave}%
+{%
+name={weave},%
+sort={weave},%
+type={main},%
+first={weave},%
+firstplural={weaves},%
+text={weave},%
+plural={weaves},%
+description={Gewebe},%
+descriptionplural={Gewebe},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
