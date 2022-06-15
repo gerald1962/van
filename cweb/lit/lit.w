@@ -10,11 +10,18 @@ three phases: First it inputs the source file and stores cross-reference
 data, then it inputs the source once again and produces the \TEX/ output
 file, finally it sorts and outputs the index.
 
+\def\func #1 #2 { \par \hskip #1 pt
+                  \hangindent #2 \parindent}
+
+\def\funcp #1 #2 { \par \hskip #1 pt
+                   \hangindent #2 \parindent}
+
+\vskip 2pt
 @ {\sl main()} - is called by the C library by recognizing the in-built keyword
 {\sl main}. The way for running another program on \.{Linux} involves first
 calling {\sl fork()}, which creates a new process as a copy of the first one,
 and then calling {\sl exec()} to replace this copy (of the shell) with the
-actual program to run.
+actual program to run. 
 
 \vskip 2pt \noindent
 Richie and Kerninghan write: "$\ldots$ {\sl main} is a special function. Our program
@@ -34,30 +41,43 @@ $\ldots$ or with two parameters (referred to here {\sl ac} and {\sl av)."
 % \sl use slanted type
 % \tt use typewriter type
 
+% \def
+% There’s a special way of making a macro definition global. Normally you define
+% a macro using either the \def command ...
+%
 % \par
 % This command ends a paragraph and puts TEX into vertical mode, ready
 % to add more items to the page.
-                                 
-\def\marg{\par\indent\indent
-          \hangindent3\parindent
-          \textindent}
+%
+% \parindent [ <token-list> parameter ]
+% This parameter specifies the amount by which the first line of each paragraph
+% is to be indented.
+%
+% \hangindent [ <dimen> parameter]
+% These two parameters jointly specify “hanging indentation” for a paragraph.
+% The hanging indentation indicates to TEX that certain lines of the paragraph
+% should be indented
+% 
+% \textindent like \item, but doesn’t do hanging indentation.
 
-\def\mreturn{\par\indent\indent\indent\indent
-             \hangindent5\parindent
-             \textindent}
+\def\farg #1 #2 { \par \hskip #1 pt
+                  \hangindent #2 \parindent}
+
+\def\freturn #1 #2 { \par \hskip #1 pt
+                     \hangindent #2 \parindent }
 
 \vskip 2pt
-\marg {\sl ac:} {\rm If the value of {\sl ac} is greater than zero, the array
-                 members $av[0]$ through $argv[argc-1]$ inclusive shall contain
-                 pointers to strings, which are given by the host environment
-                 prior to program startup.}
-\marg {\sl av:} {\rm If the value of {\sl ac} is greater than zero, the string
-                 pointed to by $av[0]$ represents the program name. If the value
-                 of {\sl ac} is greater than one, the strings pointed to by
-                 $av[1]$ through $av[ac-1]$ represent the program parameters.}
+\farg 12 4 {\sl ac:} { \rm If the value of {\sl ac} is greater than zero, the
+array members $av[0]$ through $argv[argc-1]$ inclusive shall contain pointers to
+strings, which are given by the host environment prior to program startup. }
+
+\farg 12 4 {\sl av:} { \rm If the value of {\sl ac} is greater than zero, the
+string pointed to by $av[0]$ represents the program name. If the value of
+{\sl ac} is greater than one, the strings pointed to by $av[1]$ through
+$av[ac-1]$ represent the program parameters. }
 
 \vskip 2pt
-\mreturn {\bf return} {\rm $\ldots$ from the initial call to the
+\freturn 12 4 {\bf return} { \rm $\ldots$ from the initial call to the
 {\sl main} function is equivalent to calling the {\sl exit} function with the
 value returned by the {\sl main} function as its argument; reaching the
 $\rbrace$ that terminates the {\sl main} function returns a value compatible

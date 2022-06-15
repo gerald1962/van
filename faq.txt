@@ -1,26 +1,26 @@
 Hi Herbert,
 
-Status
+schau dir das an:
 
-https://github.com/gerald1962/van/cweb/lit
+https://github.com/gerald1962
 
-LG,
+wie
+
+lit
+
+Es kostet erstmal nichts und ich kann mich austoben.
+
 Gerald
 
-P.S:
-das geht so:
-gerald@gerald:~/van_development/van/cweb/lit$ ls
-erald@gerald:~/van_development/van/cweb/lit$ git commit -a -m "lit"
-git status
 
-git branch
-  c_sharp
-* cweb
-  linux
-  main
-  vunit
+123 Reiz/Physis/Psyche
+======================
+Das Weber-Fechner-Gesetz ist die Formulierung eINER psychophysischen Beziehung
+in der Sinnesphysiologie und besagt, dass ein linearer Zuwachs der (psychisch)
+subjektiv empfundenen Stärke von Sinneseindrücken dem Logarithmus des Zuwachses
+der (physikalisch) objektiv messbaren Intensität des Reizes entspricht.
 
-
+https://de.wikipedia.org/wiki/Weber-Fechner-Gesetz
 
 
 122 Schulbegleitung Forchheim
@@ -62,11 +62,6 @@ gerald@gerald:~/van_development/van/glossary$
 
 121.2 Guide
 -----------
-gerald@gerald:~/van_development/van/glossary$ glossariesbegin.pdf 
-
-121.3 Experiment----------------
-gerald@gerald:~/van_development/van/glossary$
-exp.tex
 
 121.4 Build
 -----------
@@ -76,7 +71,7 @@ pdflatex exp.tex
 evince exp.pdf
 
 
-120 Lit structure
+120 Lit structureb
 =================
 
 --------------------------
@@ -2510,7 +2505,7 @@ see ~/github/van/.gitignore
 https://www.rohde-schwarz.com/de/produkte/messtechnik/dc-netzgeraete/rs-ngm200-netzgeraeteserie_63493-652229.html
 
 
-51 Canvas Example
+51 Canvas Exampleggggg
 =================
 https://wiki.tcl-lang.org/page/Canvas+Object+Movement+Example
 

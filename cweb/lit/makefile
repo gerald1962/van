@@ -56,11 +56,15 @@ melem: lextern.tex lelem.tex
 	pdftex lextern.tex
 	pdftex lelem.tex
 
+f: func.tex
+	pdftex func.tex
+
 # This rule containing the delete command associated with
 # the target ‘clean’ does not have prerequisites.
 #
 clean:
 	rm -f \
+	func.tex \
 	lit lcommon.tex lit.tex \
 	lelem lextern.tex lelem.tex \
 	*~ *.c *.idx *.log *.o *.scn *.toc
