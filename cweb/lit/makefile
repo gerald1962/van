@@ -48,23 +48,23 @@ lelem: lelem.c lextern.c
 # the prerequisites of the target, and may also give a recipe to use to create
 # or update the targets.
 #
-mlit: lcommon.tex lit.tex
-	pdftex lcommon.tex
+mlit: lextern.tex lit.tex
+	pdftex lextern.tex
 	pdftex lit.tex
 
 melem: lextern.tex lelem.tex
 	pdftex lextern.tex
 	pdftex lelem.tex
 
-f: func.tex
-	pdftex func.tex
+mtest: test.tex
+	pdftex test.tex
 
 # This rule containing the delete command associated with
 # the target ‘clean’ does not have prerequisites.
 #
 clean:
 	rm -f \
-	func.tex \
-	lit lcommon.tex lit.tex \
+	test.tex \
+	lit lit.tex \
 	lelem lextern.tex lelem.tex \
 	*~ *.c *.idx *.log *.o *.scn *.toc

@@ -8,7 +8,7 @@ function, in addition to everything that a declaration does, it also allocates
 memory for that variable or function.
         
 @c
-int argc; /* copy of |ac| parameter to |main| */
-char **argv; /* copy of |av| parameter to |main| */
+int argc;
+char **argv;
 
 @* Index.
