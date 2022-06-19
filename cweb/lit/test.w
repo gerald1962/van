@@ -1,9 +1,11 @@
-@ Knuth means, that a programmer at any time is able to understand,
-what you do and therefore it should be able to left ideas
-as comments except you get low. I refere to "Literate Programming", see
-{\tt knuth\_lit.pdf}: "Instead of imagining that our
-main task is to instruct a computer what to do, let us
-concentrate rather on explaining to human beings what
-we want a computer to do."
+@ The output function {\sl printf} translates internal values to characters:
+
+\vskip 2pt \noindent
+{\tt int printf(char *format, arg1, arg2, ...); }
+
+\vskip 2pt \noindent
+{\sl printf} converts, formats, and prints its arguments on the
+format. It returns the number of characters printed, see {\bf KR}: it'a symbol for
+{\tt https://en.wikipedia.org/wiki/Dennis_Ritchie}.
 
 @* Index.

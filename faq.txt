@@ -39,6 +39,37 @@ Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
 Bewerbung am besten ...
 
 
+122 Backup with tar
+===================
+
+To create a tar backup file, first identify the files and folders that would be
+part of your backup. Let’s assume we want to take backup of
+
+van_development_So_19_Jun_18_42_20_2022
+
+Run following tar command,
+
+$ tar <options>  {tar-backup-filename}  {files-folders-to-be-backed-up}
+
+$ sudo tar -cvpf  van_development_So_19_Jun_18_42_20_2022.tar van_development_So_19_Jun_18_42_20_2022
+
+This will create a tar ball in the present working directory. In above tar command, we have used following options
+
+c – Create new archive
+v – display verbose output while creating tar file
+f – archive file name
+p – preserve permissions
+
+As you have seen that we have not used any compression options to compress tar
+file. So, to compress the tar backup file during the archive use
+-z ( gzip compression) or -j (bzip2 compression).
+
+Creating tar backup along with gzip compression
+Use ‘z’ in tar command to use gzip compression. This time tar backup file will
+have extension either .tgz or .tar.gz
+
+$ sudo tar -zcvpf van_development_So_19_Jun_18_42_20_2022.tgz van_development_So_19_Jun_18_42_20_2022
+
 121 Glossary
 ============
 

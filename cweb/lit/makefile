@@ -32,7 +32,7 @@
 # $< - The name of the first prerequisite. If the target got its recipe from an
 # implicitrule, this will be the first prerequisite added by the implicit rule.
 # 
-lit: lit.c lcommon.c
+lit: lit.c lextern.c
 	gcc -g -o $@ $<
 
 lelem: lelem.c lextern.c

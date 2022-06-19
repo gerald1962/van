@@ -38,7 +38,7 @@ $\ldots$ or with two parameters (referred to here {\sl ac} and {\sl av})."
 
 \vskip 2pt
 \decl 1 3.25 {\sl ac:} { \rm If the value of {\sl ac} is greater than zero, the
-array members $av[0]$ through $argv[argc-1]$ inclusive shall contain pointers to
+array members $av[0]$ through $av[ac-1]$ inclusive shall contain pointers to
 strings, which are given by the host environment prior to program startup. }
 
 \decl 1 3.25 {\sl av:} { \rm If the value of {\sl ac} is greater than zero, the
@@ -49,12 +49,12 @@ $av[ac-1]$ represent the program parameters. }
 \vskip 2pt
 \decl 1 3.25 {\bf return} { \rm $\ldots$ from the initial call to the
 {\sl main} function is equivalent to calling the {\sl exit} function with the
-value returned by the {\sl main} function as its argument; reaching the
-$\rbrace$ that terminates the {\sl main} function returns a value compatible
-with \bf int. }
+value returned by the {\sl main} function as its argument; reaching the end of
+{\sl main} $\rbrace$ that terminates the {\sl main} function returns a value
+compatible with \bf int. }
 
 @c
-void main(void)
+void main(int ac, char **av)
 {
         printf("Hi Herbert and Renate.\n");
 }

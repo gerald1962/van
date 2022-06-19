@@ -46,7 +46,30 @@ A {\sl header file} is a file containing C declarations and macro definitions
 request the use of a header file in your program by including it, with the C
 preprocessing directive {\bf \#include}.
 
-@ Include the {\sl printf} declaration.
+@ The system header {\tt <stdio.h>} declares three types, several macros, and
+many functions for performing input and output, see {\bf ISO/IEC 9899:TC3}.
+
+\vskip 2pt \noindent
+To use the {\sl printf()} function we must include {\tt <stdio.h>}.
+{\sl printf} is the name of one of the main C output functions, and stands for
+"print formatted". The {\sl printf} format string is a control parameter used by
+a class of functions in the input/output libraries of C and many other
+programming languages. The string is written in a simple template language:
+characters are usually copied literally into the function's output, but format
+specifiers, which start with a % character, indicate the location and method to
+translate a piece of data (such as a number) to characters, see
+{\tt https://en.wikipedia.org/wiki/Printf\_format\_string}.
+
+\vskip 2pt \noindent
+The output function {\sl printf} translates internal values to characters:
+
+\vskip 2pt \noindent
+{\tt int printf(char *format, arg1, arg2, ...); }
+
+\vskip 2pt \noindent
+{\sl printf} converts, formats, and prints its arguments on the
+format. It returns the number of characters printed, see {\bf KR}: it'a symbol for
+{\tt https://en.wikipedia.org/wiki/Dennis\_Ritchie}.
 
 @c
 #include <stdio.h>
