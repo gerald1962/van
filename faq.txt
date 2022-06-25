@@ -39,6 +39,90 @@ Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
 Bewerbung am besten ...
 
 
+x Noweb
+=======
+
+
+x Ulix
+======
+
+
+x Haskell
+=========
+
+
+124 Lit-Library
+===============
+Lit-Library ist eine Sammlung von Dokumenten,
+über den ich ständig Dokumente sammle und an einem Dokument rumfrigglen:
+Frank Eckstein, einer meiner vielen Vorgesetzten: er war der der Meinung, ich
+würder immer irgendwie an was frickeln:
+
+sich an einer relativ kleinteiligen Sache, die man verbessern, um- oder ausbauenk
+möchte, handwerklich oder technisch betätigen,
+
+siehe
+https://lp.duden.de/plus/?utm_source=duden_de&utm_medium=plus_int&utm_campaign=werbebox&utm_content=werbefreiheit_aktivieren
+
+weshalb ich an dem Tag x y Zeichen im Computer eingegeben habe.
+
+
+besser verstehen kann.
+
+
+hier findest du
+Location
+van/cweb/lit
+
+Contents
+
+
+C99.pdf
+cpp.pdf
+cwebman.pdf
+elisp.pdf
+emacs-cheatsheet.pdf
+emacs_man.pdf
+hello.pdf
+knuth_lit.pdf
+kr.pdf
+lelem.pdf
+lextern.pdf
+lit.pdf
+make.pdf
+schwarz-tex.pdf
+test.pdf
+texbook.pdf
+texbuch.pdf
+tlp.pdf
+vim-1.0.pdf
+vim-cheatsheet.pdf
+
+
+123 MMIX
+========
+123.1 Sources
+-------------
+cd ~/github
+https://gitlab.lrz.de/mmix/mmixware
+cd mmixware
+
+123.2 Build
+-----------
+make all
+
+123.3 Follower
+---------------
+Ein Versteher von D.E. Knuth ist Prof. Dr. Martin Ruckert,
+siehe
+
+https://www.cs.hm.edu/die_fakultaet/ansprechpartner/professoren/ruckert
+
+123.3 Documentation
+-------------------
+make doc
+
+
 122 Backup with tar
 ===================
 
@@ -5058,10 +5142,6 @@ D.4 Test
 
 XXX
 
-D.5 Delivery
-
-XXX
-ww
 
 
 =logisch2021

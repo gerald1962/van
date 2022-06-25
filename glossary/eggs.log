@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  11 JUN 2022 18:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  24 JUN 2022 17:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -288,10 +288,10 @@ LaTeX Font Info:    ... okay on input line 14.
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./eggs.aux) ) 
 Here is how much of TeX's memory you used:
- 5161 strings out of 481239
- 77556 string characters out of 5920377
- 369882 words of memory out of 5000000
- 20372 multiletter control sequences out of 15000+600000
+ 5222 strings out of 481239
+ 78780 string characters out of 5920377
+ 370280 words of memory out of 5000000
+ 20433 multiletter control sequences out of 15000+600000
  533251 words of font info for 27 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  51i,4n,37p,984b,237s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -299,7 +299,7 @@ Here is how much of TeX's memory you used:
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on eggs.pdf (1 page, 34542 bytes).
+Output written on eggs.pdf (1 page, 35530 bytes).
 PDF statistics:
  20 PDF objects out of 1000 (max. 8388607)
  13 compressed objects within 1 object stream

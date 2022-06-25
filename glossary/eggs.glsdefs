@@ -28,6 +28,36 @@ parent={},%
 %
 }%
 }%
+\ifglsentryexists{literate}{}%
+{%
+\gls@defglossaryentry{literate}%
+{%
+name={literate},%
+sort={literate},%
+type={main},%
+first={literate},%
+firstplural={literates},%
+text={literate},%
+plural={literates},%
+description={gebildet},%
+descriptionplural={gebildet},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
 \ifglsentryexists{outline}{}%
 {%
 \gls@defglossaryentry{outline}%
@@ -71,6 +101,36 @@ text={straitforward},%
 plural={straitforwards},%
 description={einfach},%
 descriptionplural={einfach},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{supplement}{}%
+{%
+\gls@defglossaryentry{supplement}%
+{%
+name={supplement},%
+sort={supplement},%
+type={main},%
+first={supplement},%
+firstplural={supplements},%
+text={supplement},%
+plural={supplements},%
+description={Ergänzung},%
+descriptionplural={Ergänzung},%
 symbol={\relax },%
 symbolplural={\relax },%
 user1={},%
