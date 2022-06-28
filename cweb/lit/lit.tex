@@ -1,0 +1,344 @@
+\input cwebmac
+
+\M{1}Literate Programming  \hfill \break
+Literate programming is a programming paradigm introduced by Donald Knuth in
+which a computer program is given an explanation of its logic in a natural
+language, such as English,
+see {\tt https://en.wikipedia.org/wiki/Literate\_programming}.
+
+\vskip 4pt \noindent
+Knuth means, that a programmer at any time is able to understand,
+what you do and therefore it should be able to lef t ideas
+as comments except you get low. I refere to "Literate Programming", see
+{\tt knuth\_lit.pdf}: "Instead of imagining that our
+main task is to instruct a computer what to do, let us
+concentrate rather on explaining to human beings what
+we want a computer to do."
+
+Und hier sind meine Gedanken:
+Und zudem soll zu jdem x-beliebigen Zeitpunkt
+der Autor, der erste Verantwortliche, mir erklären, was jedes Statement
+bedeutet oder ein Nacherfolger, der n-Verantwortliche, für den die
+Vorgänger-Bedingung gilt.
+
+\fi
+
+\M{2}C-Generator  \hfill \break
+The {\bf ctangle} program converts the {\bf CWEB} source document {\tt hello.w}
+into the {\bf C} program {\tt hello.c} that may be compiled in the usual way.
+The output file includes{ \tt \#line} specifications so that debugging can be
+done in terms of the {\bf CWEB} source file, see {\tt man ctangle}.
+
+\vskip 4pt \noindent
+The command line should have two names on it. The first is {\bf ctangle} and
+the
+second is taken as the {\bf CWEB} input file {\tt hello.w}.
+
+\vskip 4pt \noindent
+{\tt ctangle hello.w}
+
+\fi
+
+\M{3}Compilation \hfill \break
+Compiling {\sl main} or a C program is a multi-stage process. At an overview
+level, the process can be split into four separate stages: preprocessing,
+compilation, assembly, and linking, \hfill \break
+see {\tt https://2150.medium.com/what-gcc-main-c-means-3d5e5e3e4d76}:
+
+\vskip 4pt \noindent
+I'll walk through each of the four stages of compiling the C program {\bf lit}:
+
+\fi
+
+\M{4}Preprocessor  \hfill \break
+The first stage of compilation is called preprocessing. In this stage,
+lines starting with a \# character are interpreted by the preprocessor as
+preprocessor commands. These commands form a simple macro language with its own
+syntax and semantics. This language is used to reduce repetition in source code
+by providing functionality to inline files, define macros, and to conditionally
+omit code.
+
+\vskip 4pt \noindent
+Before interpreting commands, the preprocessor does some initial processing.
+his includes joining continued lines (lines ending with a \) and stripping
+comments.
+
+\vskip 4pt \noindent
+To print the result of the preprocessing stage, pass the {\sl -E} option to {%
+\bf gcc}:
+
+\vskip 4pt \noindent
+{\tt gcc -E hello.c}
+
+\fi
+
+\M{5}Compilation   \hfill \break
+The second stage the preprocessed code is translated to assembly instructions
+specific to the target processor architecture. These form an intermediate human
+readable language.
+
+\vskip 4pt \noindent
+The existence of this step allows for C code to contain inline assembly
+instructions and for different assemblers to be used.
+
+\vskip 4pt \noindent
+Some compilers also supports the use of an integrated assembler, in which the
+compilation stage generates machine code directly, avoiding the overhead of
+generating the intermediate assembly instructions and invoking the assembler.
+
+\vskip 4pt \noindent
+To save the result of the compilation stage, pass the {\sl -S} option to {\bf
+gcc}:
+
+\vskip 4pt \noindent
+{\tt gcc \-S hello.c}
+
+\fi
+
+\M{6}Assembler   \hfill \break
+During this stage, an assembler is used to translate the assembly instructions
+to object code. The output consists of actual instructions to be run by the
+target processor.
+
+\vskip 4pt \noindent
+To save the result of the assembly stage, pass the {\sl -c} option to {\bf
+gcc}:
+
+\vskip 4pt \noindent
+{\tt gcc \-c hello.c}
+
+\vskip 4pt \noindent
+Running the above command will create a file named {\tt hello.o}, containing
+the
+object code of the program. The contents of this file is in a binary format and
+an be inspected using hexdump or od by running either one of the following
+commands:
+
+\vskip 4pt \noindent
+{\tt
+hexdump hello.o
+od \-c hello.o
+}
+
+\fi
+
+\M{7}Linking   \hfill \break
+The object code generated in the assembly stage is composed of machine
+instructions that the processor understands but some pieces of the program are
+out of order or missing. To produce an executable program, the existing pieces
+save to be rearranged and the missing ones filled in. This process is called
+linking. The linker will arrange the pieces of object code so that functions in
+some pieces can successfully call functions in other ones. It will also add
+pieces containing the instructions for library functions used by the program.
+In the ase of the {\bf hello} program, the linker will add the object code for
+the {\sl printf} function.
+
+\vskip 4pt \noindent
+The result of this stage is the final executable program.
+
+\vskip 4pt \noindent
+{\tt gcc \-o hello hello.c}
+
+\fi
+
+\M{8}User header \hfill \break
+The next few sections contain stuff from the file \PB{\.{"lextern.w"}} that
+must
+be included in both \PB{\.{"lit.w"}} and \PB{\.{"log.w"}}. It appears in
+file \PB{\.{"lextern.h"}}, which is also included in \PB{\.{"lextern.w"}} to
+propagate
+possible changes from this \.{EXTERN} interface consistently.
+
+% Type styles: see texbook.pdf
+% \bf use boldface type
+% \it use italic type
+% \rm use roman type
+% \sl use slanted type
+% \tt use typewriter type
+
+% \def
+% There’s a special way of making a macro definition global. Normally you
+%define
+% a macro using either the \def command ...
+%
+% \par
+% This command ends a paragraph and puts TEX into vertical mode, ready
+% to add more items to the page.
+%
+% \parindent [ <token-list> parameter ]
+% This parameter specifies the amount by which the first line of each paragraph
+% is to be indented.
+%
+% \hangindent [ <dimen> parameter]
+% These two parameters jointly specify “hanging indentation” for a
+%paragraph.
+% The hanging indentation indicates to TEX that certain lines of the paragraph
+% should be indented
+%
+% \textindent like \item, but doesn’t do hanging indentation.
+
+\def\decl #1 #2 { \par \hskip #1 pt
+\hangindent #2 \parindent}
+
+\fi
+
+\M{9}Substitution \hfill \break
+Ritchie writes in "The Development of the C Language", see
+{\tt c\_development.html}: "$\ldots$ but the most important was the
+introduction
+of the preprocessor $\ldots$ The preprocessor performs macro substitution,
+using
+conventions distinct from the rest of the language. $\ldots$"
+
+\vskip 2pt \noindent
+Here's what Wittgenstein says in the {\bf TLP},  see {\tt tlp.pdf}: "6.24 The
+method by which mathematics arrives at its equations is the method of
+substitution. For equations express the substitutability of two expressions,
+and
+we proceed from a number of equations to new equations, replacing expressions
+by
+others in accordance with the equations."
+
+\vskip 2pt \noindent
+Stallman defines {\sl header file} in "The C Preprocessor", see {\tt cpp.pdf}:
+A {\sl header file} is a file containing C declarations and macro definitions
+(see Chapter 3 [Macros], page 13) to be shared between several source files.
+You
+request the use of a header file in your program by including it, with the C
+preprocessing directive {\bf \#include}.
+
+\fi
+
+\M{10}System Header \hfill \break
+The system header {\tt <stdio.h>} declares three types, several macros, and
+many functions for performing input and output, see {\bf ISO/IEC 9899:TC3}.
+
+\vskip 2pt \noindent
+To use the {\sl printf()} function we must include {\tt <stdio.h>}.
+{\sl printf} is the name of one of the main C output functions, and stands for
+"print formatted". The {\sl printf} format string is a control parameter used
+by
+a class of functions in the input/output libraries of C and many other
+programming languages. The string is written in a simple template language:
+characters are usually copied literally into the function's output, but format
+specifiers, which start with a % character, indicate the location and method to
+translate a piece of data (such as a number) to characters, see
+{\tt https://en.wikipedia.org/wiki/Printf\_format\_string}.
+
+\vskip 2pt \noindent
+The output function {\sl printf} translates internal values to characters:
+
+\vskip 2pt \noindent
+{\tt int printf(char *format, arg1, arg2, ...); }
+
+\vskip 2pt \noindent
+{\sl printf} converts, formats, and prints its arguments on the
+format. It returns the number of characters printed, see {\bf KR}.
+
+\Y\B\8\#\&{include} \.{<stdio.h>}\par
+\fi
+
+\M{11}External variables \hfill \break
+Because external variables are globally accessible, they can be used instead of
+argument lists to communicate data between functions. Furthermore, because
+external variables remain in existence permanently, rather than appearing and
+disappearing as functions are called and exited, they retain their values even
+ater the functions that set them ve returned, see {\bf KR}.
+
+Declaration of the global variables or function simply declares that the
+variable or function exists, but the memory is not allocated for them.
+
+\vskip 2pt
+\decl 1 3.25 {\sl argc:} copy of \PB{\\{ac}} parameter to \PB{\\{main}}.
+
+\decl 1 3.25 {\sl argv:}  copy of \PB{\\{av}} parameter to \PB{\\{main}}
+
+\Y\B\&{extern} \&{int} \\{argc};\6
+\&{extern} \&{char} ${}{*}{*}\\{argv}{}$;\par
+\fi
+
+\M{12}Program \hfill \break
+\.{LIT} has a fairly straightforward outline.  It operates in
+three phases: First it inputs the source file and stores cross-reference
+data, then it inputs the source once again and produces the \TEX/ output
+file, finally it sorts and outputs the index.
+
+\vskip 2pt
+\fi
+
+\M{13} Main function \hfill \break
+A function definition has this form, see {\bf KR}:Rechercheb
+Rechercheb
+\vskip 2pt \noindent
+{\tt
+return-type function-name(parameter declarations, or void) \hfill \break
+$\lbrace$ \hfill \break
+\indent declarations \hfill \break
+\indent statements \hfill \break
+$\rbrace$
+}
+
+\vskip 4pt \noindent
+The function {\sl main} is called by the operation system. Each call passes two
+arguments to main, which each time returns an integer.
+
+\vskip 2pt \noindent
+{\sl main()} - The function {\sl main} is called by the operation system. Each
+call passes two
+arguments to main, which each time returns an integer.
+
+\vskip 2pt \noindent
+The way for running another program on \.{Linux} involves first
+calling {\sl fork()}, which creates a new process as a copy of the first one,
+and then calling {\sl exec()} to replace this copy (of the shell) with the
+actual program to run.
+
+\vskip 2pt \noindent
+Richie and Kerninghan write: "$\ldots$ {\sl main} is a special function. Our
+program
+begins executing at the beginning of {\sl main}. This means that every program
+must have a {\sl main} somewhere and will usually call other functions to help
+perform its
+job."
+
+\vskip 2pt \noindent
+In the \.{C99} standard is defined: "The function called at program startup is
+named {\sl main}. $\ldots$ It shall be defined with a return type of {\bf int}
+and
+$\ldots$ or with two parameters (referred to here {\sl ac} and {\sl av})."
+
+\vskip 2pt
+\decl 1 3.25 {\sl ac:} { \rm If the value of {\sl ac} is greater than zero, the
+array members $av[0]$ through $av[ac-1]$ inclusive shall contain pointers to
+strings, which are given by the host environment prior to program startup. }
+
+\decl 1 3.25 {\sl av:} { \rm If the value of {\sl ac} is greater than zero, the
+string pointed to by $av[0]$ represents the program name. If the value of
+{\sl ac} is greater than one, the strings pointed to by $av[1]$ through
+$av[ac-1]$ represent the program parameters. }
+
+\vskip 2pt
+\decl 1 3.25 {\bf return} { \rm $\ldots$ from the initial call to the
+{\sl main} function is equivalent to calling the {\sl exit} function with the
+value returned by the {\sl main} function as its argument; reaching the end of
+{\sl main} $\rbrace$ that terminates the {\sl main} function returns a value
+compatible with \bf int. }
+
+\item{1} xxx
+\item{x} yyy
+
+\Y\B\1\1\&{void} \\{main}(\&{int} \\{ac}${},\39{}$\&{char} ${}{*}{*}\\{av})\2%
+\2{}$\6
+${}\{{}$\1\6
+${}\\{argc}\K\\{ac}{}$;\C{ 1 }\6
+${}\\{argv}\K\\{av}{}$;\C{ 2 }\6
+\\{printf}(\.{"Hi\ Herbert\ and\ Rena}\)\.{te.\\n"});\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{14}Index.
+\fi
+
+\inx
+\fin
+\con

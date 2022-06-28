@@ -1,0 +1,86 @@
+%
+%	LaTeX - SCHABLONE fuer die VORTRAGSFOLIEN
+%	Â©egst Â· 12.09.2oo8
+%
+\documentclass[a4paper]{slides}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\newcommand\lvtyp{PROSEMINAR}
+\newcommand\lvname{Algorithmen der Mustererkennung und Künstlichen Intelligenz}
+\newcommand\lvinst{Institut für Informatik FSU Jena}
+
+%
+%	HIER WERDEN TITEL REFERENT UND DATUM EINGETRAGEN
+%
+\newcommand\svthema{Kaltblüter in großstätischer Heimtierhaltung}
+\newcommand\svperson{Steven Spielberg}
+\newcommand\svdatum{14.November 2oo8}
+
+\begin{document}
+
+\title{ \textbf{\color{blue}\svthema} }
+\author{ \emph{\color{red}\svperson} }
+\date{ \textrm{\lvtyp} \\ \emph{"`\lvname"'} \\ \svdatum }
+\maketitle
+
+\begin{slide}
+\textbf{\Large Inhalt}
+	\vfill
+\begin{itemize}
+\item	ÃÜbersicht
+\item	Entwicklungsgeschichte
+\item	Theoretische Grundlagen
+\item	Algorithmen \& Systemarchitektur
+\item	Stand der Technik
+\item	Anwendungsbeispiele \& Produkte
+\item	Zusammenfassung und Ausblick
+\end{itemize}
+	\vfill
+\end{slide}
+
+\begin{slide}
+\textbf{\Large Theoretische Grundlagen}
+	\vfill
+Univariate Normalverteilung
+	\[
+	f (x \mid \mu, \sigma^2) ~=~ \frac 1 {\sigma\sqrt{2\pi}}
+		\cdot \exp\left\{
+			-\frac {(x-\mu)^2} {2\sigma^2}
+			\right\}
+	\]
+	\par
+Multivariate Normalverteilung
+	\[
+	f (\vec x \mid \vec\mu, S) ~=~ f (\vec x - \vec\mu \mid \vec0, S)
+	\]
+mit
+	\[
+	f (\vec x \mid \vec0, S) ~=~ \det(2\pi S)^{-1/2}
+		\cdot \exp \left\{
+			-\frac 12 \cdot \vec x^\top S^{-1} \vec x
+			\right\}
+	\]
+	\par
+Definition der quadratischen Form:
+	\[
+	\vec x^\top A \vec x ~:=~ \sum_i \sum_j x_i A_{ij} x_j
+	\]
+	\vfill
+\end{slide}
+
+\begin{slide}
+\textbf{\Large Systemarchitektur}
+	\vfill
+\includegraphics [width=\textwidth] {bildchen}
+	\vfill
+\includegraphics [width=\textwidth,height=0.3\textheight] {bildchen}
+	\vfill
+\end{slide}
+
+\end{document}

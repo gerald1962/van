@@ -1,3 +1,8 @@
+\input cwebmac
+
+\M{1}The details will be filled in due course. The interface of this module
+is included first. It is also used by the main programs.
+
 % Type styles: see texbook.pdf
 % \bf use boldface type
 % \it use italic type
@@ -6,7 +11,8 @@
 % \tt use typewriter type
 
 % \def
-% There’s a special way of making a macro definition global. Normally you define
+% There’s a special way of making a macro definition global. Normally you
+%define
 % a macro using either the \def command ...
 %
 % \par
@@ -18,43 +24,54 @@
 % is to be indented.
 %
 % \hangindent [ <dimen> parameter]
-% These two parameters jointly specify “hanging indentation” for a paragraph.
+% These two parameters jointly specify “hanging indentation” for a
+%paragraph.
 % The hanging indentation indicates to TEX that certain lines of the paragraph
 % should be indented
-% 
+%
 % \textindent like \item, but doesn’t do hanging indentation.
 
 \def\decl #1 #2 { \par \hskip #1 pt
-                  \hangindent #2 \parindent}
+\hangindent #2 \parindent}
 
-@ Substitution \hfill \break
+\fi
+
+\M{2}Substitution \hfill \break
 Ritchie writes in "The Development of the C Language", see
-{\tt c\_development.html}: "$\ldots$ but the most important was the introduction
-of the preprocessor $\ldots$ The preprocessor performs macro substitution, using
+{\tt c\_development.html}: "$\ldots$ but the most important was the
+introduction
+of the preprocessor $\ldots$ The preprocessor performs macro substitution,
+using
 conventions distinct from the rest of the language. $\ldots$"
 
 \vskip 2pt \noindent
 Here's what Wittgenstein says in the {\bf TLP},  see {\tt tlp.pdf}: "6.24 The
 method by which mathematics arrives at its equations is the method of
-substitution. For equations express the substitutability of two expressions, and
-we proceed from a number of equations to new equations, replacing expressions by
+substitution. For equations express the substitutability of two expressions,
+and
+we proceed from a number of equations to new equations, replacing expressions
+by
 others in accordance with the equations."
 
 \vskip 2pt \noindent
 Stallman defines {\sl header file} in "The C Preprocessor", see {\tt cpp.pdf}:
 A {\sl header file} is a file containing C declarations and macro definitions
-(see Chapter 3 [Macros], page 13) to be shared between several source files. You
+(see Chapter 3 [Macros], page 13) to be shared between several source files.
+You
 request the use of a header file in your program by including it, with the C
 preprocessing directive {\bf \#include}.
 
-@ System Header \hfill \break
+\fi
+
+\M{3}System Header \hfill \break
 The system header {\tt <stdio.h>} declares three types, several macros, and
 many functions for performing input and output, see {\bf ISO/IEC 9899:TC3}.
 
 \vskip 2pt \noindent
 To use the {\sl printf()} function we must include {\tt <stdio.h>}.
 {\sl printf} is the name of one of the main C output functions, and stands for
-"print formatted". The {\sl printf} format string is a control parameter used by
+"print formatted". The {\sl printf} format string is a control parameter used
+by
 a class of functions in the input/output libraries of C and many other
 programming languages. The string is written in a simple template language:
 characters are usually copied literally into the function's output, but format
@@ -72,10 +89,10 @@ The output function {\sl printf} translates internal values to characters:
 {\sl printf} converts, formats, and prints its arguments on the
 format. It returns the number of characters printed, see {\bf KR}.
 
-@c
-#include <stdio.h>
+\Y\B\8\#\&{include} \.{<stdio.h>}\par
+\fi
 
-@ External variables \hfill \break
+\M{4}External variables \hfill \break
 Because external variables are globally accessible, they can be used instead of
 argument lists to communicate data between functions. Furthermore, because
 external variables remain in existence permanently, rather than appearing and
@@ -86,10 +103,26 @@ Declaration of the global variables or function simply declares that the
 variable or function exists, but the memory is not allocated for them.
 
 \vskip 2pt
-\decl 1 3.25 {\sl argc:} copy of |ac| parameter to |main|.
+\decl 1 3.25 {\sl argc:} copy of \PB{\\{ac}} parameter to \PB{\\{main}}.
 
-\decl 1 3.25 {\sl argv:}  copy of |av| parameter to |main|
+\decl 1 3.25 {\sl argv:}  copy of \PB{\\{av}} parameter to \PB{\\{main}}
 
-@c
-extern int argc;
-extern char **argv;
+\Y\B\&{extern} \&{int} \\{argc};\6
+\&{extern} \&{char} ${}{*}{*}\\{argv}{}$;\par
+\fi
+
+\M{5}Coming to the definition of the global variables, when we define a
+variable or
+function, in addition to everything that a declaration does, it also allocates
+memory for that variable or function.
+
+\Y\B\&{int} \\{argc};\6
+\&{char} ${}{*}{*}\\{argv}{}$;\par
+\fi
+
+\N{1}{6}Index.
+\fi
+
+\inx
+\fin
+\con

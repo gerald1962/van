@@ -1,0 +1,77 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdftex 2022.5.30)  26 JUN 2022 14:38
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**lit.tex
+(./lit.tex (./cwebmac.tex
+\PPbox=\box16
+\MMbox=\box17
+\MGbox=\box18
+\MODbox=\box19
+\bak=\box20
+\bakk=\box21
+\ind=\count27
+\gdepth=\count28
+\secpagedepth=\count29
+\gtitle=\toks13
+\intersecskip=\skip18
+\toksA=\toks14
+\toksB=\toks15
+\toksC=\toks16
+\toksD=\toks17
+\toksE=\toks18
+\toksF=\toks19
+\usersanitizer=\toks20
+\countA=\count30
+\countB=\count31
+\countC=\count32
+\pagewidth=\dimen16
+\pageheight=\dimen17
+\fullpageheight=\dimen18
+\pageshift=\dimen19
+\cont=\write0
+\sbox=\box22
+\lbox=\box23
+\twodigits=\count33
+)
+Overfull \hbox (119.71776pt too wide) in paragraph at lines 3--8
+\tenrm is given an ex-pla-na-tion of its logic in a nat-u-ral lan-guage, such a
+s En-glish, see \tentt https://en.wikipedia.org/wiki/Literate[]programming\tenr
+m . |
+
+\hbox(6.94444+2.22223)x469.75499, glue set - 1.0
+.\tenrm i
+.\tenrm s
+.\glue 3.33333 plus 1.66666 minus 1.11111
+.\tenrm g
+.\tenrm i
+.etc.
+
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¤ in font cmr10!
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¼ in font cmr10!
+Missing character: There is no Ã in font cmr10!
+Missing character: There is no ¤ in font cmr10!
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+\openout0 = `lit.toc'.
+
+] [2] [3] [4] *14 Index:
+(./lit.idx) [5] (./lit.toc) Section names: (./lit.scn) Table of contents:
+(./lit.toc) [0] )</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmtex10.pfb></usr/share/texlive/texmf-dist/font
+s/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmtt10.pfb>
+Output written on lit.pdf (6 pages, 140038 bytes).
+PDF statistics:
+ 105 PDF objects out of 1000 (max. 8388607)
+ 86 compressed objects within 1 object stream
+ 1 named destinations out of 1000 (max. 500000)
+ 17 words of extra memory for PDF output out of 10000 (max. 10000000)
+

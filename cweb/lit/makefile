@@ -38,6 +38,9 @@ lit: lit.c lextern.c
 lelem: lelem.c lextern.c
 	gcc -g -o $@ $<
 
+hello: hello.c
+	gcc -g -o $@ $<
+
 # A simple makefile consists of “rules” with the following shape:
 # target ... : prerequisites ...
 #	recipe
@@ -49,22 +52,26 @@ lelem: lelem.c lextern.c
 # or update the targets.
 #
 mlit: lextern.tex lit.tex
+	cweave lextern.w
 	pdftex lextern.tex
 	pdftex lit.tex
 
 melem: lextern.tex lelem.tex
+	cweave lextern.w
 	pdftex lextern.tex
 	pdftex lelem.tex
 
 mtest: test.tex
 	pdftex test.tex
 
+mhello: hello.tex
+	pdftex hello.tex
+
 # This rule containing the delete command associated with
 # the target ‘clean’ does not have prerequisites.
 #
 clean:
 	rm -f \
-	test.tex \
-	lit lit.tex \
-	lelem lextern.tex lelem.tex \
+	hello.tex lelem.text lit.tex test.tex \
+	hello lelem lit test \
 	*~ *.c *.idx *.log *.o *.scn *.toc
