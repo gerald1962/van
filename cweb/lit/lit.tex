@@ -1,6 +1,12 @@
 \input cwebmac
 
-\M{1}Literate Programming \hfill \break
+\M{1}Literate Programming  \hfill \break
+Literate programming is a programming paradigm introduced by Donald Knuth in
+which a computer program is given an explanation of its logic in a natural
+language, such as English,
+see {\tt https://en.wikipedia.org/wiki/Literate\_programming}.
+
+\vskip 4pt \noindent
 Knuth means, that a programmer at any time is able to understand,
 what you do and therefore it should be able to lef t ideas
 as comments except you get low. I refere to "Literate Programming", see
@@ -9,9 +15,15 @@ main task is to instruct a computer what to do, let us
 concentrate rather on explaining to human beings what
 we want a computer to do."
 
+Und hier sind meine Gedanken:
+Und zudem soll zu jdem x-beliebigen Zeitpunkt
+der Autor, der erste Verantwortliche, mir erklären, was jedes Statement
+bedeutet oder ein Nacherfolger, der n-Verantwortliche, für den die
+Vorgänger-Bedingung gilt.
+
 \fi
 
-\M{2}Generator  \hfill \break
+\M{2}C-Generator  \hfill \break
 The {\bf ctangle} program converts the {\bf CWEB} source document {\tt hello.w}
 into the {\bf C} program {\tt hello.c} that may be compiled in the usual way.
 The output file includes{ \tt \#line} specifications so that debugging can be

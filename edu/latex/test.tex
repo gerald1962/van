@@ -1,0 +1,55 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
+\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
+\usepackage[usenames,dvipsnames]{color}  % Using the color package, not xcolor
+\usepackage{makeidx}
+\makeindex
+
+\setcounter{secnumdepth}{4}
+
+\renewcommand{\theparagraph}{\arabic{section}.\arabic{paragraph}.}
+% \renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+\usepackage{chngcntr}
+\counterwithout*{paragraph}{section}  %% stop resetting paragraph number with each new subsubsection
+% \counterwithin*{paragraph}{section}   %% reset paragraph number for each section; only works with the preceding line!
+
+\definecolor{coquelicot}{rgb}{1.0, 0.22, 0.0}
+
+%	HIER WERDEN TITEL REFERENT UND DATUM EINGETRAGEN
+%
+\newcommand\svthema{Pädagogik und Psychologie}
+\newcommand\svperson{Leoni Heber, Gerald Schüller}
+\newcommand\svdatum{\today}
+\newcommand\lvtyp{Schuljahr 2022/23}
+\newcommand\lvinst{Berufsschule für Kinderpflege - Höchstadt a. d. Aisch}
+
+\begin{document}
+
+\title{ \textbf{\color{blue}\svthema} }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{ \small {\lvtyp} - {\lvinst} }
+\maketitle
+
+\tableofcontents
+
+\newpage
+\section{Das aktuelle Bild vom Kind}
+
+\paragraph{\color{coquelicot} {Definition:}} \bf{Bindung}
+\footnote{\label{Bindung} PP, S. 14} \index{Bindung}
+\sl{ist ein lang anhaltendes, gefühlsmäßiges Band zu einer spezifischen Person,
+die nicht ausgetauscht werden kann.}
+
+\newpage
+\section{Das Wesen der Erziehung}
+
+\paragraph{\color{coquelicot} {Definition:}} \bf{Intentionale Erziehung}
+\footnote{\label{Intensionale} PP, S. 35} \index{Intentionale Erziehung}
+\sl{umfaßt die zielgerichteten Handlungen des Erziehers, die absichtsvoll und
+geplant durchgeführt werden.}
+
+\printindex
+
+\end{document}

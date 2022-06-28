@@ -1,3 +1,33 @@
+Hi Leoni,
+
+genauso theoretisch fleissig wie du am Samstag und Sonntag warst,
+war ich gestern und heute auch.
+
+Und hier ist ein Zwischenergebnis, das du auf deinem Smartphone
+lesen kannst, weil ich es u.a. im PDF-Format
+
+Das Buch, das du mir freundlicherweise bis Sonntag überlassen hast -
+Pädagogik/Psychologie von der Herausgeberin Hagemann fesselt mich
+immer mehr. Hoffentlich kann ich einen Funken übertragen,
+auser du willst was anderes machen. Wurscht: bisher, habe ich
+so viel gelernt, dass ich lebenslang davon provitiere.
+
+Fast das halbe Buch habe ich schon gelesen und wenn wir das zusammen
+lesen, wird es dir auch gefallen, ausser du willst was anderes lernen.
+
+Momenten mache ich gerne was für dich so wie du für mich, weil mich
+das irgendwie interessiert: du erstellt grade eine  Sammlung von Ideen für
+Jahreszeiten mit Liedern und Gedichten über die Natur
+oder über Tischsitten, ...
+
+Dein theoretisches Kernfach - Pädagogik und Psychologie - kriegen
+wir in den Griff.
+
+Seit Montag habe ich soviel gelesen und aufgeschrieben:
+
+
+
+
 
 123 Reiz/Physis/Psyche
 ======================
@@ -37,6 +67,115 @@ und Spaß an der Arbeit mit besonderen Kindern und Jugendlichen Ausgeprägtes
 Verantwortungsbewusstsein.
 Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
 Bewerbung am besten ...
+
+
+x Pädagogik/Psychologie
+=======================
+
+Artikel
+-------
+~/van_development/van/edu/latex/pp.tex
+
+Build
+-----
+pdflatex pp.tex
+makeindex pp.idx
+pdflatex pp.tex
+
+Guide
+-----
+see https://latex.tugraz.at/
+
+Using colours
+-------------
+see https://www.overleaf.com/learn/latex/Using_colours_in_LaTeX
+
+DIN A4
+------
+DIN A4	210 x 297 mm	21,0 cm x 29,7 cm
+
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}
+
+\setlength{\parskip}{-4pt}%
+\setlength{\parindent}{0pt}%
+
+German
+------
+\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
+\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
+
+Section font
+------------
+\usepackage{titlesec}
+\newcommand\smallsection{%
+  \titleformat{\section}
+    {\normalfont\normalsize\bfseries}{\thesection}{1em}{}
+}
+
+\smallsection
+
+Section color
+-------------
+{ \color{coolblack}
+  \section{Das Wesen der Erziehung} }
+
+Paragraph counter
+-----------------
+\setcounter{secnumdepth}{4}
+
+\renewcommand{\theparagraph}{\arabic{section}.\arabic{paragraph}.}
+
+\usepackage{chngcntr}
+\counterwithout*{paragraph}{section}
+
+Paragraph space
+---------------
+\setlength{\parskip}{-4pt}%
+\setlength{\parindent}{0pt}%
+
+Contents
+--------
+\begin{document}
+\tableofcontents
+
+Color
+-----
+\usepackage[usenames,dvipsnames]{color}  % Using the color package, not xcolor
+see https://latexcolor.com/
+
+Index
+-----
+\usepackage{makeidx}
+\makeindex
+
+Footnote
+--------
+...
+This is some example text\footnote{\label{myfootnote}Hello footnote}.
+...
+...
+I'm referring to footnote \ref{myfootnote}.
+...
+
+Zeilenumbruch
+-------------
+Der Befehl \linebreak fügt an der Stelle an der er gesetzt wurde, wie \\, einen
+Zeilenumbruch ein. Der Unterschied zu \\ ist, dass in der Zeile vor dem Umbruch
+ein Randausgleich stattfindet.
+
+
+x Edu
+=====
+
+x Latex
+-------
+pdflatex ausarbeitung.tex
+pdflatex folien.tex
+
+
+x Latex beamer
+==============
+sudo snap install slides
 
 
 x Noweb

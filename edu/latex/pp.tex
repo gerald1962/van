@@ -1,0 +1,203 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}
+
+\setlength{\parskip}{-4pt}%
+\setlength{\parindent}{0pt}%
+
+\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
+\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
+\usepackage[usenames,dvipsnames]{color}  % Using the color package, not xcolor
+\usepackage{makeidx}
+\makeindex
+
+\setcounter{secnumdepth}{4}
+
+\renewcommand{\theparagraph}{\arabic{section}.\arabic{paragraph}.}
+% \renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+\usepackage{chngcntr}
+\counterwithout*{paragraph}{section}  %% stop resetting paragraph number with each new subsubsection
+% \counterwithin*{paragraph}{section}   %% reset paragraph number for each section; only works with the preceding line!
+
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+
+\usepackage{titlesec}
+\newcommand\smallsection{%
+  \titleformat{\section}
+    {\normalfont\normalsize\bfseries}{\thesection}{1em}{}
+}
+
+\newcommand\einstieg{\paragraph{\color{amethyst} {Einstiegssituation:}}}
+\newcommand\definition{\paragraph{\color{red} {Definition:}}}
+\newcommand\fallbeispiel{\paragraph{\color{applegreen} {Fallbeispiel:}}}
+
+%	HIER WERDEN TITEL REFERENT UND DATUM EINGETRAGEN
+%
+\newcommand\svthema{Pädagogik und Psychologie}
+\newcommand\svperson{Leoni Heber, Gerald Schüller}
+\newcommand\svdatum{\today}
+\newcommand\lvtyp{Schuljahr 2022/23}
+\newcommand\lvinst{Berufsschule für Kinderpflege - Höchstadt a. d. Aisch}
+
+\begin{document}
+
+\title{ \textbf{\color{blue}\svthema} }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{ \small {\lvtyp} - {\lvinst} }
+\maketitle
+
+\tableofcontents
+
+\smallsection
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Das aktuelle Bild vom Kind} }
+
+\einstieg {\sl Lucca, ein Jahr und vier Monate, hat die Kinderpflegerin an die
+  Hand genommen und zum Wickeltisch geführt, weil seine Windel voll
+  war.}\footnote{\label{E-Lucca} PP, S. 13}
+
+\vskip 10pt
+{\rm Die Bindung bildet die Basis für die soziale Entwicklung des
+  Kindes.}\footnote{\label{E-Bindung} PP, S. 14}
+
+\definition \bf{Bindung}\index{Bindung}
+\sl{ist ein lang anhaltendes, gefühlsmäßiges Band zu einer spezifischen Person,
+  die nicht ausgetauscht werden kann.}\footnote{\label{Bindung} PP, S. 14}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Das Wesen der Erziehung} }
+
+\einstieg {\sl Melanie, fünf Jahre, malt und ihre Nase läuft. Die
+  Kinderpflegerin fordert sie auf, sich ein Taschentuch zu holen. Melanie kommt
+  der Aufforderung nach.}\footnote{\label{E-Melanie} PP, S. 29}
+
+\fallbeispiel \sl{Der dreijährige Linus
+  klettert über den Zaun und läuft weg. Eine Kinderpflegerin erklärt ihm, warum
+  er nicht über den Zaun steigen und weglaufen darf.}\footnote{\label{F-Linus} PP, S. 35}
+
+\vskip 10pt
+{\rm Da die Erziehung hier beabsichtigt geschieht, nennt man sie}
+\bf{intentionale Erziehung}.
+
+\definition \bf{Intentionale Erziehung}\index{Intentionale Erziehung} \sl{umfaßt
+  die zielgerichteten Handlungen des Erziehers, die absichtsvoll und geplant
+  durchgeführt werden.}\footnote{\label{Intensionale} PP, S. 35}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Erziehung in Familie und sozalpädagogischen Einrichtungen} }
+
+\einstieg {\sl Ein Kindergarten wird von Kindern besucht wie Thomas oder Anna.
+  Thomas Eltern - Spätaussieder mit einem niedrigen Bildungsniveau - leben in
+  einer Sozialwohnung und verdienen wenig. Annas Eltern - Akademiker - wohnen
+  im Eigenheim und verfügen über ein hohes Einkommen.}\footnote{\label{F-Anna} PP, S. 38}
+
+\definition \bf{Familie}\index{Familie} \sl{bezeichnet eine Lebensform, die
+  mindestens ein Kind und ein Elternteil umfasst, dauerhaft ist und im Innern
+  durch Solidarität und persönliche Verbundenheit zusammengehalten
+  wird.}\footnote{\label{Familie} PP, S. 39}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Personen und Situationen wahrnehmen und beobachten} }
+
+\einstieg {\sl Erzieherin Theresa beobachtet Emely und
+  beschreibt sie als \\ übertrieben
+  bestimmend. Deswegen führt die Kinderpflegerin
+  eine systematische Beobachtung durch und bestätigt ihre gegenteilige
+  Wahrnehmung: Emely spielt kooperativ mit anderen Kindern.}\footnote{\label{F-Emily} PP, S. 67}
+
+\definition \bf{Wahrnehmung}\index{Wahrnehmung} \sl{ist der Prozess der
+  Reizaufname und Reizverarbeitung.}\footnote{\label{Wahrnehmung} PP, S. 71}
+
+\definition \bf{Beobachtung}\index{Beobachtung} \sl{ist die bewusste und
+  planvolle Wahrnung von Ereignissen und Verhaltensweisen.}\footnote{\label{Beobachtung} PP, S. 71}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Bedürfnisse wahrnehmen, erkennen und angemessen befriedigen} }
+
+\einstieg {\sl Das Team des Kindergartens ,,Arche'' beschließt, ihn um eine
+  Kindertagesstätte mit Krippe zu erweitern. Sie müssen nun anfangen, die Bedürnisse
+  und Fähigkeiten aller Altersgruppen zu analysieren.}\footnote{\label{F-Arche} PP, S. 85}
+
+\definition \sl{Der Begriff} {\bf ,,Bedürfnis''}\index{Bedürfnis} \sl{bezeichnet
+  einen physischen oder psychischen Mangelzustand.}\footnote{\label{Bedürfnis} PP, S. 86}
+
+\definition \bf{Motive}\index{Motiv} \sl{sind Begeggründe. Sie treiben den
+  Menschen an, ein bestimmtes Ziel zu erreichen, bestimmte Bedürnisse zu
+  befriedigen. Motivation ist der Vorgang, bei dem Motive den Menschen
+  antreiben.}\footnote{\label{Motive} PP, S. 86}
+
+\newpage
+{ \color{coolblack}
+  \section{Werte und Ziele in der Erziehung} }
+
+\einstieg {\sl Pia aus dem Team der Krippengruppe hat beobachtet, dass sich Kinder für
+  Körper und Krankheit oder Gesundheit interessieren. Das Team überlegt, welche
+  Kompetenzen gestärkt werden können.}\footnote{\label{F-Pia} PP, S. 106}
+
+\definition {\bf Kompetenz}\index{Kompetenz} \sl{bezeichnet die Fähigkeit und
+  Bereitschaft des Einzelnen, Kenntnisse und Fertigkeiten sowie persönliche und
+  methodische Fähigkeiten zu nutzen und sich in verschiedenen Lebenssituationen
+  durchdacht sowie individuell und sozial verantwortlich zu
+  verhalten.}\footnote{\label{Kompetenz} PP, S. 107}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Lernen und erziehen} }
+
+\einstieg {\sl Rita, heute sieben Jahre alt, ist eine begabte
+  Zeichnerin. Nach wenige Wochen in der ersten Klasse erlosch bei ihr die Freude
+  am Zeichnen. Die Erzieherin überlegt, wie man die Freude am Zeichnen
+  wiederbeleben könnte.}\footnote{\label{F-Rita} PP, S. 129}
+
+\definition {\bf Erziehung}\index{Erziehung} \sl{ist das beabsichtigte und
+  zielgerichtete Einwirken des Erziehenden auf das Kind, um das Verhalten oder
+  Erleben des Kindes zu stärken oder zu ändern. Hat das Kind dieses Verhalten
+  oder Erlben verändert oder eine neue Verhaltens- oder Erlebensweise erworben,
+  so hat das Kind gelernt.}\footnote{\label{Erziehung} PP, S. 130}
+
+% \newpage
+\vskip 16pt \hrule
+{ \color{coolblack}
+  \section{Erziehungsstile} }
+
+\einstieg {\sl Die Geschwister Martin, neun Jahre, und Maria, sieben Jahre,
+  wohnen im Kinderheim. Sie trödeln morgens und kommen deshalb nicht
+  rechtzeitig zum Frühstück. Die Erzieherin Sabine greift nicht ein, obwohl die
+  Kinder zu spät in die Schule kommen. Anders fordert sie die Praktikantin Katja
+  erst freundlich auf, ermahnt sie dann und schimpft. Martin beschwert sich:
+  ,,Sabine lässt uns in Ruhe!'' Sie will die Angelegenheit mit dem Team
+  besprechen.}\footnote{\label{F-Katja} PP, S. 158}
+
+\definition {\sl Unter} {\bf ,,Erziehungsstiel''}\index{Erziehungsstiel}
+\sl{versteht man die Grundhaltung, eine charakteristische Art und Weise, die
+  Erziehende den Kindern gegenüber einnehmen. Es sind Muster von Einstellungen,
+  Handlungsweisen, sprachlichen und nicht sprachlichen Äußerungen, die die Art
+  des Umgangs von Erziehenden mit Kindern kennzeichnen.}\footnote{\label{Erziehungsstiel} PP, S. 159}
+
+% \newpage
+\vskip 16pt \hrule
+\section{A}
+
+\einstieg {\sl x.}\footnote{\label{F-x} B, S. i}
+
+\definition {\bf y}\footnote{\label{y} B, S. i}
+\index{y} \sl{z.}
+
+\printindex
+
+\end{document}

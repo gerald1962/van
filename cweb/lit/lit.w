@@ -1,7 +1,8 @@
 @ Literate Programming @.\it{Literate Programming}@> \hfill \break
 Literate programming is a programming paradigm introduced by Donald Knuth in
 which a computer program is given an explanation of its logic in a natural
-language, such as English, see https://en.wikipedia.org/wiki/Literate_programming
+language, such as English,
+see {\tt https://en.wikipedia.org/wiki/Literate\_programming}.
 
 \vskip 4pt \noindent
 Knuth means, that a programmer at any time is able to understand,
@@ -12,11 +13,15 @@ main task is to instruct a computer what to do, let us
 concentrate rather on explaining to human beings what
 we want a computer to do."
 
+\vskip 4pt \noindent
+This is also, where the first authentic or autonomous idea comes into play:
+the author of a program, if it is a proper person and has awareness of responsibility,  and the first , is able to elucidate each statement at any time.
+
 Und hier sind meine Gedanken:
 Und zudem soll zu jdem x-beliebigen Zeitpunkt
 der Autor, der erste Verantwortliche, mir erklären, was jedes Statement bedeutet oder ein Nacherfolger, der n-Verantwortliche, für den die Vorgänger-Bedingung gilt.
 
-@ Generator @.\it{C-Generator}@> \hfill \break
+@ C-Generator @.\it{C-Generator}@> \hfill \break
 The {\bf ctangle} program converts the {\bf CWEB} source document {\tt hello.w}
 into the {\bf C} program {\tt hello.c} that may be compiled in the usual way.
 The output file includes{ \tt \#line} specifications so that debugging can be
