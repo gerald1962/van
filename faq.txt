@@ -1,11 +1,58 @@
-Hi Leoni,
+Hi Herbert,
 
-hier ist das Ergebnis:
+Leonies Mitschrift
 
-https://github.com/gerald1962/van/blob/main/edu/latex/pp.pdf
+Leonies Mitschrift übertrage ich nach LaTeX
+und das ist interessant, weil sie ein
+verspieltes und farbenfrohes Layout verwendet.
 
-LG,
-Gerald
+Dank Internet finde ich immer ein LaTeX-Packet,
+mit dem ich ihr Design in ein TeX-Program
+umwandeln kann.
+
+Interessant ist, wie sie über das Design das
+verstehen will, was sie interessiert und lernen
+soll.
+
+Eigentlich lernt man etwas, über:
+1. "Das merke ich mir." oder
+2. "Das probiere ich aus." oder
+3. "Das untersuche ich." ...
+
+1. Das schafft man mit Auswendig-Lernen.
+Entweder fragt man sich selbst ab oder schneller
+geht es mit jemand, der dich abfragt oder gegenseitig.
+
+2. Die Voraussetzung für 2. und 3. ist 1.
+3. Bei 2. und 3. ist zumindest bei mir das Verhältnis
+von Einsatz und Gewinn negativ.
+
+
+
+x Edu
+=====
+
+x Latex
+-------
+pdflatex ausarbeitung.tex
+pdflatex folien.tex
+
+
+x Latex beamer
+==============
+sudo snap install slides
+
+
+x Noweb
+=======
+
+
+x Ulix
+======
+
+
+x Haskell
+=========
 
 
 123 Reiz/Physis/Psyche
@@ -48,29 +95,76 @@ Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
 Bewerbung am besten ...
 
 
-x Pädagogik/Psychologie
-=======================
+126 Pädagogik/Psychologie Skript
+================================
 
-Artikel
--------
+126.1 Location
+--------------
+~/van_development/van/edu/latex/transcript.tex
+
+126.2 Build
+-----------
+pdflatex transcript.tex
+makeindex transcript.idx
+pdflatex transcript.tex
+
+126.2 Unterstrich
+-----------------
+
+126.2.1 Soul package
+....................
+https://ctan.space-pro.be/tex-archive/macros/generic/soul/soul.pdf
+
+\setul
+The predefined underline depth and thickness work well with most fonts. They
+can be changed using the macro \setul.
+
+\setul{hunderline depthi}{hunderline thicknessi}
+
+Either dimension can be omitted, in which case there has to be an empty pair
+of braces. Both values should be defined in terms of ex, letting them grow and
+shrink with the respective fonts.
+
+\resetul
+The \resetul command restores the standard
+values.
+
+126.3 Rahmen
+------------
+\fboxrule=2pt % Sets the width of the frame.
+\fboxsep=4pt  % Set the separation between the text and the frame.
+
+\fcolorbox{red}{white}{
+  \begin{minipage}{0.95\textwidth}    
+...
+    
+  \end{minipage}
+}
+
+
+125 Pädagogik/Psychologie Buch
+==============================
+
+125.1 Location
+--------------
 ~/van_development/van/edu/latex/pp.tex
 
-Build
------
+125.2 Build
+-----------
 pdflatex pp.tex
 makeindex pp.idx
 pdflatex pp.tex
 
-Guide
------
+125.3 Guide
+-----------
 see https://latex.tugraz.at/
 
-Using colours
--------------
+125.4 Using colours
+-------------------
 see https://www.overleaf.com/learn/latex/Using_colours_in_LaTeX
 
-DIN A4
-------
+125.5 DIN A4
+------------
 DIN A4	210 x 297 mm	21,0 cm x 29,7 cm
 
 \usepackage[textwidth=17cm,textheight=26cm]{geometry}
@@ -78,13 +172,13 @@ DIN A4	210 x 297 mm	21,0 cm x 29,7 cm
 \setlength{\parskip}{-4pt}%
 \setlength{\parindent}{0pt}%
 
-German
-------
+125.6 German
+------------
 \usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
 \usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
 
-Section font
-------------
+125.7 Section font
+------------------
 \usepackage{titlesec}
 \newcommand\smallsection{%
   \titleformat{\section}
@@ -93,13 +187,13 @@ Section font
 
 \smallsection
 
-Section color
--------------
+125.8 Section color
+-------------------
 { \color{coolblack}
   \section{Das Wesen der Erziehung} }
 
-Paragraph counter
------------------
+125.9 Paragraph counter
+-----------------------
 \setcounter{secnumdepth}{4}
 
 \renewcommand{\theparagraph}{\arabic{section}.\arabic{paragraph}.}
@@ -107,28 +201,28 @@ Paragraph counter
 \usepackage{chngcntr}
 \counterwithout*{paragraph}{section}
 
-Paragraph space
----------------
+125.10 Paragraph space
+-----------------------
 \setlength{\parskip}{-4pt}%
 \setlength{\parindent}{0pt}%
 
-Contents
---------
+125.11 Contents
+---------------
 \begin{document}
 \tableofcontents
 
-Color
------
+125.12 Color
+------------
 \usepackage[usenames,dvipsnames]{color}  % Using the color package, not xcolor
 see https://latexcolor.com/
 
-Index
------
+125.13 Index
+------------
 \usepackage{makeidx}
 \makeindex
 
-Footnote
---------
+125.14 Footnote
+---------------
 ...
 This is some example text\footnote{\label{myfootnote}Hello footnote}.
 ...
@@ -136,37 +230,59 @@ This is some example text\footnote{\label{myfootnote}Hello footnote}.
 I'm referring to footnote \ref{myfootnote}.
 ...
 
-Zeilenumbruch
--------------
+125.15 Zeilenumbruch
+--------------------
 Der Befehl \linebreak fügt an der Stelle an der er gesetzt wurde, wie \\, einen
 Zeilenumbruch ein. Der Unterschied zu \\ ist, dass in der Zeile vor dem Umbruch
 ein Randausgleich stattfindet.
 
+125.16 Silbentrennung
+---------------------
+\- : Mit dieser Anweisung teilt man LaTeX mit, dass das Wort nur an der
+betreffenden Stelle getrennt werden kann. Staats\-ver\-trag
+Achtung! Ist in einem Wort dieses Zeichen gesetzt, wird es an keiner anderen
+Stelle mehr getrennt werden. Daher sollte man, wenn diese Anweisung in einem
+Wort verwendet wurde, an jeder Stelle, an der man in diesem Wort einen Umbruch
+dulden möchte, diese Anweisung setzen.
 
-x Edu
-=====
+125.17 Two parallel columns
+---------------------------
+\usepackage{parallel}
+...
+\begin{Parallel}[c]{0.475\textwidth}{0.475\textwidth}%
+\ParallelLText{<left-text>}
+\ParallelRText{<right-text>}
+\end{Parallel}
 
-x Latex
--------
-pdflatex ausarbeitung.tex
-pdflatex folien.tex
+125.18 "ö ü ä ß" in Latex
+-------------------------
+According the subsection "indirekte Eingabe von Umlauten" you can write
+\"A, \"O, \"U, \"a, \"o, \"u and \ss{} or {\"A}, {\"O}, {\"U}, {\"a}, {\"o},
+{\"u} and {\ss} to get german letters.
 
+125.19 Changing the font size locally
+-------------------------------------
+\Huge
+\huge
+\LARGE
+\Large
+\large
+\normalsize
+\small
+\footnotesize
+\scriptsize
+\tiny
 
-x Latex beamer
-==============
-sudo snap install slides
-
-
-x Noweb
-=======
-
-
-x Ulix
-======
-
-
-x Haskell
-=========
+125.20 Font styles
+------------------
+\bf   Switch to bold face.
+\cal  Switch to calligraphic letters for math.
+\it   Italics.
+\rm   Roman.
+\sc   Small caps.
+\sf   Sans serif.
+\sl   Slanted (oblique).
+\tt   Typewriter (monospace, fixed-width).
 
 
 124 Lit-Library

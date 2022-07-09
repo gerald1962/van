@@ -1,0 +1,301 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}
+
+\setlength{\parskip}{-4pt}%
+\setlength{\parindent}{0pt}%
+
+\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
+\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
+\usepackage[dvipsnames]{xcolor}          % Using the color package
+\usepackage{color,soul}                  % Underlining
+\usepackage{makeidx}
+\usepackage{parallel}                    % 2003/04/13
+\usepackage{stackengine}                 % Stacking of objects: 
+\makeindex
+
+\setcounter{secnumdepth}{4}
+
+\renewcommand{\theparagraph}{\arabic{paragraph}.}
+% \renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+\usepackage{chngcntr}
+\counterwithout*{paragraph}{section}  %% stop resetting paragraph number with each new subsubsection
+% \counterwithin*{paragraph}{section}   %% reset paragraph number for each section; only works with the preceding line!
+
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
+\definecolor{brinkpink}{rgb}{0.98, 0.38, 0.5}
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
+\definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
+\definecolor{english}{rgb}{0.0, 0.5, 0.0}
+
+\usepackage{titlesec}
+\newcommand\smallsection{%
+  \titleformat{\section}
+    {\normalfont\normalsize\bfseries}{\thesection}{1em}{}
+}
+
+%	HIER WERDEN TITEL REFERENT UND DATUM EINGETRAGEN
+%
+\newcommand\svthema{Pädagogik und Psychologie}
+\newcommand\svperson{Leonie Heber}
+\newcommand\svdatum{\today}
+\newcommand\lvtyp{Schuljahr 2021/22}
+\newcommand\lvinst{Berufsschule für Kinderpflege - Höchstadt a. d. Aisch}
+
+\usepackage{verbatim}
+
+\begin{comment}
+:Title: Diagram of the sensory stimulus and reaction or response cycle
+:Tags: Diagrams;Flowcharts;Charts;Styles;Computer science
+:Author: Gerald Schüller
+:Slug: linux
+
+A flow diagram of a sensory stimulus and reaction or response cycle.
+It uses basic nodes and arrows and defines node styles.
+\end{comment}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows, arrows.meta, decorations.markings}
+
+% for double arrows adapt line thickness and line width, if needed
+\tikzstyle{vecArrow} = [
+  thick,
+  decoration = {
+    markings, mark=at position
+    1 with {\arrow[semithick]{open triangle 60}}
+  },
+  double distance =1.4pt,
+  shorten >= 5.5pt,
+  preaction = {decorate},
+  postaction = {
+    draw, line width=1.4pt, white,shorten >= 4.5pt}
+]
+
+\tikzset{%
+  >={Latex[width=2mm,length=2mm]},
+  % Specifications for style of nodes:
+  base/.style = {
+    rectangle,
+    draw = black,
+    double = black,           %% here
+    double distance = 0.5pt,  %% here
+    minimum width = 3cm,
+    minimum height = 0.5cm,
+    text centered,
+    font = \sffamily,
+    text = violet!80},
+}
+
+\begin{document}
+
+\title{ \textbf{\color{blue}\svthema} }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{ \small {\lvtyp} - {\lvinst} }
+\maketitle
+
+\smallsection
+
+% \newpage
+\paragraph\rm{\large\hskip -20pt {Unser neues Fach
+    \setulcolor{red} \ul{P\"adagogik} und \setulcolor{english} \ul{Psychologie}}}
+
+\begin{Parallel}[c]{0.475\textwidth}{0.475\textwidth}%
+  \ParallelLText{\center {\color{english} {Pädagogik}}}%
+  \ParallelRText{\center {\color{red} {Psychologie}}}%
+  \ParallelPar%
+  
+  \vskip 4pt
+  \ParallelLText{Diese Wissenschaft beschäftigt sich mit der \\
+    {\color{red} Erziehung} und {\color{red} Bildung} eines Menschen.}
+
+  \ParallelRText{Diese Wissenschaft beschäft sich mit dem
+    {\color{english} Verhältnis} von {\color{english} Erleben}
+    (von außen nicht beobachtbar) und {\color{english} Entwicklung} oder
+    {\color{english} Verhalten} (von außen beobachtbar) eines Menschen. }
+  \ParallelPar%
+\end{Parallel}%
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt 
+\paragraph\rm{\large\hskip -20pt {\setulcolor{english}\setul{.65ex}{2pt}
+    \ul{Das Fach P\"adagogik und Psychologie}}}
+
+\vskip 20pt
+
+\fboxrule = 2pt % Sets the width of the frame.
+\fboxsep  = 4pt  % Set the separation between the text and the frame.
+
+\fcolorbox{red}{white}{
+  \begin{minipage}{0.95\textwidth}    
+    Arbeitsauftrag:
+    \begin{enumerate}
+    \item Lies den Text aufmerksam durch und tausche dich über Unklarheiten
+      mit deinem Banknachbarn aus.
+
+    \item Markiert euch wichtige Merkmale zu den Begriffen Pädagogik,
+      Psychologie und Alltagspsychologie.
+
+    \item Erklärt euch gegenseitig die Begriffe in eigenen Worten.
+    \end{enumerate}
+    
+  \end{minipage}
+}
+
+\vskip 20pt
+\paragraph\rm{\hskip -20pt \colorbox{yellow}{Pädagogik} ist die Bezeichnung für
+  die \colorbox{yellow}{wissenschaftliche Disziplin}, die sich mit der Theorie
+  und Praxis von \colorbox{yellow}{Bildung und Erziehung} auseinandersetzt. Die
+  Pädagogik nimmt dabei ein Doppelrolle ein: sie erforscht Bildungs- und
+  Erziehungszusammenhänge (Theorie), macht aber auch Vorschläge, wie Bildungs-
+  und Erziehungspraxis\footnote{\fcolorbox{aqua}{white}{
+    \begin{minipage}{0.90\textwidth} Mit Erziehungspraxis wird das Handeln in
+      konkreten erzieherischen Situationen, das ein bestimmtes Ziel verfolgt,
+      bezeichnet.
+  \end{minipage}}}
+  gestaltet und verbessert werden kann (Praxis).}
+
+\vskip 16pt
+\paragraph\rm{\hskip -20pt \colorbox{yellow}{Psychologie} ist eine weitere
+  Wissenschaft, die das \colorbox{yellow}{Erleben und Verhalten} des Menschen,
+  seine \colorbox{yellow}{Entwicklung} im Lauf des Lebens und alle dafür
+  maßgeblichen inneren und äußeren Ursachen und Bedingungen beschreibt und
+  erklärt. Jeder Mensch ist psychologisch tätig, indem er Menschenkenntnis
+  besitzt, andere Menschen durchschaut oder Urteile über den Charakter anderer
+  fällt. Dieses aufgrund persönlicher Erfahrungen gewonnene Wissen bezeichnen wir
+  als Alltagspsychologie im Gegensatz zur wissenschaftlichen Psychologie, die
+  sich auf wissenschaftliche Methoden (Experiment, Test, Befragung, $\ldots$)
+  stützt. Bei der Alltagspsychologie orientiert man sich vorwiegend an den
+  eigenen Erfahrungen und an denen anderer oder auch an Tradition und
+  Alltagsweisheiten. }
+
+% \vskip 16pt \hrule \vskip 20pt 
+\paragraph\rm{\large\hskip -20pt {\setulcolor{amethyst}\setul{.65ex}{2pt}
+    \ul{Was ist Psychologie?}}}
+
+\vskip 20pt
+
+Folgende zwei Fälle können uns bei der Beantwortung dieser Fragen helfen:
+
+\vskip 16pt
+
+\fcolorbox{amethyst}{white}{
+  \begin{minipage}{0.95\textwidth}    
+    \begin{description}
+    \item[\theparagraph 1.] Die Kinder des Kindergartens Sonnenblume sind beim Picknick im Walt.
+      Die kleine Maria lässt die Hand der Kinderpflegerin nicht los. Auch als
+      Peter kommt, um sich von der Kinderpflegerin beim Öffnen der Flasche
+      helfen zu lassen, lässt sie die Hand nicht lost. Die Kinderpflegerin
+      fragt: ,,Maria, kannst du bitte kurz loslassen?'' Maria hält die Hand aber
+      nur noch fester und ruft: ,,Nein, nein. Nicht loslassen. Ich hab sonst so
+      viel Angst.''
+      
+    \end{description}
+
+    Inwiefern ist Maria auffällig? \\
+    Habt ihr eine mögliche Erklärung dafür?
+      
+  \end{minipage}
+}
+
+\begin{description}
+\item[\theparagraph 2.] Auszug aus einem Elterngespräch zwischen Frau Schmitt,
+  Mutter der sechsjährigen Kerstin und der Kinderpflegerin:
+\end {description}
+
+\begin{description}
+\item[{\setulcolor{emerald}\setul{.65ex}{2pt} \ul{\rm Frau Schmitt}:}] ,,Und wie geht es
+  eigentlich mit Kerstin im Kindergarten?''
+
+\item[{\setulcolor{aqua}\setul{.65ex}{2pt} \ul{\rm Kinderpflegerin}:}] ,,Also, ich kann
+  mich überhaupt nicht beschweren, Ihre Tochter ist sehr höflich,
+  kommt gut mit den anderen Kindern klar und ist gerade beim Bastelen
+  sehr geschickt.''
+  
+\item[{\setulcolor{emerald}\setul{.65ex}{2pt} \ul{\rm Frau Schmitt}:}] ,,Hm.
+  Also, ich frage mal ganz direkt: gibt es irgendwelche Probleme, wenn sie auf
+  die Toilette muss?''
+
+\item[{\setulcolor{aqua}\setul{.65ex}{2pt} \ul{\rm Kinderpflegerin (erstaunt)}:}]
+  ,,Nein, überhaupt nicht. Weshalb fragen Sie?''
+
+\item[{\setulcolor{emerald}\setul{.65ex}{2pt} \ul{\rm Frau Schmitt}:}] ,,Kerstin
+  macht fast jede Nacht ins Bett. Sie weint dann immer und meint: ,, Ich will
+  nicht, dass das passiert.'' Der Kinderarzt konnte keinen Grund finden. Ich
+  mach mir Sorgen.''
+\end {description}
+
+Beschreibe, wie die Kinderpflegerin Kerstin wahrnimmt. Die Mutter hat eine
+andere Wahrnehmung. Woran könnte das liegen?
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt
+\paragraph\rm{\large\hskip -20pt {\setulcolor{brinkpink}\setul{.65ex}{2pt}
+    \ul{Unser Fach P\"adagogik und Psychologie}}}
+
+\vskip 20pt
+
+xxx
+
+\vskip 16pt \hrule \vskip 20pt
+\paragraph\rm{\large\hskip -20pt {\setulcolor{amethyst}\setul{.65ex}{2pt}
+    \ul{Wahrnehmung - Ich sehe, was du nicht siehst!}}}
+
+\begin{description}
+
+\newlength\lunderset
+\newlength\rulethick
+\lunderset = 1.5pt\relax
+\rulethick = .8pt\relax
+\def\stackalignment{l}
+
+\newcommand\nunderline[3][1]{%
+  \setbox0 = \hbox{#2}%
+  \stackunder[#1 \lunderset - \rulethick]
+             {\strut #2}
+             {\color{#3} \rule{\wd0} {\rulethick}}%
+}
+
+\item[\theparagraph 1.] \nunderline[2]{\nunderline{Definition:}{english}}{red}
+  Wahrnehmung ist der Prozess der Reizaufnahme und Reizverarbeitung.
+
+\item[\theparagraph 2.] Der Prozess der Wahrnehmung:
+
+% Drawing part, node distance is 2 cm and every node
+% is prefilled with white background
+\begin{tikzpicture}[
+    node distance = 1.75cm,
+    every node/.style = {fill = white, font = \sffamily}, align = center
+  ]
+  
+\newcommand\laArrow{%
+  [-{Latex[open, line width=3mm, width=3mm]}]
+}
+
+  % Specification of nodes (position, etc.)
+  \node (start)        [base]                      {Reiz};
+  \node (senses)       [base, below of = start]    {Sinnesorgan};
+  \node (brain)        [base, below of = senses]   {Gehirn};
+  \node (experiences)  [base, left of  = brain, xshift=-3.5cm]
+        {Bisherige Erfahrungen \\ {\scriptsize {\color{black} {(Schmerz, Gefühle, Bedürfnis)}} }};
+  \node (feeling)      [base, below of = brain]    {Empfindung \& \\ Bewertung};
+  \node (stop)         [base, below of = feeling]  {Reaktion};
+
+  % Specification of lines between nodes specified above
+  % with aditional nodes for description 
+  \draw[vecArrow]  (start)        --  (senses);
+  \draw\laArrow    (senses)       --  (brain);
+  \draw\laArrow    (experiences)  |-  node [yshift=-2cm, text width=3.1cm] { }
+                                      (brain);
+  \draw\laArrow    (brain)        --  (feeling);
+  \draw[vecArrow]  (feeling)      --  (stop);
+
+\end{tikzpicture}
+
+\end{description}
+
+\printindex
+
+\end{document}
