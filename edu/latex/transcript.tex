@@ -11,7 +11,9 @@
 \usepackage{color,soul}                  % Underlining
 \usepackage{makeidx}
 \usepackage{parallel}                    % 2003/04/13
-\usepackage{stackengine}                 % Stacking of objects: 
+\usepackage{stackengine}                 % Stacking of objects:
+\usepackage{amsmath}			 % AMS-Mathe: roman digits
+
 \makeindex
 
 \setcounter{secnumdepth}{4}
@@ -27,9 +29,13 @@
 \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 \definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
 \definecolor{brinkpink}{rgb}{0.98, 0.38, 0.5}
+\definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+\definecolor{cerisepink}{rgb}{0.93, 0.23, 0.51}
 \definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
 \definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
 \definecolor{english}{rgb}{0.0, 0.5, 0.0}
+\definecolor{lemonchiffon}{rgb}{1.0, 0.98, 0.8}
+\definecolor{lightcyan}{rgb}{0.88, 1.0, 1.0}
 
 \usepackage{titlesec}
 \newcommand\smallsection{%
@@ -88,6 +94,23 @@ It uses basic nodes and arrows and defines node styles.
     font = \sffamily,
     text = violet!80},
 }
+
+
+\newlength\lunderset
+\newlength\rulethick
+\lunderset = 1.5pt\relax
+\rulethick = .8pt\relax
+\def\stackalignment{l}
+
+\newcommand\nunderline[3][1]{%
+  \setbox0 = \hbox{#2}%
+  \stackunder[#1 \lunderset - \rulethick]
+             {\strut #2}
+             {\color{#3} \rule{\wd0} {\rulethick}}%
+}
+
+
+\usepackage{tikzsymbols}
 
 \begin{document}
 
@@ -171,6 +194,7 @@ It uses basic nodes and arrows and defines node styles.
   eigenen Erfahrungen und an denen anderer oder auch an Tradition und
   Alltagsweisheiten. }
 
+% \newpage
 % \vskip 16pt \hrule \vskip 20pt 
 \paragraph\rm{\large\hskip -20pt {\setulcolor{amethyst}\setul{.65ex}{2pt}
     \ul{Was ist Psychologie?}}}
@@ -231,37 +255,84 @@ Beschreibe, wie die Kinderpflegerin Kerstin wahrnimmt. Die Mutter hat eine
 andere Wahrnehmung. Woran könnte das liegen?
 
 % \newpage
+
+% Subparagraph counter.
+\newcounter{subParagraphC}
+\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
+
+% Description counter.
+\newcommand\desccount{%
+  \stepcounter{subParagraphC}\theparagraph\thesubParagraphC
+}
+
+% \newpage
 \vskip 16pt \hrule \vskip 20pt
 \paragraph\rm{\large\hskip -20pt {\setulcolor{brinkpink}\setul{.65ex}{2pt}
     \ul{Unser Fach P\"adagogik und Psychologie}}}
 
 \vskip 20pt
 
-xxx
+Kläre bei den folgenden Fällen, ob es sich um {\setulcolor{red} \ul{p\"adagogische}}
+oder {\setulcolor{english} \ul{psychologische}} Fallbeispiele handelt und
+begründe deine Entscheidung!
 
-\vskip 16pt \hrule \vskip 20pt
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\begin{description}
+\item[\desccount] Frau Schmitt traut sich wegen ihrer Spinnenphobie ($=$ große
+  Angst vor Spinnen) nicht mehr in den Keller. \\
+  {\color{english} {Psychologisch}}, denn Frau Schmitt könnte ein unliebsames
+  Erlebnis gehabt haben mit den Spinnen.
+
+\item[\desccount] Die Kinderpflegerin übt mit den Kindern das Zählen. \\
+  {\color{red} {Pädagogisch}}, denn die Kinderpflegerin bildet die Kinder, indem
+  sie das Zählen übt.
+
+\item[\desccount] Karsten, 18 Jahre, wacht oft mit schlimmen Alpträumen auf. \\
+  {\color{english} {Psychologisch}}, $\ldots$
+
+\item[\desccount] Helga, 16 Jahre, verletzt sich mit Absicht selbst am Arm. \\
+  {\color{english} {Psychologisch}}, denn Helga versucht ihr schlechtes Erlebnis
+  auf ihre Art zu verdrängen / vergessen.
+
+\item[\desccount] Die Hauswirtschaftslehrerin Frau N erklärt ihren Schülern, wie
+  man eine Lasagne zubereitet. \\
+  {\color{red} {Pädagogisch}}, denn die Lehrerin bildet die Schüler. Sie zeigt
+  ihnen, wie man eine Lasagne zubereitet.
+
+\item[\desccount] Herr Huber zeigt seinem achtjährigen Sohn, wie man einen
+  Köpfer vom Beckenrand macht. \\
+  {\color{red} {Pädagogisch}}, denn Herr Huber bildet seinen Sohn, indem er
+  einen Kopfsprung vom Beckenrand aus vorführt.
+
+\item[\desccount] Gisela, 23 Jahre, traut sich nach einem Autounfall nicht
+  mehr selbst ans Steuer. \\
+  {\color{english} {Psychologisch}}, denn Gisela hat ein schlechtes Erlebnis
+  erlebt, durch das sie traumatisiert ist.
+
+\item[\desccount] Lara, 3 Jahre, kommt vom Kindergarten nach Hause und zählt
+  beim Abendessen die neuesten Wörter auf, die sie heute gelernt hat: ,,Du Sau!
+  Hau ab!'' \\
+  {\color{red} {Pädagogisch}}, denn Lara hat was neues gelernt und wurde somit
+  gebildet.
+  
+\end{description}
+
+% \newpage
+\vskip 2pt \hrule \vskip 20pt
 \paragraph\rm{\large\hskip -20pt {\setulcolor{amethyst}\setul{.65ex}{2pt}
     \ul{Wahrnehmung - Ich sehe, was du nicht siehst!}}}
 
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
 \begin{description}
 
-\newlength\lunderset
-\newlength\rulethick
-\lunderset = 1.5pt\relax
-\rulethick = .8pt\relax
-\def\stackalignment{l}
-
-\newcommand\nunderline[3][1]{%
-  \setbox0 = \hbox{#2}%
-  \stackunder[#1 \lunderset - \rulethick]
-             {\strut #2}
-             {\color{#3} \rule{\wd0} {\rulethick}}%
-}
-
-\item[\theparagraph 1.] \nunderline[2]{\nunderline{Definition:}{english}}{red}
+\item[\desccount] \nunderline[2]{\nunderline{Definition:}{english}}{red}
   Wahrnehmung ist der Prozess der Reizaufnahme und Reizverarbeitung.
 
-\item[\theparagraph 2.] Der Prozess der Wahrnehmung:
+\item[\desccount] Der Prozess der Wahrnehmung:
 
 % Drawing part, node distance is 2 cm and every node
 % is prefilled with white background
@@ -294,7 +365,324 @@ xxx
 
 \end{tikzpicture}
 
+Reize aus der Umwelt oder dem Körperinneren werden von den Sinnesorganen
+aufgenommen und von dort über das Nervensystem an das Gehirn weitergeleitet,
+in welchem sie verarbeitet werden. Sie werden mit bisherigen Erfahrungen in
+Beziehung gesetzt und lösen eine bestimmte Empfindung aus. Diese Empfindung
+wird bewertet. Die Empfindung und die bisherige, subjektive Erfahrung führen
+letztendlich zu einer Reaktion.
+
 \end{description}
+
+% Begin of a subparagraph
+\newcommand\subParagraph[1] {%
+  \stepcounter{subParagraphC}
+  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
+}
+
+\vskip 4pt
+\subParagraph{\setulcolor{amethyst}\setul{.65ex}{2pt}
+  \ul{Beispiel Fliege}}
+
+\vskip 16pt
+Der Reiz kommt aus der Umwelt, die Fliege auf dem Käsebrot und wird vom
+Sinnesorgan Auge aufgenommen. Von dort wird der Reiz über das Nervensystem an
+das Gehirn weitergeleitet, in welchem er verarbeitet wird. Ich setze den Reiz
+mit meinen bisherigen Erfahrungen in Beziehung, nämlich dass ich solche Fliegen
+beim Essen kenne. Dies löst eine Empfindung und Bewertung aus, ich empfinde Ekel
+und bewerte die Situation als unangenehm. Auf diese Empfindung reagiere ich,
+indem ich die Fliege wegscheuche.
+
+
+\newpage
+\rulethick = 3pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Jeder sieht die Welt mit anderen Augen!}
+      {cerisepink}}{aqua}
+}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 16pt
+\fcolorbox{aqua}{white}{%
+  \begin{minipage}{0.95\textwidth} 
+    Unsere Wahrnehmung wird immer von individuellen und sozialen Faktoren sowie
+    durch die Beschaffenheit unserer Sinnesorgrane bestimmt. So wird sie teilweise
+    stark verzerrt, verändert und verfälscht, was sich in der Wahrnehmung von
+    anderen Personen bzw. Gruppen schicksalhaft auswirken kann.
+  \end{minipage}
+}
+
+\vskip 16pt
+\fcolorbox{cerisepink}{white}{
+  \begin{minipage}{0.95\textwidth}    
+    \begin{description}
+    \item[Arbeitsauftrag:] Überlege dir gemeinsam mit deinem Banknachbarn, was
+      in den einzelnen Beispielen / Situationen die Wahrnehmung der jeweiligen
+      Persion beeinflußt. Notiere diesen Einflußfaktor!
+      
+    \end{description}
+  \end{minipage}
+}
+
+\begin{description}
+
+  \newcommand\answer[1]{%
+    \begin{tikzpicture}
+      \draw[cerisepink, -{Triangle}, line width=1.5pt] (0, 0)--(0.5, 0);
+      \node[text width=12cm, left] at (12.75, 0) {\color{cerisepink} {#1}};
+    \end{tikzpicture}
+  }
+
+\item[\desccount] Du triffst im Kaufhaus einen Menschen, von dem deine Freundin
+  sagt, dass er Zahnarzt sei. Er erscheint dir sehr arrogant und unsympathisch. \\
+  \answer{Schlechte Erfahrung, Vorurteil}
+
+\item[\desccount] Sara geht mit knurrenden Magen durch den Supermarkt. Fast
+  alle Produkte erscheinen ihr sehr lecker. Auch die Fertignudeln, die sie
+  sonst nicht mag, wegen ihr Interesse. Dafür vergisst sie den Schreibblock. \\
+    \begin{tikzpicture}
+      \draw[cerisepink,-{Triangle}, line width=1.5pt] (0, 0)--(0.5, 0);
+      \node[text width=6cm, left] at (6.75, 0) {\color{cerisepink} {Hunger}};
+      \draw[vecArrow] (2.1, 0)--(2.6, 0);
+      \node[text width=6cm, left] at (8.9, 0) {\color{cerisepink} {Bedürfnis}};
+    \end{tikzpicture}
+
+  \item[\desccount] Karl hat den Führerschein bestanden und ist darüber sehr
+    glückllich. Heute schmeckt ihm sogar der Gemüseeintopf seiner Mutter. \\
+    \answer{Gefühle, Stimmung, Freude}
+
+  \item[\desccount] Sandra trifft auf der Straße einen jungen Mann, der mit
+    typischen Punk-Outfit auf sie zukommt und sie denkt, er wollte sie um Geld
+    anbetteln. \\
+    \answer{Vorurteil}
+
+  \item[\desccount] Deine Freundin hat dich überredet, einen Film in
+    englischsprachiger Originalfassung im Kino anzusehen. Leider verstehts du
+    nur die Hälfte, während sich deine Freundin prächtig amüsiert. \\
+    \answer{Interessen, Fähigkeiten}
+
+  \item[\desccount] In Peters Clique rauche alle. Er beginnt nun auch damit,
+    weil es anscheindend angesagt ist. Nichtraucher findet er ab jetzt uncool. \\
+    \answer{Freunde, Gruppenzwang, Vorstellungen der Gruppe}
+
+  \item[\desccount] Auf einer Hochzeitsfeier trägt ein Gast ein Kleid von Gucci
+    im Wert von 900 \texteuro. Dir ist dieses Kleid viel zu teuer und es gefällt
+    dir nicht. Die Frau ist Vorstandsvorsitzende bei Bosch und hat eigenen
+    Angaben zufolge mit dem Kleid bei Sommersale ein Schnäppchen gemacht. \\
+    \answer{Neid, Erwartungen, Einstellungen}
+
+\end{description}
+
+
+% \newpage
+\vskip 4pt \hrule \vskip 20pt
+\paragraph\rm{\large\hskip -20pt {\setulcolor{english}\setul{.65ex}{2pt}
+    \ul{Die Wahrnehmung wird von verschiedenen Faktoren beeinflusst:}}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\newcommand\rectItem[1]{%
+  \vskip 6pt \hskip #1
+  \tikz \fill [black] (0.1,0.1) rectangle (0.3,0.3);
+}
+
+\vskip 20pt
+\subParagraph{\colorbox{lightcyan}{Individuelle Faktoren} \tikz \Strichmaxerl[2]; :}
+
+\rectItem{165pt} Erwartungen
+\rectItem{165pt} Erfahrungen
+\rectItem{165pt} Befürfnisse, Motive
+\rectItem{165pt} Gefühle und Stimmungen
+\rectItem{165pt} Wertvorstellungen, Einstellungen
+\rectItem{165pt} Vorteile
+\rectItem{165pt} Interessen, Fähigkeiten
+
+\vskip 30pt
+\subParagraph{%
+  \colorbox{lemonchiffon}{Soziale Faktoren}
+  \tikz \Strichmaxerl[2]; \hskip 8pt - \tikz \Strichmaxerl[2]; \hskip 8pt :}
+
+\rectItem{160pt} Wert- und Normvorstellungen
+\rectItem{160pt} Gesellschaft / Kultur
+\rectItem{160pt} Personengruppen (z.B. Clique)
+\rectItem{160pt} Andere Einzelpersonen
+
+
+% \newpage
+\vskip 20pt \hrule \vskip 20pt
+
+\lunderset = 2pt\relax
+\rulethick = 3pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Die 7 Sinne des Menschen}
+      {magenta}}{red}
+}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 16pt
+\begin{description}
+
+\item[\rm Tastsinn]
+
+\item[\rm Geschmacksinn]
+
+\item[\rm Gleichgewichtssinn]
+  
+\item[\rm Lage - und Bewegungssinn]
+  
+\end{description}
+
+\vskip 4pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{Merke:} {red}}{red} \ {\color {magenta} {Nahsinne}}
+}
+
+\vskip 16pt \hskip 77.5 pt
+Mit Nahsinne nehmen wir körpereigene, nahe Reize auf.
+
+\hskip 60pt
+\tikz {%
+  \draw [line width=1pt, -] (0, 0) -- (0, 0.5);
+  \draw[-{Triangle[open]}, line width=1pt] (0, 0)--(0.5, 0); }
+$=$ Signale aus der Umwelt
+
+\vskip 8 pt\hskip 77.5 pt
+z.B. Geschmack des Kuchens
+
+\vskip 16pt
+\begin{description}
+
+\item[\rm Sehsinn]
+
+\item[\rm Hörsinn]
+
+\item[\rm Geruchsinn]
+  
+\end{description}
+
+\vskip 4pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{Merke:} {red}}{red} \ {\color {magenta} {Fernsinne}}
+}
+
+\vskip 16pt \hskip 77.5 pt
+\begin{minipage}{0.75\textwidth}  
+  Mit Fersinne können wir Reize aus der Umwelt aufnehmen, die weiter entfernt
+  sind, ohne dass man direkten Kontakt mit ihnen hat.
+\end{minipage}
+
+
+% \newpage
+\vskip 20pt \hrule \vskip 20pt
+
+\lunderset = 1pt\relax
+\rulethick = 3pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Bestandteile der Gruppenarbeit}
+      {magenta}}{capri}
+}}
+
+% Roman digits.
+\newcommand{\rom}[1]{$\underline{\overline{\text{#1}}}$}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 20 pt
+Bei Gruppenarbeiten gibt es wichtige Bestandteile, die zu Vorbereitung,
+Durführung und Nachbearbeitung gehören. Auch im Unterrichtung führen wir
+Gruppenarbeiten durch.
+
+\vskip 16pt
+\rom{I}. {\setulcolor{yellow} \setul{.65ex}{2pt} \ul{Vorbereitung}}
+
+\vskip 16pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{Arbeitsplatz:} {magenta}}{magenta}
+}
+
+\vskip 16pt \hskip 90pt
+\begin{minipage}{0.75\textwidth}
+  \begin{enumerate}
+
+  \item Tisch und Sitzordnung stellen (genügend Platz)
+  \item Auf guten Lichteinfall achten
+  \item Auf guten Blickkontakt achten
+  \item Arbeitsmaterial bereit halten / legen
+    
+  \end{enumerate}
+\end{minipage}
+
+\vskip 16pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{Arbeitsplanung:} {magenta}}{magenta}
+}
+
+\vskip 16pt \hskip 90pt
+\begin{minipage}{0.75\textwidth}
+  \begin{enumerate}
+
+  \item Brainstorming
+    
+    \tikz {%
+      \draw [line width=1pt, -] (0, 0) -- (0, 0.25);
+      \draw[-{Triangle[open]}, line width=1pt] (0, 0)--(0.5, 0); }
+    Thema genau erfassen
+
+  \item Zügig arbeiten
+
+    \item Klärung der Vorgehensweise und der Arbeitsvorgaben
+    
+  \end{enumerate}
+\end{minipage}
+
+\vskip 16pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{Gruppenregeln:} {magenta}}{magenta}
+}
+
+\vskip 16pt \hskip 90pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+
+  \item Jeder ist gleichberechtigt und kann seine Meinung äußern
+  \item Kritik konstruktiv äußern
+  \item Höflicher Umgangston
+  \item Jeder arbeitet mit
+  \item Fair bleiben
+  \item Nicht vom Thema abweichen
+  \item Gruppenrollen einhalten
+  \item Ziel verfolgen
+    
+  \end{itemize}
+\end{minipage}
+
+\vskip 16pt
+\lunderset = 1pt\relax
+\rulethick = 3pt\relax
+\rom{II}. \nunderline[2]{\nunderline{Durchf\"uhrung}
+  {yellow}}{brown}
 
 \printindex
 

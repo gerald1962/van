@@ -1,32 +1,44 @@
-Hi Herbert,
+x Tex / LaTex
+=============
 
-Leonies Mitschrift
+x.y Ist Tex / LateX turingmächtig ?
+-----------------------------------
+Rethorische Fragem. Knuth ist Mathematiker.
 
-Leonies Mitschrift übertrage ich nach LaTeX
-und das ist interessant, weil sie ein
-verspieltes und farbenfrohes Layout verwendet.
+siehe
+https://de.wikipedia.org/wiki/Turing-Vollst%C3%A4ndigkeit
 
-Dank Internet finde ich immer ein LaTeX-Packet,
-mit dem ich ihr Design in ein TeX-Program
-umwandeln kann.
+Der denkt genauso wie Wittgenstein:
 
-Interessant ist, wie sie über das Design das
-verstehen will, was sie interessiert und lernen
-soll.
+6.24 GER [→OGD | →P/M]
+Die Methode der Mathematik, zu ihren Gleichungen zu kommen, ist die
+Substitutionsmethode.
 
-Eigentlich lernt man etwas, über:
-1. "Das merke ich mir." oder
-2. "Das probiere ich aus." oder
-3. "Das untersuche ich." ...
+Denn die Gleichungen drücken die Ersetzbarkeit zweier Ausdrücke aus und wir
+schreiten von einer Anzahl von Gleichungen zu neuen
+Gleichungen vor, indem wir, den Gleichungen
+entsprechend, Ausdrücke durch andere ersetzen.
 
-1. Das schafft man mit Auswendig-Lernen.
-Entweder fragt man sich selbst ab oder schneller
-geht es mit jemand, der dich abfragt oder gegenseitig.
+Ich vermute, wie bei Schach, ein Mathematiker kann viel schneller wie wir
+substituieren: er verwendet ein Koordinatensystem, fasst alles ganz schnell zusammen mit Abkürzigen und
+findet dadurch etwas schneller heraus, wie der Ungeschicktere.
 
-2. Die Voraussetzung für 2. und 3. ist 1.
-3. Bei 2. und 3. ist zumindest bei mir das Verhältnis
-von Einsatz und Gewinn negativ.
+Ist es möglich, dass man alles, was jemand
+mit der einen oder anderen Hand bildlich darstellt, mit Tex / Latex
+nachahmen kann.
 
+TeX If
+tbd. oder qed.
+
+Tex Jump
+tbd. oder qe.
+
+Ich denke schon.
+
+x.z Beispiel
+------------
+transkript.tex
+transkript.pdf
 
 
 x Edu
@@ -93,6 +105,31 @@ und Spaß an der Arbeit mit besonderen Kindern und Jugendlichen Ausgeprägtes
 Verantwortungsbewusstsein.
 Eine wertschätzende und positive Grundhaltung Interesse? Reichen Sie Ihre
 Bewerbung am besten ...
+
+
+x Latex
+=======
+
+x.y Piktogramm
+--------------
+
+x.y.1 Definition
+................
+Ein Piktogramm ist ein Symbol, das einen Hinweis durch ein einfaches Bild vermittelt.
+Siehe: https://de.wikipedia.org/wiki/Piktogramm.
+
+x.y.1 Strichmännchen
+....................
+Es gibt ein Paket:
+
+\usepackage{tikzsymbols}
+
+\begin{document}
+    \begin{tikzpicture}
+    \Strichmaxerl[3]
+    \end{tikzpicture}
+\end{document}
+
 
 
 126 Pädagogik/Psychologie Skript

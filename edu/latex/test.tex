@@ -27,6 +27,7 @@
 \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 \definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
 \definecolor{brinkpink}{rgb}{0.98, 0.38, 0.5}
+\definecolor{cerisepink}{rgb}{0.93, 0.23, 0.51}
 \definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
 \definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
 \definecolor{english}{rgb}{0.0, 0.5, 0.0}
@@ -104,19 +105,33 @@ It uses basic nodes and arrows and defines node styles.
              {\color{#3} \rule{\wd0} {\rulethick}}%
 }
 
+% Subparagraph counter.
+\newcounter{subParagraphC}
+\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
+
+% Begin of a subparagraph
+\newcommand\subParagraph[1] {%
+  \stepcounter{subParagraphC}
+  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
+}
+
+% Description counter.
+\newcommand\desccount{%
+  \stepcounter{subParagraphC}\theparagraph\thesubParagraphC
+}
+
+\usepackage{tikzsymbols}
+
+\usepackage{amsmath}			 % AMS-Mathe: romans digits
+
+% Definition des neuen Kommandos
+\newcommand{\rom}[1]{$\underline{\overline{\text{#1}}}$}
+
 \begin{document}
 
-\nunderline{Definition:}{english}
+\rom{I}. Vorbereitung
 
-\vskip 20pt
-\nunderline[2]{\nunderline{Definition:}{english}}{red}
-
-\vskip 20pt
-
-\nunderline{overlap}{red}%
-\nunderline[2]{\nunderline{ping }{red}}{cyan}%
-\nunderline{\nunderline{\nunderline{high}{red}}{blue}}{cyan}%
-\nunderline{\nunderline[2]{light}{blue}}{cyan}%
-\nunderline[3]{ing}{cyan}
+\vskip 16 pt
+\rom{I}. {\setulcolor{yellow} \setul{.65ex}{2pt} \ul{Vorbereitung}}
 
 \end{document}
