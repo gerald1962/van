@@ -1,0 +1,391 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  19 JUL 2022 15:40
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**transcript_background.tex
+(./transcript_background.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2019/12/20 v1.4l Standard LaTeX file (size option)
+)
+\c@part=\count167
+\c@section=\count168
+\c@subsection=\count169
+\c@subsubsection=\count170
+\c@paragraph=\count171
+\c@subparagraph=\count172
+\c@figure=\count173
+\c@table=\count174
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen134
+)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
+File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
+\l__kernel_color_stack_int=\count175
+\l__pdf_internal_box=\box45
+)
+(./transcript_background.aux)
+\openout1 = `transcript_background.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 3.
+LaTeX Font Info:    ... okay on input line 3.
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Der Lesefluss innerhalb eines Artikels sollte nicht durch he
+rvorgehobene[] 
+ []
+
+
+Overfull \hbox (300.74437pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://de.wikipedia.org/wiki/Hilfe:Textgestaltung#Formatier
+ungen,_die_nicht_in_Wikipedia-Artikeln_verwendet_werden_sollten[] 
+ []
+
+
+Overfull \hbox (101.24611pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Ein Piktogramm ist ein Symbol, das einen Hinweis durch ein e
+infaches Bild vermittelt.[] 
+ []
+
+
+Overfull \hbox (263.99469pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://de.answacode.com/tex/441917/gibt-es-eine-einfache-mo
+glichkeit-strichmannchen-in-pgftikz-zeichnungen-zu-verwe[] 
+ []
+
+
+Overfull \hbox (106.49606pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://ftp.rrze.uni-erlangen.de/ctan/graphics/pgf/contrib/t
+ikzsymbols/tikzsymbols.pdf[] 
+ []
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 The package provides various emoticons, cooking symbols and 
+trees:[] 
+ []
+
+[1
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 The color package also supports decimal values in the RGB co
+lor model that[] 
+ []
+
+
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 \usepackage[dvipsnames]{xcolor}          % Using the color p
+ackage[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Wir wollen in diesem Vortrag aufzeigen, wie simple Zeichnung
+en, aber auch[] 
+ []
+
+
+Overfull \hbox (48.74657pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Graphen, B^^?aume und Diagramme durch wenige einfache Befehl
+e direkt aus einem[] 
+ []
+
+
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 In this first post we'll start with the basics, showing how 
+to draw simple[] 
+ []
+
+
+Overfull \hbox (53.99652pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 shapes, with subsequent posts introducing some of the intere
+sting things you[] 
+ []
+
+
+Overfull \hbox (284.9945pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://de.overleaf.com/learn/latex/LaTeX_Graphics_using_Tik
+Z%3A_A_Tutorial_for_Beginners_(Part_1)%E2%80%94Basic_Drawing[] 
+ []
+
+[2]
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 This post is about exploring TikZ arrows in LaTeX provided b
+y the arrows.meta[] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 library. We will learn how to change the arrow tip (head), t
+he arrow thickness,[] 
+ []
+
+
+Overfull \hbox (137.99579pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Could anyone please tell me how do I draw a rectangular shap
+e with a black border around it?[] 
+ []
+
+
+Overfull \hbox (211.49515pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/105876/drawing-a-rec
+tangular-shape-with-a-border-around-it-in-tikz[] 
+ []
+
+
+Overfull \hbox (143.24574pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://ftp.agdsn.de/pub/mirrors/latex/dante/macros/latex/co
+ntrib/stackengine/stackengine.pdf[] 
+ []
+
+
+Overfull \hbox (174.74547pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/169189/highlighting-
+text-through-stacked-colored-underlines[] 
+ []
+
+
+Overfull \hbox (11.99689pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/326258/create-custom
+-counter[] 
+ []
+
+[3]
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 \newcommand - Used to create your own commands (control sequ
+ences, macros,[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 \usepackage{soul}  % Provides letter spacing, underlining, s
+triking out, etc.[] 
+ []
+
+
+Overfull \hbox (80.24629pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/29233/tikz-adding-te
+xt#comment57371_29233[] 
+ []
+
+[4]
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 In TikZ you can use nodes to place almost anything (in parti
+cular, text) in the[] 
+ []
+
+
+Overfull \hbox (106.49606pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/170645/removing-boun
+ding-box-of-text-node-tikz[] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 The draw key in the options list for the node tells TikZ to 
+draw the node shape[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 511--511
+[]  \OT1/cmtt/m/n/10 \draw (0, 1.3) node[below] {$B$} -- (3, 1.3) node[below] {
+$C$} --[] 
+ []
+
+[5]
+Overfull \hbox (22.4968pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://www.mit.edu/afs.new/sipb/project/latex/tutorial_late
+x_tikz.pdf[] 
+ []
+
+
+Overfull \hbox (153.74565pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/34719/tikz-style-att
+ribute-for-adding-default-node-text[] 
+ []
+
+
+Overfull \hbox (321.74419pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://www.overleaf.com/learn/latex/LaTeX_Graphics_using_Ti
+kZ%3A_A_Tutorial_for_Beginners_(Part_3)%E2%80%94Creating_Flowcharts[] 
+ []
+
+
+Overfull \hbox (6.74693pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 \What is TikZ?" Basically, it just defines a number of TEX c
+ommands[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://ctan.mirror.norbert-ruehl.de/graphics/pgf/base/doc/p
+gfmanual.pdf[] 
+ []
+
+[6]
+Overfull \hbox (48.74657pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://de.answacode.com/stackoverflow/5533110/emacs-vergros
+sernverkleinern[] 
+ []
+
+
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Nach einer Kombination (C-x C-+ oder C-x C--), aufeinanderfo
+lgend + oder -[] 
+ []
+
+
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 erh^^?ohen oder verringern Sie den Textma^^Ystab, ohne C-x C
+- erneut zu tippen.[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 The border of the rectangle is drawn because you are using t
+he \draw command,[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 which, by definition, draws the specified path (here the rec
+tangle). The fact[] 
+ []
+
+
+Overfull \hbox (64.49643pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 that you are adding the option fill=orange just tells TikZ t
+hat in addition it[] 
+ []
+
+
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 should fill the path with orange. Replacing \draw with \fill
+ will do what you[] 
+ []
+
+
+Overfull \hbox (200.99524pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/82530/how-to-draw-a-
+filled-rectangle-without-a-border-using-tikz[] 
+ []
+
+[7]
+Overfull \hbox (59.24648pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/9866/latest-advice-o
+n-the-euro-symbol[] 
+ []
+
+LaTeX Font Info:    Trying to load font information for TS1+cmtt on input line 
+511.
+(/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmtt.fd
+File: ts1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+Overfull \hbox (132.74583pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/402454/tikz-draw-a-v
+ertical-line-to-a-straight-line[] 
+ []
+
+[8]
+Overfull \hbox (48.74657pt too wide) in paragraph at lines 511--511
+[]  \OT1/cmtt/m/n/10 This text is processed in paragraph mode, and then becomes
+ an indivisible[] 
+ []
+
+
+Overfull \hbox (43.49661pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Nahsinne, Sinnesorgane der Haut und der Geschmackssinn im Ge
+gensatz zu den[] 
+ []
+
+
+Overfull \hbox (69.74638pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Die moderne Sinnesphysiologie kennt f^^?ur den Menschen klas
+sischerweise noch vier[] 
+ []
+
+
+Overfull \hbox (53.99652pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 Organsinne, Viszero- oder Enterozeption (unter anderem empfu
+nden als Hunger,[] 
+ []
+
+[9]
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 In diesem Text werden die zwei r\"omischen Zahlen \rom{XII} 
+und \rom{IV}[] 
+ []
+
+
+Overfull \hbox (200.99524pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/12373/how-to-change-
+the-space-between-the-itemize-items-in-latex[] 
+ []
+
+[10]
+Overfull \hbox (1.49698pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 \noindent No spacing between this line and the item list bel
+ow it.[] 
+ []
+
+
+Overfull \hbox (137.99579pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/74353/what-commands-
+are-there-for-horizontal-spacing[] 
+ []
+
+
+Overfull \hbox (74.99634pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://tex.stackexchange.com/questions/327972/underlining-w
+ith-dash-dotted-line[] 
+ []
+
+
+Overfull \hbox (32.9967pt too wide) in paragraph at lines 511--511
+[]\OT1/cmtt/m/n/10 https://ftp.gwdg.de/pub/ctan/graphics/pgf/base/doc/pgfmanual
+.pdf, p. 166[] 
+ []
+
+
+Overfull \hbox (38.24666pt too wide) in paragraph at lines 511--511
+[]    \OT1/cmtt/m/n/10 ([yshift=-2pt]dashed.south west) -- ([yshift=-2pt]dashed
+.south east);[] 
+ []
+
+[11] (./transcript_background.aux) ) 
+Here is how much of TeX's memory you used:
+ 384 strings out of 481239
+ 6867 string characters out of 5920377
+ 241737 words of memory out of 5000000
+ 15729 multiletter control sequences out of 15000+600000
+ 532803 words of font info for 26 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 25i,4n,19p,168b,256s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/gerald/.texlive2019/texmf-var/fonts
+/pk/ljfour/jknappen/ec/tctt1000.600pk></usr/share/texlive/texmf-dist/fonts/type
+1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmtt10.pfb>
+Output written on transcript_background.pdf (11 pages, 42892 bytes).
+PDF statistics:
+ 53 PDF objects out of 1000 (max. 8388607)
+ 36 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+

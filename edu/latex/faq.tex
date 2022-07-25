@@ -1,0 +1,108 @@
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+% Import a package for a specific purpose.
+\usepackage{color, soul}  % Underlining
+\usepackage{minted}       % Syntax highlighting.
+
+% Force the numbering of a paragraph text.
+\setcounter{secnumdepth}{4}
+
+% Introduce a paragraph section with a number.
+\renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+% Subparagraph counter.
+\newcounter{subParagraphC}
+\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
+
+% Begin of a subparagraph
+\newcommand\subParagraph[1] {%
+  \stepcounter{subParagraphC}
+  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
+}
+
+% Elements of a title page.
+\newcommand\svthema{Frequently Asked Questions}
+\newcommand\svperson{Gerald Schüller}
+\newcommand\svdatum{\today}
+
+% General conditions for a paragraph. 
+\newcommand\p[1]{\paragraph\rm{\large\hskip -20pt #1}}
+
+% Start of a LaTeX text, that is to be printed.
+\begin{document}
+
+% Front page
+\title{ \textbf{\color{blue}\svthema} }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{}
+
+% You tell LaTeX the information used to produce the title page.
+\maketitle
+
+% \newpage
+% Start of a new paragraph.
+\p{{\setulcolor{red} \ul{\LaTeX}}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 20pt
+\subParagraph{Template}
+
+\begin{verbatim}
+124.28 Template
+---------------
+A template is a pattern used as a guide to make something.
+
+124.28.2 Expose
+----------------
+1. In einem Expose möchte man einen Manger für etwas interessieren (Projekt).
+2. Dann spricht man über irgendwas (Wissenstand) und skizziert eine Idee (Hypthesen).
+3. Wie das geht (Methode) und was dabei herauskommt (Ziel).
+4. Und wie lange etwas dauert (Termin) und was man jeden Tagen zeigen
+kann (Plan), hängt vom Vertrauensverhältnis ab.
+
+124.28.1 Reference
+..................
+https://www.techtarget.com/whatis/definition/template
+https://en.wikipedia.org/wiki/Help:A_quick_guide_to_templates
+https://de.wikipedia.org/wiki/Expos%C3%A9_(Wissenschaft)
+
+124.28.3 Example
+.................
+i.j Title
+------------
+Introduction
+
+i.j.1 Reason
+---------------
+
+i.j.2 Reference
+..................
+Inet address
+
+i.j.3 Example
+.................
+TeX/LateX source text
+
+i.j.4 Result
+.................
+LateX output
+TeX/LateX source text
+
+124.28.4 Result
+.................
+LateX output
+
+\end{verbatim}
+
+% Start of the syntax highlighting.
+\begin{minted}{tex}
+  xxx
+  
+\end{minted}
+% The syntax highlighting ends her.
+
+% End of a LaTeX text, that is to be printed.
+\end{document}

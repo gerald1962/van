@@ -1,0 +1,8 @@
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+\begin{document}
+xxx
+
+% End of a LaTeX text, that is to be printed.
+\end{document}

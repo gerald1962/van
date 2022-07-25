@@ -5,14 +5,17 @@
 \setlength{\parskip}{-4pt}%
 \setlength{\parindent}{0pt}%
 
-\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
-\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
-\usepackage[dvipsnames]{xcolor}          % Using the color package
-\usepackage{color,soul}                  % Underlining
+\usepackage[ngerman]{babel}	 % Deutsche Namen/Umlaute
+\usepackage[utf8]{inputenc}	 % Zeichensatzkodierung
+\usepackage[dvipsnames]{xcolor}  % Using the color package
+\usepackage{color,soul}          % Underlining
 \usepackage{makeidx}
-\usepackage{parallel}                    % 2003/04/13
-\usepackage{stackengine}                 % Stacking of objects:
-\usepackage{amsmath}			 % AMS-Mathe: roman digits
+\usepackage{parallel}            % 2003/04/13
+\usepackage{stackengine}         % Stacking of objects:
+\usepackage{amsmath}		 % AMS-Mathe: roman digits
+\usepackage{tikz}
+\usepackage{tikzsymbols}         % Provide various emoticon ...
+\usepackage{ulem}                % Underlining for empahsis: \coloreduwave
 
 \makeindex
 
@@ -29,7 +32,9 @@
 \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 \definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
 \definecolor{brinkpink}{rgb}{0.98, 0.38, 0.5}
+\definecolor{cadmiumorange}{rgb}{0.93, 0.53, 0.18}
 \definecolor{capri}{rgb}{0.0, 0.75, 1.0}
+\definecolor{carnationpink}{rgb}{1.0, 0.65, 0.79}
 \definecolor{cerisepink}{rgb}{0.93, 0.23, 0.51}
 \definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
 \definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
@@ -63,7 +68,6 @@ A flow diagram of a sensory stimulus and reaction or response cycle.
 It uses basic nodes and arrows and defines node styles.
 \end{comment}
 
-\usepackage{tikz}
 \usetikzlibrary{arrows, arrows.meta, decorations.markings}
 
 % for double arrows adapt line thickness and line width, if needed
@@ -93,6 +97,26 @@ It uses basic nodes and arrows and defines node styles.
     text centered,
     font = \sffamily,
     text = violet!80},
+  processA/.style = {
+    rectangle,
+    draw = aqua,
+    double = aqua,           %% here
+    double distance = 0.75pt,  %% here
+    minimum width = 3cm,
+    minimum height = 0.5cm,
+    text centered,
+    font = \sffamily,
+    text = black},
+  processO/.style = {
+    rectangle,
+    draw = orange,
+    double = orange,           %% here
+    double distance = 0.75pt,  %% here
+    minimum width = 3cm,
+    minimum height = 0.5cm,
+    text centered,
+    font = \sffamily,
+    text = black},
 }
 
 
@@ -110,7 +134,21 @@ It uses basic nodes and arrows and defines node styles.
 }
 
 
-\usepackage{tikzsymbols}
+% Subparagraph counter.
+\newcounter{subParagraphC}
+\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
+
+% Begin of a subparagraph
+\newcommand\subParagraph[1] {%
+  \stepcounter{subParagraphC}
+  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
+}
+
+% Description counter.
+\newcommand\desccount{%
+  \stepcounter{subParagraphC}\theparagraph\thesubParagraphC
+}
+
 
 \begin{document}
 
@@ -146,14 +184,19 @@ It uses basic nodes and arrows and defines node styles.
 \paragraph\rm{\large\hskip -20pt {\setulcolor{english}\setul{.65ex}{2pt}
     \ul{Das Fach P\"adagogik und Psychologie}}}
 
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
 \vskip 20pt
 
 \fboxrule = 2pt % Sets the width of the frame.
 \fboxsep  = 4pt  % Set the separation between the text and the frame.
 
+\subParagraph{Arbeitsauftrag}
+
+\vskip 16pt
 \fcolorbox{red}{white}{
   \begin{minipage}{0.95\textwidth}    
-    Arbeitsauftrag:
     \begin{enumerate}
     \item Lies den Text aufmerksam durch und tausche dich über Unklarheiten
       mit deinem Banknachbarn aus.
@@ -168,7 +211,7 @@ It uses basic nodes and arrows and defines node styles.
 }
 
 \vskip 20pt
-\paragraph\rm{\hskip -20pt \colorbox{yellow}{Pädagogik} ist die Bezeichnung für
+\subParagraph{\rm{\colorbox{yellow}{Pädagogik}} ist die Bezeichnung für
   die \colorbox{yellow}{wissenschaftliche Disziplin}, die sich mit der Theorie
   und Praxis von \colorbox{yellow}{Bildung und Erziehung} auseinandersetzt. Die
   Pädagogik nimmt dabei ein Doppelrolle ein: sie erforscht Bildungs- und
@@ -181,7 +224,7 @@ It uses basic nodes and arrows and defines node styles.
   gestaltet und verbessert werden kann (Praxis).}
 
 \vskip 16pt
-\paragraph\rm{\hskip -20pt \colorbox{yellow}{Psychologie} ist eine weitere
+\subParagraph{\rm{\colorbox{yellow}{Psychologie}} ist eine weitere
   Wissenschaft, die das \colorbox{yellow}{Erleben und Verhalten} des Menschen,
   seine \colorbox{yellow}{Entwicklung} im Lauf des Lebens und alle dafür
   maßgeblichen inneren und äußeren Ursachen und Bedingungen beschreibt und
@@ -254,16 +297,6 @@ Folgende zwei Fälle können uns bei der Beantwortung dieser Fragen helfen:
 Beschreibe, wie die Kinderpflegerin Kerstin wahrnimmt. Die Mutter hat eine
 andere Wahrnehmung. Woran könnte das liegen?
 
-% \newpage
-
-% Subparagraph counter.
-\newcounter{subParagraphC}
-\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
-
-% Description counter.
-\newcommand\desccount{%
-  \stepcounter{subParagraphC}\theparagraph\thesubParagraphC
-}
 
 % \newpage
 \vskip 16pt \hrule \vskip 20pt
@@ -373,12 +406,6 @@ wird bewertet. Die Empfindung und die bisherige, subjektive Erfahrung führen
 letztendlich zu einer Reaktion.
 
 \end{description}
-
-% Begin of a subparagraph
-\newcommand\subParagraph[1] {%
-  \stepcounter{subParagraphC}
-  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
-}
 
 \vskip 4pt
 \subParagraph{\setulcolor{amethyst}\setul{.65ex}{2pt}
@@ -551,9 +578,9 @@ indem ich die Fliege wegscheuche.
 \vskip 16pt \hskip 77.5 pt
 Mit Nahsinne nehmen wir körpereigene, nahe Reize auf.
 
-\hskip 60pt
+\vskip 8pt \hskip 80pt
 \tikz {%
-  \draw [line width=1pt, -] (0, 0) -- (0, 0.5);
+  \draw [line width=1pt, -] (0, 0) -- (0, 0.25);
   \draw[-{Triangle[open]}, line width=1pt] (0, 0)--(0.5, 0); }
 $=$ Signale aus der Umwelt
 
@@ -621,6 +648,7 @@ Gruppenarbeiten durch.
 \vskip 16pt \hskip 90pt
 \begin{minipage}{0.75\textwidth}
   \begin{enumerate}
+    \setlength\itemsep{0em}
 
   \item Tisch und Sitzordnung stellen (genügend Platz)
   \item Auf guten Lichteinfall achten
@@ -642,6 +670,7 @@ Gruppenarbeiten durch.
   \begin{enumerate}
 
   \item Brainstorming
+    \setlength\itemsep{0em}
     
     \tikz {%
       \draw [line width=1pt, -] (0, 0) -- (0, 0.25);
@@ -665,6 +694,7 @@ Gruppenarbeiten durch.
 \vskip 16pt \hskip 90pt
 \begin{minipage}{0.75\textwidth}
   \begin{itemize}
+    \setlength\itemsep{0em}
 
   \item Jeder ist gleichberechtigt und kann seine Meinung äußern
   \item Kritik konstruktiv äußern
@@ -683,6 +713,422 @@ Gruppenarbeiten durch.
 \rulethick = 3pt\relax
 \rom{II}. \nunderline[2]{\nunderline{Durchf\"uhrung}
   {yellow}}{brown}
+
+
+% \newpage
+\vskip 20pt \hrule \vskip 20pt
+
+\lunderset = 1pt\relax
+\rulethick = 3pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Respektvoller Umgang}
+      {emerald}}{capri}
+}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 16pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{sagen} {magenta}}{magenta}
+} \tikz {%
+  \draw [line width=1pt, -to] (0,0) -- (0.5,0);
+  
+}
+
+\vskip -10pt \hskip 75pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+
+  \item Höflichkeit
+    
+  \end{itemize}
+\end{minipage}
+
+\vskip 16pt
+\subParagraph{%
+  \lunderset = 1pt\relax
+  \rulethick = 1pt\relax
+  \nunderline[2]{\nunderline{tun} {magenta}}{magenta}
+} \tikz {%
+  \draw [line width=1pt, -to] (0,0) -- (0.5,0);
+  
+}
+
+\newcommand{\skipitems}[1]{%
+  \addtocounter{\@enumctr}{#1}%
+}
+\makeatother
+
+\vskip -10pt \hskip 70pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    
+  \item Konflikt suchen und ansprechen
+  \item Begrüßen
+  \item Anlächeln
+  \item Bei Problemen helfen
+  \item Jeden akzeptieren
+  \item Erst überlegen, dann reden / handeln
+  \item Sichtweise überdenken
+  \item Bei Problemen miteinander reden
+    
+  \end{itemize}
+\end{minipage}
+
+% \vskip 20pt
+\newpage
+
+\lunderset = 1pt\relax
+\rulethick = 2pt\relax
+
+\subParagraph\rm{%
+  \hskip -2pt {%
+    \nunderline[2]{\nunderline{Empathie $=$ sich in den anderen hineinversetzen}
+      {yellow}}{magenta}
+}}
+
+\vskip 20pt
+\hskip -20pt
+\begin{minipage}{0.75\textwidth}
+
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    
+  \item Man muss sich in den anderen heinversetzen.
+  \item Seine Sichtweise ändern oder eine andere Sichtweise einnehmen.
+  \item Sich Vorschläge, Meinungen und Tipps anhören.
+  \item Eine gemeinsame Lösung finden.
+  \item Evtl. eine dritte Persion dazu holen.
+    
+  \end{itemize}
+  
+\end{minipage}
+
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt
+
+\lunderset = 1pt\relax
+\rulethick = 3pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Respektvolle Umgangsformen}
+      {yellow}}{magenta}
+}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 20pt
+\hskip -20pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    
+  \item Freundlich grüßen und anlächeln
+  \item Bitte und danke sage \\
+    ,,Darf ich bitte $\ldots$'', ,,Könntest du bitte $\ldots$''
+  \item Niemanden auslachen
+    
+  \end{itemize}
+  
+\end{minipage}
+
+\vskip 20pt
+\subParagraph{\setulcolor{yellow}\setul{.65ex}{2pt}
+  \ul{In Konfliktsituationen:}}
+
+\vskip 12pt
+\begin{description}
+  \setlength\itemsep{0em}
+  
+  \item[-] Die eigene Sichtweise verändern und versuchen, sich in den anderen
+    hineinzuversetzen
+    
+  \item[-] Ehrlich und fair miteinander reden, ohne zu verletzen
+
+  \item[-] Argumente und Meinungen austauschen
+
+  \item[-] Kompromisse finden
+
+  \item[-] Evtl. eine dritte Person hinzuholen
+    
+\end{description}
+
+
+% \newpage
+\vskip 12pt \hrule \vskip 20pt 
+\paragraph\rm{\large\hskip -20pt {\setulcolor{magenta}\setul{.65ex}{2pt}
+    \ul{Methodische Prinzipien}}}
+
+\vskip 16pt
+\begin{description}
+  \setlength\itemsep{0em}
+  
+\item[-] Lebensnähe
+\item[-] Kindgemäßheit
+\item[-] Individualisierung
+\item[-] Anschaulichkeit
+\item[-] Teilschritte
+\item[-] Handlungsorientierung
+\item[-] Freiwilligkeit
+
+\end{description}
+
+
+% \newpage
+\vskip 12pt \hrule \vskip 20pt
+
+\lunderset = 1.5pt\relax
+\rulethick = 2pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{{\color{magenta} Ein Steckbrief $\ldots$}}
+      {yellow}}{coolblack}
+}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 20pt
+$\ldots$ dient dazu sich selbst anderen Personen mit Hilfe con Stichpunkten
+vorzustellen. Man sollte also keine vollständigen Sätze verwenden.
+
+\newpage
+% \vskip 20pt
+\lunderset = 1.5pt\relax
+\rulethick = 2pt\relax
+\subParagraph{%
+  \large {%
+    \nunderline[2]{\nunderline{{\color{magenta} Wichtige Angaben}}
+      {yellow}}{coolblack}
+}}
+\normalsize
+  
+\vskip 16pt
+\begin{description}
+  \setlength\itemsep{0em}
+  
+\item[-] Vollständiger Name
+\item[-] Geburtstag / Alter / evtl. Geschwister, Kinder, $\ldots$
+\item[-] Wohnort
+\item[-] Besuchte Schule (Berufsfachschule für Kinderpflege in Höchstadt) \\
+  $+$ Warum ihr in die Einrichtung kommt
+\item[-] Hobbys / Besonderheiten / Lieblingstier $\ldots$
+\item[-] ,,Warum gefält mir der Beruf?''
+  
+\end{description}
+
+\vskip 20pt
+\lunderset = 1.5pt\relax
+\rulethick = 2pt\relax
+\subParagraph{%
+  \large {%
+    \nunderline[2]{\nunderline{{\color{magenta} Tipps für die Gestaltung}}
+      {yellow}}{coolblack}
+}}
+\normalsize
+
+% Through this transition, there is a puzzling LaTex warning:
+% pdfTeX warning: pdflatex: pop empty color page stack 0
+
+\vskip 16pt
+\begin{description}
+  \setlength\itemsep{0em}
+  
+\item[-] Foto (Gesicht gut erkennbar)
+\item[-] Bezug zum Gruppennamen: Motiv / Farbgestaltung
+\item[-] Farbenfroh / kinderfreundlich
+\item[-] Übersichtlich
+\item[-] Mit Bildern und Motiven arbeiten \\
+  \tikz {%
+    \draw[-{Triangle[open]}, line width=1pt] (0, 0)--(0.5, 0);
+  }
+  Entwurf auf Rechtschreibung, Grammatik von einer anderen Person
+  kontrollieren lassen.
+  
+\end{description}
+
+
+% \newpage
+\newcommand{\mydash}[1]{%
+  \tikz[baseline=(dashed.base)]{
+    \node[inner sep=1pt, outer sep=0pt] (dashed) {#1};
+    \draw[dashed, line width=2pt, color=magenta]
+    ([yshift=-2pt]dashed.south west) -- ([yshift=-2pt]dashed.south east);
+    }%
+}%
+
+\vskip 12pt \hrule \vskip 20pt 
+\paragraph\rm{\large\hskip -20pt {\setulcolor{carnationpink}\setul{.65ex}{4pt}
+    \ul{Lerninhalte f\"ur die 1. Schulaufgabe}}}
+
+% Initialize the subparagraph counter.
+\setcounter{subParagraphC}{0}
+
+\vskip 20pt
+\subParagraph{\mydash{- Begriffe Pädagogik und Psychologie}}
+
+\vskip 20pt
+\subParagraph{\mydash{- Wahrnehmung und Beobachtung}}
+
+\vskip 15pt
+\hskip -20pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    
+  \item Unser Sinnessystem
+  \item Wahrnehmung: Begriff und Prozess
+  \item Faktoren, welche die Wahrnehmung beeinflussen
+  \item Abgrenzung Wahrnehmung von Beobachtung
+  \item Begriff: subjektive und selektive Wahrnehmung
+  \item Bedeutung von Beobachtung
+  \item Beobachtungsfehler
+    
+  \end{itemize}
+  
+\end{minipage}
+
+\vskip 20pt
+\subParagraph{\mydash{- Erziehung}}
+
+\vskip 15pt
+\hskip -20pt
+\begin{minipage}{0.75\textwidth}
+  \begin{itemize}
+    \setlength\itemsep{0em}
+    
+  \item Begriff Erziehung
+  \item Erziehungsprozess
+  \item intensional und funktionale Erziehung
+  \item Anlange, Umwelt und Selbststeuerung
+    
+  \end{itemize}
+  
+\end{minipage}
+
+\vskip 20pt
+{\large Viel Erfolg und Vergnügen beim Vorbereiten} \dSmiley [2][yellow]
+
+
+% \newpage
+\newcommand{\mywave}[2]{%
+  \tikz[baseline=(decorate.base)]{
+    \node[inner sep=1pt, outer sep=0pt] (decorate) {#2};
+    \draw[decorate, decoration={snake}, color=#1, line width=1.5pt]
+    ([yshift=-2pt] decorate.south west) -- ([yshift=-2pt] decorate.south east);
+    }%
+}%
+
+\vskip 12pt \hrule \vskip 20pt 
+\paragraph\rm{\large\hskip -20pt {\mywave{orange}{Der Erziehungsprozess}}}
+
+\vskip 20pt 
+\begin{tikzpicture}[
+    node distance = 2.5cm,
+    every node/.style = {fill = white, font = \sffamily}, align = center
+  ]
+  
+\newcommand\LatexA{%
+  [-{Latex}, line width=1.25pt]
+}
+\newcommand\latexlatexA{%
+  [latex-latex, line width=1.25pt]
+}
+
+% Specification of nodes (position, etc.)
+\node (start)        [processA]
+      {Erziehungsziel \\
+        {\scriptsize {\color{red} {Hygiene/Gesundheit}}} \\
+        {\scriptsize {\color{emerald} {Selbstst\"andigkeit}}}
+      };
+      
+                    
+\node (procedure)    [processO, right of=start, xshift=2.5cm]
+      {Erziehungsmaßnahme \\
+        {\scriptsize {\color{red} {Drohung}}} \\
+        {\scriptsize {\color{emerald} {Marion beruhigt und ermutigt}}}
+      };
+
+\node (change)        [processA, below of=procedure]
+      {dauerhafte Verhaltensänderung \\
+        {\scriptsize {\color{red} {Händewaschen vor dem Mittagessen}}} \\
+        {\scriptsize {\color{emerald} {Paul kann selbständig seine Jacke schließen}}}
+      };
+
+\node (teacher)  [processO, left of=change, xshift=-5cm]
+      {Erzieher \\
+        {\scriptsize {\color{red} {Mutter}}} \\
+        {\scriptsize {\color{emerald} {Kinderpflegerin Marion}}}
+      };
+      
+\node (pupil)        [processA, below of=change]
+      {Zuerziehender \\
+        {\scriptsize {\color{red} {Martin}}} \\
+        {\scriptsize {\color{emerald} {Paul}}}
+      };
+
+\node (basic)        [processA, below of=pupil]
+      {Rahmenbedingung \\
+        {\scriptsize {\color{red} {Beeinflusung durch Freund Jens}}}
+      };
+
+  % Specification of lines between nodes specified above
+  % with aditional nodes for description
+  \draw\LatexA       (start)    |-  (change);
+  \draw\LatexA       (teacher)  |-  (start);
+  \draw\LatexA       (pupil)    --  (change);
+  \draw\latexlatexA  (pupil)    -|  (teacher);
+  \draw\LatexA       (basic)    --  (pupil);
+
+\end{tikzpicture}
+
+\vskip 20pt
+
+\fboxrule = 4pt % Sets the width of the frame.
+\fboxsep  = 4pt  % Set the separation between the text and the frame.
+
+\vskip 20pt
+\fcolorbox{emerald}{white}{
+  \begin{minipage}{0.95\textwidth}    
+    \begin{Parallel}{0.475\textwidth}{0.75\textwidth}%
+
+      \ParallelLText{%
+        {\setulcolor{red} \setul{.65ex}{2pt} \ul{Definition Erziehung:\ }}
+      }
+
+      \ParallelRText{%
+        Erziehung ist das zielgerichtete und beabsichtigte Einwirken des
+        Erziehers anf den Zuerziehenden, um eine dauerhafte Verhaltensänderung
+        herbeizuführen.
+      }
+      
+      \ParallelPar%
+    \end{Parallel}%
+  \end{minipage}
+}
+
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt
+
+\lunderset = 1pt\relax
+\rulethick = 2pt\relax
+
+\paragraph\rm{%
+  \large\hskip -20pt {%
+    \nunderline[2]{\nunderline{Beobachtungsfehler}
+      {yellow}}{magenta}
+}}
 
 \printindex
 

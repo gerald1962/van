@@ -1,137 +1,30 @@
-\documentclass[12pt,a4paper]{article}
-
-\usepackage[textwidth=17cm,textheight=26cm]{geometry}
-
-\setlength{\parskip}{-4pt}%
-\setlength{\parindent}{0pt}%
-
-\usepackage[ngerman]{babel}		 % Deutsche Namen/Umlaute
-\usepackage[utf8]{inputenc}		 % Zeichensatzkodierung
-\usepackage[dvipsnames]{xcolor}          % Using the color package
-\usepackage{color,soul}                  % Underlining
-\usepackage{makeidx}
-\usepackage{parallel}                    % 2003/04/13
-
-\makeindex
-
-\setcounter{secnumdepth}{4}
-
-\renewcommand{\theparagraph}{\arabic{paragraph}.}
-% \renewcommand{\theparagraph}{\arabic{paragraph}.}
-
-\usepackage{chngcntr}
-\counterwithout*{paragraph}{section}  %% stop resetting paragraph number with each new subsubsection
-% \counterwithin*{paragraph}{section}   %% reset paragraph number for each section; only works with the preceding line!
-
-\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
-\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
-\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
-\definecolor{brinkpink}{rgb}{0.98, 0.38, 0.5}
-\definecolor{cerisepink}{rgb}{0.93, 0.23, 0.51}
-\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
-\definecolor{emerald}{rgb}{0.31, 0.78, 0.47}
-\definecolor{english}{rgb}{0.0, 0.5, 0.0}
-
-\usepackage{titlesec}
-\newcommand\smallsection{%
-  \titleformat{\section}
-    {\normalfont\normalsize\bfseries}{\thesection}{1em}{}
-}
-
-%	HIER WERDEN TITEL REFERENT UND DATUM EINGETRAGEN
-%
-\newcommand\svthema{Pädagogik und Psychologie}
-\newcommand\svperson{Leonie Heber}
-\newcommand\svdatum{\today}
-\newcommand\lvtyp{Schuljahr 2021/22}
-\newcommand\lvinst{Berufsschule für Kinderpflege - Höchstadt a. d. Aisch}
-
-\usepackage{verbatim}
-
-\begin{comment}
-:Title: Diagram of the sensory stimulus and reaction or response cycle
-:Tags: Diagrams;Flowcharts;Charts;Styles;Computer science
-:Author: Gerald Schüller
-:Slug: linux
-
-A flow diagram of a sensory stimulus and reaction or response cycle.
-It uses basic nodes and arrows and defines node styles.
-\end{comment}
-
-\usepackage{tikz}
-\usetikzlibrary{arrows, arrows.meta, decorations.markings}
-
-% for double arrows adapt line thickness and line width, if needed
-\tikzstyle{vecArrow} = [
-  thick,
-  decoration = {
-    markings, mark=at position
-    1 with {\arrow[semithick]{open triangle 60}}
-  },
-  double distance =1.4pt,
-  shorten >= 5.5pt,
-  preaction = {decorate},
-  postaction = {
-    draw, line width=1.4pt, white,shorten >= 4.5pt}
-]
-
-\tikzset{%
-  >={Latex[width=2mm,length=2mm]},
-  % Specifications for style of nodes:
-  base/.style = {
-    rectangle,
-    draw = black,
-    double = black,           %% here
-    double distance = 0.5pt,  %% here
-    minimum width = 3cm,
-    minimum height = 0.5cm,
-    text centered,
-    font = \sffamily,
-    text = violet!75},
-}
-
-\usepackage{stackengine} % Stacking of objects, insets, baseline changes, etc
+\documentclass{article}
+\usepackage[dvipsnames]{xcolor}  % Using the color package
+\usepackage{stackengine}         % Stacking of objects:
 
 \newlength\lunderset
-\newlength\rulethick
-\lunderset = 1.5pt\relax
-\rulethick = .8pt\relax
-\def\stackalignment{l}
 
-\newcommand\nunderline[3][1]{%
+% munderline - 
+
+\newcommand\munderline[4][1]{%
   \setbox0 = \hbox{#2}%
-  \stackunder[#1 \lunderset - \rulethick]
+  \stackunder[#1 \lunderset - #4]
              {\strut #2}
-             {\color{#3} \rule{\wd0} {\rulethick}}%
+             {\color{#3} \rule{\wd0} {#4}}%
 }
 
-% Subparagraph counter.
-\newcounter{subParagraphC}
-\renewcommand{\thesubParagraphC}{\bf\arabic{subParagraphC}.}
-
-% Begin of a subparagraph
-\newcommand\subParagraph[1] {%
-  \stepcounter{subParagraphC}
-  \bf{\theparagraph}\thesubParagraphC \hskip 6pt \rm #1
-}
-
-% Description counter.
-\newcommand\desccount{%
-  \stepcounter{subParagraphC}\theparagraph\thesubParagraphC
-}
-
-\usepackage{tikzsymbols}
-
-\usepackage{amsmath}			 % AMS-Mathe: romans digits
-
-% Definition des neuen Kommandos
-\newcommand{\rom}[1]{$\underline{\overline{\text{#1}}}$}
+\newcommand\world[1] {#1}
+\newcommand\wcase[1] {#1}
+\newcommand\wspace[1] {#1}
 
 \begin{document}
+\lunderset = 1.25pt\relax
 
-\rom{I}. Vorbereitung
+\munderline[1]{\world World: education} {red}{1pt}
 
-\vskip 16 pt
-\rom{I}. {\setulcolor{yellow} \setul{.65ex}{2pt} \ul{Vorbereitung}}
+\vskip 20pt
+\munderline[2]{\munderline[1]{\wcase Case: x} {red}{1pt}}{green}{2pt}
 
+\vskip 20pt
+\munderline[3]{\munderline[2]{\munderline[1]{\wspace Space: y}{red}{1pt}}{green}{2pt}}{blue}{4pt}
 \end{document}
