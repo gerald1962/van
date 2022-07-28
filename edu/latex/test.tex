@@ -1,11 +1,14 @@
 \documentclass{article}
-\usepackage[dvipsnames]{xcolor}  % Using the color package
-\usepackage{stackengine}         % Stacking of objects:
+\usepackage[dvipsnames]{xcolor}  % Using the color package.
+\usepackage{stackengine}         % Stacking of objects.
 
 \newlength\lunderset
 
-% munderline - 
-
+% munderline - draw multiple underlines.
+% #1: variable argument.
+% #2: text.
+% #3: underline color.
+% #4: line width
 \newcommand\munderline[4][1]{%
   \setbox0 = \hbox{#2}%
   \stackunder[#1 \lunderset - #4]
@@ -20,7 +23,7 @@
 \begin{document}
 \lunderset = 1.25pt\relax
 
-\munderline[1]{\world World: education} {red}{1pt}
+\munderline[1] {\world World: education} {red} {1pt}
 
 \vskip 20pt
 \munderline[2]{\munderline[1]{\wcase Case: x} {red}{1pt}}{green}{2pt}
