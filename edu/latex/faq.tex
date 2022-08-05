@@ -2,12 +2,14 @@
 \documentclass[10pt,a4paper]{article}
 
 % Import a package for a specific purpose.
-\usepackage{color, soul}  % Underlining
-\usepackage{stackengine}  % Stacking of objects, see \munderline.
+\usepackage{color, soul}  % Underlining.
+\usepackage{stackengine}  % Stacking of objects, see \cul.
 \usepackage{ulem}         % Underline text.
 \usepackage{minted}       % Syntax highlighting.
-\usepackage{tikz}         % Creating graphics
+\usepackage{tikz}         % Creating graphics.
 \usepackage{tikzsymbols}  % Various emoticon, cooking symbols and trees.
+\usepackage{scrextend}    % KOMA-Script class: labeling 
+
 
 % Initial distance of a paragraphs like enumerate
 \setlength{\parskip}{-4pt}%
@@ -50,7 +52,7 @@
 % #2: text.
 % #3: underline color.
 % #4: line width
-\newcommand\munderline[4][1]{%
+\newcommand\cul[4][1]{%
   \setbox0 = \hbox{#2}%
   \stackunder[#1 \lunderset - #4]
              {\strut #2}
@@ -66,8 +68,9 @@
 \definecolor{amber}{rgb}{1.0, 0.75, 0.0}
 \definecolor{amber(sae/ece)}{rgb}{1.0, 0.49, 0.0}
 \definecolor{americanrose}{rgb}{1.0, 0.01, 0.24}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{armygreen}{rgb}{0.29, 0.33, 0.13}
 \definecolor{english}{rgb}{0.0, 0.5, 0.0}
-
 
 % Start of a LaTeX text, that is to be printed.
 \begin{document}
@@ -89,18 +92,18 @@
 \lunderset = 0.75pt\relax
 
 % Start of a new paragraph.
-\p{\munderline[1] {LaTeX:} {amber}{2pt}}  \LaTeX\ is a typesetting system.
+\p{\cul[1] {LaTeX:} {amber}{2pt}}  \LaTeX\ is a typesetting system.
 
 \vskip 7.5pt
-\subp {\munderline[2] {\munderline[1] {Template:} {amber}{2pt}} {amber(sae/ece)}{1.5pt}}
+\subp {\cul[2] {\cul[1] {Template:} {amber}{2pt}} {amber(sae/ece)}{1.5pt}}
       template is a pattern used as a guide to make something.
 
 \vskip 7.5pt
-\subsubp{\munderline[2] {%
-    \munderline[1] {Expose} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
+\subsubp{\cul[2] {%
+    \cul[1] {Expose} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
 \begin{enumerate}
   \setlength\itemsep{0em}
-\item Interest a sponsor for a subject: {\color{english} $p := project$}
+\item Interest a sponsor for a project: {\color{english} $s := subject$}
   
 \item Convince the sponsor, that you are well informed -
   {\color{english} $k := level\ of\ knowledge$}
@@ -109,19 +112,34 @@
 \item Describe clearly, how do you want to realize the project -
   {\color{english} $m := method$} - and which result do you strive:
   {\color{english} $t := target$}.
-    
-\item Specify the final result -
-  {\color{english} $d := delivery\ date$} - and what do you want to show
-  regularly - daily, weekly, $\ldots$: {\color{english} $p := plan$}.
+
+\item Express your ideas:  {\color{english} $p := propositions$}
+
+\item Specify the final delivery -
+  {\color{english} $d := deadline$} - and what do you want to show
+  regularly - daily, weekly, $\ldots$: {\color{english} $m := milestons$}.
 \end{enumerate}
 
 \vskip 7.5pt
 tbd.: Diagramm
+
+Prototype:
+
+% Needed for busy beaver Turing machine, see
+% https://mirror.dogado.de/tex-archive/graphics/pgf/base/doc/pgfmanual.pd
+% p. 102
+
+% Turingmaschine:
+% https://de.wikipedia.org/wiki/Turingmaschine
+%
+% \begin{verbatim}
+
+
 \vskip 7.5pt
 
 \vskip 7.5pt
-\subsubp{\munderline[2] {%
-    \munderline[1] {Reference} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
+\subsubp{\cul[2] {%
+    \cul[1] {Used websites} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
 
 \vskip 7.5pt
 \begin{verbatim}
@@ -136,34 +154,157 @@ https://www.ctan.org/pkg/pgf
 \end{verbatim}
 
 \vskip 7.55pt
-\subsubp{\munderline[2] {%
-    \munderline[1] {Pattern} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
+\subsubp{\cul[2] {%
+    \cul[1] {Example} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
 
 % Start of the syntax highlighting.
 \begin{minted}{tex}
   
 \vskip 7.5pt
-{\bf i. \uuline{\large Field}} \vskip 7.5pt 
-{\bf i.j.} \underline{Plot} \vskip 7.5pt 
-{\bf i.j.1.} \dashuline{Reason} \vskip 7.5pt 
-{\bf i.j.2.} \dashuline{Reference} \vskip 7.5pt
-{\bf i.j.3.} \dashuline{Pattern} \vskip 7.5pt
-{\bf i.j.4.} \dashuline{Result} \vskip 7.5pt
+{\bf i. \uuline{\large Field}} \vskip 7.5pt Summary. \vskip 10pt
+{\bf i.j.} \underline{Plot} \vskip 7.5pt Introduction. \vskip 10pt
+{\bf i.j.1.} \dashuline{Reason} \vskip 7.5pt Motivation. \vskip 10pt
+{\bf i.j.2.} \dashuline{Reference} \vskip 7.5pt Inet address. \vskip 10pt
+{\bf i.j.3.} \dashuline{Pattern} \vskip 7.5pt TeX/LateX source text. \vskip 10pt
+{\bf i.j.4.} \dashuline{Result} \vskip 7.5pt PDF document. \vskip 10pt
+{\bf i.j.5.} \dashuline{Backflow} \vskip 7.5pt Field extension.
   
 \end{minted}
 % The syntax highlighting ends her.
 
 \vskip 5pt
-\subsubp{\munderline[2] {%
-    \munderline[1] {Result} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
+\subsubp{\cul[2] {%
+    \cul[1] {Printout} {amber(sae/ece)}{2pt}} {americanrose}{1.5pt}}
 
 \vskip 10pt
-{\bf i. \uuline{\large Field}} \vskip 7.5pt
-{\bf i.j.} \underline{Plot} \vskip 7.5pt
-{\bf i.j.1.} \dashuline{Reason} \vskip 7.5pt
-{\bf i.j.2.} \dashuline{Reference} \vskip 7.5pt
-{\bf i.j.3.} \dashuline{Pattern} \vskip 7.5pt
-{\bf i.j.4.} \dashuline{Result}
+{\bf i. \uuline{\large Field}} \vskip 7.5pt Definition. \vskip 10pt
+{\bf i.j.} \underline{Plot} \vskip 7.5pt Summary. \vskip 10pt
+{\bf i.j.1.} \dashuline{Reason} \vskip 7.5pt Motivation. \vskip 10pt
+{\bf i.j.2.} \dashuline{Reference} \vskip 7.5pt Internet address. \vskip 10pt
+{\bf i.j.3.} \dashuline{Pattern} \vskip 7.5pt TeX/LateX source text. \vskip 10pt
+{\bf i.j.4.} \dashuline{Result} \vskip 7.5pt PDF format. \vskip 10pt
+{\bf i.j.5.} \dashuline{Backflow} \vskip 7.5pt Field design.
+
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+% Plot: introduction.
+\subp {\underline{Multiple colored underlines}} \vskip 7.5pt
+We show, how you can highlight text through stacked colored underlines. \vskip 7.5pt
+
+{\color{amethyst} Synopsis:} \vskip 7.5pt
+
+{\color{armygreen} cul} - draw multiple underlines. \vskip 7.5pt
+
+\begin{description}
+  \setlength\itemsep{-3pt}
+  \item[\#1:] variable argument.
+  \item[\#2:] text.
+  \item[\#3:] underline color.
+  \item[\#4:] line width.
+\end{description}
+    
+% Reason: motivation.
+\vskip 2.5pt
+\subsubp {\dashuline{Multidimensional text}} \vskip 7.5pt
+With colors you are able to design a text multidimensionally. \vskip 10pt
+
+% Reference: Inet address.
+\subsubp {\dashuline{Looking up information}} \vskip 7.5pt
+Search the Internet.
+
+\begin{labeling}{Search:} 
+  \setlength\itemsep{-3pt}
+  \item[Tool:]   \verb+https://duckduckgo.com+
+  \item[Search:] \verb+latex many coloured underlines+
+  \item[Hits:]   \verb+https://tex.stackexchange.com/questions+ \\
+    \verb+/169189/highlighting-text-through-stacked-colored-+ \\
+    \verb+underlines.+
+\end{labeling}
+
+% Pattern: TeX/LateX source text.
+\vskip 2.5pt
+\subsubp {\dashuline{Implementation}} \vskip 7.5pt
+% Start of the syntax highlighting.
+\begin{minted}{tex}
+\documentclass{article}
+\usepackage[dvipsnames]{xcolor}  % Using the color package.
+\usepackage{stackengine}         % Stacking of objects.
+
+\newlength\lunderset
+\newcommand\cul[4][1]{%
+  \setbox0 = \hbox{#2}%
+  \stackunder[#1 \lunderset - #4]
+             {\strut #2}
+             {\color{#3} \rule{\wd0} {#4}}%
+}
+
+\newcommand\world[1] {#1}
+\newcommand\wcase[1] {#1}
+\newcommand\wspace[1] {#1}
+
+\begin{document}
+\lunderset = 1.25pt\relax
+\cul[1] {\world World: education} {red} {1pt} \vskip 7.5pt
+\cul[2]{\cul[1]{\wcase Case: x} {red}{1pt}}{green}{2pt} \vskip 7.5pt
+\cul[3]{\cul[2]{\cul[1]{\wspace Space: y}{red}{1pt}}{green}{2pt}}{blue}{4pt}
+\vskip 7.5pt
+\end{document}
+\end{minted}
+
+% Result: PDF document.
+\vskip 7.5pt
+\subsubp {\dashuline{Simplification and generalization}} \vskip 7.5pt
+
+\newcommand\world[1] {#1}
+\newcommand\wcase[1] {#1}
+\newcommand\wspace[1] {#1}
+
+\lunderset = 1.25pt\relax
+\cul[1] {\world World: Psychologie} {red} {1pt} \vskip 7.5pt
+\cul[2]{\cul[1]{\wcase Case: Wahrnehmung} {red}{1pt}}{green}{2pt} \vskip 7.5pt
+\cul[3]{\cul[2]{\cul[1]{\wspace Space: Schwitzen}{red}{1pt}}{green}{2pt}}{blue}{4pt}
+\vskip 7.5pt
+
+% Backflow: Field extension.
+\vskip 7.5pt
+\subsubp {\dashuline{Backflow}} \vskip 7.5pt
+Decoration of headings.
+
+
+% \newpage
+\vskip 16pt \hrule \vskip 20pt
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+% Plot: Summary.
+\subp {\underline{Plot}} \vskip 7.5pt
+Summary. \vskip 10pt
+
+% Reason: Motivation.
+\subsubp {\dashuline{Reason}} \vskip 7.5pt
+Motivation. \vskip 10pt
+
+% Reference: Internet address.
+\subsubp {\dashuline{Reference}} \vskip 7.5pt
+Internet address. \vskip 10pt
+
+% Pattern: TeX/LateX source text.
+\subsubp {\dashuline{Pattern}} \vskip 7.5pt
+TeX/LateX source text. \vskip 10pt
+
+% Result: PDF document.
+\subsubp {\dashuline{Result}} \vskip 7.5pt
+PDF format. \vskip 10pt
+
+% Backflow: Field design.
+\subsubp {\dashuline{Backflow}} \vskip 7.5pt
+Field design.
 
 % End of a LaTeX text, that is to be printed.
 \end{document}

@@ -1,57 +1,3 @@
-Hi Renate und Herbert,
-
-1. Das erst Mal
-
-Ich war 10 Jahre alt und sie 13.
-
-Sie hat, vereinbart, wir uns treffen, in der Scheune von
-meinem Onkel.
-
-Dann sagt sie, ich soll sie streicheln.
-
-Sie war ziemlich enttäuscht,
-weil ich ihre Muschi nicht lecken wollte:
-schade.
-
-
-
-
-
-
-Mit meiner Kusin
-
-
-
-0. Allgemeines; 1. Leonis Mitschrift; 2. Meine Mitschrift;
-
-0. Und fast wie immer habe ich gar nichts verstanden: Roswitha, Bea, Renate.
-
-0
-
-
-
-Bea hat mich angesoprchen nach einen Wittgenstein Seminar.
-
-Ihr schönes Fachwerkhaus habe in Fürth ich besucht.
-
-Ihre Freunde und Freudinnen waren von mir gelangweit.
-
-LG,
-Gerald
-
-
-
-
-x Logischer Raum und Multiplizität
-==================================
-inzwischen habe ich herausgefunden,
-wie man mit Texte gleichzeitig in einem
-logischen oder mathematischen Raum - 
-Sinn oder Sprachspiel, Farbe, Geometrie, Sinne, ...
-operieren kann, siehe Anhang.
-Mit Lauten oder Tönen kann ich nicht
-experimentieren, weil mein Lautsprecher nicht funktioniert.
-
 
 124 Latex
 =========
@@ -769,24 +715,30 @@ LateX output
 
 
 
-124.27 Title
+124.27 Aligned descriptions
 ------------
 Introduction
 
 124.27.1 Reason
 ---------------
+Motivation
 
 124.27.2 Reference
 ..................
-Inet address
+Search: latex description align
+Hits: https://tex.stackexchange.com/questions/67720/description-list-with-aligned-descriptions
 
-124.27.3 Example
+124.27.3 Pattern
 .................
-TeX/LateX source text
+TeX/LateX source text.
 
 124.27.4 Result
 .................
-LateX output
+PDF format.
+
+124.27.4 Backflow
+.................
+Field extension.
 
 
 
@@ -846,14 +798,14 @@ How can one underline text with multiple colored lines?
 
 124.27.1 Reference
 ..................
-Inet address
+Highlighting text through stacked colored underlines
 
 124.27.2 Example
 .................
 TeX/LateX source text
 
 
-124.28 Title
+124.28 Aspect
 ------------
 Introduction
 
