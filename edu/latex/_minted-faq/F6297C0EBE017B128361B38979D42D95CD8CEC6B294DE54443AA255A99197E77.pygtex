@@ -1,0 +1,24 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{\PYGZbs{}documentclass}\PYG{n+nb}{\PYGZob{}}article\PYG{n+nb}{\PYGZcb{}}
+\PYG{k}{\PYGZbs{}usepackage}\PYG{n+na}{[dvipsnames]}\PYG{n+nb}{\PYGZob{}}xcolor\PYG{n+nb}{\PYGZcb{}}  \PYG{c}{\PYGZpc{} Using the color package.}
+\PYG{k}{\PYGZbs{}usepackage}\PYG{n+nb}{\PYGZob{}}stackengine\PYG{n+nb}{\PYGZcb{}}         \PYG{c}{\PYGZpc{} Stacking of objects.}
+
+\PYG{k}{\PYGZbs{}newlength\PYGZbs{}lunderset}
+\PYG{k}{\PYGZbs{}newcommand\PYGZbs{}cu}\PYG{n+na}{[4][1]}\PYG{n+nb}{\PYGZob{}}\PYG{c}{\PYGZpc{}}
+  \PYG{k}{\PYGZbs{}setbox}0 = \PYG{k}{\PYGZbs{}hbox}\PYG{n+nb}{\PYGZob{}}\PYGZsh{}2\PYG{n+nb}{\PYGZcb{}}\PYG{c}{\PYGZpc{}}
+  \PYG{k}{\PYGZbs{}stackunder}\PYG{n+na}{[\PYGZsh{}1 \PYGZbs{}lunderset \PYGZhy{} \PYGZsh{}4]}
+             \PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}strut} \PYGZsh{}2\PYG{n+nb}{\PYGZcb{}}
+             \PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}color}\PYG{n+nb}{\PYGZob{}}\PYGZsh{}3\PYG{n+nb}{\PYGZcb{}} \PYG{k}{\PYGZbs{}rule}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}wd}0\PYG{n+nb}{\PYGZcb{}} \PYG{n+nb}{\PYGZob{}}\PYGZsh{}4\PYG{n+nb}{\PYGZcb{}\PYGZcb{}}\PYG{c}{\PYGZpc{}}
+\PYG{n+nb}{\PYGZcb{}}
+
+\PYG{k}{\PYGZbs{}newcommand\PYGZbs{}world}\PYG{n+na}{[1]} \PYG{n+nb}{\PYGZob{}}\PYGZsh{}1\PYG{n+nb}{\PYGZcb{}}
+\PYG{k}{\PYGZbs{}newcommand\PYGZbs{}wcase}\PYG{n+na}{[1]} \PYG{n+nb}{\PYGZob{}}\PYGZsh{}1\PYG{n+nb}{\PYGZcb{}}
+\PYG{k}{\PYGZbs{}newcommand\PYGZbs{}wspace}\PYG{n+na}{[1]} \PYG{n+nb}{\PYGZob{}}\PYGZsh{}1\PYG{n+nb}{\PYGZcb{}}
+
+\PYG{k}{\PYGZbs{}begin}\PYG{n+nb}{\PYGZob{}}document\PYG{n+nb}{\PYGZcb{}}
+\PYG{k}{\PYGZbs{}lunderset} = 1.25pt\PYG{k}{\PYGZbs{}relax}
+\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[1]} \PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}world} World: education\PYG{n+nb}{\PYGZcb{}} \PYG{n+nb}{\PYGZob{}}red\PYG{n+nb}{\PYGZcb{}} \PYG{n+nb}{\PYGZob{}}1pt\PYG{n+nb}{\PYGZcb{}} \PYG{k}{\PYGZbs{}vskip} 20pt
+\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[2]}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[1]}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}wcase} Case: x\PYG{n+nb}{\PYGZcb{}} \PYG{n+nb}{\PYGZob{}}red\PYG{n+nb}{\PYGZcb{}\PYGZob{}}1pt\PYG{n+nb}{\PYGZcb{}\PYGZcb{}\PYGZob{}}green\PYG{n+nb}{\PYGZcb{}\PYGZob{}}2pt\PYG{n+nb}{\PYGZcb{}} \PYG{k}{\PYGZbs{}vskip} 20pt
+\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[3]}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[2]}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}cu}\PYG{n+na}{[1]}\PYG{n+nb}{\PYGZob{}}\PYG{k}{\PYGZbs{}wspace} Space: y\PYG{n+nb}{\PYGZcb{}\PYGZob{}}red\PYG{n+nb}{\PYGZcb{}\PYGZob{}}1pt\PYG{n+nb}{\PYGZcb{}\PYGZcb{}\PYGZob{}}green\PYG{n+nb}{\PYGZcb{}\PYGZob{}}2pt\PYG{n+nb}{\PYGZcb{}\PYGZcb{}\PYGZob{}}blue\PYG{n+nb}{\PYGZcb{}\PYGZob{}}4pt\PYG{n+nb}{\PYGZcb{}}
+\PYG{k}{\PYGZbs{}end}\PYG{n+nb}{\PYGZob{}}document\PYG{n+nb}{\PYGZcb{}}
+\end{Verbatim}
