@@ -1,0 +1,736 @@
+% Precondition:
+% cd /home/gerald/van_development/van/aa
+% cp /home/gerald/van_development/van/edu/latex/emoji.sty 
+% 
+% Build rules:
+% pdflatex -shell-escape alc.tex
+% evince alc.pdf
+
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+% Import a package for a specific purpose.
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}  % Customize the page layou.
+\usepackage{tikzsymbols}  % Various emoticon, cooking symbols and trees.
+\usepackage{enumitem}     % Control layout of itemize, enumerate, description.
+\usepackage{wasysym}      % Provide symbols like \Xbox.
+\usepackage{scrextend}    % KOMA-Script class: labeling 
+
+% Initial distance of a paragraphs like enumerate
+\setlength{\parskip}{-4pt}%
+
+% All paragraphs are without indentation.
+\setlength{\parindent}{0pt}%
+
+% Introduce a paragraph section with a number.
+\renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+% Force the numbering of a paragraph text.
+\setcounter{secnumdepth}{4}
+
+% Default settings for a paragraph segment.
+\newcommand\p[1] {%
+  \stepcounter{paragraph}
+  {\large\bf\theparagraph \hskip 2pt \large\bf #1 \ \hskip -8pt}
+}
+
+% Subparagraph counters.
+\newcounter{subc}
+\renewcommand{\thesubc}{\bf\arabic{subc}.}
+
+\newcounter{subsubc}
+\renewcommand{\thesubsubc}{\bf\arabic{subsubc}.}
+
+% Settings for a subparagraph segment.
+\newcommand\subp[1] {%
+  \stepcounter{subc}
+  {\bf\theparagraph\thesubc}\hskip 3pt\rm #1\hskip 4pt
+}
+
+\newcommand\subsubp[1] {%
+  \stepcounter{subsubc}
+  {\bf\theparagraph\thesubc\thesubsubc}\hskip 3pt\rm #1\hskip 4pt
+}
+
+% Elements of a title page.
+\newcommand\svthema{Therapie}
+\newcommand\svperson{Gerald Schüller}
+\newcommand\svdatum{\today}
+
+
+% Color list:
+\definecolor{alizarin}{rgb}{0.82, 0.1, 0.26}
+\definecolor{amber(sae/ece)}{rgb}{1.0, 0.49, 0.0}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
+\definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+\definecolor{darkbrown}{rgb}{0.4, 0.26, 0.13}
+\definecolor{english}{rgb}{0.0, 0.5, 0.0}
+\definecolor{indigo(web)}{rgb}{0.29, 0.0, 0.51}
+\definecolor{midnightblue}{rgb}{0.1, 0.1, 0.44}
+
+
+% Document and protocol track
+\newcommand\expt[1] {{\color {darkbrown} {\bf #1}}}       % Experiment
+\newcommand\info[1] {{\color {midnightblue} {\bf #1}}}    % Informatoin
+
+\newcommand\prop[1] {{\color {alizarin} {\bf #1}}}        % Proposal
+\newcommand\draf[1] {{\color {amber(sae/ece)} {\bf #1}}}  % Draft
+\newcommand\rele[1] {{\color {english} \bf {#1}}}         % Release
+\newcommand\rewo[1] {{\color {aqua} {\bf #1}}}            % Rework
+
+\newcommand\emps[1] {{\color {indigo(web)} {\bf #1}}}     % Emphasis
+
+\newcommand\opti[1] {{\color {amethyst} {\bf #1}}}        % Optional
+\newcommand\mand[1] {{\color {burntorange} {\bf #1}}}     % Mandatory
+
+
+% Start of a LaTeX text, that is to be printed.
+\begin{document}
+
+% Front page
+\title{ \textbf{\color{blue}\svthema} \Springtree [1.5] }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{}
+
+% You tell LaTeX the information used to produce the title page.
+\maketitle
+
+\vskip 8pt
+\p{{\info {Document-Track}}}
+
+% Initialize the subparagraph counters.
+\setcounter{subc}{0}
+
+\begin{labeling}{Information:} 
+  \setlength\itemsep{-3pt}
+  
+\item[Experiment:]  \textbackslash {\expt {expt}}
+\item[Information:] \textbackslash {\info {info}}
+\item[Proposal:]    \textbackslash {\prop {prop}}
+\item[Draft:]       \textbackslash {\draf {draf}}
+\item[Release:]     \textbackslash {\rele {rele}}
+\item[Rework:]      \textbackslash {\rewo {rewo}}
+\item[Emphasis:]    \textbackslash {\emps {emps}}
+
+\end{labeling}
+
+\vskip 4pt
+\p{\draf {Anamnese}}
+
+% Initialize the subparagraph counters.
+\setcounter{subc}{0}
+
+\vskip 8pt
+\subp{\info {Bibliographie}}
+
+\vskip 8pt
+\verb+https://de.wikipedia.org/wiki/Alkoholkrankheit+ \\
+\verb+https://de.wikipedia.org/wiki/Psychotrope_Substanz+ \\
+\verb+https://de.wikipedia.org/wiki/Psyche+ \\
+\verb+https://www.wittgensteinproject.org/w/index.php?title=+ \\
+\verb+Philosophische_Untersuchungen#+ \\
+\verb+https://de.wikipedia.org/wiki/Ethanol+ \\
+\verb+https://www.dimdi.de/static/de/klassifikationen/icd/icd-10-who/kode-suche/htmlamtl2019/+
+
+\vskip 12pt
+% Command for \
+\verb+https://de.wikibooks.org/wiki/LaTeX-Kompendium:_Sonderzeichen+ \\
+% Kästchen zum ankreuzen automatisch multipli choise.
+\verb+https://golatex.de/viewtopic.php?t=5926+
+
+\vskip 12pt
+\subp{\info {Definitionen}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 12pt
+\hskip -14pt
+\begin{minipage}{0.90\textwidth}  
+  \begin{itemize}
+    \setlength\itemsep{-3pt}
+  
+  \item {\emps {Alkoholkrankheit}} ist die Abhängigkeit von der psychotropen
+    Substanz Ethanol bzw. Alkohol.
+    
+  \item {\emps {Psychotrope Substanz}} ist ein Wirkstoff, der die menschliche
+    Psyche beeinflusst.
+
+  \item {\emps {Psyche}} ist die Gesamtheit aller geistigen Eigenschaften wie
+    Denken, Lernen, Emotionen - Entspannung, Erleichterung, Euphorie $\ldots$ -,
+    Wahrnehmen, Empfinden - Tastempfindung, Atmen, Handhaltung, $\ldots$ - ,
+    Empathie, Wissen, Intuition und Motivation.
+
+  \end{itemize}
+\end{minipage}
+
+
+\vskip 12pt
+\subp{\rele {Symptome}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 8pt
+Jeden Tag kaufe ich ein bis zwei Flaschen Wein und trinke meist ab dem
+späten Nachmittag oder eher selten ab Mittag solange, bis ich einschlafe. Meine
+früheren Interessen wie Sport, Treffen mit Freunden $\ldots$ habe ich aufgegeben
+ausser Programmieren verknüpft mit Trinken. Wenn ich nicht trinke, bin ich
+ungeduldig und wortkarg.
+
+
+\vskip 8pt
+\subp{\rele {Klassifikation nach ICD-10}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 12pt
+\subsubp{\rele {Abhängigkeitssyndrom}}
+
+\vskip 12pt
+\hskip -14pt
+\begin{minipage}{0.90\textwidth}
+  
+  \begin{enumerate}[label={\Square}]
+    \setlength\itemsep{-3pt}
+  
+  \item [\XBox] Zwanghaftes Verlangen, Alkohol zu konsumieren
+  \item [\XBox] Verminderte Kontrollfähigkeit bei der Menge
+  \item Körperliche Entzugserscheinungen
+  \item [\XBox] Nachweis einer Toleranz: zunehmend größere Mengen an Alkohol
+  \item [\XBox] Einengung des Denkens auf Alkohol
+  \item [\XBox] Anhaltender Substanzkonsum trotz gesundheitlicher und sozialer
+    Folgeschäden
+    
+  \end{enumerate}
+  
+\end{minipage}
+
+\vskip 8pt
+Abhängigkeitssyndrom (F10.2) trifft bei mir zu, da mehr als zwei Kriterien mindestens einen
+Monat lang gleichzeitig vorhanden sind.
+
+
+\vskip 12pt
+\subsubp{\rele {Akute Alkoholintoxikation (akuter Alkoholrausch)}}
+
+\vskip 8pt
+Eine akute Alkoholintoxikation (F10.0) trifft bei mir zu, da folgende
+Verhaltensauffälligkeiten und Merkmale vorliegen:
+
+\vskip 12pt
+\hskip -14pt
+\begin{minipage}{0.90\textwidth}
+  
+  \begin{itemize}
+    \setlength\itemsep{-3pt}
+  
+  \item Enthemmung
+  \item Aufmerksamkeitsstörung
+  \item Einschränkung der Urteilsfähigkeit
+  \item verwaschene Sprache
+  \item Gesichtsröte (Erröten)
+    
+  \end{itemize}
+  
+\end{minipage}
+
+
+\vskip 12pt
+\subp{\rele {Klassifikation nach DSM-5}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+
+\vskip 12pt
+\subsubp{\rele {Störung durch Alkoholkonsum (Alkoholkonsumstörung)}}
+
+\vskip 12pt
+\hskip -14pt
+\begin{minipage}{0.90\textwidth}
+  
+  \begin{enumerate}[label={\Square}]
+    \setlength\itemsep{-3pt}
+  
+  \item [\XBox] Alkohol wird in größeren Mengen oder länger als beabsichtigt
+    konsumiert.
+  \item [\XBox] erfolglose Versuche, den Alkoholkonsum zu verringern oder zu
+    kontrollieren    
+  \item [\XBox] hoher Zeitaufwand, um Alkohol zu beschaffen, zu konsumieren oder
+    sich zu erholen
+  \item [\XBox] Craving oder ein starkes Verlangen, Alkohol zu konsumieren
+  \item [\XBox] Alkoholkonsum verbunden mit der Nicht-Erfüllung von
+    Verpflichtungen: Arbeit und zu Hause
+  \item [\XBox] Alkoholkonsum trotz ständiger sozialer oder zwischenmenschlicher
+    Probleme
+  \item [\XBox] soziale, berufliche oder Freizeitaktivitäten werden aufgrund des
+    Alkoholkonsums aufgegeben
+  \item Alkoholkonsum verbunden mit einer körperlichen Gefährdung
+  \item [\XBox] Alkoholkonsum trotz Kenntnis eines anhaltenden oder
+    wiederkehrenden psychischen Problems
+  \item [\XBox] Toleranzentwicklung mit Dosissteigerung und verminderter Wirkung
+  \item Entzugssymptome
+    
+  \end{enumerate}
+  
+\end{minipage}
+
+\vskip 12pt
+Alkoholkonsumstörung trifft bei mir zu, da mehr als ein Kriterium über zwölf
+Monate vorliegt.
+
+\vskip 8pt
+Der Schweregrad ist schwer, da mehr als 5 Symptomkriterien erfüllt sind.
+
+
+\vskip 10pt
+\subp{\rele {Krankheitsverlauf und -bild}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 12pt
+\subsubp{\rele {Krankheitsverlauf}}
+
+\vskip 8pt
+Aktuell befinde ich mich wohl im Übergang von der kritischen zur chronischen
+Phase.
+
+\begin{labeling}{{\bf Chronische Phase:}} 
+  \setlength\itemsep{-3pt}
+  
+\item[{\emps {Kritische Phase:}}]  Der Alkoholiker kann sein Trinken nun
+  überhaupt nicht mehr kontrollieren. $\ldots$
+  
+\item[{\emps {Chronische Phase:}}] Der Alkohol beherrscht den Trinker nun
+  vollkommen. Seine Persönlichkeit verändert sich. Er trinkt unter der Woche, am
+  hellen Tag, häufig schon ab Mittag.  $\ldots$
+
+\end{labeling}
+
+\vskip 4pt
+\subsubp{\rele {Ausprägungen der Krankheit}}
+
+\vskip 8pt
+Selbst würde ich mich einschätzen als {\emps {Gamma-Typ}} (Rauschtrinker, Alkoholiker),
+denn ich trinke täglich. Typisch ist der Kontrollverlust: ich kann nicht
+aufhören zu trinken bis ich einschlafe.
+
+
+\vskip 8pt
+\subp{\rele {Biologie der Alkoholsucht}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 8pt
+Alkohol verändert im Gehirn Rezeptoren, die bei mir die Entspannung verbessern. Wegen
+deren Anpassung erhöhe ich die Alkoholmenge. \\
+Mit Alkohol wird vermehrt Dopamin und Endorphine produziert. \\
+Dopamin ist ein Hormon, das die Motivation fördert. \\
+Endorphine sind körpereigene Opioide, die u.a. eine Euphorie hervorrufen.
+
+
+\vskip 8pt
+\subp{\rele {Krankheitsursachen}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 12pt
+\subsubp{\rele {Genetische Faktoren}}
+
+\vskip 8pt
+Meine Mutter war tablettensüchtig und vermutlich gibt es bei mir eine angeborene
+Alkoholverträglichkeit.
+
+
+\vskip 12pt
+\subsubp{\rele {Psychologische Faktoren}}
+
+\vskip 8pt
+Die schnell eintretenden positiven Wirkungen des Alkohols wie Entspannung und
+Glücksgefühle wie Euphorie, Zufriedenheit - Stolz, $\ldots$ -  verstärken das
+Suchtverhalten.
+
+
+\vskip 12pt
+\subp{\rele {Rückfall}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 8pt
+Wenn ich mich nicht total abstinent verhalte, erwarte ich einen
+{\bf schweren} {\bf Rückfall} {\bf (relapse)} in alte Trink\-muster, die sich
+auf Alkoholmenge, Trinkfrequenz und Trinkdauer beziehen.
+
+\newpage
+\p{{\info {Protokoll-Track}}}
+
+% Initialize the subparagraph counters.
+\setcounter{subc}{0}
+
+\begin{labeling}{Mandatory elements:} 
+  \setlength\itemsep{-3pt}
+  
+\item[Mandatory elements:]  \textbackslash {\mand {mand}}
+\item[Optional elements:]   \textbackslash {\opti {opti}}
+
+\end{labeling}
+
+
+\vskip 4pt
+\subp{\info {Bibliographie}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 8pt
+\verb+https://de.wikipedia.org/wiki/Therapie+ \\
+\verb+https://de.wikipedia.org/wiki/Protokoll_(Niederschrift)+ \\
+\verb+https:https://de.wikipedia.org/wiki/Gem%C3%BCt+ \\
+\verb+https://de.wikipedia.org/wiki/Selbsthilfegruppe+ \\
+\verb+https://www.anonyme-alkoholiker.at/images/E-Medien/2021-docs/+ \\
+\verb+2021_09%20-%20SMZ%20Liebenau.pdf+ \\
+\verb+https://guttempler.org/+
+
+\vskip 12pt
+\verb+https://tex.stackexchange.com/questions/116101/add-bold-enumerate-items+
+
+\vskip 12pt
+\subp{\info {Definitionen}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 12pt
+\hskip -14pt
+\begin{minipage}{0.90\textwidth}  
+  \begin{itemize}
+    \setlength\itemsep{-3pt}
+  
+  \item {\emps {Therapie}} umfaßt alle Maßnahmen, mit denen körperliche oder
+    psychische Funktionen wiederhergestellt werden.
+    
+  \item {\emps {Protokoll}} ist eine Aufzeichnung, in der Zeitpunkt von
+    Zuständen und Vorgänge aufgelistet werden.
+
+  \item {\emps {Gemütszustand}} ist das aktuelle psychische Befinden eines
+    Menschen.
+
+  \item {\emps {Selbsthilfegruppe}} ist ein selbstorganisiertes Treffen von
+    Menschen, die ein gleiches Problem haben wie Alkoholkrankheit.
+    
+  \item {\emps {Anonyme Alkoholiker}} oder {\emps {AA}} ist eine
+    Selbsthilfegruppe für Alkoholiker mit dem Vorsatz:
+    ,,Nur heute, 24 Stunden lang, lasse ich das erste Glas stehen.''
+    
+  \item {\emps {Guttempler}} ist eine Selbsthilfegruppe, die erwartet, dass man
+    weder Alkohol noch andere bewußtseinsverändernde Drogen konsumiert.
+    
+  \end{itemize}
+\end{minipage}
+
+\vskip 12pt
+\p{{\rele {Protokoll}}}
+
+% Initialize the subparagraph counters.
+\setcounter{subc}{0}
+
+
+\vskip 12pt
+\subp{\rele {KW 36}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 10pt
+{\mand {Gewicht:}} -
+
+\vskip 10pt
+\hrule
+\vskip 10pt
+{\rele {8.9.2022 - Donnerstag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+    
+  \item {\mand {Gemütszustand:}} \dTongey [1.5][yellow]
+  \item {\mand {Abstinenz:}} -
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} -
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \item {\opti {Beratung:}} \\
+    Treffen mit Frau Etter Herzogenauach, die den Zustand meiner
+    Alkoholkranheit ermittelt.
+    
+    {\bf Aktionspunkte:}
+    
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{Selbsthilfegruppe:} 
+        \setlength\itemsep{-3pt}  
+      \item[Arztbesuch:]        Leberwerte und Blutbild
+      \item[Selbsthilfegruppe:] Treffen mit den Anonymen Alkoholikern oder Guttempler
+      \item[Folgetermin:]       Erlangen: 14.09.22 um 14.30      
+      \end{labeling}
+    \end{minipage}
+    
+  \end{enumerate}
+\end{minipage}
+
+
+\newpage
+{\rele {9.9.2022 - Freitag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} \dSmiley [1.5][yellow]
+  \item {\mand {Abstinenz:}} Geburt
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} AA in Erlangen von 19.00 - 21.00
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \end{enumerate}
+\end{minipage}
+
+
+\vskip 4pt
+\hrule
+\vskip 10pt
+{\rele {10.9.2022 - Samstag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} \dSmiley [1.5][yellow]
+  \item {\mand {Abstinenz:}} 1. Tag
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} AA in Nürnberg von 19.00 - 21.00
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \end{enumerate}
+\end{minipage}
+
+
+\vskip 4pt
+\hrule
+\vskip 10pt
+{\rele {11.9.2022 - Sonntag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+    
+  \item {\mand {Gemütszustand:}} \dSmiley [1.5][yellow]
+  \item {\mand {Abstinenz:}} 2. Tag
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} AA in Erlangen von 19.00 - 21.00
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \end{enumerate}
+\end{minipage}
+
+
+\newpage
+\subp{\rele {KW 37}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 10pt
+{\mand {Gewicht:}} -
+
+\vskip 10pt
+\hrule
+\vskip 10pt
+{\rele {12.9.2022 - Montag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} \dSmiley [1.5][yellow]
+  \item {\mand {Abstinenz:}} 3. Tag
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} Guttempler in Höchstadt von 19.00 - 20.00
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} Ravioli, Wiener, Champignons
+  \item {\mand {Verwaltung:}} -
+    
+  \item {\mand {Zazen:}} \\
+    Telefongespräch mit Frau Godt wegen Zen-Meditation in Erlangen
+            
+    {\bf Aktionspunkt:}
+    
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{Termin:} 
+        \setlength\itemsep{-3pt}  
+      \item[Termin:] Erlangen: 20.09.22 um 19.45 Uhr
+      \end{labeling}
+    \end{minipage}
+
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \item {\opti {Arztbesuch:}} \\
+    Treffen mit Dr. Barabasch wegen Blutabnahme.
+        
+    {\bf Aktionspunkt:}
+    
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{Folgetermin::} 
+        \setlength\itemsep{-3pt}  
+      \item[Folgetermin:] Steppach: 13.09.22, vormittags
+      \end{labeling}
+    \end{minipage}
+    
+  \end{enumerate}
+\end{minipage}
+
+
+\vskip 4pt
+\hrule
+\vskip 10pt
+{\rele {13.9.2022 - Dienstag}}
+
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} \dSmiley [1.5][yellow]
+  \item {\mand {Abstinenz:}} -
+  \item {\mand {Gesundheit:}} Puls: 64, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} {\prop {AA in Erlangen von 19.00 - 21.00}}
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} {\prop {Duschen}}
+  \item {\mand {Essen:}} {\prop {Blumenkohl, Hühnchen}}
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \item {\opti {Arztbesuch:}} {\prop {Treffen mit Dr. Barabasch}}
+  \end{enumerate}
+\end{minipage}
+
+
+\vskip 4pt
+\hrule
+\vskip 10pt
+{\rele {14.9.2022 - Mittwoch}}
+
+\vskip 8pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} -
+  \item {\mand {Abstinenz:}} -
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} {\prop {AA in Höchstadt von 19.30 - 21.00}}
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} -
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \item {\opti {Beratung:}} {\prop {Treffen mit Frau Etter in Erlangen um 14.30 Uhr}}
+  \end{enumerate}
+\end{minipage}
+
+\newpage
+\subp{\rele {KW 38}}
+
+% Initialize the subparagraph counters.
+\setcounter{subsubc}{0}
+
+\vskip 10pt
+{\mand {Gewicht:}} -
+
+$\ldots$
+
+\vskip 4pt
+\hrule
+\vskip 10pt
+{\rele {20.9.2022 - Dienstag}}
+       
+\vskip 4pt
+\hskip -6pt
+\begin{minipage}{0.95\textwidth}  
+  \begin{enumerate}
+    \setlength\itemsep{-3pt}
+
+  \item {\mand {Gemütszustand:}} -
+  \item {\mand {Abstinenz:}} -
+  \item {\mand {Gesundheit:}} Puls: -, Blutdruck: -
+  \item {\mand {Selbsthilfegruppe:}} -
+  \item {\mand {Freunde:}} -
+  \item {\mand {Körperpflege:}} -
+  \item {\mand {Essen:}} -
+  \item {\mand {Verwaltung:}} -
+  \item {\mand {Zazen:}} {\prop {Meditation in Erlangen um 19.45 Uhr}}
+  \item {\mand {Sport:}} -
+  \item {\mand {Haus:}} -
+  \item {\mand {Garten:}} -
+  \item {\mand {Beruf:}} -
+  \end{enumerate}
+\end{minipage}
+
+% End of a LaTeX text, that is to be printed.
+\end{document}

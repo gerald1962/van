@@ -1,16 +1,22 @@
-<<<<<<< HEAD
-x Logischer Raum und Multiplizität
-==================================
-inzwischen habe ich herausgefunden,
-wie man mit Texte gleichzeitig in einem
-logischen oder mathematischen Raum - 
-Sinn oder Sprachspiel, Farbe, Geometrie, Sinne, ...
-operieren kann, siehe Anhang.
-Mit Lauten oder Tönen kann ich nicht
-experimentieren, weil mein Lautsprecher nicht funktioniert.
 
-=======
->>>>>>> pp
+125 Renate
+==========
+Elkes Besuch - Nachlese
+
+https://dajolens.de/blog/kants-vier-fragen
+https://people.umass.edu/klement/tlp/tlp.pdf
+
+https://de.wikipedia.org/wiki/Folge_(Mathematik)
+https://de.wikipedia.org/wiki/Ordinalzahl
+
+1. Von woher wissen wir etwas jetzt - Sachverhalte s_i ?
+2. Wie tun wir etwas jetzt - Tatsachen oder t_j?
+3. Wie vergleichen wir etwas: Wahrheitsgründe für s_i und t_j ?
+4. Wie bewerten wir das: Ästhetik - das ist schön - und Ethik -
+das ist gut: ?
+5. Wie bleibe ich in einer Teilmenge: über 1.
+
+
 
 124 Latex
 =========

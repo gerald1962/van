@@ -1,0 +1,98 @@
+% Precondition:
+% cd /home/gerald/van_development/van/aa
+% cp /home/gerald/van_development/van/edu/latex/emoji.sty 
+% 
+% Build rules:
+% pdflatex -shell-escape aa.tex
+% evince aa.pdf
+
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+% Import a package for a specific purpose.
+\usepackage{tikzsymbols}  % Various emoticon, cooking symbols and trees.
+\usepackage{scrextend}    % KOMA-Script class: labeling
+
+% Initial distance of a paragraphs like enumerate
+\setlength{\parskip}{-4pt}%
+
+% All paragraphs are without indentation.
+\setlength{\parindent}{0pt}%
+
+% Introduce a paragraph section with a number.
+\renewcommand{\theparagraph}{\large \arabic{paragraph}.}
+
+% Force the numbering of a paragraph text.
+\setcounter{secnumdepth}{4}
+
+% Default settings for a paragraph segment.
+\newcommand\p[1] {\paragraph{\large \hskip -10pt #1} \ \hskip -8pt}
+
+% Elements of a title page.
+\newcommand\svthema{Anonyme Alkoholiker}
+\newcommand\svperson{Gerald Schüller}
+\newcommand\svdatum{\today}
+
+% Start of a LaTeX text, that is to be printed.
+\begin{document}
+
+% Front page
+\title{ \textbf{\color{blue}\svthema} \Autumntree [1.5] }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{}
+
+% You tell LaTeX the information used to produce the title page.
+\maketitle
+
+\verb+https://www.openthesaurus.de/synonyme/edit/21691+ \\
+\verb+https://www.dwds.de/wb/fatalistisch+ \\
+\verb+https://de.wiktionary.org/wiki/Wiktionary:Hauptseite+ \\
+\verb+https://www.duden.de/rechtschreibung/fatalistisch+ \\
+\verb+https://gegenteile.net/+ 
+
+\vskip 8pt
+\p{Erlebnis} ist eine  Tatsache.
+
+\vskip 8pt
+\verb+https://de.wikipedia.org/wiki/Erlebnis+
+
+\vskip 8pt
+Erlebnis ist ein Ereignis verbunden mit Empfindungen:
+
+\begin{labeling}{befriedigend oder enttäuschend:}
+  \setlength\itemsep{-3pt}
+
+\item[befriedigend oder enttäuschend:] Feier.
+\item[aufregend oder langweilig:]      Reise.
+\item[entspannend oder anstrengend:]   Sport.
+\item[kämpferisch oder fatalistisch:]  Alkoholiker.
+\end{labeling}
+
+\p{Erfahrung} ist ein Satz.
+
+\vskip 8pt
+\verb+https://de.wikipedia.org/wiki/Erfahrung+
+
+\vskip 8pt
+Erfahrung ist eine Hypothese, die durch Vergleich beim Experimentieren bestätigt
+oder widerlegt werden kann.
+
+\vskip 8pt
+\p{Spiritualität} ist eine Beziehung zwischen Tun, Erlebnis und Erfahrung.
+
+\vskip 8pt
+\verb+https://de.wikipedia.org/wiki/Spiritualit%C3%A4t+
+
+\vskip 8pt
+Ein spriritueller Mensch bewertet sein Handeln ethisch - gut, schlecht oder heilsam,
+unheilsam, $\ldots$ - über Erlebnisse und Erfahrungen. Abhängig von der
+Bewertung ändert er seine Lebensweise. Allein mit Wissen - naturwissenschaftliche
+Sätze -, Logik oder Mathemtik und Gesprächen kann er aus seiner aktuellen
+Lebensweise nicht ausbrechen, wenn er unzufrieden ist, wie er lebt.
+
+
+\vskip 8pt
+\verb+https://12schritte.net/+
+
+% End of a LaTeX text, that is to be printed.
+\end{document}

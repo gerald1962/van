@@ -1,4 +1,6 @@
 % This is the preamble of a LaTeX source code.
+% $ pdflatex -shell-escape test.tex
+%
 \documentclass[10pt,a4paper]{article}
 
 \setlength{\parskip}{-4pt}%
@@ -24,6 +26,13 @@
 % https://stackoverflow.com/questions/1673942/latex-table-positioning
 \usepackage{float} % H: Table positioning
 
+% Needed for Wahrheitsfunktion: \rowcolor.
+\usepackage{colortbl} % Allow rows and columns to be coloured.
+
+% Needed for Funktion und Begriff.
+\usepackage{tkz-euclide} % Cartesian coordinate system.
+
+
 % Color list:
 \definecolor{amber}{rgb}{1.0, 0.75, 0.0}
 \definecolor{amber(sae/ece)}{rgb}{1.0, 0.49, 0.0}
@@ -31,9 +40,15 @@
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
 \definecolor{armygreen}{rgb}{0.29, 0.33, 0.13}
+\definecolor{coolblack}{rgb}{0.0, 0.18, 0.39}
 \definecolor{coquelicot}{rgb}{1.0, 0.22, 0.0}
+\definecolor{cornellred}{rgb}{0.7, 0.11, 0.11}
 \definecolor{english}{rgb}{0.0, 0.5, 0.0}
 
+\definecolor{eggshell}{rgb}{0.94, 0.92, 0.84}
+
+% See Wahrheitsfunktion
+\DeclareMathSymbol{\mrq}{\mathrel}{operators}{`'}
 
 \begin{document}
 
@@ -123,7 +138,7 @@ edge node {0,1,R} (A)
 \verb+https://de.wikipedia.org/wiki/Menge_(Mathematik)+
 \vskip 8pt
 
-Eine Menge wird über Aufzählung oder Konstuktor - Formel - definiert.
+Eine Menge wird über Aufzählung - Liste - oder Konstuktor - Formel - definiert.
 
 \subsubsection {Aufzählung - Enumeration}
 
@@ -177,17 +192,375 @@ $A \times B := \{ (a, b)\ |\ a \in A, b \in B \}$
 
 \subsubsection{Beispiel}
 
+\vskip 4pt
+{\bf Bild}
+\vskip 8pt
+
+\vskip 8pt
+\verb+https://tex.stackexchange.com/questions/232536/drawing-rectangle-with-tikzpicture+
+\verb+https://mirror.dogado.de/tex-archive/graphics/pgf/base/doc/pgfmanual.pdf+, p. 35
+\vskip 8pt
+
+\begin{tikzpicture}
+
+  \filldraw[fill=red!20, draw=red!50!black] (0, 0) ellipse [x radius=7.5pt, y radius=30pt];
+  \draw (0,  0.5) node {\color{cornellred} {x}};
+  \draw (0,  0.0) node {\color{cornellred} {y}};
+  \draw (0, -0.5) node {\color{cornellred} {z}};
+
+  \draw (0,  1.5) node {{\bf A}};
+  
+  \filldraw[fill=green!20, draw=green!50!black] (2, 2) ellipse [x radius=30pt,  y radius=7.5pt];
+  \draw (1.5, 2) node {\color{english} {1}};
+  \draw (2.0, 2) node {\color{english} {2}};
+  \draw (2.5, 2) node {\color{english} {3}};
+
+  \draw (0.5, 2) node {{\bf B}};
+  
+  \filldraw[rounded corners=16pt, fill=blue!20, draw=blue!50!black] (0.6, -1) rectangle ++(70pt, 70pt);
+  \draw[step=0.7cm, draw=black!50] (1.0, -0.80) grid ++(55pt, 55pt);
+  \draw (1.00, 0.9) node {\scriptsize {\color{coolblack} {(x,1)}}};
+  \draw (1.75, 0.9) node {\scriptsize {\color{coolblack} {(x,2)}}};
+  \draw (2.50, 0.9) node {\scriptsize {\color{coolblack} {(x,3)}}};
+
+  \draw (1.00, 0.2) node {\scriptsize {\color{coolblack} {(y,1)}}};
+  \draw (1.75, 0.2) node {\scriptsize {\color{coolblack} {(y,2)}}};
+  \draw (2.50, 0.2) node {\scriptsize {\color{coolblack} {(y,3)}}};
+
+  \draw (1.00, -0.5) node {\scriptsize {\color{coolblack} {(z,1)}}};
+  \draw (1.75, -0.5) node {\scriptsize {\color{coolblack} {(z,2)}}};
+  \draw (2.50, -0.5) node {\scriptsize {\color{coolblack} {(z,3)}}};
+   
+  \draw (4, 0.2) node {{\bf A x B}};
+  
+\end{tikzpicture}
+
+\vskip 16pt
+{\bf Satz}
+
+\vskip 8pt
 $A = \{x, y, z\}$ \\
 $B = \{1, 2, 3\}$ \\
 $A \times B = \{ (x, 1), (x, 2), (x, 3), (y, 1), (y, 2), (y, 3), (z, 1), (z, 2), (z, 3) \}$
 
-\begin{tikzpicture}
 
-  \draw [line width=1pt] (0, 0) ellipse [x radius=15pt, y radius=30pt];
+\subsection{Natürliche Zahlen - $\N$}
+
+\subsubsection{Sinn}
+
+\verb+https://de.wikipedia.org/wiki/Proposition_(Linguistik)+ \\
+\verb+https://de.wikipedia.org/wiki/Valenz_(Linguistik)+ \\
+\verb+https://de.wikipedia.org/wiki/%C3%9Cber_Sinn_und_Bedeutung+ \\
+\verb+https://tex.stackexchange.com/questions/98052/umlauts-in-math-mode+ \\
+\verb+https://tex.stackexchange.com/questions/161246/quotation-marks-around-operator-in-math-mode+ \\
+\verb+https://de.wikipedia.org/wiki/Ellipse_(Sprache)+ \\
+\verb+https://de.wikipedia.org/wiki/Kontext_(Sprachwissenschaft)+ \\
+\verb+https://de.wikipedia.org/wiki/Sprachspiel+ \\
+\verb+https://de.wikipedia.org/wiki/Abstraktion+ \\
+\verb+https://golatex.de/viewtopic.php?t=1926+ \\
+
+\verb+https://www.philosophie.hu-berlin.de/de/lehrbereiche/natur/forschung/dfg-wittgenstein-ramsey+ \\
+\verb+https://plato.stanford.edu/entries/ramsey/+ \\
+
+\verb+https://tex.stackexchange.com/questions/155181/coordinate-system-in-latex-with-tikz+ \\
+\verb+https://ctan.net/macros/latex/contrib/tkz/tkz-euclide/doc/tkz-euclide.pdf+ \\
+\verb+https://de.wikipedia.org/wiki/Euklidischer_Raum+ \\
+\verb+https://de.wikipedia.org/wiki/Affine_Ebene+ \\
+
+Proposition ist der Sinn eines Satzes - Frege: \\
+Die Valenz oder Leerstellen von $z\ddot{a}hlen$ ist 2. \\
+
+\begin{labeling}{Konditionalsatz:}
+  \setlength\itemsep{-3pt}
+  
+\item[Proposition:]     $z\ddot{a}hlen(A, B)$
+\item[Positiver Satz:]  A zählt B.
+\item[Negativer Satz:]  A zählt nicht B.
+\item[Frage:]           Zählt A B?
+\item[Befehl:]          A, zähle B!
+\item[Ellipse:]         Zähle! - Kontext, Sprachspiel, $\ldots$
+\item[Konditionalsatz:] Wenn A B zählt, ...
+\item[$\ldots$] 
+
+\end{labeling}
+
+\subsubsection{Funktion und Begriff}
+
+\verb+https://de.wikipedia.org/wiki/Funktion_und_Begriff+ \\
+\verb+https://ia802700.us.archive.org/25/items/functionundbegr00freggoog/functionundbegr00freggoog.pdf+ \\
+
+Die ungeraden natürlichen Zahlen $2 \ast x + 1$ kann man als Funktion
+darstellen mit Definitionsmenge und Zielmenge: \\
+
+Zuordnungsvorschrift mit $D$ und $Z$:
+$f: \N \rightarrow \N,\ x \mapsto 2 \ast x + 1$ \\ oder \\
+\hskip -16pt
+\begin{minipage}{0.3\textwidth}
+  \[ f: \left\{%
+  \begin{array}{ll}
+    \N \rightarrow \N \\
+    x \mapsto 2 \ast x + 1
+  \end{array}
+  \right.
+  \]
+\end{minipage}
+\\
+
+\vskip 8pt
+Das Argument $x$ oder $()$ ist eine unbestimmte Zahl der Funktion $2 \ast x + 1$
+oder $2 \ast () + 1$. \\
+
+Eine Funktion mit dem Ausdruck $2 \ast x + 1$ oder mit einem anderen Ausdruck 
+$2 \ast () + 1$ für das Argument 1 hat den Wert $3$. \\
+
+In der affinen Ebene werden zwei Punkte mit eine Geraden verbunden und es gibt
+parallele Geraden. \\
+
+Der zweidimensionale euklidischen Raum ist die euklidische Ebene oder affine
+Ebene. \\
+
+Für beide Ausdrücke ergibt sich derselbe Werteverlauf, den wir in der euklidischen Ebene
+darstellen: \\
+
+\vskip 8pt
+\begin{tikzpicture}[scale=0.25]
+  \tkzInit[xmax=8,ymax=8]
+  \tkzGrid
+%  \tkzAxeXY
+
+% necessary to limit
+% the size of the axes
+\tkzDrawX[>=latex]
+\tkzDrawY[>=latex]
+
+\tkzDefPoint(0,1){A}
+\tkzDefPoint(1,3){B}
+\tkzDefPoint(2,5){C}
+\tkzDefPoint(3,7){D}
+
+\tkzDrawPoints[color=red](A,B,C,D)
+
+\draw (0,1) -- (3,7) node {\ };
 
 \end{tikzpicture}
 
-    
+\subsubsection{Tractatus}
+
+\verb+https://en.wikipedia.org/wiki/Nota_bene+ \\
+\verb+https://people.umass.edu/klement/tlp/tlp.pdf+ \\
+\verb+https:https://oeis.org/wiki/List_of_LaTeX_mathematical_symbols+ \\
+\verb+https://tex.stackexchange.com/questions/50804/explicit-space-character+ \\
+\verb+https://en.wikipedia.org/wiki/Logical_NOR+ \\
+\verb+https://de.wikipedia.org/wiki/%C3%9Cberstrich+ \\
+\verb+https://en.wikipedia.org/wiki/Tractatus_Logico-Philosophicus+ \\
+\verb+https://tex.stackexchange.com/questions/177000/math-mode-accents+ \\
+
+\verb+https://de.wikipedia.org/wiki/Paradoxon+ \\
+\verb+https://de.wikipedia.org/wiki/Satz_vom_Widerspruch+ \\
+
+\verb+https://de.wikipedia.org/wiki/Neun-Punkte-Problem+ \\
+
+\vskip 4pt
+{\bf NOR}
+\vskip 8pt
+
+Das Ergebnis der {NOR-Operation} -
+$p\ NOR\ q$ oder $p \downarrow q \Leftrightarrow \neg (p \vee q)$ - ist $wahr$,
+wenn beide Operanden $falsch$ sind. \\
+
+Ein Satz $p \downarrow q$ ist $wahr$, wenn: $Weder\ p\ noch\ q\ ist\ wahr$. \\
+
+$W$ bedeutet $wahr$ und $F$ bedeutet $falsch$. \\
+
+\begin{tabular}{|c|c|c|}
+  \hline
+  \rowcolor{eggshell} \textbf{p} & \textbf{q} & \textbf{(WWWF)(p,q)} \\
+  \hline
+  W & W & F \\
+  W & F & F \\
+  F & W & F \\
+  F & F & W \\
+  \hline
+\end{tabular}
+
+\vskip 12pt
+Den $OR$- oder $\vee$-Operation definieren wir mit $NOR$: \\
+$P = p \vee q \Leftrightarrow (p \downarrow q) \downarrow (p \downarrow q)$
+\\
+
+\begin{tabular}{|c|c|c|}
+  \hline
+  \rowcolor{eggshell} \textbf{p} & \textbf{q} & \textbf{P} \\
+  \hline
+  W & W & W \\
+  W & F & W \\
+  F & W & W \\
+  F & F & F \\
+  \hline
+\end{tabular}
+\\
+
+\vskip 8pt
+{\bf Wahrheitsfunktion}
+\vskip 8pt
+
+TLP 2.0211, TLP 2.0212: \\
+Die Welt hat eine Substanz und das sind die Gegenstände. Deswegen können wir ein
+Bild von der Welt erzeugen: \\
+ 
+Ein Bild ist $wahr$ oder $falsch$. \\
+
+TLP 2.21, 2.223: \\
+Wenn ein Bild wahr ist, gibt es eine Übereinstimmung mit der Wirklichkeit. \\
+Das finden wir heraus über einen Vergleich und das ist eine Abbildung. \\
+
+TLP 3.01: \\
+Ein Bild der Welt sind Gedanken: \\
+Ein Gedanke ist wahr, wenn er Bild der Welt ist. \\
+
+TLP 3.313: \\
+Eine Satzvariable wird ersetzt durch Sätze mit einem {\it konstanten} und
+{\it variablen} Ausdruck. \\
+N.b: \\
+e := expression \\
+P := complex proposition \\
+$P = e^1 e^2 e^3 $ \\
+$P = e^1 {\textvisiblespace}\ wohnt\ in{\textvisiblespace} e^3$ \\
+
+TLP 3.313, 3.333: \\
+Ein Satz ist eine Funktion und ein Argument ist ein Ausdruck. \\
+Ein Satz oder eine Funktion kann kein Argument sein, um Paradoxien aufzulösen. \\
+
+Eine Paradoxon ist eine widersprüchliche Aussage: ein Barbier rasiert alle
+Männer, die sich nicht selbst rasieren. \\
+
+TLP 4.022: \\
+Ein Gedanke ist immer sinnlich wahrnehmbar,
+auch wenn wir nichts tun oder schlafen: wie wir daliegen, wie sich unser
+Gesichtsausdruck verändert, $\ldots$. \\
+
+Beim Sprechen, Schreiben und was wir sonst noch so tun wie Kochen oder \\
+Aufräumen ist ein Gedanke deutlicher sinnlich wahrnehmbar und wir zeigen uns \\
+gegenseitig, wie wir das herausfinden, was wahr ist. \\
+
+TLP 5.5: \\
+Wenn wir die $NOR$-Operation $(FFFW) (\xi, \ldots)$ mit Elementarsätzen
+ausführen, ist das Ergebnis eine Wahrheitsfunktion. \\
+
+TLP 5.501: \\
+$\xi$ ist eine Satzvariable, der man z.B. drei Sätze $P, Q, R$ zuweissen kann. \\
+Der Überstrich $\bar {\textvisiblespace}$ von $\bar \xi = P, Q, R$
+bedeutet, dass die Werte ungeordnet sind. \\
+
+Die allgemeine Form eines Satzes - Proposition - ist eine Wahrheitsfunktion:
+$[\bar p, \bar \xi, N(\bar \xi)]$
+
+\begin{itemize}
+  \setlength\itemsep{0em}
+  
+\item $\bar p$        steht für alle Elemenatarsätze wie $p, q, \ldots$.
+\item $\bar \xi$      ist eine Satzvariable wie $P, Q, R, \ldots$, in der
+  Elementarsätze mit logischen Operatoren verbunden werden.
+\item $N (\bar \xi)$  ist die $NOR$-Operation mit Elementarsätzen.
+\end{itemize}
+ 
+TLP 6: \\
+Die Wahrheitsfunktion für $N(P)$ ist $(FFFW) (p,q)$ und wird berechnet mit \\
+
+\begin{tabular}{|c|c|c|}
+  \hline
+  \rowcolor{eggshell} \textbf{p} & \textbf{q} & \textbf{P} \\
+  \hline
+  W & W & F \\
+  W & F & F \\
+  F & W & F \\
+  F & F & W \\
+  \hline
+\end{tabular}
+
+
+\vskip 8pt
+{\bf Operation}
+\vskip 8pt
+
+TLP 6.01: \\
+Ein Satzübergang ist eine Operation $\Omega\mrq(\bar \eta)$:
+$[\bar \xi, N(\bar \xi)]\mrq (\bar\eta)\ (= [\bar \eta, \bar \xi, N(\bar \xi)])$ \\
+
+N.b: \\
+$[\bar \xi, N(\bar \xi)]$ ist ein 2-er Tupel oder Liste. \\
+Mit der Operation $\Omega\mrq(\bar \eta)$ tauschen wir die atomaren Sätze der
+Umgangssprache $\bar p$ durch die der Mathematik $\bar \eta$ aus, um die
+natürlichen Zahlen zu definieren. \\
+
+{\bf Koordinatensystem}
+\vskip 8pt
+
+\verb+https://de.wikipedia.org/wiki/Koordinatensystem+ \\
+
+{\bf Gleichung}
+\vskip 8pt
+
+\verb+https://de.wikipedia.org/wiki/Gleichung+ \\
+
+Eine Gleichung ist $T(l) = (m) T(r)$. \\
+In einer Gleichung gibt es mindestens vier Aspekte: Koordinatensystem, Term,
+Gleichheitszeichen und Wahrheitsfunktion. \\
+Sie wird aufgebaut aus einem Term $T(l)$ auf der linken Seite,
+dem Gleichheitszeichen $=(m)$ in der Mitte und dem Term $T(r)$ auf der rechten
+Seite. \\
+Das Gleichheitszeichen bedeutet, dass $T(l)$ mit $T(r)$ verglichen wird. \\
+Wenn $T(l)$ mit $T(r)$ übereinstimmt wie $p = p$, ist die Gleichung wahr,
+ansonsten falsch wie $p = q$ \\
+
+{\bf Natürlichen Zahlen}
+\vskip 8pt
+
+TLP 6.02, 6.021: \\
+Die Zahl ist der Exponent einer Operation.
+
+\begin{labeling}{Definition:}
+  \setlength\itemsep{-3pt}
+
+\item[Regeln:]
+  $x = \Omega^{0 \mrq}x$ \\
+  $\Omega^\mrq \Omega^{\nu \mrq}x = \Omega^{\nu+1 \mrq}x$
+
+\item[Reihe:]
+  $x, \Omega^{\mrq}x, \Omega^{\mrq}\Omega^{\mrq}x, \Omega^{\mrq}\Omega^{\mrq}\Omega^{\mrq}x, \ldots =
+  \Omega^{0 \mrq}x, \Omega^{0+1 \mrq}x, \Omega^{0+1+1 \mrq}x, \Omega^{0+1+1+1 \mrq}x, \ldots$
+
+\item[Operation:]
+  $[x, \xi, \Omega^{\mrq} \xi] = [\Omega^{0 \mrq}x, \Omega^{\nu \mrq}x, \Omega^{\nu+1 \mrq}x]$
+
+\item[Definition:]
+  $0 + 1 = 1$ \\
+  $0 + 1 + 1 = 2$ \\
+  $0 + 1 + + 1 = 3$ \\
+  $\vdots$
+\end{labeling}
+
+
+\vskip 8pt
+{\bf Gedanke und Satz oder Plan}
+\\
+\verb+https://de.wikipedia.org/wiki/Reflexive_Relation+ \\
+\verb+ttps://de.wikipedia.org/wiki/Selbstreferenzialit%C3%A4t+ \\
+
+\vskip 8pt
+\subsubsection{Von Neumann}
+
+\verb+https://de.wikipedia.org/wiki/Nat%C3%BCrliche_Zahl+
+
+\subsubsection{Ordinialzahl}
+
+\verb+https://de.wikipedia.org/wiki/Ordinalzahl+
+
+\subsubsection{Folge - Tupel}
+
+\verb+https://de.wikipedia.org/wiki/Folge_(Mathematik)+
+
+
 \subsection {Funktion}
 
 \verb+https://en.wikipedia.org/wiki/Function_(mathematics)+ \\
@@ -223,7 +596,7 @@ Element $y$ einer Zielmenge $Z$ zu.
 \begin{labeling}{Zuordnungsvorschrift mit $D$ und $Z$:} 
   \setlength\itemsep{-3pt}
   \item[Funktionsgleichung:]   $f(x) = x^2,\ x \in \N$
-  \item[Zuordnungsvorschrift mit $D$:] $x \rightarrow x^2,\ x \in \N$
+  \item[Zuordnungsvorschrift mit $D$:] $x \mapsto x^2,\ x \in \N$
     
   \setlength\itemsep{-12pt}
   \item[Zuordnungsvorschrift mit $D$ und $Z$:]
@@ -239,18 +612,19 @@ Element $y$ einer Zielmenge $Z$ zu.
     \]
     \end{minipage}
     
+    \setlength\itemsep{6pt}
+    \item[Wertetabelle:] 
+      \begin{tabular}{c||c|c|c|c}
+        % <-- added & and content for each colum
+        x & 1 & 2 & 3 & $\ldots$ \\
+        \hline
+        y & 1 & 4 & 9 & $\ldots$
+      \end{tabular}
+
+      \setlength\itemsep{0pt}
+      \item[Relation oder Aufzählung:] $f = \{ (1,1), (2,4), (3,9), \ldots \}$
+
 \end{labeling}
-\vskip 8pt
-
-\begin{verbatim}
-Wertetabelle:
-x|1|2|3|...
------------
-y|1|4|9|...
-Relation oder Aufzählung: f = {(1,1), (2,4), (3,9), ...}
-\end{verbatim}
-\vskip 8pt
-
 
 \subsubsection {Ausdruck}
 
@@ -281,16 +655,15 @@ Relation oder Aufzählung: f = {(1,1), (2,4), (3,9), ...}
 Eine partielle Funktion ordnet einem Element aus der Menge $X$ ein
 Element aus der Menge $Y$ zu.
 
-\vskip 16pt
+\vskip 8pt
 {\bf Aufzählung}
 
-\vskip 16pt
-\begin{verbatim}
-X = {1, 2, 3}
-Y = {a, b, c, d}
-f: X->Y = { 2->d, 3->c}
-\end{verbatim}
+\vskip 8pt
+$X = \{ 1, 2, 3, \}$ \\
+$Y = \{ a, b, c, d \}$ \\
+$f = \{ (2,d), (3,c)\}$
 
+\vskip 8pt
 \begin{tikzpicture}
 
   \node (1) at ( 0.0,   0.5) {1};
@@ -303,7 +676,7 @@ f: X->Y = { 2->d, 3->c}
   \node (c) at (2.15, -0.75) {c};
 
   \draw (0, 1.3) node {{\bf X}};
-  \draw (2, 1.5)  node {{\bf Y}};
+  \draw (2, 1.5) node {{\bf Y}};
   
 
   \draw [line width=1pt] (0, 0) ellipse [x radius=15pt, y radius=30pt];
@@ -314,15 +687,13 @@ f: X->Y = { 2->d, 3->c}
   
 \end{tikzpicture}
 
-\vskip 16pt
+\vskip 8pt
 {\bf Konstruktion}
 
-\begin{verbatim}
-Ungerade natürliche Zahlen.
-
-f: N -> N
-f(x) = 2x + 1
-\end{verbatim}
+\vskip 8pt
+Ungerade natürliche Zahlen: \\
+$f(x) = 2x + 1,\ x \in \N$ oder \\
+$f: \N \rightarrow \N,\ x \mapsto 2x + 1$
 
 
 \subsection {Algorithmus}
@@ -331,6 +702,24 @@ f(x) = 2x + 1
 \vskip 8pt
 
 Ein Algorithmus ist eine Turingmaschine.
+
+\subsubsection {Beweis}
+
+{\bf Transitives Denken}
+\\
+
+{\bf Reflexives Denken}
+\\
+\verb+https://de.wikipedia.org/wiki/Neun-Punkte-Problem+ \\
+\verb+https://de.wikipedia.org/wiki/0,999%E2%80%A6+ \\
+
+Verbinde 9 Punkte mit 4 Linien. \\
+
+N.b.:
+Verbinde x Punkte mit y Linien: optimale Weg. \\
+
+oder
+$0,999 \ldots = 1$.
 
 \subsubsection {Deterministischer Algorithmus}
 
@@ -395,9 +784,7 @@ $DTM$ ist eine deterministische Turingmaschine: $<Q, \Gamma, b, \Sigma, \delta, 
 
 \subsubsection {Architecture}
 
-\bf {Draft}
-
-\vskip 16pt
+\vskip 8pt
 \begin{tikzpicture}
 \tikzstyle{every path}=[very thick]
 
@@ -454,7 +841,13 @@ $DTM$ ist eine deterministische Turingmaschine: $<Q, \Gamma, b, \Sigma, \delta, 
 
 
 \vskip 16pt
-\bf {CPU}
+\bf {Computer system}
+
+\verb+https://www.tutorialspoint.com/Computer-System-Architecture+
+
+\begin{tikzpicture}
+\end{tikzpicture}
+
 \vskip 16pt
 
 
@@ -521,6 +914,8 @@ $read, \ calculate,\ write,\ address$ \\
       \hline
       % <-- added & and content for each colum
       \tb{C} & \tb{I} & \tb{O} & \tb{A} & \tb{N}\\ % <--
+      \hline
+      \hline
       S & 0 & 0 & S & A \\ % <--      
       \hline
       A & 0 & 1 & R & B \\ % <--      
@@ -541,7 +936,7 @@ $read, \ calculate,\ write,\ address$ \\
 
 \subsubsection{Trace}
 
-\vskip 16pt
+\vskip 4pt
 {\bf Log}
        
 \vskip 4pt
@@ -553,6 +948,7 @@ $read, \ calculate,\ write,\ address$ \\
       \hline
       % <-- added & and content for each colum
       \tb{P} & \tb{C} & \tb{I} & \tb{O} & \tb{A} & \tb{N} & \tb{M}\\ % <--
+      \hline
       \hline
       0  & S & 0 & 0 & S & A & $\{0, \ldots$, 0,    0,    0,    0, \e 0,    0,    0,    0, $\ldots, 0\}$\\ % <--      
       1  & A & 0 & 1 & R & B & $\{0, \ldots$, 0,    0,    0,    0,    1, \e 0,    0,    0, $\ldots, 0\}$\\ % <--      
@@ -573,6 +969,10 @@ $read, \ calculate,\ write,\ address$ \\
     \end{tabular}
   \end{center}
 \end{table}
+
+
+\subsection{TLP}
+
 
 
 \vskip 16pt
