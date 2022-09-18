@@ -1,4 +1,30 @@
 
+
+pgfplot
+=======
+Tutorial:
+--------
+https://golatex.de/wiki/Diagramme_mit_LaTeX
+https://tex.stackexchange.com/questions/120628/is-there-any-good-and-complete-tutorial-for-pgfplots
+https://reijz.github.io/2016/01/24/pgfplots.htm
+https://latex-tutorial.com/tutorials/pgfplotstable/
+https://wikis.ovgu.de/lss/doku.php?id=guide:latex:with_pgf
+https://reijz.github.io/2016/01/25/pgfplotstable.html
+https://latexdraw.com/plot-a-function-and-data-in-latex/
+https://shantoroy.com/latex/line-graph-pgfplots/#google_vignette
+https://latex-tutorial.com/tutorials/pgfplotstable/
+https://github.com/kmundnic/pgfplots-example
+https://shantoroy.com/latex/draw-multiple-y-axis-in-latex-pgfplot/
+https://towardsdatascience.com/how-to-create-publication-ready-plots-with-latex-4a095eb2f1bd
+
+TikZiT
+======
+
+GUI editor for graphs
+---------------------
+https://tikzit.github.io/
+
+
 125 Renate
 ==========
 Elkes Besuch - Nachlese
