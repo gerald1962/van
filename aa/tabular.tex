@@ -1,0 +1,35 @@
+% cd /home/gerald/van_development/van/aa
+% cp /home/gerald/van_development/van/edu/latex/emoji.sty 
+% 
+% Build rules:
+% pdflatex -shell-escape dia.tex
+% evince dia.pdf
+
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+% \setlength\LTleft\parindent
+% \setlength\LTright\fill
+  
+\begin{document}
+  
+\begin{tabular}{||l|c|r|p{6cm}||}
+    Left & Center & Right & Paragraph \\
+    1 & 1 & 1 & Lorem ipsum dolor sit amet, consectetuer adipiscing elit. \\
+    12 & 12 & 12 & Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis. \\
+    123 & 123 & 123 & Curabitur dictum gravidamauris. \\
+\end{tabular}
+
+\vskip 16pt
+% \noindent
+\begin{table}[h!]
+\begin{tabular}{@{}c|c|r|p{8cm}||}
+  Linie & Punkt & Jahr & Sachverhalt \\
+  \hline
+  $c$   & $K$ & {\bf 1962} & Geboren am 4.12.1962 in Dietfurt. \\
+  \  & 12 & 12 & Ut purus elit, vestibulum ut, placerat ac, adipiscing vitae, felis. \\
+  123 & 123 & 123 & Curabitur dictum gravidamauris. \\
+\end{tabular}
+\end{table}
+
+\end{document}

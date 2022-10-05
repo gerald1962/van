@@ -1,0 +1,49 @@
+\documentclass[10pt,a4paper]{article}
+
+% Import a package for a specific purpose: see https://www.ctan.org/
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}  % Customize the page layout.
+
+% \usepackage[textwidth=17cm,textheight=26cm]{geometry}  % Customize the page layout.
+\usepackage{tikzsymbols}    % Various emoticon: \includegraphics
+% \usepackage{enumitem}       % Control layout of itemize, enumerate, description.
+% \usepackage{wasysym}        % Provide symbols like \XBox.
+% \usepackage{scrextend}      % KOMA-Script class: labeling .
+% \usepackage{mdframed}       % Breakable framed and coloured boxes: mdframed.
+% \usepackage{anyfontsize}    % Select any font size: see \square.
+% \usepackage{stix}           % Complete set of mathematical glyphs: \boxtimes.
+% \usepackage[ngerman]{babel} % German orthography.
+% \usepackage{etoc}           % Table of contents control: \addcontentsline.
+% \usepackage{pdfpages}       % Inclusion of external PDF document: \includepdf.
+% \usepackage{colortbl}       % Allow rows and columns to be coloured: \rowcolor.
+% \usepackage{tcolorbox}      % Coloured and framed text boxes: tcolorbox
+% \tcbuselibrary{fitting,skins}
+% \usepackage{listings}       % Typeset programming code: lstlisting.
+% \usepackage{paracol}         % Multiple columns with texts in parallel: paracol.
+
+% xxx
+% \usepackage{subfig}
+
+\begin{document}
+  
+\begin{figure}
+% \centering
+\parbox{8cm}{
+  \includegraphics[
+    width=8cm,
+    height=6cm,
+    keepaspectratio,
+  ]{menue/vIndLeber.png}
+\caption{Vorbereitung}}
+\qquad
+\begin{minipage}{8cm}
+  \includegraphics[
+    width=8cm,
+    height=6cm,
+    keepaspectratio,
+  ]{menue/eIndLeber.png}
+\caption{Ergebnis}
+
+\end{minipage}
+\end{figure}
+
+\end{document}
