@@ -1,0 +1,17 @@
+[0] Config.pm:304> INFO - This is Biber 2.14 (beta)
+[0] Config.pm:307> INFO - Logfile is 'dia.blg'
+[54] biber:322> INFO - === Sa Okt 15, 2022, 10:35:56
+[64] Biber.pm:415> INFO - Reading 'dia.bcf'
+[112] Biber.pm:940> INFO - Using all citekeys in bib section 0
+[121] Biber.pm:4256> INFO - Processing section 0
+[121] Utils.pm:75> INFO - Globbing data source 'books.bib'
+[121] Utils.pm:91> INFO - Globbed data source 'books.bib' to books.bib
+[128] Biber.pm:4455> INFO - Looking for bibtex format file 'books.bib' for section 0
+[129] bibtex.pm:1653> INFO - LaTeX decoding ...
+[143] bibtex.pm:1471> INFO - Found BibTeX data source 'books.bib'
+[224] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[224] UCollate.pm:68> INFO - Overriding locale 'de-DE' defaults 'variable = shifted' with 'variable = non-ignorable'
+[224] Biber.pm:4084> INFO - Sorting list 'anyt/global//global/global' of type 'entry' with template 'anyt' and locale 'de-DE'
+[225] Biber.pm:4090> INFO - No sort tailoring available for locale 'de-DE'
+[235] bbl.pm:652> INFO - Writing 'dia.bbl' with encoding 'UTF-8'
+[242] bbl.pm:755> INFO - Output to dia.bbl

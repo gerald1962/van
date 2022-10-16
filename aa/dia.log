@@ -1,8 +1,8 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  5 OCT 2022 19:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.30)  15 OCT 2022 19:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**dia.tex
+**dia
 (./dia.tex
 LaTeX2e <2020-02-02> patch level 2
 L3 programming layer <2020-02-14>
@@ -1007,41 +1007,268 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@thisruleclass=\count329
 \@lastruleclass=\count330
 \@thisrulewidth=\dimen306
-) (./dia.aux)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
+Package: biblatex 2019/12/01 v3.14 programmable bibliographies (PK/MW)
+
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count331
+
+(/usr/share/texlive/texmf-dist/tex/latex/logreq/logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+\c@tabx@nest=\count332
+\c@listtotal=\count333
+\c@listcount=\count334
+\c@liststart=\count335
+\c@liststop=\count336
+\c@citecount=\count337
+\c@citetotal=\count338
+\c@multicitecount=\count339
+\c@multicitetotal=\count340
+\c@instcount=\count341
+\c@maxnames=\count342
+\c@minnames=\count343
+\c@maxitems=\count344
+\c@minitems=\count345
+\c@citecounter=\count346
+\c@maxcitecounter=\count347
+\c@savedcitecounter=\count348
+\c@uniquelist=\count349
+\c@uniquename=\count350
+\c@refsection=\count351
+\c@refsegment=\count352
+\c@maxextratitle=\count353
+\c@maxextratitleyear=\count354
+\c@maxextraname=\count355
+\c@maxextradate=\count356
+\c@maxextraalpha=\count357
+\c@abbrvpenalty=\count358
+\c@highnamepenalty=\count359
+\c@lownamepenalty=\count360
+\c@maxparens=\count361
+\c@parenlevel=\count362
+\blx@tempcnta=\count363
+\blx@tempcntb=\count364
+\blx@tempcntc=\count365
+\blx@maxsection=\count366
+\blx@maxsegment@0=\count367
+\blx@notetype=\count368
+\blx@parenlevel@text=\count369
+\blx@parenlevel@foot=\count370
+\blx@sectionciteorder@0=\count371
+\blx@entrysetcounter=\count372
+\labelnumberwidth=\skip141
+\labelalphawidth=\skip142
+\biblabelsep=\skip143
+\bibitemsep=\skip144
+\bibnamesep=\skip145
+\bibinitsep=\skip146
+\bibparsep=\skip147
+\bibhang=\skip148
+\blx@bcfin=\read5
+\blx@bcfout=\write6
+\blx@langwohyphens=\language85
+\c@mincomprange=\count373
+\c@maxcomprange=\count374
+\c@mincompwidth=\count375
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-dm.def
+File: blx-dm.def 2019/12/01 v3.14 biblatex localization (PK/MW)
+)
+Package biblatex Info: Trying to load biblatex style data model...
+Package biblatex Info: ... file 'alphabetic.dbx' not found.
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count376
+\c@savedafterword=\count377
+\c@annotator=\count378
+\c@savedannotator=\count379
+\c@author=\count380
+\c@savedauthor=\count381
+\c@bookauthor=\count382
+\c@savedbookauthor=\count383
+\c@commentator=\count384
+\c@savedcommentator=\count385
+\c@editor=\count386
+\c@savededitor=\count387
+\c@editora=\count388
+\c@savededitora=\count389
+\c@editorb=\count390
+\c@savededitorb=\count391
+\c@editorc=\count392
+\c@savededitorc=\count393
+\c@foreword=\count394
+\c@savedforeword=\count395
+\c@holder=\count396
+\c@savedholder=\count397
+\c@introduction=\count398
+\c@savedintroduction=\count399
+\c@namea=\count400
+\c@savednamea=\count401
+\c@nameb=\count402
+\c@savednameb=\count403
+\c@namec=\count404
+\c@savednamec=\count405
+\c@translator=\count406
+\c@savedtranslator=\count407
+\c@shortauthor=\count408
+\c@savedshortauthor=\count409
+\c@shorteditor=\count410
+\c@savedshorteditor=\count411
+\c@labelname=\count412
+\c@savedlabelname=\count413
+\c@institution=\count414
+\c@savedinstitution=\count415
+\c@lista=\count416
+\c@savedlista=\count417
+\c@listb=\count418
+\c@savedlistb=\count419
+\c@listc=\count420
+\c@savedlistc=\count421
+\c@listd=\count422
+\c@savedlistd=\count423
+\c@liste=\count424
+\c@savedliste=\count425
+\c@listf=\count426
+\c@savedlistf=\count427
+\c@location=\count428
+\c@savedlocation=\count429
+\c@organization=\count430
+\c@savedorganization=\count431
+\c@origlocation=\count432
+\c@savedoriglocation=\count433
+\c@origpublisher=\count434
+\c@savedorigpublisher=\count435
+\c@publisher=\count436
+\c@savedpublisher=\count437
+\c@language=\count438
+\c@savedlanguage=\count439
+\c@origlanguage=\count440
+\c@savedoriglanguage=\count441
+\c@pageref=\count442
+\c@savedpageref=\count443
+\shorthandwidth=\skip149
+\shortjournalwidth=\skip150
+\shortserieswidth=\skip151
+\shorttitlewidth=\skip152
+\shortauthorwidth=\skip153
+\shorteditorwidth=\skip154
+\locallabelnumberwidth=\skip155
+\locallabelalphawidth=\skip156
+\localshorthandwidth=\skip157
+\localshortjournalwidth=\skip158
+\localshortserieswidth=\skip159
+\localshorttitlewidth=\skip160
+\localshortauthorwidth=\skip161
+\localshorteditorwidth=\skip162
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-compat.def
+File: blx-compat.def 2019/12/01 v3.14 biblatex compatibility (PK/MW)
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.def
+File: biblatex.def 2019/12/01 v3.14 biblatex compatibility (PK/MW)
+\c@textcitecount=\count444
+\c@textcitetotal=\count445
+\c@textcitemaxnames=\count446
+\c@biburlbigbreakpenalty=\count447
+\c@biburlbreakpenalty=\count448
+\c@biburlnumpenalty=\count449
+\c@biburlucpenalty=\count450
+\c@biburllcpenalty=\count451
+\biburlbigskip=\muskip17
+\biburlnumskip=\muskip18
+\biburlucskip=\muskip19
+\biburllcskip=\muskip20
+\c@smartand=\count452
+)
+Package biblatex Info: Trying to load bibliography style 'alphabetic'...
+Package biblatex Info: ... file 'alphabetic.bbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/alphabetic.bbx
+File: alphabetic.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2019/12/01 v3.14 biblatex bibliography style (PK/MW)
+\c@bbx:relatedcount=\count453
+\c@bbx:relatedtotal=\count454
+))
+Package biblatex Info: Trying to load citation style 'alphabetic'...
+Package biblatex Info: ... file 'alphabetic.cbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/cbx/alphabetic.cbx
+File: alphabetic.cbx 2019/12/01 v3.14 biblatex citation style (PK/MW)
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+Package biblatex Info: Redefining '\cites'.
+Package biblatex Info: Redefining '\parencites'.
+Package biblatex Info: Redefining '\smartcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.cfg
+File: biblatex.cfg 
+))
+
+Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
+(biblatex)                Loading 'csquotes' recommended.
+
+\@quotelevel=\count455
+\@quotereset=\count456
+(./dia.aux)
 \openout1 = `dia.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 189.
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 189.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 209.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 209.
 LaTeX Font Info:    Trying to load font information for LS1+stix on input line 
-189.
-
-(/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stix.fd
+209.
+ (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stix.fd
 File: ls1stix.fd 2015/04/17 v1.1.2-latex STIX LS1 font definitions
 )
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 189.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 209.
 LaTeX Font Info:    Trying to load font information for LS2+stix on input line 
-189.
+209.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stix.fd
 File: ls2stix.fd 2015/04/17 v1.1.2-latex STIX LS2 font definitions
 )
-LaTeX Font Info:    ... okay on input line 189.
-LaTeX Font Info:    Trying to load font information for T1+stix on input line 1
-89.
+LaTeX Font Info:    ... okay on input line 209.
+LaTeX Font Info:    Trying to load font information for T1+stix on input line 2
+09.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/t1stix.fd
 File: t1stix.fd 2015/04/17 v1.1.2-latex STIX T1 font definitions
@@ -1083,28 +1310,36 @@ File: t1stix.fd 2015/04/17 v1.1.2-latex STIX T1 font definitions
 ABD: EveryShipout initializing macros
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count331
+\scratchcounter=\count457
 \scratchdimen=\dimen307
 \scratchbox=\box135
-\nofMPsegments=\count332
-\nofMParguments=\count333
+\nofMPsegments=\count458
+\nofMParguments=\count459
 \everyMPshowfont=\toks42
-\MPscratchCnt=\count334
+\MPscratchCnt=\count460
 \MPscratchDim=\dimen308
-\MPnumerator=\count335
-\makeMPintoPDFobject=\count336
+\MPnumerator=\count461
+\makeMPintoPDFobject=\count462
 \everyMPtoPDFconversion=\toks43
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/grfext/grfext.sty
+Package: grfext 2019/12/03 v1.3 Manage graphics extensions (HO)
+)
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 85.
+Package grfext Info: Graphics extension search list:
+(grfext)             [.pdf,.png,.jpg,.mps,.jpeg,.jbig2,.jb2,.PDF,.PNG,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 504.
 
 (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \AtBeginShipoutBox=\box136
-\Etoc@tf=\read5
+\Etoc@tf=\read6
 
 (/usr/share/texlive/texmf-dist/tex/latex/pdflscape/pdflscape.sty
 Package: pdflscape 2019/12/05 v0.12 Display of landscape pages in PDF (HO)
@@ -1114,81 +1349,108 @@ Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 )
-\c@lstlisting=\count337
+\c@lstlisting=\count463
 
 ABD: EverySelectfont initializing macros
-LaTeX Info: Redefining \selectfont on input line 189.
+LaTeX Info: Redefining \selectfont on input line 209.
+Package biblatex Info: Trying to load language 'ngerman'...
+Package biblatex Info: ... file 'ngerman.lbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/ngerman.lbx
+File: ngerman.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
+Package biblatex Info: Trying to load language 'german'...
+Package biblatex Info: ... file 'german.lbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/german.lbx
+File: german.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
+)
+Package biblatex Info: Trying to load language 'german'...
+Package biblatex Info: ... file 'german.lbx' found.
+
+(/usr/share/texlive/texmf-dist/tex/latex/biblatex/lbx/german.lbx
+File: german.lbx 2019/12/01 v3.14 biblatex localization (PK/MW)
+))
+Package biblatex Info: Input encoding 'utf8' detected.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'utf8'.
+\openout6 = `dia.bcf'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'dia.bbl' found.
+ (./dia.bbl)
+Package biblatex Info: Reference section=0 on input line 209.
+Package biblatex Info: Reference segment=0 on input line 209.
 \g__tikzsymbols_savebox_F_0 g 0 G_17.28_BasicTree_1.5_brown!70!black_green!90!b
 lack_green!80!black_leaf_box=\box137
 LaTeX Font Info:    Trying to load font information for LS1+stixscr on input li
-ne 197.
+ne 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixscr.fd
 File: ls1stixscr.fd 2015/04/17 v1.1.2-latex STIX script LS1 font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixex on input lin
-e 197.
+e 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixex.fd
 File: ls2stixex.fd 2015/04/17 v1.1.2-latex STIX extentions LS2 font definitions
 
 )
-LaTeX Font Info:    Trying to load font information for U+wasy on input line 19
+LaTeX Font Info:    Trying to load font information for U+wasy on input line 21
 7.
 
 (/usr/share/texlive/texmf-dist/tex/latex/wasysym/uwasy.fd
 File: uwasy.fd 2020/01/19 v2.4 Wasy-2 symbol font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixfrak on input l
-ine 197.
+ine 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixfrak.fd
 File: ls1stixfrak.fd 2015/04/17 v1.1.2-latex STIX fraktur LS1 font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixbb on input lin
-e 197.
+e 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixbb.fd
 File: ls1stixbb.fd 2015/04/17 v1.1.2-latex STIX blackboard LS1 font definitions
 
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixcal on input li
-ne 197.
+ne 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixcal.fd
 File: ls2stixcal.fd 2015/04/17 v1.1.2-latex STIX calligraphic LS2 font definiti
 ons
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixsf on input lin
-e 197.
+e 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixsf.fd
 File: ls1stixsf.fd 2015/04/17 v1.1.2-latex STIX sans-serif LS1 font definitions
 
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixtt on input lin
-e 197.
+e 217.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixtt.fd
 File: ls2stixtt.fd 2015/04/17 v1.1.2-latex STIX typewriter LS2 font definitions
 
 )
 LaTeX Font Info:    Font shape `T1/stix/m/sl' in size <12> not available
-(Font)              Font shape `T1/stix/m/it' tried instead on input line 197.
-\tf@toc=\write6
-\openout6 = `dia.toc'.
+(Font)              Font shape `T1/stix/m/it' tried instead on input line 217.
+\tf@toc=\write7
+\openout7 = `dia.toc'.
 
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
-50.
+70.
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 )
 LaTeX Font Info:    Trying to load font information for TS1+stix on input line 
-275.
+295.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ts1stix.fd
 File: ts1stix.fd 2015/04/17 v1.1.2-latex STIX TS1 font definitions
@@ -1198,7 +1460,7 @@ Overfull \vbox (42.13335pt too high) has occurred while \output is active []
 
 [4] [5] [6] [7] [8] [9]
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 1021.
+ mdframed uses option nobreak mdframed on input line 1041.
  [10]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_-2_box=\box138
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_-1.5_box=\box139
@@ -1208,26 +1470,26 @@ Package mdframed Info: mdframed inside a box
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_1.5_box=\box143
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_2_box=\box144
 LaTeX Font Info:    Font shape `T1/stix/m/sl' in size <10> not available
-(Font)              Font shape `T1/stix/m/it' tried instead on input line 1175.
+(Font)              Font shape `T1/stix/m/it' tried instead on input line 1195.
 
  [11] [12]
-Package mdframed Info: Not enough space on this page on input line 1249.
+Package mdframed Info: Not enough space on this page on input line 1269.
  [13]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 1506.
+(mdframed)              on input line 1526.
  [14] [15]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_gold(web)(golden)_2_box=\box1
 45
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 1776.
+(mdframed)              on input line 1796.
  [16]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_red_0_box=\box146
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_2_box=\box147
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 1894.
+(mdframed)              on input line 1914.
  [17]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_red_1_box=\box148
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_1_box=\box149
@@ -1242,12 +1504,12 @@ File: lstlang1.sty 2019/09/10 1.8c listings language file
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_0_box=\box152
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 2459.
+(mdframed)              on input line 2479.
  [22]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_0_box=\box153
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 2598.
+(mdframed)              on input line 2618.
  [23]
 \g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_1_box=\box154
  [24] [25]
@@ -1257,187 +1519,202 @@ Package mdframed Info: Box was splittet wrong
  [27]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 3180.
+(mdframed)              on input line 3200.
  [28] [29] [30] [31] [32]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 3835.
+(mdframed)              on input line 3855.
  [33]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 3835.
+(mdframed)              on input line 3855.
  [34]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 4007.
+(mdframed)              on input line 4027.
  [35]
 [36]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 4234.
+(mdframed)              on input line 4254.
  [37] [38] [39]
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
-(mdframed)              on input line 4488.
+(mdframed)              on input line 4508.
  [40] [41]
-Package mdframed Info: Not enough space on this page on input line 4638.
- [42]
-<lw220912.pdf, id=161, 614.295pt x 794.97pt>
+\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_-1_box=\box157
+Package mdframed Info: Box was splittet wrong
+ starting loop to iterate the splitting point
+(mdframed)              on input line 4712.
+ [42] [43]
+Package mdframed Info: Box was splittet wrong
+ starting loop to iterate the splitting point
+(mdframed)              on input line 4962.
+ [44] [45] [46] [47] [48] [49] [50]
+[51] [52]
+Package mdframed Info: Box was splittet wrong
+ starting loop to iterate the splitting point
+(mdframed)              on input line 5956.
+ [53]
+<lw220912.pdf, id=197, 614.295pt x 794.97pt>
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 4734.
+Package pdftex.def Info: lw220912.pdf  used on input line 6052.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 4734.
+Package pdftex.def Info: lw220912.pdf  used on input line 6052.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<lw220912.pdf, id=164, page=1, 614.295pt x 794.97pt>
+<lw220912.pdf, id=200, page=1, 614.295pt x 794.97pt>
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 4734.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 6052.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 4734.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [43]
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 4734.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 4734.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 4734.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [44 <./lw220912.pdf>]
-<menue/vThunfischR.png, id=176, 291.0875pt x 192.72pt>
-File: menue/vThunfischR.png Graphic file (type png)
-<use menue/vThunfischR.png>
-Package pdftex.def Info: menue/vThunfischR.png  used on input line 4784.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischR.png, id=177, 291.0875pt x 192.72pt>
-File: menue/eThunfischR.png Graphic file (type png)
-<use menue/eThunfischR.png>
-Package pdftex.def Info: menue/eThunfischR.png  used on input line 4791.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberBohnen.png, id=178, 291.0875pt x 192.72pt>
-File: menue/vLeberBohnen.png Graphic file (type png)
-<use menue/vLeberBohnen.png>
-Package pdftex.def Info: menue/vLeberBohnen.png  used on input line 4809.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberBohnen.png, id=179, 291.0875pt x 192.72pt>
-File: menue/eLeberBohnen.png Graphic file (type png)
-<use menue/eLeberBohnen.png>
-Package pdftex.def Info: menue/eLeberBohnen.png  used on input line 4816.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vTofuKartoffeln.png, id=180, 291.0875pt x 192.72pt>
-File: menue/vTofuKartoffeln.png Graphic file (type png)
-<use menue/vTofuKartoffeln.png>
-Package pdftex.def Info: menue/vTofuKartoffeln.png  used on input line 4834.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eTofuKartoffeln.png, id=181, 291.0875pt x 192.72pt>
-File: menue/eTofuKartoffeln.png Graphic file (type png)
-<use menue/eTofuKartoffeln.png>
-Package pdftex.def Info: menue/eTofuKartoffeln.png  used on input line 4841.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberKohlrabi.png, id=182, 291.0875pt x 192.72pt>
-File: menue/vLeberKohlrabi.png Graphic file (type png)
-<use menue/vLeberKohlrabi.png>
-Package pdftex.def Info: menue/vLeberKohlrabi.png  used on input line 4859.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberKohlrabi.png, id=183, 291.0875pt x 192.72pt>
-File: menue/eLeberKohlrabi.png Graphic file (type png)
-<use menue/eLeberKohlrabi.png>
-Package pdftex.def Info: menue/eLeberKohlrabi.png  used on input line 4866.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
- [45 <./menue/vThunfischR.png> <./menue/eThunfischR.png> <./menue/vLeberBohnen.
-png> <./menue/eLeberBohnen.png> <./menue/vTofuKartoffeln.png> <./menue/eTofuKar
-toffeln.png>]
-<menue/vWienerSk.png, id=187, 291.0875pt x 192.72pt>
-File: menue/vWienerSk.png Graphic file (type png)
-<use menue/vWienerSk.png>
-Package pdftex.def Info: menue/vWienerSk.png  used on input line 4884.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eWienerSk.png, id=188, 291.0875pt x 192.72pt>
-File: menue/eWienerSk.png Graphic file (type png)
-<use menue/eWienerSk.png>
-Package pdftex.def Info: menue/eWienerSk.png  used on input line 4891.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vThunfischMr.png, id=189, 291.0875pt x 192.72pt>
-File: menue/vThunfischMr.png Graphic file (type png)
-<use menue/vThunfischMr.png>
-Package pdftex.def Info: menue/vThunfischMr.png  used on input line 4909.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischMr.png, id=190, 291.0875pt x 192.72pt>
-File: menue/eThunfischMr.png Graphic file (type png)
-<use menue/eThunfischMr.png>
-Package pdftex.def Info: menue/eThunfischMr.png  used on input line 4916.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-
-[46 <./menue/vLeberKohlrabi.png> <./menue/eLeberKohlrabi.png> <./menue/vWienerS
-k.png> <./menue/eWienerSk.png> <./menue/vThunfischMr.png> <./menue/eThunfischMr
-.png>] [47] [48] [49] [50] [51] [52] [53]
-<GrstAktz.pdf, id=217, 614.295pt x 794.97pt>
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 5588.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 5588.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<GrstAktz.pdf, id=220, page=1, 614.295pt x 794.97pt>
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 5588.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 5588.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 6052.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
  [54]
+File: lw220912.pdf Graphic file (type pdf)
+<use lw220912.pdf, page 1>
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 6052.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+File: lw220912.pdf Graphic file (type pdf)
+<use lw220912.pdf, page 1>
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 6052.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+File: lw220912.pdf Graphic file (type pdf)
+<use lw220912.pdf, page 1>
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 6052.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+ [55 <./lw220912.pdf>]
+<menue/vThunfischR.png, id=212, 291.0875pt x 192.72pt>
+File: menue/vThunfischR.png Graphic file (type png)
+<use menue/vThunfischR.png>
+Package pdftex.def Info: menue/vThunfischR.png  used on input line 6102.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eThunfischR.png, id=213, 291.0875pt x 192.72pt>
+File: menue/eThunfischR.png Graphic file (type png)
+<use menue/eThunfischR.png>
+Package pdftex.def Info: menue/eThunfischR.png  used on input line 6109.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/vLeberBohnen.png, id=214, 291.0875pt x 192.72pt>
+File: menue/vLeberBohnen.png Graphic file (type png)
+<use menue/vLeberBohnen.png>
+Package pdftex.def Info: menue/vLeberBohnen.png  used on input line 6127.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eLeberBohnen.png, id=215, 291.0875pt x 192.72pt>
+File: menue/eLeberBohnen.png Graphic file (type png)
+<use menue/eLeberBohnen.png>
+Package pdftex.def Info: menue/eLeberBohnen.png  used on input line 6134.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/vTofuKartoffeln.png, id=216, 291.0875pt x 192.72pt>
+File: menue/vTofuKartoffeln.png Graphic file (type png)
+<use menue/vTofuKartoffeln.png>
+Package pdftex.def Info: menue/vTofuKartoffeln.png  used on input line 6152.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eTofuKartoffeln.png, id=217, 291.0875pt x 192.72pt>
+File: menue/eTofuKartoffeln.png Graphic file (type png)
+<use menue/eTofuKartoffeln.png>
+Package pdftex.def Info: menue/eTofuKartoffeln.png  used on input line 6159.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/vLeberKohlrabi.png, id=218, 291.0875pt x 192.72pt>
+File: menue/vLeberKohlrabi.png Graphic file (type png)
+<use menue/vLeberKohlrabi.png>
+Package pdftex.def Info: menue/vLeberKohlrabi.png  used on input line 6177.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eLeberKohlrabi.png, id=219, 291.0875pt x 192.72pt>
+File: menue/eLeberKohlrabi.png Graphic file (type png)
+<use menue/eLeberKohlrabi.png>
+Package pdftex.def Info: menue/eLeberKohlrabi.png  used on input line 6184.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+ [56 <./menue/vThunfischR.png> <./menue/eThunfischR.png> <./menue/vLeberBohnen.
+png> <./menue/eLeberBohnen.png> <./menue/vTofuKartoffeln.png> <./menue/eTofuKar
+toffeln.png>]
+<menue/vWienerSk.png, id=223, 291.0875pt x 192.72pt>
+File: menue/vWienerSk.png Graphic file (type png)
+<use menue/vWienerSk.png>
+Package pdftex.def Info: menue/vWienerSk.png  used on input line 6202.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eWienerSk.png, id=224, 291.0875pt x 192.72pt>
+File: menue/eWienerSk.png Graphic file (type png)
+<use menue/eWienerSk.png>
+Package pdftex.def Info: menue/eWienerSk.png  used on input line 6209.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/vThunfischMr.png, id=225, 291.0875pt x 192.72pt>
+File: menue/vThunfischMr.png Graphic file (type png)
+<use menue/vThunfischMr.png>
+Package pdftex.def Info: menue/vThunfischMr.png  used on input line 6227.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+<menue/eThunfischMr.png, id=226, 291.0875pt x 192.72pt>
+File: menue/eThunfischMr.png Graphic file (type png)
+<use menue/eThunfischMr.png>
+Package pdftex.def Info: menue/eThunfischMr.png  used on input line 6234.
+(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
+ [57 <./menue/vLeberKohlrabi.png> <./menue/eLeberKohlrabi.png> <./menue/vWiener
+Sk.png> <./menue/eWienerSk.png> <./menue/vThunfischMr.png> <./menue/eThunfischM
+r.png>] [58] [59]
+[60] [61] [62] [63] [64]
+<GrstAktz.pdf, id=252, 614.295pt x 794.97pt>
+File: GrstAktz.pdf Graphic file (type pdf)
+<use GrstAktz.pdf>
+Package pdftex.def Info: GrstAktz.pdf  used on input line 6912.
+(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
+File: GrstAktz.pdf Graphic file (type pdf)
+<use GrstAktz.pdf>
+Package pdftex.def Info: GrstAktz.pdf  used on input line 6912.
+(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
+<GrstAktz.pdf, id=255, page=1, 614.295pt x 794.97pt>
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 5588.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 6912.
+(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
+File: GrstAktz.pdf Graphic file (type pdf)
+<use GrstAktz.pdf, page 1>
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 6912.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+ [65]
+File: GrstAktz.pdf Graphic file (type pdf)
+<use GrstAktz.pdf, page 1>
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 6912.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 5588.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 6912.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 5588.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 6912.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [55 <./GrstAktz.pdf>] [56]
-(./dia.aux) ) 
+ [66 <./GrstAktz.pdf>] [67] (./dia.aux)
+Package logreq Info: Writing requests to 'dia.run.xml'.
+\openout1 = `dia.run.xml'.
+
+ ) 
 Here is how much of TeX's memory you used:
- 29552 strings out of 481239
- 574088 string characters out of 5920377
- 1205215 words of memory out of 5000000
- 44306 multiletter control sequences out of 15000+600000
+ 36695 strings out of 481239
+ 717454 string characters out of 5920377
+ 1552056 words of memory out of 5000000
+ 51390 multiletter control sequences out of 15000+600000
  646641 words of font info for 151 fonts, out of 8000000 for 9000
- 1141 hyphenation exceptions out of 8191
- 88i,19n,97p,870b,2805s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/stix/stix-ts1.enc} 
-</home/gerald/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk
->{/usr/share/texlive/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</usr/share/te
-xlive/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/stix/stix-mathbb.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/stix/stix-mathex.pfb></usr/share/texlive/texmf-dist/fon
-ts/type1/public/stix/stix-mathit.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/stix/stix-mathrm.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-stix/stix-mathscr.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/wasy-ty
-pe1/wasy10.pfb>
-Output written on dia.pdf (56 pages, 2746791 bytes).
+ 1143 hyphenation exceptions out of 8191
+ 88i,19n,97p,1124b,2807s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/stix/stix-ts1.enc} </home/gera
+ld/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt1000.600pk>{/usr/shar
+e/texlive/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</usr/share/texlive/texmf
+-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/stix/STIXGeneral-Italic.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/stix/STIXGeneral-Regular.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/stix/stix-mathbb.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/stix/stix-mathex.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/stix/stix-mathit.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/sti
+x/stix-mathrm.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/stix/stix-m
+athscr.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/wasy-type1/wasy10.
+pfb>
+Output written on dia.pdf (67 pages, 2788595 bytes).
 PDF statistics:
- 345 PDF objects out of 1000 (max. 8388607)
- 174 compressed objects within 2 object streams
+ 380 PDF objects out of 1000 (max. 8388607)
+ 198 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  149 words of extra memory for PDF output out of 10000 (max. 10000000)
 

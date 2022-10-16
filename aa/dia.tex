@@ -185,6 +185,26 @@
 \usepackage{tabularx,ragged2e,booktabs}
 
 
+
+% xxx
+\usepackage[backend=biber,style=alphabetic,]{biblatex}
+
+% biber dia
+% pdflatex dia
+% pdflatex dia
+%
+\addbibresource{books.bib}
+
+\defbibheading{bibliography}[\bibname]{%
+  \subsection{Bibliothek}%
+  \markboth{#1}{#1}}
+
+\defbibheading{subbibliography}[\bibname]{%
+  \subsubsection{#1}%
+  \markboth{#1}{#1}}
+
+
+
 % Start of a LaTeX text, that is to be printed.
 \begin{document}
 
@@ -4489,71 +4509,1370 @@ Geschichte und lächelt verschmitzt.
 
 
 \ddivide
-{\prop {6.10.2022 - Donnerstag}}
+{\rele {6.10.2022 - Donnerstag}}
        
 \begin{mdframed}[style=daystyle]
   \begin{labeling}{{\mand {Bemerkungen:}}}
     \setlength\itemsep{-3pt}
-  \item[{\mand {Countdown:}}]    \n{\_\_} {\rewo {16 (16) 16 Stunden}}
-  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
-  \item[{\mand {Abstinenz:}}]    \n{\_\_} {\prop {? Tage}}
-  \item[{\mand {Gesundheit:}}]   \n{\_\_} {\prop {Ruhepuls: ? (70), Blutdruck: ?/? (143/89)}}
-  \item[{\mand {Körperpflege:}}] \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Duschen}}
-  \item[{\mand {Ernährung:}}]    \n{\_\_}
+  \item[{\mand {Countdown:}}]     \n{\_7} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_8} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Abstinenz:}}]     \n{\_9} 27 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 64 (70), Blutdruck:127/78 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_3} $2 \times$ Zähneputzen (2), $\square$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_4}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{$\square$ Intervallfasten:} 
         \setlength\itemsep{-3pt}  
-      \item[$\square$ Früstück:]         06.15: schwarzer Kaffee
-      \item[$\square$ Mittagessem:]      $\oldemptyset$
-      \item[$\square$ Abendessen:]       17.00: {\prop {???}}
-      \item[$\square$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
-      \item[$\square$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Hähnchen, Linsen, Champignons, Kohlrabi
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
       \end{labeling}
     \end{minipage}
       \bottomspace
-  \item[{\mand {Snoopy:}}]       \n{\_\_} {\prop {0 Spaziergänge (4); $\square$ SHG ohne Snoopy}}
-  \item[{\mand {Zazen:}}]        \n{\_\_} {\prop {$\square$ 25 min, $\square$ 25 min}}
+  \item[{\mand {Snoopy:}}]        \n{\_6} 4 Spaziergänge (4); $\square$ Einkaufen ohne Snoopy
+  \item[{\mand {Zazen:}}]        \n{\_\_} $\square$ 25 min, $\square$ 25 min
   \item[{\mand {Sport:}}]        \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
         \setlength\itemsep{-3pt}
-      \item[$\square$ Schulterübungen:] {\prop {$s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)}}
-      \item[$\square$ Nackenübungen:]   {\prop {$s^0 \times r^{10} \times e^3$ (3)}}
-      \item[$\square$ Schmetterling:]   {\prop {$s^0 \times e^3 \times 2\ min$ (3)}}
-      \item[$\square$ Roller:]          {\prop {$s^0 \times e^{10}$ (3)}}
-      \item[$\square$ Rumpfbeugen:]     {\prop {$s^0 \times e^{10}$ (3)}}
-      \item[$\square$ Laufen:]          {\prop {$r^0 \times 3\ km$ (1)}}
-      \item[$\square$ Liegestützen:]    {\prop {$s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100}}
+      \item[$\square$ Schulterübungen:] $s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^0 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^0 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^0 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^0 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\square$ Liegestützen:]    $s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
       \end{labeling}
     \end{minipage}
     \bottomspace        
-  \item[{\mand {SHG:}}]          \n{\_\_} {\prop {$\square$ AA in Erlangen von 19.00 - 21.00}}
-  \item[{\mand {Freunde:}}]      \n{\_\_} {\prop {$\square$ Kaffee trinken}}
-  \item[{\mand {Verwaltung:}}]   \n{\_\_} {\prop {$\square$ Bewerbung}}
-  \item[{\mand {Haus:}}]         \n{\_\_} {\prop {$\square$ Bücher aufräumen}}
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Erlangen von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} $\square$ Kaffee trinken
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Lebenslauf
+  \item[{\mand {Haus:}}]         \n{\_\_} $\boxtimes$ Holz aufschlichten, $\square$ Bücher aufräumen
   \item[{\mand {Garten:}}]       \n{\_\_} Herbst
   \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
-  \item[{\mand {Lesen:}}]        \n{\_\_} {\prop {$\square$ Tractatus: 5.4 - ?}}
-  \item[{\mand {Fokus:}}]        \n{\_\_} {\prop {$\square$ Bücher aufräumen}}
-  \item[{\mand {Schlaf:}}]       \n{\_\_} {\prop {$\square$ 22.00 - 06.00 (?)}}
-  \item[{\mand {Backlog:}}]      \n{\_\_} {\prop {
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.4 - ?, $\square$ Basis Bibel: ?
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\square$ Bücher aufräumen
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 20.00 - 06.00 (10)
+  \item[{\mand {Backlog:}}]        \n{10} 
     $+$ Bewerbung,
     $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
-    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.}}    
-  \item[{\opti {Brennholz:}}]    \n{\_\_} {\prop {$\square$ Karli liefert in der KW 40 12 Ster Scheitholz.
-    Liefertermin ist offen.}}
+    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.
+  \item[{\opti {Brennholz:}}]      \n{12} $\square$ Karli liefert heute um 13.00 Uhr 12 Ster Kiefern-Scheitholz.
+    Es kostet 960 \euro und ist bezahlt.
+  \item[{\mand {Plan:}}]           \n{11}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\draf {$\square$ {Lebenslauf:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Lebenslauf:] 13.30 - 15.00
+      \item[$\square$ Bücher:]     15.00 - 15.00
+      \item[$\square$ Lesen:]      16.00 - 17.00
+      \item[$\square$ Snoopy:]     17.00 - 17.30
+        
+      \item[$\square$ Lebenslauf:] 17.30 - 19.30
+      \item[$\square$ Bücher:]     19.30 - 21.30
+      \item[$\square$ Lesen:]      20.30 - 21.30
+      \item[$\square$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]   \n{\_5} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Dem Abwärtstrend mußt du dich widersetzen.
+
+  \vskip 2pt
+  Darf ich die Erkältung auskurieren.
+
+  \vskip 2pt
+  Papperlapapp. Ein bisschen mehr wie gestern darf es heute schon sein.
+
+  \vskip 2pt
+  In der Tat. Heute bin ich nicht so erschöpft.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {7.10.2022 - Freitag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_7} {\rewo {6 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_6} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{-1}
+  \item[{\mand {Abstinenz:}}]     \n{\_5} 28 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 64 (70), Blutdruck: 134/85 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_3} $1 \times$ Zähneputzen (2), $\square$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_4}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Leber, Kartoffeln, Wirsing
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_9} 4 Spaziergänge (4); $\square$ SHG ohne Snoopy
+  \item[{\mand {Zazen:}}]        \n{\_\_} $\square$ 25 min, $\square$ 25 min
+  \item[{\mand {Sport:}}]        \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Schulterübungen:] $s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^0 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^0 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^0 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^0 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\square$ Liegestützen:]    $s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Erlangen von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} $\square$ Kaffee trinken
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Bewerbung
+  \item[{\mand {Haus:}}]         \n{\_\_} $\boxtimes$ Holz aufschlichten, $\square$ Bücher aufräumen
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.4 - ?, Basis Bibel: ?
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\square$ Bücher aufräumen
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\square$ 23.00 - 06.00 (7)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Bewerbung,
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
+    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.
+  \item[{\opti {Regal:}}]          \n{10} $\boxtimes$ Aufstellen des Holzregals.
+  \item[{\mand {Plan:}}]          \n{\_8}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Lebenslauf:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00
+      \item[$\boxtimes$ Einkaufen:]  08.00 - 09.00
+      \item[$\boxtimes$ Holz:]       09.00 - 11.30        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Holz:]       12.30 - 16.00        
+      \item[$\boxtimes$ Regal:]      16.00 - 17.00        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30
+      \item[$\boxtimes$ Kochen:]     17.30 - 19.00
+      \item[$\square$ Lebenslauf:] 19.00 - 20.00
+      \item[$\square$ Bücher:]     20.00 - 21.00
+      \item[$\square$ Lesen:]      21.00 - 21.30        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]   \n{\_\_} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Im Lebenslauf bist du steckengeblieben.
+
+  \vskip 2pt
+  Wie wurschtle ich mich durch?
+
+  \vskip 2pt
+  Fangen wir mit den offenen Punkten und Linien an.
+
+  \vskip 2pt
+  Priesterseminar \\
+  Musisches Internat oder Gabieli-Heim \\
+  Fallschirmjäger \\
+  Studium \\
+  Basisband \\
+  Stolzenroth
+
+  \vskip 2pt
+  Bitte löse die Rätsel mit einem korrekten deutschen Satz.
+
+  \vskip 2pt
+  Später nach dem Holz schlichten. Viele Zwischenpunkte blubbern an die
+  Oberfläche: Zen, eigene Wohnung, Jagd nach Fossilen, 100 Bücher der
+  Weltliteratur, $\ldots$
+
+  \vskip 2pt
+  Betrachte die Punkt als Menge und zähle die Elemente auf: P = \{ $\ldots$ \}, $\ldots$
+  
+\end{mdframed}
+
+
+\ddivide
+{\rele {8.10.2022 - Samstag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_7} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_6} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Abstinenz:}}]     \n{\_5} 29 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 53 (70), Blutdruck: 134/79 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_3} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_4}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Thunfisch, Zwiebel, Champingnons, Erbsen, Bohnen, Kopfsalat
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_9} 4 Spaziergänge (4)
+  \item[{\mand {Zazen:}}]          \n{10} $\boxtimes$ 10 min, $\boxtimes$ 10 min
+  \item[{\mand {Sport:}}]        \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Schulterübungen:] $s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^0 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^0 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^0 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^0 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\square$ Liegestützen:]    $s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Nürnberg von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Cornona
+  \item[{\mand {Verwaltung:}}]     \n{15} $\square$ Lebenslauf
+  \item[{\mand {Haus:}}]           \n{12} $\boxtimes$ Holz aufschlichten
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]          \n{14} $\boxtimes$ Tractatus: 5.4 - 5.5, $\boxtimes$ Basis Bibel: 1
+  \item[{\mand {Fokus:}}]          \n{11} $\boxtimes$ Holz aufschlichten, $\boxtimes$ Lebenslauf
+  \item[{\mand {Schlaf:}}]          \n{1} $\boxtimes$ 22.00 - 08.00 (10)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+      $+$ Lebenslauf, $+$ Sortieren der Papiere,
+      $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
+      $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.
+  \item[{\opti {Elektriker:}}]     \n{16} $\boxtimes$ Die Rechnung für den Durchlauferhitzer und die Lampe wird erwartert. 
+    Es kostet 515 \euro und ist überwiesen.
+  \item[{\mand {Plan:}}]          \n{\_8}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Lebenslauf:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoppy:]     09.00 - 09.30        
+      \item[$\boxtimes$ Zazen:]      09.30 - 10.00        
+      \item[$\boxtimes$ Einkaufen:]  10.00 - 11.30        
+      \item[$\boxtimes$ Holz:]       11.30 - 12.00
+      \item[$\boxtimes$ Snoppy:]     13.00 - 13.30
+      \item[$\boxtimes$ Zazen  :]    13.30 - 14.00
+      \item[$\boxtimes$ Holz:]       14.00 - 16.30
+      \item[$\boxtimes$ Snoppy:]     16.30 - 17.00
+      \item[$\boxtimes$ Duschen:]    17.00 - 17.30
+      \item[$\boxtimes$ Kochen:]     17.30 - 19.00        
+      \item[$\boxtimes$ Lesen:]      19.00 - 20.00        
+      \item[$\square$ Lebenslauf:]   20.00 - 21.30        
+      \item[$\boxtimes$ Snoppy:]     22.30 - 23.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]     \n{13} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Schnell komme ich nicht voran.
+
+  \vskip 2pt
+  Was geht langsam?
+
+  \vskip 2pt
+  Manches steht still.
+
+  \vskip 2pt
+  Alles muß man dir aus der Nase herausziehen.
+
+  \vskip 2pt
+  Lesen, Lebenslauf und das Holz schlichten will ich unterbrechen mit hacken.
+
+  \vskip 2pt
+  Alles ist nebensächlich, solange du nichts alleine trinkst.
+
+  \vskip 2pt
+  Mir sticht nichts ins Auge, wie ich alleine schneller vorankommen könnte. Die
+  heftige Grippe mit laufender Nase und verschleimten Bronchien bremst mich
+  runter auf ein Schneckentempo.
+
+  \vskip 2pt
+  Ein Lichtblick ist, dass du dich an Zazen heranwagst.
+
+  \vskip 2pt
+  Die dreitägige Unterbrechung ärgert mich.
+
+  \vskip 2pt
+  Wegen des Beratungstermins am Montag würde ich den Lebenslauf in den Mittelpunkt stellen.
+
+  \vskip 2pt
+  Das ändere ich sofort.
+
+  \vskip 2pt
+  Duschen nicht vergessen.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {9.10.2022 - Sonntag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_8} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_7} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Abstinenz:}}]     \n{\_6} 30 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 54 (70), Blutdruck: 127/85 (143/89)
+  \item[{\mand {Körperpflege:}}] \n{\_\_} $1 \times$ Zähneputzen (2)
+  \item[{\mand {Ernährung:}}]     \n{\_4}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\square$ Abendessen:]       17.00: Leber, Zwiebel, Paprika, Champignons, Blumenkohl, Kopfsalat
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_3} 4 Spaziergänge (4); $\square$ SHG ohne Snoopy
+  \item[{\mand {Zazen:}}]          \n{11} $\boxtimes$ 10 min, $\boxtimes$ 10 min
+  \item[{\mand {Sport:}}]          \n{10}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Schulterübungen:] $s^1 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^1 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^1 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^1 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^1 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^1 \times 3\ km$ (1)
+      \item[$\square$ Liegestützen:]    $s^0 \times r^{20} \land s^4 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Erlangen von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]     \n{13} $\boxtimes$ Bücher katalogisieren
+  \item[{\mand {Haus:}}]         \n{\_\_} $\boxtimes$ Holz aufschlichten
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]          \n{12} $\boxtimes$ Tractatus: 5.5 - 5.6, $\boxtimes$ Basis Bibel 1 - 2
+  \item[{\mand {Fokus:}}]          \n{11} $\boxtimes$ Sport
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 23.00 - 08.00 (9)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren
+  \item[{\mand {Plan:}}]          \n{\_9}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ { Bücher:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Zazen:]   10.00 - 11.00
+      \item[$\boxtimes$ Holz:]    11.00 - 12.00        
+      \item[$\boxtimes$ Laufen:]  12.00 - 13.00        
+      \item[$\boxtimes$ Zazen:]   13.00 - 14.00
+      \item[$\boxtimes$ Holz:]    14.00 - 16.30
+      \item[$\boxtimes$ Snoopy:]  16.30 - 17.00        
+      \item[$\boxtimes$ Kochen:]  17.00 - 19.00        
+      \item[$\boxtimes$ Lesen:]   19.00 - 20.00
+      \item[$\boxtimes$ Bücher:]  20.00 - 21.30
+      \item[$\boxtimes$ Snoopy:]  21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]   \n{\_5} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Übernächste Woche fängt Herbert in Plattling an.
+
+  \vskip 2pt
+  Das hätte ich nicht erwartet und dann braut sich ein Gemisch von Gier, Hass und
+  Verblendung zusammen. Und das übertrage ich auf Renate wegen Annette.
+
+  \vskip 2pt
+  Wie windest du dich heraus?
+
+  \vskip 2pt
+  Den Hauch vom Gründen wische ich weg, denn was anderes ist wichtiger.
+
+  \vskip 2pt
+  Und was wäre?
+
+  \vskip 2pt
+  Bis Freitag will ich das Holz aufräumen und langsam will ich heute ins
+  Sportprogramm einsteigen.
+
+  \vskip 2pt
+  Von woher nimmst du dir die Zeit?
+
+  \vskip 2pt
+  In den Pausen kümmere ich um das Holz. Diese Prioritäten sind
+  vielversprechender.
+
+  \vskip 2pt
+  Wie hängt das mit dem Anfang zusammen?
+
+  \vskip 2pt
+  Ich habe das untrügliche Gefühl, eher das Richtige zu tun, wenn ich alles
+  Wesentliche selbst bestimme, solange ich nicht absolut in Not bin.
+
+  \vskip 2pt
+  Wie geht es dir jetzt?
+
+  \vskip 2pt
+  Besser.
+
+  \notep 4 Mit dem Lebenslauf stecke ich in verschiedenen Sackgassen.
+
+  \vskip 2pt
+  In welchen?
+
+  \vskip 2pt
+  In düsteren wie in den früheren Wohnverhältnissen, die keine Perspektiven
+  bestimmen. Deshalb kümmere ich mich lieber um meine Bücher.
+
+\end{mdframed}
+
+
+\topvskip
+\ldivide
+\subsubp{\rele {KW 41}}
+
+\topvskip
+{\mand {Gewicht:}} 58 kg
+
+\fdivide
+{\rele {10.10.2022 - Montag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_7} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_6} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Abstinenz:}}]     \n{\_5} 31 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 61 (70), Blutdruck: 132/89 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_4} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_8}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Wiener, Speck, Bohnen, Zwiebel, Champignons, Kopfsalat
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_3} 4 Spaziergänge (4); $\square$ Beratung ohne Snoopy
+  \item[{\mand {Zazen:}}]          \n{14} $\boxtimes$ 15 min, $\boxtimes$ 10 min
+  \item[{\mand {Sport:}}]         \n{\_9}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Schulterübungen:] $s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^0 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^0 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^0 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^0 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:] $s^0 \times r^{20} \land s^4 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ Guttempler (09195/8899737) in Höchstatt von 19.00 - 20.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Bücher katalogisieren
+  \item[{\mand {Haus:}}]           \n{13} $\boxtimes$ Holz aufschlichten
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.6 - ?, $\square$ Basis Bibel: 3 - ?
+  \item[{\mand {Fokus:}}]          \n{12} $\boxtimes$ Holz
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 24.00 - 08.00 (8)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren
+  \item[{\opti {Beratung:}}]       \n{15} $\boxtimes$ Treffen mit Frau Etter (09131 803-2330) in Erlangen um 15.30 Uhr.
+  \item[{\mand {Plan:}}]           \n{10}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Einkaufen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Zazen:]     09.00 - 10.00
+      \item[$\square$ Einkaufen:] 11.00 - 12.00
+      \item[$\square$ Holz:]      11.00 - 12.00
+        
+      \item[$\square$ Laufen:]    12.00 - 13.00
+      \item[$\square$ Zazen:]     13.00 - 14.00
+      \item[$\square$ Beratung:]  15.00 - 17.00
+        
+      \item[$\square$ Snoopy:]    17.00 - 17.30
+      \item[$\square$ Kochen:]    17.30 - 18.30
+      \item[$\square$ SHG:]       18.30 - 21.00
+      \item[$\square$ Bücher:]    21.00 - 21.30
+        
+      \item[$\square$ Snoopy:]    21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Alternative:}}]    \n{11}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Einkaufen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Zazen:]     09.00 - 09.30
+      \item[$\boxtimes$ Einkaufen:] 09.30 - 10.00
+      \item[$\boxtimes$ Holz:]      10.00 - 12.00
+      \item[$\boxtimes$ Snoopy:]    12.00 - 12.30
+      \item[$\boxtimes$ Zazen:]     12.00 - 13.00
+      \item[$\boxtimes$ Holz:]      13.00 - 15.00
+      \item[$\boxtimes$ Beratung:]  15.00 - 17.30
+      \item[$\boxtimes$ Snoopy:]    17.30 - 18.00
+      \item[$\boxtimes$ Kochen:]    18.00 - 19.30
+      \item[$\boxtimes$ Snoopy:]    21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]    \n{16} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Wegen der Alkoholberatung und Guttempler komme ich in Zeitnot. Fürs
+  Holz bleibt mir höchstens eine Stunde.
+
+  \vskip 2pt
+  Auf was dürftest du nicht verzichten?
+
+  \vskip 2pt
+  Beratung und Holz.
+
+  \vskip 2pt
+  Was könntest du zusammenstreichen?
+
+  \vskip 2pt
+  Sport und Guttempler.
+
+  \vskip 2pt
+  Schau dir den Alternativplan an.
+
+  \vskip 2pt
+  Der sieht gut aus. Fünf Stunden lang könnte ich Holz aufschlichten. Bei den
+  Guttemplern müsste ich mich abmelden.
+
+  \vskip 2pt
+  Mach das sofort.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {11.10.2022 - Dienstag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_9} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_8} Morgen: \dChangey [1.5][orange]{0},Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Abstinenz:}}]     \n{\_7} 32 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 61 (70), Blutdruck: 146/89 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_4} {\draf {$1 \times$ Zähneputzen (2)}}
+  \item[{\mand {Ernährung:}}]     \n{\_6}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Leber, Zwiebel, Lauch, Paprika, Champignons, Kartoffelpüree, Kopfsalat
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_3} 4 Spaziergänge (4); $\boxtimes$ SHG ohne Snoopy
+  \item[{\mand {Zazen:}}]          \n{10} $\boxtimes$ 5 min, $\boxtimes$ 5 min
+  \item[{\mand {Sport:}}]         \n{\_5}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Schulterübungen:] $s^2 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\square$ Nackenübungen:]   $s^2 \times r^{10} \times e^3$ (3)
+      \item[$\square$ Schmetterling:]   $s^2 \times e^3 \times 2\ min$ (3)
+      \item[$\square$ Roller:]          $s^2 \times e^{10}$ (3)
+      \item[$\square$ Rumpfbeugen:]     $s^2 \times e^{10}$ (3)
+      \item[$\boxtimes$ Laufen:]        $r^1 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:]  $s^0 \times r^{20} \land s^4 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]            \n{14} $\boxtimes$ Zazen in Erlangen von 19.45 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Bücher katalogisieren
+  \item[{\mand {Haus:}}]           \n{13} $\boxtimes$ Holz aufschlichten
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.6 - ?, $\square$ Basis Bibel: 3 - ?
+  \item[{\mand {Fokus:}}]          \n{11} $\boxtimes$ Holz aufschlichten
+  \item[{\mand {Schlaf:}}]        \n{\_1} 01.00 - 08.00 (7)
+  \item[{\mand {Backlog:}}]      \n{\_\_}
+    $+$ Bewerbung,
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
+    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W. 
+  \item[{\mand {Plan:}}]           \n{10}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Kochen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:] 08.00 - 08.30        
+      \item[$\boxtimes$ Zazen:]  09.00 - 09.30        
+      \item[$\boxtimes$ Holz:]   09.30 - 11.00
+      \item[$\boxtimes$ Laufen:] 11.00 - 12.00
+      \item[$\boxtimes$ Zazen:]  12.00 - 13.00
+      \item[$\boxtimes$ Holz:]   13.00 - 17.00
+      \item[$\boxtimes$ Snoopy:] 17.00 - 17.30
+      \item[$\boxtimes$ Kochen:] 17.30 - 19.00
+      \item[$\boxtimes$ SHG:]    19.15 - 20.45
+      \item[$\square$ Lesen:]  20.45 - 21.30
+      \item[$\boxtimes$ Snoopy:] 21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]    \n{12} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Vor dem Einschlafen verhältst du dich undiszipliniert.
+
+  \vskip 2pt
+  Morgens fehlen mir zwei Stunden.
+
+  \vskip 2pt
+  Jeden Tag kannst du üben.
+
+  
+  \notep 4 Weshalb wollen Sie mit dem Trinken aufhören.
+
+  \vskip 2pt
+  Weil ich Sie nicht enttäuschen will, jemanden, der sich ehrlich um mich
+  bemüht.
+
+  
+  \notep 4 Soll ich oder soll ich nicht.
+
+  \vskip 2pt
+  Mach es nicht so spannend.
+
+  \vskip 2pt
+  Unschlüssig bin ich, ob ich im ersten Gang das Sportprogramm starten soll.
+  
+  \vskip 2pt
+  Wo liegt das Problem?
+
+  \vskip 2pt
+  Meine Bronchien sind verschleimt und die Nase tropft.
+
+  
+  \notep 4 Auf ein neues Buch über Wittgenstein freue ich mich.
+
+  \vskip 2pt
+  Kommst du nicht in Geldnot.
+
+  \vskip 2pt
+  Im Lotto habe ich fast 50€ gewonnen.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {12.10.2022 - Mittwoch}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]    \n{\_\_} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Abstinenz:}}]    \n{\_\_} 33 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 61 (70), Blutdruck: 137/89 (143/89)
+  \item[{\mand {Körperpflege:}}] \n{\_\_} $2 \times$ Zähneputzen (2), $\square$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_4}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Hase, Blaukraut
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_3} 4 Spaziergänge (4); $\boxtimes$ Planetarium ohne Snoopy
+  \item[{\mand {Zazen:}}]        \n{\_\_} $\boxtimes$ 10 min, $\boxtimes$ 10 min, $\boxtimes$ 10 min
+  \item[{\mand {Sport:}}]        \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Schulterübungen:] $s^3 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\boxtimes$ Nackenübungen:]   $s^3 \times r^{10} \times e^3$ (3)
+      \item[$\boxtimes$ Schmetterling:]   $s^3 \times e^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Roller:]          $s^3 \times e^{10}$ (3)
+      \item[$\boxtimes$ Rumpfbeugen:]     $s^3 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:]    $s^2 \times r^{20} \land s^4 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Höchstatt von 19.00 - 20.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Mitteilungen sortieren
+  \item[{\mand {Haus:}}]         \n{\_\_} $\boxtimes$ Bücher aufräumen
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.4 - ?
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\boxtimes$ Bücher aufräumen
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 01.00 - 08.00 (7)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Bewerbung,
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
+    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.  
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Aktion:}}} 
         \setlength\itemsep{-3pt}
-      \item[{\prop {$\square$ Aktion:}}]  ii.ii - ii.ii
+      \item[$\square$ Aktion:]  ii.ii - ii.ii
       \end{labeling}
     \end{minipage}
     \bottomspace
-  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\prop {$\square$}}
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Wie geht es dir?
+
+  \vskip 2pt
+  Vor mir liegt ausgebreitet ein Gewirr von bunten Linien, die ich mit tikz
+  zeichnen würde.
+
+  \vskip 2pt
+  Wo drückt der Schuh?
+
+  \vskip 2pt
+  Den kleinen Holzhaufen vor der Haustür muß ich abbauen und die Schmutzwäsche
+  quillt aus der Tonne.
+
+  \vskip 2pt
+  Entwirre den Geist des Alkoholikers mit einem Plan.
+
+  \vskip 2pt
+  Gestern Abend vor Zazen habe ich ein paar Worte gewechselt mit einer
+  feinfühligen Frau und soll ich heute Abend das Planetarium in Nürnberg
+  besuchen? \\
+  Dringend ist Wäsche waschen, Plan, Liegestützen und Zazen. \\
+  Warum nicht neustarten. Leider ist die Waschmaschine besetzt.
+
+  \notep 4 Mit dem Kaffee trinken drücke ich mich vor etwas, während ich mich mit
+  Renate unterhalte und der aufgeblähte Gockel hört sich gern selbst reden.
+
+  \vskip 2pt
+  Welche drei Wünsche hat der alte Mann?
+
+  \vskip 2pt
+  Einer ging gerade in Erfüllung, nämlich 20 Liegestützen.
+
+  \vskip 2pt
+  Und nun wähle den zweiten aus.
+
+  \vskip 2pt
+  Wunsch und Erwartung harmonieren. Die Strohblume ist von einem Zauber umgeben
+  und in einem wärmenden Mantel eingehüllt. An zwei Seiten habe ich das Holz
+  aufgeschichtet.
+
+  \vskip 2pt
+  Für welchen dritten Wunsch hast du dich entschieden?
+
+  \vskip 2pt
+  Die Waschmaschine läuft. \\
+  Ein sonniger Vormittag und Gemüt. \\
+  Auf, auf. Vielleicht gelingen mir noch mal 20 Liegestützen.
+
+  \notep 4 Mit dieser Kraft und Energie bahnst du dir den richtigen Weg im
+  Gestrüpp der Linien. Hebe drei Prioritäten hervor.
+
+  \vskip 2pt
+  Welche. Zehn Bücher will ich katalogisieren. Den Plan kann ich später
+  aufstellen. Die Fahrt nehme ich mit Zazen auf.
+
+  \vskip 2pt
+  Vergiss nicht den armen Snoopy.
+
+  \vskip 2pt
+  Gleich kriegt er sein Futter.
+
+  \notep 4 Veringere etwas das Tempo und bin gespannt auf die erste Priorität.
+
+  \vskip 2pt
+  Die Zeit verkürze ich mit einem einfachen Spaziergang.
+
+  \notep 4 Essen nicht vergessen.
+
+  \vskip 2pt
+  Dann nehme ich mir die zehn Bücher vor. \\
+  Geht doch. 15 Liegestützen schiebe ich ein.
+
+  \notep 4 Die Tüte für den gelben Punkt ist voll.
+
+  \vskip 2pt
+  Raus damit.
+
+  \notep 4 Es wird komplex.
+
+  \vskip 2pt
+  Was den schon wieder.
+
+  \vskip 2pt
+  Bücher katalogisieren geht nicht so schnell. Deshalb will ich dich auf fünf
+  runterverhandeln und die Wäsche ist fertig.
+
+  \vskip 2pt
+  Häng die zuerst auf.
+
+  \vskip 2pt
+  Erledigt. Für die Holzreste brauche ich noch Zeitungen von Ruth und den Plan
+  will ich nicht länger liegen lassen.
+
+  \vskip 2pt
+  Okay. Trotzdem. Bearbeite wenigstens noch die fünf Bücher.
+
+  \vskip 2pt
+  Nein, erst lege ich auf den Stack Zazen drauf.
+
+  \notep 4 Fünf Bücher habe ich erfasst.
+
+  \vskip 2pt
+  Was wäre dir als nächstes wichtig?
+
+  \vskip 2pt
+  Lesen.
+
+  \vskip 2pt
+  Mach das ohne Umschweif.
+
+  \vskip 2pt
+  Aber erst will ich endlich die dritte Sportrunde schaffen.
+
+  \vskip 2pt
+  Von mir aus, vorausgesetzt du machst nicht schlapp.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {13.10.2022 - Donnerstag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]     \n{\_8} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_7} Morgen: \dChangey [1.5][orange]{1}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Abstinenz:}}]     \n{\_6} 34 Tage
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 62 (70), Blutdruck: 122/78 (143/89)
+  \item[{\mand {Körperpflege:}}] \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Ernährung:}}]     \n{\_3}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: schwarzer Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       17.00: Leber, Kohlrabi
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_5} 5 Spaziergänge (4); $\square$ SHG ohne Snoopy
+  \item[{\mand {Zazen:}}]          \n{11} $\boxtimes$ 10 min, $\boxtimes$ 10 min, $\boxtimes$ 10 min
+  \item[{\mand {Sport:}}]          \n{10}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Schulterübungen:] $s^3 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\boxtimes$ Nackenübungen:]   $s^3 \times r^{10} \times e^3$ (3)
+      \item[$\boxtimes$ Schmetterling:]   $s^3 \times e^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Roller:]          $s^3 \times e^{10}$ (3)
+      \item[$\boxtimes$ Rumpfbeugen:]     $s^3 \times e^{10}$ (3)
+      \item[$\boxtimes$ Laufen:]          $r^1 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:]    $s^3 \times r^{20} \land s^3 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Erlangen in Erlangen von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Dokumente sortieren
+  \item[{\mand {Haus:}}]         \n{\_\_} $\square$ Bücher aufräumen
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]        \n{\_\_} $\square$ Tractatus: 5.6 - ?, $\square$ Basis Bibel: 3 - ?
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\square$ Bücher aufräumen
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\square$ 22.00 - 06.00 (8)
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Bewerbung,
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
+    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.  
+  \item[{\mand {Plan:}}]          \n{\_9}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Einkaufen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Zazen:]     12.00 - 12.30
+      \item[$\boxtimes$ Snoopy:]    12.30 - 13.00
+      \item[$\boxtimes$ Einkaufen:] 13.00 - 14.00
+      \item[$\boxtimes$ Zazen:]     14.00 - 15.00
+      \item[$\boxtimes$ Laufen:]    15.00 - 16.00
+      \item[$\boxtimes$ Snoopy:]    17.00 - 17.30
+      \item[$\boxtimes$ Zazen:]     17.30 - 18.30
+      \item[$\boxtimes$ Kochen:]    18.30 - 20.00
+      \item[$\boxtimes$ Snoopy:]    23.30 - 24.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]   \n{\_4} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Wie geht es dir?
+
+  \vskip 2pt
+  Der Blutdruck beruhigt mich: 122/77, den Puls ignoriere ich: 62
+
+  \vskip 2pt
+  Wie geht es weiter?
+
+  \vskip 2pt
+  Mit den drei Prioritäten. Die zweite ist liegengeblieben, Lesen.
+
+  \vskip 2pt
+  Beginne mit der.
+
+
+  \notep 4 Wann räume ich den gestrigen Tag auf?
+
+  \vskip 2pt
+  Die zweite und dritte Priorität $\ldots$
+
+  \vskip 2pt
+  Halt. Die Liegestützen bestimmen meinen Zustand.
+
+  \vskip 2pt
+  Und?
+
+  \vskip 2pt
+  Die Form kann ich halten mit 20. im Hinterkopf spuken mehr.
+
+  \vskip 2pt
+  Sachte.
+
+
+  \notep 4 Aufgestanden bist du nicht sofort.
+
+  \vskip 2pt
+  Die Frau aus dem Zazen-Treffen geht mir nicht aus dem Kopf.
+
+  \vskip 2pt
+  Hast du dich verliebt?
+
+  \vskip 2pt
+  Vor dem Eingang beginnt sie ein Gespräch und im Geist spinne ich unendlich
+  viele Fortsetzungen. Am liebsten würde ich sie sofort einladen zum Pizza
+  essen um die Ecke. Kenne ich von früher.
+
+
+  \notep 4 Gestern Abend hast du einen Ausflug gemacht.
+
+  \vskip 2pt
+  Toll. Im Planetarium sehe ich den aktuellen Sternenhimmel. Gestern Abend
+  zusammen mit Snoopy wusste ich, dass rechts neben dem Mond der Jupiter
+  leuchtet. Leider war es neblig. Gern hätte ich noch das Sommerdreieck mit
+  Wega bewundert und den Polarstern gesucht.
+
+
+  \notep 4 Meine Betreuerin betont die Vergangenheit.
+
+  \vskip 2pt
+  Was hat das mit dem Sternenhimmel zu tun?
+
+  \vskip 2pt
+  Der nordwestliche Punkt im Sommdreieck leuchtet jetzt mit einem Licht, das 25 Jahre alt ist.
+
+
+  \notep 4 Wie steht du auf?
+
+  \vskip 2pt
+  Nach dem Notwendigen putze ich mir freiwillig die Zähne.
+
+  \vskip 2pt
+  Genug siniert. Der Snoopy muß doch raus und die zweite Priorität ist unerledigt.
+
+  \vskip 2pt
+  Eine Sache will ich noch loswerden. Von Dogen habe ich Fukanzazengi bestellt.
+
+  \vskip 2pt
+  Später machen wir weiter.
+
+
+  \notep 4 Buridans Esel entscheidet sich für die Tagesstruktur.
+
+  \vskip 2pt
+  Den Stack bauen wir aber auch ab.
+
+
+  \notep 4 Oh Mann. Mit dir hat man es nicht einfach. Dieses ständige auf und ab
+  von einem Tag zum anderen.
+
+  \vskip 2pt
+  Sorry. Wie bin ich eigentlich hängengeblieben?
+
+  \vskip 2pt
+  Sag du es mir.
+
+  \vskip 2pt
+  Ah, beim Ausfüllen des gestrigen Formulars.
+
+  \vskip 2pt
+  Mach hinne, Jung.
+
+  \vskip 2pt
+  Nur noch heute.
+
+
+  \notep 4 An der Schwelle verharre ich im trüben Tag.
+
+  \vskip 2pt
+  Reiß dich am Riemen.
+
+  \vskip 2pt
+  Laufen kommt vor Lesen.
+
+  \vskip 2pt
+  Aber dann.
+
+  \vskip 2pt
+  Für AA habe ich keine Zeit. Sollte ich nicht die Zeitungen für die Holzspäne
+  besorgen?
+
+  \vskip 2pt
+  Bitte verbummle die dritte Priorität nicht.
+
+  \vskip 2pt
+  Laufen, Punkt.
+  
+\end{mdframed}
+
+
+\ddivide
+{\rele {14.10.2022 - Freitag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Countdown:}}]      \n{10} {\rewo {0 (0) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_9} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Abstinenz:}}]     \n{\_8} $p^{1}, s^{1}, t^{35}$
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 67? (70), Blutdruck: 137/82 (143/89)
+  \item[{\mand {Körperpflege:}}]  \n{\_3} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Ernährung:}}]     \n{\_7}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         06.15: Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\square$ Abendessen:]       19.00: Thunfisch, Paprika, Champignons, Bohnen, Kohlrabi, Mohrrüben
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Obst
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00: Obst
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Snoopy:}}]        \n{\_4} 4 Spaziergänge (4), $\square$ SHG ohne Snoopy
+  \item[{\mand {Zazen:}}]          \n{13} $\boxtimes$ 12 min, $\boxtimes$ 12 min, $\boxtimes$ 12 min
+  \item[{\mand {Sport:}}]         \n{\_5}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Schulterübungen:] $s^3 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\boxtimes$ Nackenübungen:]   $s^3 \times r^{10} \times e^3$ (3)
+      \item[$\boxtimes$ Schmetterling:]   $s^3 \times e^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Roller:]          $s^3 \times e^{10}$ (3)
+      \item[$\boxtimes$ Rumpfbeugen:]     $s^3 \times e^{10}$ (3)
+      \item[$\square$ Laufen:]          $r^0 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:]    $s^1 \times r^{20} \land s^7 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Erlangen von 19.00 - 21.00
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} $\square$ Dokumente sortieren
+  \item[{\mand {Haus:}}]         \n{\_\_} $\square$ Bücher katalogisieren
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {Lesen:}}]          \n{12} $\boxtimes$ Tractatus: 5.6 - 6, $\boxtimes$ Basis Bibel: 3 - 4,
+      $\boxtimes$ Budhhas Lehrreden: 11 - 15
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\square$ Bücher katalogisieren
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 24.00 - 09.00 (9)
+  \item[{\mand {Backlog:}}]      \n{\_\_}
+    $+$ Dokumente sortieren, $+$ Bücher katalogisieren,
+    $+$ Zendo putzen, saugen, $+$ Gewürze auffüllen; $+$ Blumen entsorgen
+  \item[{\mand {Plan:}}]           \n{11}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Kochen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:] 13.00 - 13.30
+      \item[$\boxtimes$ Lesen:]  15.00 - 16.00        
+      \item[$\boxtimes$ Zazen:]  16.00 - 19.00
+      \item[$\boxtimes$ Kochen:] 19.00 - 21.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_6} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 Extrem schlapp fühle ich mich heute.
+
+  \vskip 2pt
+  Aber lesen wirst du doch können.
+
+  \vskip 2pt
+  Wenn ich nicht jetzt damit anfange, wann dann.
+
+  \vskip 2pt
+  Würde ich auch so sehen.
+
+
+  \notep 4 Welches dritte Buch würdest du gerne lesen?
+
+  \vskip 2pt
+  Ein Schulbuch.
+
+  \vskip 2pt
+  Und welches darf ich dir aus der Nase ziehen?
+
+  \vskip 2pt
+  Oder der Abiturkurs im Internet.
+
+
+  \notep 4 Wie geht es dir?
+
+  \vskip 2pt
+  Mies.
+
+  \vskip 2pt
+  Weswegen?
+
+  \vskip 2pt
+  Zum einem geh ich spät ins Bett, dann steh ich spät auf und lese endlos online
+  Zeitungen.
+
+  \vskip 2pt
+  Tröstet dich nicht die Abstinenz?
+
+  \vskip 2pt
+  Nicht wirklich. Denk ich an das eine, spule ich ein Programm ab. Oder ich esse
+  irgendwas reflexhaft.
+
+  \vskip 2pt
+  In den nächsten Stunden geht noch was.
+
+  \vskip 2pt
+  Lesen, nachdem ich stundenlang Internet-Seiten über Nachhilfe angelesen habe.
+
+  \vskip 2pt
+  Gefällt dir eine?
+
+  \vskip 2pt
+  Eigentlich würde mir die von Duden passen.
+
+  \vskip 2pt
+  Wieso zögerst du?
+
+  \vskip 2pt
+  Mindestens ein halbes Jahr muß ich durchhalten.
+
+  \vskip 2pt
+  Erst lesen, dann schauen wir mal.
+
+  \vskip 2pt
+  Am liebsten würde ich wie immer ausweichen. Ach was soll’s. Erst lesen. Es
+  gibt noch diesen Sog und Strudel in meinen Denkbahnen. Zwanghaft bestellen muß
+  ich die Bücher: \\
+  Matthias Wille: Gottlob Frege: Begriffsschrift \\
+  Shohaku Okumura: Dogen-Zenjis Shobogenzo \\
+  Ungeduldig warte ich auf die Post und lege sie auf einen meiner vielen
+  Bücherstöße ohne eine Seite zu lesen.
+
+  \vskip 2pt
+  Stell doch erst einen Plan auf.
+
+  \vskip 2pt
+  Nach den nächsten 15 Liegestützen.
+
+
+  \notep 4 Hurra.
+
+  \vskip 2pt
+  Entscheide dich für ein drittes Buch.
+
+  \vskip 2pt
+  Thich Nhat Hanh: Der Buddha sagt
+
+  \vskip 2pt
+  Der Hungerbrunnen bestimmt die Versickerung. Drei Sätze erwarte ich von dir
+  nach der Lesung.
+
+  \vskip 2pt
+  Die Präsentation böte sich an.
+
+  \vskip 2pt
+  Her mit den Sätzen.
+
+  \vskip 2pt
+  Automatisch fahre ich los und kaufe eine Laugenstange.
+
+  \vskip 2pt
+  Tu das nicht.
+
+  \vskip 2pt
+  1. ,,Das philosophische Ich, …, die Grenze - nicht ein Teil - der Welt.'' \\
+  ( . - - - o: Wega \\
+  2. ,,und verbannst mich aus deiner Gegenwart.'' \\
+  3. ,,Im Wildpark von Isipatana bei Varanasi ist das unvergleichliche Rad der
+  Lehre in Gang gesetzt worden.''
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {15.10.2022 - Samstag}}
+       
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_1} $\boxtimes$ 23.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_2} Ruhepuls: 67 (70), Blutdruck: 119/75 (143/89)
+  \item[{\mand {Zazen:}}]         \n{\_3} {\draf {$s^4 \times 12 min$ (5)}}
+  \item[{\mand {Körperpflege:}}]  \n{\_4} {\draf {$1 \times$ Zähneputzen (2), $\square$ Duschen}}
+  \item[{\mand {Sport:}}]         \n{\_5}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Schulterübungen:] $s^3 \times e^2 \times 1\ min$ mit Stange und Ringe (3)
+      \item[$\boxtimes$ Nackenübungen:]   $s^3 \times r^{10} \times e^3$ (3)
+      \item[$\boxtimes$ Schmetterling:]   $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Handstandübung:]  $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Roller:]          $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):] $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Laufen:]          $r^1 \times 3\ km$ (1)
+      \item[$\boxtimes$ Liegestützen:]    $s^3 \times r^{20} \land s^4 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]     \n{\_6}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Früstück:]         08.15: Kaffee
+      \item[$\boxtimes$ Mittagessem:]      $\oldemptyset$
+      \item[$\boxtimes$ Abendessen:]       18.00: Leber, Blumenkohl, Bohnen, Mohrrüben, Champignons, Paprika, Kopfsalat
+      \item[$\boxtimes$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Obst
+      \item[$\boxtimes$ Intervallfasten:]  00.00 - 16.00: Haferflocken, Obst
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Countdown:}}]     \n{\_8} {\rewo {2 (2) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]      \n{\_9} Morgen: \dChangey [1.5][orange]{1}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Abstinenz:}}]      \n{10} {\draf {$p^{2}, s^{2}, t^{36}$}}
+  \item[{\mand {Plan:}}]           \n{11}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Bibliothek:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:]     08.30 - 09.00
+      \item[$\boxtimes$ Bibliothek:] 09.00 - 11.00        
+      \item[$\boxtimes$ Einkauf:]    11.00 - 12.00
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Recherche:]  12.30 - 15.30        
+      \item[$\boxtimes$ Zazen:]      16.00 - 17.30
+      \item[$\boxtimes$ Laufen:]     17.30 - 18.00
+      \item[$\boxtimes$ Kochen:]     18.00 - 19.30
+        
+      \item[{\prop {$\square$ Ablage:}}]     19.30 - 20.30
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Snoopy:}}]         \n{12} {\draf {3 Spaziergänge (4)}}, $\square$ SHG ohne Snoopy
+  \item[{\mand {Bibliothek:}}]     \n{13} $\boxtimes$ $b^{10}$
+  \item[{\mand {Recherche:}}]      \n{14} $\boxtimes$ Tractatus: 4 - 4.1, $\boxtimes$ Basis Bibel: 3.11,
+      $\boxtimes$ Budhhas Lehrreden: 16 - 17
+  \item[{\mand {Fokus:}}]        \n{\_\_} $\boxtimes$ Bücher katalogisieren
+  \item[{\mand {Haus:}}]         \n{\_\_} $\boxtimes$ Bücher katalogisieren
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} {\prop {$\square$ Dokumente sortieren}}
+  \item[{\mand {Freunde:}}]      \n{\_\_} Corona
+  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
+  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
+  \item[{\mand {SHG:}}]          \n{\_\_} $\square$ AA in Nürnberg von 19.00 - 21.00
+  \item[{\mand {Backlog:}}]      \n{\_\_} 
+    $+$ Dokumente sortieren
+    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen
+  \item[{\mand {Bemerkungen:}}]   \n{\_7} {\draf {$\square$}}
   \end{labeling}
     
   % Initialize the note counter.
@@ -4564,61 +5883,51 @@ Geschichte und lächelt verschmitzt.
 
 
 \ddivide
-{\prop {7.10.2022 - Freitag}}
+{\prop {16.10.2022 - Sonntag}}
        
 \begin{mdframed}[style=daystyle]
   \begin{labeling}{{\mand {Bemerkungen:}}}
     \setlength\itemsep{-3pt}
-  \item[{\mand {Countdown:}}]    \n{\_\_} {\rewo {16 (16) 16 Stunden}}
-  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
-  \item[{\mand {Abstinenz:}}]    \n{\_\_} {\prop {? Tage}}
+  \item[{\mand {Schlaf:}}]       \n{\_\_} {\prop {$\square$ 22.00 - 06.00 (?)}}
   \item[{\mand {Gesundheit:}}]   \n{\_\_} {\prop {Ruhepuls: ? (70), Blutdruck: ?/? (143/89)}}
-  \item[{\mand {Körperpflege:}}] \n{\_\_} {\prop {$0 \times$ Zähneputzen (2)}}
-  \item[{\mand {Ernährung:}}]    \n{\_\_}
-    \topspace
-    \begin{minipage}{0.75\textwidth}  
-      \begin{labeling}{$\square$ Intervallfasten:} 
-        \setlength\itemsep{-3pt}  
-      \item[$\square$ Früstück:]         06.15: schwarzer Kaffee
-      \item[$\square$ Mittagessem:]      $\oldemptyset$
-      \item[$\square$ Abendessen:]       17.00: {\prop {???}}
-      \item[$\square$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Marmelade, Apfel, Banane
-      \item[$\square$ Intervallfasten:]  18.00 - 10.00: Apfel, Banane
-      \end{labeling}
-    \end{minipage}
-      \bottomspace
-  \item[{\mand {Snoopy:}}]       \n{\_\_} {\prop {0 Spaziergänge (4); $\square$ SHG ohne Snoopy}}
-  \item[{\mand {Zazen:}}]        \n{\_\_} {\prop {$\square$ 25 min, $\square$ 25 min}}
+  \item[{\mand {Zazen:}}]        \n{\_\_} {\prop {$s^0 \times 12 min$ (5)}}
+  \item[{\mand {Körperpflege:}}] \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Duschen}}
   \item[{\mand {Sport:}}]        \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
         \setlength\itemsep{-3pt}
+      \item[$\square$ Handstandübung:]  {\prop {$s^3 \times r^{10}$ (3)}}
+      \item[$\square$ Rumpf(Wand):]     {\prop {$s^3 \times 2\ min$ (3)}}
       \item[$\square$ Schulterübungen:] {\prop {$s^0 \times e^2 \times 1\ min$ mit Stange und Ringe (3)}}
-      \item[$\square$ Nackenübungen:]   {\prop {$s^0 \times r^{10} \times e^3$ (3)}}
       \item[$\square$ Schmetterling:]   {\prop {$s^0 \times e^3 \times 2\ min$ (3)}}
+      \item[$\square$ Nackenübungen:]   {\prop {$s^0 \times r^{10} \times e^3$ (3)}}
+      \item[$\square$ Bruststoß:]       {\prop {$s^3 \times r^{10}$ (15 kg, 3)}}
+      \item[$\square$ Kniebeugen:]      {\prop {$s^3 \times r^{10}$ (15 kg, 3)}}
+      \item[$\square$ Rückenstoß:]      {\prop {$s^3 \times r^{10}$ (15 kg, 3)}}
       \item[$\square$ Roller:]          {\prop {$s^0 \times e^{10}$ (3)}}
-      \item[$\square$ Rumpfbeugen:]     {\prop {$s^0 \times e^{10}$ (3)}}
+      \item[$\square$ Rumpf(Sandsack):] {\prop {$s^0 \times e^{10}$ (3)}}
       \item[$\square$ Laufen:]          {\prop {$r^0 \times 3\ km$ (1)}}
       \item[$\square$ Liegestützen:]    {\prop {$s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100}}
       \end{labeling}
     \end{minipage}
     \bottomspace        
-  \item[{\mand {SHG:}}]          \n{\_\_} {\prop {$\square$ AA in Erlangen von 19.00 - 21.00}}
-  \item[{\mand {Freunde:}}]      \n{\_\_} {\prop {$\square$ Kaffee trinken}}
-  \item[{\mand {Verwaltung:}}]   \n{\_\_} {\prop {$\square$ Bewerbung}}
-  \item[{\mand {Haus:}}]         \n{\_\_} {\prop {$\square$ Bücher aufräumen}}
-  \item[{\mand {Garten:}}]       \n{\_\_} Herbst
-  \item[{\mand {Beruf:}}]        \n{\_\_} Aufschub bis nach der stationären Therapie
-  \item[{\mand {Lesen:}}]        \n{\_\_} {\prop {$\square$ Tractatus: 5.4 - ?}}
-  \item[{\mand {Fokus:}}]        \n{\_\_} {\prop {$\square$ Bücher aufräumen}}
-  \item[{\mand {Schlaf:}}]       \n{\_\_} {\prop {$\square$ 22.00 - 06.00 (?)}}
-  \item[{\mand {Backlog:}}]      \n{\_\_} {\prop {
-    $+$ Bewerbung,
-    $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
-    $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.}}    
-  \item[{\opti {Brennholz:}}]    \n{\_\_} {\prop {$\square$ Karli liefert in der KW 40 12 Ster Scheitholz.
-    Liefertermin ist offen.}}
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Früstück:]         06.15: Kaffee
+      \item[$\square$ Mittagessem:]      $\oldemptyset$
+      \item[$\square$ Abendessen:]       17.00: Bratwürste, Sauerkraut, Kartoffelpüree, Kopfsalat
+      \item[$\square$ Zwischendurch:]    $x <= 18 \land x >= 10$: Haferflocken, Obst
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00: Obst
+      \end{labeling}
+    \end{minipage}
+      \bottomspace
+  \item[{\mand {Countdown:}}]    \n{\_\_} {\rewo {16 (16) 16 Stunden}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Abstinenz:}}]    \n{\_\_} {\prop {$p^{1}, s^{1}, t^{35}$}}
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
@@ -4628,6 +5937,18 @@ Geschichte und lächelt verschmitzt.
       \end{labeling}
     \end{minipage}
     \bottomspace
+  \item[{\mand {Snoopy:}}]       \n{\_\_} {\prop {0 Spaziergänge (4); $\square$ SHG ohne Snoopy}}    
+  \item[{\mand {Fokus:}}]        \n{\_\_} {\prop {$\square$ Bibliothek}}
+  \item[{\mand {Bibliothek:}}]   \n{\_\_} {\prop {$\square$ $b^{0}$ (10)}}
+  \item[{\mand {Recherche:}}]    \n{\_\_} {\prop {$\square$ Tractatus: 4 - 4.1, $\square$ Basis Bibel: 3.11,
+      $\square$ Budhhas Lehrreden: 16 - 17}}
+  \item[{\mand {Ablage:}}]       \n{\_\_} {\prop {$\square$ $d^{0}$ (10)}}
+  \item[{\mand {Haus:}}]         \n{\_\_} {\prop {$\square$ Gewürze}}
+  \item[{\mand {Verwaltung:}}]   \n{\_\_} {\prop {$\square$ Ablage}}
+  \item[{\mand {Freunde:}}]      \n{\_\_} {\prop {Telephonieren}}
+  \item[{\mand {Garten:}}]       \n{\_\_} {\prop {Gras}}
+  \item[{\mand {Beruf:}}]        \n{\_\_} {\prop {$\square$ Diagnose-Lua, $\square$ Van-Rust}}
+  \item[{\mand {SHG:}}]          \n{\_\_} {\prop {$\square$ AA ??,  $\square$ Heute ??}}
   \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\prop {$\square$}}
   \end{labeling}
     
@@ -4640,13 +5961,13 @@ Geschichte und lächelt verschmitzt.
 
 \topvskip
 \ldivide
-\subsubp{\rele {KW 41}}
+\subsubp{\rele {KW 42}}
 
 \topvskip
 {\mand {Gewicht:}} {\prop {?? kg}}
 
 \fdivide
-{\prop {10.10.2022 - Montag}}
+{\prop {19.10.2022 - Mittwoch}}
        
 \begin{mdframed}[style=daystyle]
   \begin{labeling}{{\mand {Bemerkungen:}}}
@@ -4682,7 +6003,7 @@ Geschichte und lächelt verschmitzt.
       \item[$\square$ Roller:]          {\prop {$s^0 \times e^{10}$ (3)}}
       \item[$\square$ Rumpfbeugen:]     {\prop {$s^0 \times e^{10}$ (3)}}
       \item[$\square$ Laufen:]          {\prop {$r^0 \times 3\ km$ (1)}}
-      \item[$\square$ Liegestützen:]    {\prop {($r^{15} \land s^0 \times r^{10}) \vee (n=10, s^0 \times r^{n-1})$ (5-10), Ziel: 10}}
+      \item[$\square$ Liegestützen:]    {\prop {$s^0 \times r^{20} \land s^0 \times r^{15} \land s^0 \times r^{10}$, Ziel: 100}}
       \end{labeling}
     \end{minipage}
     \bottomspace        
@@ -4699,7 +6020,7 @@ Geschichte und lächelt verschmitzt.
     $+$ Bewerbung,
     $+$ Zendo putzen, saugen; $+$ Gewürze auffüllen; $+$ Blumen entsorgen, $+$ Bücher sortieren,
     $+$ Tractatus, $+$ Band, $+$ Basis Bibel, $+$ Billy W.}}    
-  \item[{\opti {Beratung:}}]     \n{\_\_} {\prop {$\square$ Treffen mit Frau Etter (09131 803-2330) in Erlangen um 15.30 Uhr.}}
+  \item[{\opti {Beratung:}}]     \n{\_\_} {\prop {$\square$ Treffen mit Frau Etter (09131 803-2330) in Erlangen um 9.00 Uhr.}}
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
@@ -5047,24 +6368,30 @@ zielorientiert \\
 zuverlässig
 
 
-\subsection{Bücher}
+% xxx
+% Start of the library.
+%
 
-\subsubsection{Kinderbücher}
+% Print the complete library.
+\nocite{*}
 
-Carle Eric: Die kleine Raupe Nimmersatt
-
-
-\subsubsection{Schule}
-
-Bienioscheck, Horst: Duden Physik, 5. bis 10. Klasse \\
-Börner, Heike: Mathematik, 5. Klasse \\
-Herrmann, Bea: Geschichten erzählen, 4. Klasse \\
-Herrmann, Bea: Sachtexte schreiben, 3. Klasse
+\printbibheading
 
 
-\subsubsection{Naturwissenschaft}
+\printbibliography[keyword=Bilder, heading=subbibliography,
+  title={Bilderbücher}]
 
-Glaubrecht, Matthias: Charles Darwin
+
+\printbibliography[keyword=Vorschule, heading=subbibliography,
+  title={Vorschule}]
+
+
+\printbibliography[keyword=Schule, heading=subbibliography,
+  title={Schulbücher}]
+
+
+\printbibliography[keyword=Evolution, heading=subbibliography,
+  title={Evolution}]
 
 
 \subsection{Tractatus}

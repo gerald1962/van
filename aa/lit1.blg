@@ -1,5 +1,0 @@
-[0] Config.pm:304> INFO - This is Biber 2.14 (beta)
-[0] Config.pm:307> INFO - Logfile is 'lit1.blg'
-[65] biber:322> INFO - === So Okt  2, 2022, 18:53:33
-[180] Utils.pm:309> ERROR - Cannot find 'lit1.bcf'!
-[180] Biber.pm:132> INFO - ERRORS: 1
