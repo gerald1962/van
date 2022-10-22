@@ -19,6 +19,137 @@
 
 \refsection{0}
   \datalist[entry]{anyt/global//global/global}
+    \entry{aa2:bb}{book}{}
+      \name{author}{1}{}{%
+        {{hash=3b98e2dffc6cb06a89dcb0d5c60a0206}{%
+           family={AA},
+           familyi={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Schnitzer}%
+      }
+      \strng{namehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{fullhash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{bibnamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authorbibnamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authornamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authorfullhash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \field{extraname}{1}
+      \field{labelalpha}{AA04}
+      \field{sortinit}{A}
+      \field{sortinithash}{a3dcedd53b04d1adfd5ac303ecd5e6fa}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Das Blaue Buch}
+      \field{year}{2004}
+      \true{nocite}
+      \keyw{AA}
+    \endentry
+    \entry{aa1:heute}{book}{}
+      \name{author}{1}{}{%
+        {{hash=3b98e2dffc6cb06a89dcb0d5c60a0206}{%
+           family={AA},
+           familyi={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Schnitzer}%
+      }
+      \strng{namehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{fullhash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{bibnamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authorbibnamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authornamehash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \strng{authorfullhash}{3b98e2dffc6cb06a89dcb0d5c60a0206}
+      \field{extraname}{2}
+      \field{labelalpha}{AA17}
+      \field{sortinit}{A}
+      \field{sortinithash}{a3dcedd53b04d1adfd5ac303ecd5e6fa}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Heute}
+      \field{year}{2017}
+      \true{nocite}
+      \keyw{AA}
+    \endentry
+    \entry{aischylos:orestie}{book}{}
+      \name{author}{1}{}{%
+        {{hash=c4e0aa5e0f580cc0b94dfb2138998f1e}{%
+           family={Aischylos},
+           familyi={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Reclam}%
+      }
+      \strng{namehash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \strng{fullhash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \strng{bibnamehash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \strng{authorbibnamehash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \strng{authornamehash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \strng{authorfullhash}{c4e0aa5e0f580cc0b94dfb2138998f1e}
+      \field{labelalpha}{Ais18}
+      \field{sortinit}{A}
+      \field{sortinithash}{a3dcedd53b04d1adfd5ac303ecd5e6fa}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Orestie}
+      \field{year}{2018}
+      \true{nocite}
+      \keyw{Theater,Aischylos}
+    \endentry
+    \entry{altenthan:sophia}{book}{}
+      \name{author}{1}{}{%
+        {{hash=a12770a8ce701f855c3d807d62e3168b}{%
+           family={Altenthan},
+           familyi={A\bibinitperiod},
+           given={Sophia},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Bildungsverlag Eins}%
+      }
+      \strng{namehash}{a12770a8ce701f855c3d807d62e3168b}
+      \strng{fullhash}{a12770a8ce701f855c3d807d62e3168b}
+      \strng{bibnamehash}{a12770a8ce701f855c3d807d62e3168b}
+      \strng{authorbibnamehash}{a12770a8ce701f855c3d807d62e3168b}
+      \strng{authornamehash}{a12770a8ce701f855c3d807d62e3168b}
+      \strng{authorfullhash}{a12770a8ce701f855c3d807d62e3168b}
+      \field{labelalpha}{Alt13}
+      \field{sortinit}{A}
+      \field{sortinithash}{a3dcedd53b04d1adfd5ac303ecd5e6fa}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Pädagogik / Psychologie}
+      \field{year}{2013}
+      \true{nocite}
+      \keyw{Vorschule,Pädagogik,Psychologie}
+    \endentry
+    \entry{becket:samuel}{book}{}
+      \name{author}{1}{}{%
+        {{hash=78dc1f3aa4638542b930e809523a027c}{%
+           family={Becket},
+           familyi={B\bibinitperiod},
+           given={Samuel},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Suhrkamp}%
+      }
+      \strng{namehash}{78dc1f3aa4638542b930e809523a027c}
+      \strng{fullhash}{78dc1f3aa4638542b930e809523a027c}
+      \strng{bibnamehash}{78dc1f3aa4638542b930e809523a027c}
+      \strng{authorbibnamehash}{78dc1f3aa4638542b930e809523a027c}
+      \strng{authornamehash}{78dc1f3aa4638542b930e809523a027c}
+      \strng{authorfullhash}{78dc1f3aa4638542b930e809523a027c}
+      \field{labelalpha}{Bec16}
+      \field{sortinit}{B}
+      \field{sortinithash}{8de16967003c7207dae369d874f1456e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Das letzte Band}
+      \field{year}{2016}
+      \true{nocite}
+      \keyw{Theater,Becket}
+    \endentry
     \entry{becker:frank}{book}{}
       \name{author}{1}{}{%
         {{hash=181a5bbfb4ff1203a7cacfef507f3706}{%
@@ -181,7 +312,7 @@
       \true{nocite}
       \keyw{Schule,Deutsch}
     \endentry
-    \entry{buschmeier:gudrun}{book}{}
+    \entry{buschmeier1:gudrun}{book}{}
       \name{author}{1}{}{%
         {{hash=99c9b558a7514f7e2208a28ccaf34fa9}{%
            family={Buschmeier},
@@ -198,6 +329,7 @@
       \strng{authorbibnamehash}{99c9b558a7514f7e2208a28ccaf34fa9}
       \strng{authornamehash}{99c9b558a7514f7e2208a28ccaf34fa9}
       \strng{authorfullhash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \field{extraname}{1}
       \field{labelalpha}{Bus20}
       \field{sortinit}{B}
       \field{sortinithash}{8de16967003c7207dae369d874f1456e}
@@ -208,7 +340,35 @@
       \true{nocite}
       \keyw{Schule,Mathematik}
     \endentry
-    \entry{carle1:eric}{book}{}
+    \entry{buschmeier2:gudrun}{book}{}
+      \name{author}{1}{}{%
+        {{hash=99c9b558a7514f7e2208a28ccaf34fa9}{%
+           family={Buschmeier},
+           familyi={B\bibinitperiod},
+           given={Gudrun},
+           giveni={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wesertermann}%
+      }
+      \strng{namehash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \strng{fullhash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \strng{bibnamehash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \strng{authorbibnamehash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \strng{authornamehash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \strng{authorfullhash}{99c9b558a7514f7e2208a28ccaf34fa9}
+      \field{extraname}{2}
+      \field{labelalpha}{Bus21}
+      \field{sortinit}{B}
+      \field{sortinithash}{8de16967003c7207dae369d874f1456e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Denken und Rechnen, 2. Klasse}
+      \field{year}{2021}
+      \true{nocite}
+      \keyw{Schule,Mathematik}
+    \endentry
+    \entry{carle3:eric}{book}{}
       \name{author}{1}{}{%
         {{hash=14c8fd16b2539b7eef616b1c25fcad84}{%
            family={Carle},
@@ -229,6 +389,36 @@
       \field{labelalpha}{Car19}
       \field{sortinit}{C}
       \field{sortinithash}{4c244ceae61406cdc0cc2ce1cb1ff703}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Brauner Bär, wen siehst du?}
+      \field{year}{2019}
+      \true{nocite}
+      \keyw{Bilder,Kinder}
+    \endentry
+    \entry{carle1:eric}{book}{}
+      \name{author}{1}{}{%
+        {{hash=14c8fd16b2539b7eef616b1c25fcad84}{%
+           family={Carle},
+           familyi={C\bibinitperiod},
+           given={Eric},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Gerstenberg}%
+      }
+      \strng{namehash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \strng{fullhash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \strng{bibnamehash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \strng{authorbibnamehash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \strng{authornamehash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \strng{authorfullhash}{14c8fd16b2539b7eef616b1c25fcad84}
+      \field{extraname}{2}
+      \field{labelalpha}{Car19}
+      \field{sortinit}{C}
+      \field{sortinithash}{4c244ceae61406cdc0cc2ce1cb1ff703}
+      \field{extraalpha}{2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Die kleine Raube Nimmersatt}
@@ -253,7 +443,7 @@
       \strng{authorbibnamehash}{14c8fd16b2539b7eef616b1c25fcad84}
       \strng{authornamehash}{14c8fd16b2539b7eef616b1c25fcad84}
       \strng{authorfullhash}{14c8fd16b2539b7eef616b1c25fcad84}
-      \field{extraname}{2}
+      \field{extraname}{3}
       \field{labelalpha}{Car20}
       \field{sortinit}{C}
       \field{sortinithash}{4c244ceae61406cdc0cc2ce1cb1ff703}
@@ -263,6 +453,60 @@
       \field{year}{2020}
       \true{nocite}
       \keyw{Bilder,Kinder}
+    \endentry
+    \entry{dumoulin:heinrich}{book}{}
+      \name{author}{1}{}{%
+        {{hash=9a4b70f2b0bc545733861d5767c53172}{%
+           family={Dumoulin},
+           familyi={D\bibinitperiod},
+           given={Heinrich},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Theseus}%
+      }
+      \strng{namehash}{9a4b70f2b0bc545733861d5767c53172}
+      \strng{fullhash}{9a4b70f2b0bc545733861d5767c53172}
+      \strng{bibnamehash}{9a4b70f2b0bc545733861d5767c53172}
+      \strng{authorbibnamehash}{9a4b70f2b0bc545733861d5767c53172}
+      \strng{authornamehash}{9a4b70f2b0bc545733861d5767c53172}
+      \strng{authorfullhash}{9a4b70f2b0bc545733861d5767c53172}
+      \field{labelalpha}{Dum90}
+      \field{sortinit}{D}
+      \field{sortinithash}{c438b3d5d027251ba63f5ed538d98af5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Dogen Zen}
+      \field{year}{1990}
+      \true{nocite}
+      \keyw{Buddhismus,Zazen}
+    \endentry
+    \entry{euler:verena}{book}{}
+      \name{author}{1}{}{%
+        {{hash=2c39597403ec8cfadee195a625bfba92}{%
+           family={Euler},
+           familyi={E\bibinitperiod},
+           given={Verena},
+           giveni={V\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Klett}%
+      }
+      \strng{namehash}{2c39597403ec8cfadee195a625bfba92}
+      \strng{fullhash}{2c39597403ec8cfadee195a625bfba92}
+      \strng{bibnamehash}{2c39597403ec8cfadee195a625bfba92}
+      \strng{authorbibnamehash}{2c39597403ec8cfadee195a625bfba92}
+      \strng{authornamehash}{2c39597403ec8cfadee195a625bfba92}
+      \strng{authorfullhash}{2c39597403ec8cfadee195a625bfba92}
+      \field{labelalpha}{Eul21}
+      \field{sortinit}{E}
+      \field{sortinithash}{c554bd1a0b76ea92b9f105fe36d9c7b0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Sicher durch die 5. Klasse}
+      \field{year}{2021}
+      \true{nocite}
+      \keyw{Schule,Deutsch,Mathematik,Englisch}
     \endentry
     \entry{gigl:claus}{book}{}
       \name{author}{1}{}{%
@@ -317,6 +561,33 @@
       \field{year}{2009}
       \true{nocite}
       \keyw{Evolution}
+    \endentry
+    \entry{graf:christian}{book}{}
+      \name{author}{1}{}{%
+        {{hash=604da99e91493e56fb83c2236d92d254}{%
+           family={Graf},
+           familyi={G\bibinitperiod},
+           given={Christian},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Reclam}%
+      }
+      \strng{namehash}{604da99e91493e56fb83c2236d92d254}
+      \strng{fullhash}{604da99e91493e56fb83c2236d92d254}
+      \strng{bibnamehash}{604da99e91493e56fb83c2236d92d254}
+      \strng{authorbibnamehash}{604da99e91493e56fb83c2236d92d254}
+      \strng{authornamehash}{604da99e91493e56fb83c2236d92d254}
+      \strng{authorfullhash}{604da99e91493e56fb83c2236d92d254}
+      \field{labelalpha}{Gra10}
+      \field{sortinit}{G}
+      \field{sortinithash}{62eb2aa29549e4fdbd3cb154ec5711cb}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Russische Erzählungen}
+      \field{year}{2010}
+      \true{nocite}
+      \keyw{Erzählungen,Russische}
     \endentry
     \entry{herrmann:bea}{book}{}
       \name{author}{1}{}{%
@@ -428,6 +699,168 @@
       \true{nocite}
       \keyw{Vorschule}
     \endentry
+    \entry{janosch:panama}{book}{}
+      \name{author}{1}{}{%
+        {{hash=ed95a338a61c528031df3f41d4544170}{%
+           family={Janosch},
+           familyi={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Beitz}%
+      }
+      \strng{namehash}{ed95a338a61c528031df3f41d4544170}
+      \strng{fullhash}{ed95a338a61c528031df3f41d4544170}
+      \strng{bibnamehash}{ed95a338a61c528031df3f41d4544170}
+      \strng{authorbibnamehash}{ed95a338a61c528031df3f41d4544170}
+      \strng{authornamehash}{ed95a338a61c528031df3f41d4544170}
+      \strng{authorfullhash}{ed95a338a61c528031df3f41d4544170}
+      \field{labelalpha}{Jan03}
+      \field{sortinit}{J}
+      \field{sortinithash}{c45040a764d616897e7f5b30174d7b92}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Ach, so schön ist Panama}
+      \field{year}{2003}
+      \true{nocite}
+      \keyw{Kindergeschichten,Kinder}
+    \endentry
+    \entry{kafka1:franz}{book}{}
+      \name{author}{1}{}{%
+        {{hash=60be36656775fc7e4034ece6367e5162}{%
+           family={Kafka},
+           familyi={K\bibinitperiod},
+           given={Franz},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Fischer}%
+      }
+      \strng{namehash}{60be36656775fc7e4034ece6367e5162}
+      \strng{fullhash}{60be36656775fc7e4034ece6367e5162}
+      \strng{bibnamehash}{60be36656775fc7e4034ece6367e5162}
+      \strng{authorbibnamehash}{60be36656775fc7e4034ece6367e5162}
+      \strng{authornamehash}{60be36656775fc7e4034ece6367e5162}
+      \strng{authorfullhash}{60be36656775fc7e4034ece6367e5162}
+      \field{labelalpha}{Kaf96}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Die Erzählungen}
+      \field{year}{1996}
+      \true{nocite}
+      \keyw{Erzählungen,Kafka}
+    \endentry
+    \entry{keller:karl}{book}{}
+      \name{author}{1}{}{%
+        {{hash=dc4025f612c644bf150f1cfc710f3e58}{%
+           family={Keller},
+           familyi={K\bibinitperiod},
+           given={Karl-Heinz},
+           giveni={K\bibinithyphendelim H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Mildenberger}%
+      }
+      \strng{namehash}{dc4025f612c644bf150f1cfc710f3e58}
+      \strng{fullhash}{dc4025f612c644bf150f1cfc710f3e58}
+      \strng{bibnamehash}{dc4025f612c644bf150f1cfc710f3e58}
+      \strng{authorbibnamehash}{dc4025f612c644bf150f1cfc710f3e58}
+      \strng{authornamehash}{dc4025f612c644bf150f1cfc710f3e58}
+      \strng{authorfullhash}{dc4025f612c644bf150f1cfc710f3e58}
+      \field{labelalpha}{Kel20}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Mathematik, 2. Klasse}
+      \field{year}{2020}
+      \true{nocite}
+      \keyw{Schule,Mathematik}
+    \endentry
+    \entry{knuth2:donald}{book}{}
+      \name{author}{1}{}{%
+        {{hash=395055c8f2efa277f21a94f57185e19c}{%
+           family={Knuth},
+           familyi={K\bibinitperiod},
+           given={E.\bibnamedelimi Donald},
+           giveni={E\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{fullhash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{bibnamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authorbibnamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authornamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authorfullhash}{395055c8f2efa277f21a94f57185e19c}
+      \field{extraname}{1}
+      \field{labelalpha}{Knu94}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The TeXbook}
+      \field{year}{1994}
+      \true{nocite}
+      \keyw{Computer,TeX}
+    \endentry
+    \entry{knuth1:donald}{book}{}
+      \name{author}{1}{}{%
+        {{hash=395055c8f2efa277f21a94f57185e19c}{%
+           family={Knuth},
+           familyi={K\bibinitperiod},
+           given={E.\bibnamedelimi Donald},
+           giveni={E\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{fullhash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{bibnamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authorbibnamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authornamehash}{395055c8f2efa277f21a94f57185e19c}
+      \strng{authorfullhash}{395055c8f2efa277f21a94f57185e19c}
+      \field{extraname}{2}
+      \field{labelalpha}{Knu96}
+      \field{sortinit}{K}
+      \field{sortinithash}{d3edc18d54b9438a72c24c925bfb38f4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The TeXbook}
+      \field{year}{1996}
+      \true{nocite}
+      \keyw{Computer,TeX}
+    \endentry
+    \entry{lindgren:astrid}{book}{}
+      \name{author}{1}{}{%
+        {{hash=737a0390abac3895433e173941e132c4}{%
+           family={Lindgren},
+           familyi={L\bibinitperiod},
+           given={Astrid},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Oetinger}%
+      }
+      \strng{namehash}{737a0390abac3895433e173941e132c4}
+      \strng{fullhash}{737a0390abac3895433e173941e132c4}
+      \strng{bibnamehash}{737a0390abac3895433e173941e132c4}
+      \strng{authorbibnamehash}{737a0390abac3895433e173941e132c4}
+      \strng{authornamehash}{737a0390abac3895433e173941e132c4}
+      \strng{authorfullhash}{737a0390abac3895433e173941e132c4}
+      \field{labelalpha}{Lin15}
+      \field{sortinit}{L}
+      \field{sortinithash}{dad3efd0836470093a7b4a7bb756eb8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Pippi Langstrumpf}
+      \field{year}{2015}
+      \true{nocite}
+      \keyw{Kindergeschichten,Kinder}
+    \endentry
     \entry{meyer:lothar}{book}{}
       \name{author}{1}{}{%
         {{hash=26cfa91152a5e9311f41464fd0202a44}{%
@@ -454,6 +887,85 @@
       \field{year}{2017}
       \true{nocite}
       \keyw{Schule,Physik}
+    \endentry
+    \entry{mueller:bettina}{book}{}
+      \name{author}{1}{}{%
+        {{hash=f3e3bc6ab82e38553a24421c2c68f4c8}{%
+           family={Müller},
+           familyi={M\bibinitperiod},
+           given={Bettina},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Mildenberger}%
+      }
+      \strng{namehash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \strng{fullhash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \strng{bibnamehash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \strng{authorbibnamehash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \strng{authornamehash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \strng{authorfullhash}{f3e3bc6ab82e38553a24421c2c68f4c8}
+      \field{labelalpha}{Mül19}
+      \field{sortinit}{M}
+      \field{sortinithash}{2e5c2f51f7fa2d957f3206819bf86dc3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Texte schreiben, 1., 2., Klasse}
+      \field{year}{2019}
+      \true{nocite}
+      \keyw{Schule,Deutsch}
+    \endentry
+    \entry{platon1:parmenides}{book}{}
+      \name{author}{1}{}{%
+        {{hash=e2baf3f5223080b8067f5af7843427cc}{%
+           family={Platon},
+           familyi={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Reclam}%
+      }
+      \strng{namehash}{e2baf3f5223080b8067f5af7843427cc}
+      \strng{fullhash}{e2baf3f5223080b8067f5af7843427cc}
+      \strng{bibnamehash}{e2baf3f5223080b8067f5af7843427cc}
+      \strng{authorbibnamehash}{e2baf3f5223080b8067f5af7843427cc}
+      \strng{authornamehash}{e2baf3f5223080b8067f5af7843427cc}
+      \strng{authorfullhash}{e2baf3f5223080b8067f5af7843427cc}
+      \field{labelalpha}{Pla20}
+      \field{sortinit}{P}
+      \field{sortinithash}{bb5b15f2db90f7aef79bb9e83defefcb}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Parmenides}
+      \field{year}{2020}
+      \true{nocite}
+      \keyw{Philosophie,Platon}
+    \endentry
+    \entry{ruckert1:martin}{book}{}
+      \name{author}{1}{}{%
+        {{hash=2a8cbae6e7902294fd7b8a729015b6c5}{%
+           family={Ruckert},
+           familyi={R\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Independently published}%
+      }
+      \strng{namehash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \strng{fullhash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \strng{bibnamehash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \strng{authorbibnamehash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \strng{authornamehash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \strng{authorfullhash}{2a8cbae6e7902294fd7b8a729015b6c5}
+      \field{labelalpha}{Ruc21}
+      \field{sortinit}{R}
+      \field{sortinithash}{b9c68a358aea118dfa887b6e902414a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{WEB to cweb}
+      \field{year}{2021}
+      \true{nocite}
+      \keyw{Computer,Web}
     \endentry
     \entry{schmid:walter}{book}{}
       \name{author}{1}{}{%
@@ -482,6 +994,33 @@
       \true{nocite}
       \keyw{Schule,Mathematik}
     \endentry
+    \entry{schramm:martina}{book}{}
+      \name{author}{1}{}{%
+        {{hash=799a7253a63f80ae6fd027af9022da58}{%
+           family={Schramm},
+           familyi={S\bibinitperiod},
+           given={Martina},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cornelson}%
+      }
+      \strng{namehash}{799a7253a63f80ae6fd027af9022da58}
+      \strng{fullhash}{799a7253a63f80ae6fd027af9022da58}
+      \strng{bibnamehash}{799a7253a63f80ae6fd027af9022da58}
+      \strng{authorbibnamehash}{799a7253a63f80ae6fd027af9022da58}
+      \strng{authornamehash}{799a7253a63f80ae6fd027af9022da58}
+      \strng{authorfullhash}{799a7253a63f80ae6fd027af9022da58}
+      \field{labelalpha}{Sch20}
+      \field{sortinit}{S}
+      \field{sortinithash}{c319cff79d99c853d775f88277d4e45f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Vom Wort zum Satz, 1. Klasse}
+      \field{year}{2020}
+      \true{nocite}
+      \keyw{Schule,Deutsch}
+    \endentry
     \entry{schmidt:eva}{book}{}
       \name{author}{1}{}{%
         {{hash=19e6d22b230d8e91d8a5131a63ac556c}{%
@@ -504,10 +1043,37 @@
       \field{sortinithash}{c319cff79d99c853d775f88277d4e45f}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Frühling, 1., 1. Klasse}
+      \field{title}{Frühling, 1., 2. Klasse}
       \field{year}{2021}
       \true{nocite}
       \keyw{Schule,Deutsch}
+    \endentry
+    \entry{schwarz:norbert}{book}{}
+      \name{author}{1}{}{%
+        {{hash=f80adac13cc206bee44ac5e0c8dfa15f}{%
+           family={Schwarz},
+           familyi={S\bibinitperiod},
+           given={Norbert},
+           giveni={N\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley}%
+      }
+      \strng{namehash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \strng{fullhash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \strng{bibnamehash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \strng{authorbibnamehash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \strng{authornamehash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \strng{authorfullhash}{f80adac13cc206bee44ac5e0c8dfa15f}
+      \field{labelalpha}{Sch88}
+      \field{sortinit}{S}
+      \field{sortinithash}{c319cff79d99c853d775f88277d4e45f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Einführung in TeX}
+      \field{year}{1988}
+      \true{nocite}
+      \keyw{Computer,TeX}
     \endentry
     \entry{simon:nina}{book}{}
       \name{author}{1}{}{%
@@ -589,6 +1155,174 @@
       \field{year}{2020}
       \true{nocite}
       \keyw{Schule,Deutsch}
+    \endentry
+    \entry{tolkien1:j}{book}{}
+      \name{author}{1}{}{%
+        {{hash=84577d441f5fc56c5c3ee96ac6871395}{%
+           family={Tolkien},
+           familyi={T\bibinitperiod},
+           given={J.\bibnamedelimi R.\bibnamedelimi R.},
+           giveni={J\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Klett-Cotta}%
+      }
+      \strng{namehash}{84577d441f5fc56c5c3ee96ac6871395}
+      \strng{fullhash}{84577d441f5fc56c5c3ee96ac6871395}
+      \strng{bibnamehash}{84577d441f5fc56c5c3ee96ac6871395}
+      \strng{authorbibnamehash}{84577d441f5fc56c5c3ee96ac6871395}
+      \strng{authornamehash}{84577d441f5fc56c5c3ee96ac6871395}
+      \strng{authorfullhash}{84577d441f5fc56c5c3ee96ac6871395}
+      \field{labelalpha}{Tol01}
+      \field{sortinit}{T}
+      \field{sortinithash}{51f9faf24c60c62ca764a77f78cf5666}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Der Herr der Ringe. Die Gefährten}
+      \field{year}{2001}
+      \true{nocite}
+      \keyw{Romane,Tolkien}
+    \endentry
+    \entry{voget:andre}{book}{}
+      \name{author}{1}{}{%
+        {{hash=b9ac24e15fcc2880757e0fd510c1794b}{%
+           family={Voget},
+           familyi={V\bibinitperiod},
+           given={Andre},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Signifant}%
+      }
+      \strng{namehash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \strng{fullhash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \strng{bibnamehash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \strng{authorbibnamehash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \strng{authornamehash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \strng{authorfullhash}{b9ac24e15fcc2880757e0fd510c1794b}
+      \field{labelalpha}{Vog99}
+      \field{sortinit}{V}
+      \field{sortinithash}{02432525618c08e2b03cac47c19764af}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Komplett, 1. Klasse}
+      \field{year}{1999}
+      \true{nocite}
+      \keyw{Schule,Deutsch,Mathematik}
+    \endentry
+    \entry{wittgenstein2:ludwig}{book}{}
+      \name{author}{1}{}{%
+        {{hash=3234c99a3eebf68ef7d42684cdb8ed8f}{%
+           family={Wittgenstein},
+           familyi={W\bibinitperiod},
+           given={Ludwig},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Suhrkamp}%
+      }
+      \strng{namehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{fullhash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{bibnamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authorbibnamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authornamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authorfullhash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \field{extraname}{1}
+      \field{labelalpha}{Wit22}
+      \field{sortinit}{W}
+      \field{sortinithash}{1af34bd8c148ffb32de1494636b49713}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Betrachtungen zur Musik}
+      \field{year}{2022}
+      \true{nocite}
+      \keyw{Philosophie,Wittgenstein}
+    \endentry
+    \entry{wittgenstein1:ludwig}{book}{}
+      \name{author}{1}{}{%
+        {{hash=3234c99a3eebf68ef7d42684cdb8ed8f}{%
+           family={Wittgenstein},
+           familyi={W\bibinitperiod},
+           given={Ludwig},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Reclam}%
+      }
+      \strng{namehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{fullhash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{bibnamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authorbibnamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authornamehash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \strng{authorfullhash}{3234c99a3eebf68ef7d42684cdb8ed8f}
+      \field{extraname}{2}
+      \field{labelalpha}{Wit22}
+      \field{sortinit}{W}
+      \field{sortinithash}{1af34bd8c148ffb32de1494636b49713}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Logisch-Philosophische Abhandlung}
+      \field{year}{2022}
+      \true{nocite}
+      \keyw{Philosophie,Wittgenstein}
+    \endentry
+    \entry{zweig2:stefan}{book}{}
+      \name{author}{1}{}{%
+        {{hash=844f6e4a9295f1d60de4740181f019de}{%
+           family={Zweig},
+           familyi={Z\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {AuraBooks}%
+      }
+      \strng{namehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{fullhash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{bibnamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authorbibnamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authornamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authorfullhash}{844f6e4a9295f1d60de4740181f019de}
+      \field{extraname}{1}
+      \field{labelalpha}{Zwe22}
+      \field{sortinit}{Z}
+      \field{sortinithash}{8f7b480688e809b50b6f6577b16f3db5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Schachnovelle}
+      \field{year}{2022}
+      \true{nocite}
+      \keyw{Erzählungen,Zweig}
+    \endentry
+    \entry{zweig1:stefan}{book}{}
+      \name{author}{1}{}{%
+        {{hash=844f6e4a9295f1d60de4740181f019de}{%
+           family={Zweig},
+           familyi={Z\bibinitperiod},
+           given={Stefan},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Insel}%
+      }
+      \strng{namehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{fullhash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{bibnamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authorbibnamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authornamehash}{844f6e4a9295f1d60de4740181f019de}
+      \strng{authorfullhash}{844f6e4a9295f1d60de4740181f019de}
+      \field{extraname}{2}
+      \field{labelalpha}{Zwe27}
+      \field{sortinit}{Z}
+      \field{sortinithash}{8f7b480688e809b50b6f6577b16f3db5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Sternstunden der Menschheit}
+      \field{year}{1927}
+      \true{nocite}
+      \keyw{Erzählungen,Zweig}
     \endentry
   \enddatalist
 \endrefsection

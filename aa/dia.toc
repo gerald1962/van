@@ -2,188 +2,226 @@
 \boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
 \babel@toc {ngerman}{}
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{1.\hskip 3pt {{\color {midnightblue} {\bf Track}}}}{3}%
+\contentsline {section}{1.\hskip 3pt {{\color {midnightblue} {\bf Track}}}}{4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{2.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{3}%
+\contentsline {section}{2.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{3.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{3}%
+\contentsline {section}{3.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{4.\hskip 3pt {\color {english} \bf {Anamnese}}}{3}%
+\contentsline {section}{4.\hskip 3pt {\color {english} \bf {Anamnese}}}{4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{4.1.\hskip 3pt {\color {midnightblue} {\bf Fragen}}}{3}%
+\contentsline {subsection}{4.1.\hskip 3pt {\color {midnightblue} {\bf Fragen}}}{4}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{4.2.\hskip 3pt {\color {midnightblue} {\bf Lebenslauf}}}{5}%
+\contentsline {subsection}{4.2.\hskip 3pt {\color {midnightblue} {\bf Lebenslauf}}}{6}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{4.3.\hskip 3pt {\color {midnightblue} {\bf Subjektiv Solipsistische Lebenslauf}}}{6}%
+\contentsline {subsection}{4.3.\hskip 3pt {\color {midnightblue} {\bf Subjektiv Solipsistische Lebenslauf}}}{7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{4.4.\hskip 3pt {\color {midnightblue} {\bf Objektiv Empirische Lebenslauf}}}{6}%
+\contentsline {subsection}{4.4.\hskip 3pt {\color {midnightblue} {\bf Objektiv Empirische Lebenslauf}}}{7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{4.5.\hskip 3pt {\color {midnightblue} {\bf Biographie}}}{6}%
+\contentsline {subsection}{4.5.\hskip 3pt {\color {midnightblue} {\bf Biographie}}}{7}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{5.\hskip 3pt {\color {english} \bf {Ätiologie}}}{7}%
+\contentsline {section}{5.\hskip 3pt {\color {english} \bf {Ätiologie}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{6.\hskip 3pt {\color {english} \bf {Pathogenese}}}{7}%
+\contentsline {section}{6.\hskip 3pt {\color {english} \bf {Pathogenese}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{7.\hskip 3pt {\color {english} \bf {Labordiagnostik}}}{7}%
+\contentsline {section}{7.\hskip 3pt {\color {english} \bf {Labordiagnostik}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{7.1.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{7}%
+\contentsline {subsection}{7.1.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{7.2.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{7}%
+\contentsline {subsection}{7.2.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{7.3.\hskip 3pt {\color {amber(sae/ece)} {\bf Blutbild}}}{7}%
+\contentsline {subsection}{7.3.\hskip 3pt {\color {amber(sae/ece)} {\bf Blutbild}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{7.3.1.\hskip 3pt {{\color {amber(sae/ece)} {\bf Leberwerte}}}}{7}%
+\contentsline {subsubsection}{7.3.1.\hskip 3pt {{\color {amber(sae/ece)} {\bf Leberwerte}}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{7.3.2.\hskip 3pt {\color {amber(sae/ece)} {\bf 12.09.2022}}}{7}%
+\contentsline {subsubsection}{7.3.2.\hskip 3pt {\color {amber(sae/ece)} {\bf 12.09.2022}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{8.\hskip 3pt {\color {english} \bf {Klassifikation}}}{7}%
+\contentsline {section}{8.\hskip 3pt {\color {english} \bf {Klassifikation}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.1.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{7}%
+\contentsline {subsection}{8.1.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{8}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.2.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{8}%
+\contentsline {subsection}{8.2.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.3.\hskip 3pt {\color {english} \bf {Symptome}}}{8}%
+\contentsline {subsection}{8.3.\hskip 3pt {\color {english} \bf {Symptome}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.4.\hskip 3pt {\color {english} \bf {Klassifikation nach ICD-10}}}{8}%
+\contentsline {subsection}{8.4.\hskip 3pt {\color {english} \bf {Klassifikation nach ICD-10}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.4.1.\hskip 3pt {\color {english} \bf {Abhängigkeitssyndrom}}}{8}%
+\contentsline {subsubsection}{8.4.1.\hskip 3pt {\color {english} \bf {Abhängigkeitssyndrom}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.4.2.\hskip 3pt {\color {english} \bf {Akute Alkoholintoxikation (akuter Alkoholrausch)}}}{8}%
+\contentsline {subsubsection}{8.4.2.\hskip 3pt {\color {english} \bf {Akute Alkoholintoxikation (akuter Alkoholrausch)}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.5.\hskip 3pt {\color {english} \bf {Klassifikation nach DSM-5}}}{8}%
+\contentsline {subsection}{8.5.\hskip 3pt {\color {english} \bf {Klassifikation nach DSM-5}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.5.1.\hskip 3pt {\color {english} \bf {Störung durch Alkoholkonsum (Alkoholkonsumstörung)}}}{8}%
+\contentsline {subsubsection}{8.5.1.\hskip 3pt {\color {english} \bf {Störung durch Alkoholkonsum (Alkoholkonsumstörung)}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.6.\hskip 3pt {\color {english} \bf {Krankheitsverlauf und -bild}}}{8}%
+\contentsline {subsection}{8.6.\hskip 3pt {\color {english} \bf {Krankheitsverlauf und -bild}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.6.1.\hskip 3pt {\color {english} \bf {Krankheitsverlauf}}}{8}%
+\contentsline {subsubsection}{8.6.1.\hskip 3pt {\color {english} \bf {Krankheitsverlauf}}}{9}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.6.2.\hskip 3pt {\color {english} \bf {Ausprägungen der Krankheit}}}{9}%
+\contentsline {subsubsection}{8.6.2.\hskip 3pt {\color {english} \bf {Ausprägungen der Krankheit}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.7.\hskip 3pt {\color {english} \bf {Biologie der Alkoholsucht}}}{9}%
+\contentsline {subsection}{8.7.\hskip 3pt {\color {english} \bf {Biologie der Alkoholsucht}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.8.\hskip 3pt {\color {english} \bf {Krankheitsursachen}}}{9}%
+\contentsline {subsection}{8.8.\hskip 3pt {\color {english} \bf {Krankheitsursachen}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.8.1.\hskip 3pt {\color {english} \bf {Genetische Faktoren}}}{9}%
+\contentsline {subsubsection}{8.8.1.\hskip 3pt {\color {english} \bf {Genetische Faktoren}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{8.8.2.\hskip 3pt {\color {english} \bf {Psychologische Faktoren}}}{9}%
+\contentsline {subsubsection}{8.8.2.\hskip 3pt {\color {english} \bf {Psychologische Faktoren}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{8.9.\hskip 3pt {\color {english} \bf {Rückfall}}}{9}%
+\contentsline {subsection}{8.9.\hskip 3pt {\color {english} \bf {Rückfall}}}{10}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{9.\hskip 3pt {{\color {english} \bf {Therapie}}}}{10}%
+\contentsline {section}{9.\hskip 3pt {{\color {english} \bf {Therapie}}}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.1.\hskip 3pt {{\color {midnightblue} {\bf Track}}}}{10}%
+\contentsline {subsection}{9.1.\hskip 3pt {{\color {midnightblue} {\bf Track}}}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.2.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{10}%
+\contentsline {subsection}{9.2.\hskip 3pt {\color {midnightblue} {\bf Bibliographie}}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.2.1.\hskip 3pt {\color {midnightblue} {\bf Sport}}}{10}%
+\contentsline {subsubsection}{9.2.1.\hskip 3pt {\color {midnightblue} {\bf Sport}}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.2.2.\hskip 3pt {\color {midnightblue} {\bf \LaTeX }}}{10}%
+\contentsline {subsubsection}{9.2.2.\hskip 3pt {\color {midnightblue} {\bf \LaTeX }}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.3.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{10}%
+\contentsline {subsection}{9.3.\hskip 3pt {\color {midnightblue} {\bf Definitionen}}}{11}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.4.\hskip 3pt {\color {darkbrown} {\bf Phasen}}}{11}%
+\contentsline {subsection}{9.4.\hskip 3pt {\color {darkbrown} {\bf Phasen}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.4.1.\hskip 3pt {\color {darkbrown} {\bf Entgiftung}}}{11}%
+\contentsline {subsubsection}{9.4.1.\hskip 3pt {\color {darkbrown} {\bf Entgiftung}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.4.2.\hskip 3pt {\color {darkbrown} {\bf Entzug}}}{11}%
+\contentsline {subsubsection}{9.4.2.\hskip 3pt {\color {darkbrown} {\bf Entzug}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.4.3.\hskip 3pt {\color {darkbrown} {\bf Entwöhnung}}}{11}%
+\contentsline {subsubsection}{9.4.3.\hskip 3pt {\color {darkbrown} {\bf Entwöhnung}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.5.\hskip 3pt {\color {english} \bf {Gefühlszustände}}}{11}%
+\contentsline {subsection}{9.5.\hskip 3pt {\color {english} \bf {Gefühlszustände}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.6.\hskip 3pt {{\color {english} \bf {Alltagsstruktur}}}}{11}%
+\contentsline {subsection}{9.6.\hskip 3pt {{\color {english} \bf {Alltagsstruktur}}}}{12}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.7.\hskip 3pt {{\color {english} \bf {Speisekarte}}}}{12}%
+\contentsline {subsection}{9.7.\hskip 3pt {{\color {english} \bf {Speisekarte}}}}{13}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.8.\hskip 3pt {{\color {english} \bf {Protokoll}}}}{12}%
+\contentsline {subsection}{9.8.\hskip 3pt {{\color {english} \bf {Protokoll}}}}{13}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.1.\hskip 3pt {\color {midnightblue} {\bf Wortschatz}}}{12}%
+\contentsline {subsubsection}{9.8.1.\hskip 3pt {\color {midnightblue} {\bf Wortschatz}}}{13}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.2.\hskip 3pt {\color {english} \bf {KW 36}}}{13}%
+\contentsline {subsubsection}{9.8.2.\hskip 3pt {\color {english} \bf {KW 36}}}{14}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.3.\hskip 3pt {\color {english} \bf {KW 37}}}{13}%
+\contentsline {subsubsection}{9.8.3.\hskip 3pt {\color {english} \bf {KW 37}}}{14}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.4.\hskip 3pt {\color {english} \bf {KW 38}}}{16}%
+\contentsline {subsubsection}{9.8.4.\hskip 3pt {\color {english} \bf {KW 38}}}{17}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.5.\hskip 3pt {\color {english} \bf {KW 39}}}{26}%
+\contentsline {subsubsection}{9.8.5.\hskip 3pt {\color {english} \bf {KW 39}}}{27}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.6.\hskip 3pt {\color {english} \bf {KW 40}}}{37}%
+\contentsline {subsubsection}{9.8.6.\hskip 3pt {\color {english} \bf {KW 40}}}{38}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.7.\hskip 3pt {\color {english} \bf {KW 41}}}{45}%
+\contentsline {subsubsection}{9.8.7.\hskip 3pt {\color {english} \bf {KW 41}}}{46}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{9.8.8.\hskip 3pt {\color {english} \bf {KW 42}}}{54}%
+\contentsline {subsubsection}{9.8.8.\hskip 3pt {\color {english} \bf {KW 42}}}{55}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{9.9.\hskip 3pt {{\color {amber(sae/ece)} {\bf Auswertung}}}}{54}%
+\contentsline {subsubsection}{9.8.9.\hskip 3pt {\color {english} \bf {KW 43}}}{65}%
 \defcounter {refsection}{0}\relax 
-\contentsline {section}{\numberline {A}Appendix}{55}%
+\contentsline {subsubsection}{9.8.10.\hskip 3pt {\color {english} \bf {KW 44}}}{67}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.1}Laborwerte - 12.09.2022}{55}%
+\contentsline {subsubsection}{9.8.11.\hskip 3pt {\color {english} \bf {KW 45}}}{67}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.2}Saaletalklinik}{56}%
+\contentsline {subsubsection}{9.8.12.\hskip 3pt {\color {english} \bf {KW 46}}}{67}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.2.1}Therapiekonzept}{56}%
+\contentsline {subsubsection}{9.8.13.\hskip 3pt {\color {english} \bf {KW 47}}}{67}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.2.2}Sportgeräte}{56}%
+\contentsline {subsection}{9.9.\hskip 3pt {{\color {amber(sae/ece)} {\bf Auswertung}}}}{68}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.2.3}Zazen}{56}%
+\contentsline {section}{\numberline {A}Appendix}{69}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.3}Menübilder}{56}%
+\contentsline {subsection}{\numberline {A.1}Laborwerte - 12.09.2022}{69}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.1}Thunfisch mit Spinat-Ravioli}{56}%
+\contentsline {subsection}{\numberline {A.2}Deutsches Sportabzeichen}{70}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.2}Leber mit Bohnen}{56}%
+\contentsline {subsection}{\numberline {A.3}Saaletalklinik}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.3}Tofu mit Kartoffeln}{56}%
+\contentsline {subsubsection}{\numberline {A.3.1}Therapiekonzept}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.4}Leber mit Kohlrabi}{57}%
+\contentsline {subsubsection}{\numberline {A.3.2}Sportgeräte}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.5}Wiener mit Sauerkraut}{57}%
+\contentsline {subsubsection}{\numberline {A.3.3}Zazen}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.3.6}Thunfisch mit Mohrrüben}{57}%
+\contentsline {subsection}{\numberline {A.4}Menübilder}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.4}Charaktereigenschaften}{57}%
+\contentsline {subsubsection}{\numberline {A.4.1}Thunfisch mit Spinat-Ravioli}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.5}Bibliothek}{59}%
+\contentsline {subsubsection}{\numberline {A.4.2}Leber mit Bohnen}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.5.1}Bilderbücher}{59}%
+\contentsline {subsubsection}{\numberline {A.4.3}Tofu mit Kartoffeln}{71}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.5.2}Vorschule}{59}%
+\contentsline {subsubsection}{\numberline {A.4.4}Leber mit Kohlrabi}{72}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.5.3}Schulbücher}{59}%
+\contentsline {subsubsection}{\numberline {A.4.5}Wiener mit Sauerkraut}{72}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.5.4}Evolution}{60}%
+\contentsline {subsubsection}{\numberline {A.4.6}Thunfisch mit Mohrrüben}{72}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.6}Tractatus}{60}%
+\contentsline {subsection}{\numberline {A.5}Charaktereigenschaften}{72}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.7}Märchen}{60}%
+\contentsline {subsection}{\numberline {A.6}Bibliothek}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.7.1}Das Hirtenbüblein}{60}%
+\contentsline {subsubsection}{\numberline {A.6.1}Philosophie}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.7.2}Frau Holle}{60}%
+\contentsline {subsubsection}{\numberline {A.6.2}Buddhismus}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.7.3}Der Arme und der Reiche}{61}%
+\contentsline {subsubsection}{\numberline {A.6.3}Anonyme Alkoholiker}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.7.4}Rumpelstilzchen}{63}%
+\contentsline {subsubsection}{\numberline {A.6.4}Computer}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.8}Zensus}{64}%
+\contentsline {subsubsection}{\numberline {A.6.5}Erzählungen}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.8.1}Bibliographie}{64}%
+\contentsline {subsubsection}{\numberline {A.6.6}Romane}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.8.2}Definitionen}{64}%
+\contentsline {subsubsection}{\numberline {A.6.7}Theatestücke}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.8.3}Anmeldung}{64}%
+\contentsline {subsubsection}{\numberline {A.6.8}Bilderbücher}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.9}Grundsteuer}{64}%
+\contentsline {subsubsection}{\numberline {A.6.9}Kindergeschichten}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.9.1}Bibliographie}{64}%
+\contentsline {subsubsection}{\numberline {A.6.10}Vorschule}{75}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.9.2}Definitionen}{64}%
+\contentsline {subsubsection}{\numberline {A.6.11}Schulbücher}{76}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.9.3}Grundsteuererklärung}{64}%
+\contentsline {subsubsection}{\numberline {A.6.12}Evolution}{76}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.9.4}Aktenzeichen}{66}%
+\contentsline {subsection}{\numberline {A.7}Recherche}{77}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsection}{\numberline {A.10}Ausblick}{67}%
+\contentsline {subsubsection}{\numberline {A.7.1}Tractatus}{77}%
 \defcounter {refsection}{0}\relax 
-\contentsline {subsubsection}{\numberline {A.10.1}Muskelaufbau}{67}%
+\contentsline {subsubsection}{\numberline {A.7.2}Basis Bibel}{77}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.7.3}Buddhas Lehrreden}{77}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.8}Fukanzazengi}{78}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.9}Tractatus}{80}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.10}Märchen}{81}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.10.1}Das Hirtenbüblein}{81}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.10.2}Frau Holle}{81}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.10.3}Der Arme und der Reiche}{82}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.10.4}Rumpelstilzchen}{83}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.11}Zensus}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.11.1}Bibliographie}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.11.2}Definitionen}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.11.3}Anmeldung}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.12}Grundsteuer}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.12.1}Bibliographie}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.12.2}Definitionen}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.12.3}Grundsteuererklärung}{85}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.12.4}Aktenzeichen}{87}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsection}{\numberline {A.13}Ausblick}{88}%
+\defcounter {refsection}{0}\relax 
+\contentsline {subsubsection}{\numberline {A.13.1}Muskelaufbau}{88}%
