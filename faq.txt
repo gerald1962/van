@@ -1,3 +1,9 @@
+PDF Reader
+==========
+https://www.linuxcapable.com/how-to-install-okular-on-ubuntu-22-04-lts/
+sudo apt update && sudo apt upgrade -y
+sudo apt install okular -y
+okular dia.pdf&
 
 
 pgfplot
