@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.11.4)  14 NOV 2022 13:23
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.11.4)  23 NOV 2022 23:07
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1774,139 +1774,147 @@ Package mdframed Info: Not enough space on this page on input line 9439.
 Package mdframed Info: Box was splittet wrong
  starting loop to iterate the splitting point
 (mdframed)              on input line 9692.
- [86] [87] [88] [89] [90] [91] [92] [93] [94] [95] [96]
-[97] [98] [99]
-<lw220912.pdf, id=344, 614.295pt x 794.97pt>
+ [86] [87] [88] [89] [90] [91] [92] [93] [94]
+Package mdframed Info: Box was splittet wrong
+ starting loop to iterate the splitting point
+(mdframed)              on input line 10690.
+ [95] [96]
+[97] [98] [99] [100] [101] [102] [103]
+Package mdframed Info: Not enough space on this page on input line 11519.
+ [104] [105] [106] [107] [108] [109]
+<lw220912.pdf, id=376, 614.295pt x 794.97pt>
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 11067.
+Package pdftex.def Info: lw220912.pdf  used on input line 12079.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 11067.
+Package pdftex.def Info: lw220912.pdf  used on input line 12079.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<lw220912.pdf, id=347, page=1, 614.295pt x 794.97pt>
+<lw220912.pdf, id=379, page=1, 614.295pt x 794.97pt>
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 11067.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 12079.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 11067.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 12079.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [100]
+
+[110]
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 11067.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 11067.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 12079.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
 File: lw220912.pdf Graphic file (type pdf)
 <use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 11067.
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 12079.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [101 <./lw220912.pdf>]
-<dosb.pdf, id=358, 597.51233pt x 845.0471pt>
+File: lw220912.pdf Graphic file (type pdf)
+<use lw220912.pdf, page 1>
+Package pdftex.def Info: lw220912.pdf , page1 used on input line 12079.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+ [111 <./lw220912.pdf>]
+<dosb.pdf, id=390, 597.51233pt x 845.0471pt>
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf>
-Package pdftex.def Info: dosb.pdf  used on input line 11078.
+Package pdftex.def Info: dosb.pdf  used on input line 12090.
 (pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf>
-Package pdftex.def Info: dosb.pdf  used on input line 11078.
+Package pdftex.def Info: dosb.pdf  used on input line 12090.
 (pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
-<dosb.pdf, id=361, page=1, 597.51233pt x 845.0471pt>
+<dosb.pdf, id=393, page=1, 597.51233pt x 845.0471pt>
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 11078.
+Package pdftex.def Info: dosb.pdf , page1 used on input line 12090.
 (pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 11078.
+Package pdftex.def Info: dosb.pdf , page1 used on input line 12090.
 (pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 11078.
+Package pdftex.def Info: dosb.pdf , page1 used on input line 12090.
 (pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 11078.
+Package pdftex.def Info: dosb.pdf , page1 used on input line 12090.
 (pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
 File: dosb.pdf Graphic file (type pdf)
 <use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 11078.
+Package pdftex.def Info: dosb.pdf , page1 used on input line 12090.
 (pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
- [102 <./dosb.pdf>]
-<menue/vThunfischR.png, id=381, 291.0875pt x 192.72pt>
+ [112 <./dosb.pdf>]
+<menue/vThunfischR.png, id=413, 291.0875pt x 192.72pt>
 File: menue/vThunfischR.png Graphic file (type png)
 <use menue/vThunfischR.png>
-Package pdftex.def Info: menue/vThunfischR.png  used on input line 11154.
+Package pdftex.def Info: menue/vThunfischR.png  used on input line 12166.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischR.png, id=382, 291.0875pt x 192.72pt>
+<menue/eThunfischR.png, id=414, 291.0875pt x 192.72pt>
 File: menue/eThunfischR.png Graphic file (type png)
 <use menue/eThunfischR.png>
-Package pdftex.def Info: menue/eThunfischR.png  used on input line 11161.
+Package pdftex.def Info: menue/eThunfischR.png  used on input line 12173.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberBohnen.png, id=383, 291.0875pt x 192.72pt>
+<menue/vLeberBohnen.png, id=415, 291.0875pt x 192.72pt>
 File: menue/vLeberBohnen.png Graphic file (type png)
 <use menue/vLeberBohnen.png>
-Package pdftex.def Info: menue/vLeberBohnen.png  used on input line 11179.
+Package pdftex.def Info: menue/vLeberBohnen.png  used on input line 12191.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberBohnen.png, id=384, 291.0875pt x 192.72pt>
+<menue/eLeberBohnen.png, id=416, 291.0875pt x 192.72pt>
 File: menue/eLeberBohnen.png Graphic file (type png)
 <use menue/eLeberBohnen.png>
-Package pdftex.def Info: menue/eLeberBohnen.png  used on input line 11186.
+Package pdftex.def Info: menue/eLeberBohnen.png  used on input line 12198.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
- [103 <./menue/vThunfischR.png> <./menue/eThunfischR.png>]
-<menue/vTofuKartoffeln.png, id=389, 291.0875pt x 192.72pt>
+ [113 <./menue/vThunfischR.png> <./menue/eThunfischR.png>]
+<menue/vTofuKartoffeln.png, id=420, 291.0875pt x 192.72pt>
 File: menue/vTofuKartoffeln.png Graphic file (type png)
 <use menue/vTofuKartoffeln.png>
-Package pdftex.def Info: menue/vTofuKartoffeln.png  used on input line 11204.
+Package pdftex.def Info: menue/vTofuKartoffeln.png  used on input line 12216.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eTofuKartoffeln.png, id=390, 291.0875pt x 192.72pt>
+<menue/eTofuKartoffeln.png, id=421, 291.0875pt x 192.72pt>
 File: menue/eTofuKartoffeln.png Graphic file (type png)
 <use menue/eTofuKartoffeln.png>
-Package pdftex.def Info: menue/eTofuKartoffeln.png  used on input line 11211.
+Package pdftex.def Info: menue/eTofuKartoffeln.png  used on input line 12223.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberKohlrabi.png, id=391, 291.0875pt x 192.72pt>
+<menue/vLeberKohlrabi.png, id=422, 291.0875pt x 192.72pt>
 File: menue/vLeberKohlrabi.png Graphic file (type png)
 <use menue/vLeberKohlrabi.png>
-Package pdftex.def Info: menue/vLeberKohlrabi.png  used on input line 11229.
+Package pdftex.def Info: menue/vLeberKohlrabi.png  used on input line 12241.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberKohlrabi.png, id=392, 291.0875pt x 192.72pt>
+<menue/eLeberKohlrabi.png, id=423, 291.0875pt x 192.72pt>
 File: menue/eLeberKohlrabi.png Graphic file (type png)
 <use menue/eLeberKohlrabi.png>
-Package pdftex.def Info: menue/eLeberKohlrabi.png  used on input line 11236.
+Package pdftex.def Info: menue/eLeberKohlrabi.png  used on input line 12248.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vWienerSk.png, id=393, 291.0875pt x 192.72pt>
+<menue/vWienerSk.png, id=424, 291.0875pt x 192.72pt>
 File: menue/vWienerSk.png Graphic file (type png)
 <use menue/vWienerSk.png>
-Package pdftex.def Info: menue/vWienerSk.png  used on input line 11254.
+Package pdftex.def Info: menue/vWienerSk.png  used on input line 12266.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eWienerSk.png, id=394, 291.0875pt x 192.72pt>
+<menue/eWienerSk.png, id=425, 291.0875pt x 192.72pt>
 File: menue/eWienerSk.png Graphic file (type png)
 <use menue/eWienerSk.png>
-Package pdftex.def Info: menue/eWienerSk.png  used on input line 11261.
+Package pdftex.def Info: menue/eWienerSk.png  used on input line 12273.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vThunfischMr.png, id=395, 291.0875pt x 192.72pt>
+<menue/vThunfischMr.png, id=426, 291.0875pt x 192.72pt>
 File: menue/vThunfischMr.png Graphic file (type png)
 <use menue/vThunfischMr.png>
-Package pdftex.def Info: menue/vThunfischMr.png  used on input line 11279.
+Package pdftex.def Info: menue/vThunfischMr.png  used on input line 12291.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischMr.png, id=396, 291.0875pt x 192.72pt>
+<menue/eThunfischMr.png, id=427, 291.0875pt x 192.72pt>
 File: menue/eThunfischMr.png Graphic file (type png)
 <use menue/eThunfischMr.png>
-Package pdftex.def Info: menue/eThunfischMr.png  used on input line 11286.
+Package pdftex.def Info: menue/eThunfischMr.png  used on input line 12298.
 (pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
- [104 <./menue/vLeberBohnen.png> <./menue/eLeberBohnen.png> <./menue/vTofuKarto
+ [114 <./menue/vLeberBohnen.png> <./menue/eLeberBohnen.png> <./menue/vTofuKarto
 ffeln.png> <./menue/eTofuKartoffeln.png> <./menue/vLeberKohlrabi.png> <./menue/
 eLeberKohlrabi.png> <./menue/vWienerSk.png> <./menue/eWienerSk.png> <./menue/vT
 hunfischMr.png> <./menue/eThunfischMr.png>]
 \openout4 = `dia.pyg'.
 
- (./_minted-dia/default.pygstyle)
+
+(./_minted-dia/default.pygstyle)
 (./_minted-dia/1D2A21B95A736071B246FCBA2B18D8317E4DB96A0959E35F4FC20921D95563A8
 .pygtex
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
@@ -1916,40 +1924,40 @@ LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
 
 
 (./_minted-dia/153E1544025AC864CAD164BDA32A2C1EB209D16833555C9EFB9F9EA27F32D78D
-.pygtex) [105] [106] [107] [108] [109] [110] [111] [112] [113] [114] [115]
-[116] [117] [118] [119] [120]
-<GrstAktz.pdf, id=451, 614.295pt x 794.97pt>
+.pygtex) [115] [116] [117] [118] [119] [120] [121] [122] [123] [124] [125]
+[126] [127] [128] [129] [130]
+<GrstAktz.pdf, id=483, 614.295pt x 794.97pt>
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf  used on input line 13442.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf  used on input line 13442.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<GrstAktz.pdf, id=454, page=1, 614.295pt x 794.97pt>
+<GrstAktz.pdf, id=486, page=1, 614.295pt x 794.97pt>
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 13442.
 (pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 13442.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [121]
+ [131]
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 12430.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 13442.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
 File: GrstAktz.pdf Graphic file (type pdf)
 <use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 12430.
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 13442.
 (pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [122 <./GrstAktz.pdf>] [123] (./dia.aux)
+File: GrstAktz.pdf Graphic file (type pdf)
+<use GrstAktz.pdf, page 1>
+Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 13442.
+(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
+ [132 <./GrstAktz.pdf>] [133] (./dia.aux)
 runsystem(rm dia.pyg)...executed.
 
 Package logreq Info: Writing requests to 'dia.run.xml'.
@@ -1959,7 +1967,7 @@ Package logreq Info: Writing requests to 'dia.run.xml'.
 Here is how much of TeX's memory you used:
  41300 strings out of 478287
  839374 string characters out of 5849289
- 1755884 words of memory out of 5000000
+ 1755885 words of memory out of 5000000
  58868 multiletter control sequences out of 15000+600000
  577776 words of font info for 145 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
@@ -1977,10 +1985,10 @@ st/fonts/type1/public/stix/stix-mathit.pfb></usr/share/texlive/texmf-dist/fonts
 /type1/public/stix/stix-mathrm.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
 ublic/stix/stix-mathscr.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/w
 asy-type1/wasy10.pfb>
-Output written on dia.pdf (123 pages, 3105425 bytes).
+Output written on dia.pdf (133 pages, 3140141 bytes).
 PDF statistics:
- 526 PDF objects out of 1000 (max. 8388607)
- 332 compressed objects within 4 object streams
+ 558 PDF objects out of 1000 (max. 8388607)
+ 354 compressed objects within 4 object streams
  0 named destinations out of 1000 (max. 500000)
  169 words of extra memory for PDF output out of 10000 (max. 10000000)
 
