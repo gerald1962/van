@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{\PYGZbs{}usepackage}\PYG{n+nb}{\PYGZob{}}minted\PYG{n+nb}{\PYGZcb{}}         \PYG{c}{\PYGZpc{} Syntax highlighting: \PYGZbs{}begin\PYGZob{}minted\PYGZcb{}\PYGZob{}lua\PYGZcb{}.}
+
+\PYG{c}{\PYGZpc{} Start of the syntax highlighting.}
+\PYG{k}{\PYGZbs{}begin}\PYG{n+nb}{\PYGZob{}}minted\PYG{n+nb}{\PYGZcb{}\PYGZob{}}lua\PYG{n+nb}{\PYGZcb{}}
+  \PYGZhy{}\PYGZhy{} This is single line comment
+  \PYGZhy{}\PYGZhy{}
+  print(\PYGZdq{}Hello World!\PYGZdq{});
+\end{Verbatim}

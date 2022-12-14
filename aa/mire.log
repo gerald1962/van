@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.11.4)  14 DEC 2022 10:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2022.11.4)  28 NOV 2022 11:45
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
-**dia.tex
-(./dia.tex
+**mire
+(./mire.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-01-21>
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
@@ -1099,10 +1099,10 @@ Package: catchfile 2019/12/09 v1.8 Catch the contents of a file (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/iftex/ifluatex.sty
 Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
 )
-runsystem(uname -s > "dia.w18")...executed.
+runsystem(uname -s > "mire.w18")...executed.
 
- (./dia.w18)
-runsystem(rm -- "dia.w18")...executed.
+ (./mire.w18)
+runsystem(rm -- "mire.w18")...executed.
 
 )
 (/usr/share/texlive/texmf-dist/tex/generic/xstring/xstring.sty
@@ -1136,7 +1136,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@float@every@listing=\toks44
 \c@listing=\count444
 )
-runsystem(mkdir -p _minted-dia)...executed.
+runsystem(mkdir -p _minted-mire)...executed.
 
 \c@subc=\count445
 \c@subsubc=\count446
@@ -1421,9 +1421,9 @@ Package biblatex Info: ... and expl3
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
 Package: blx-case-expl3 2022/02/02 v3.17 expl3 case changing code for biblatex
 ))
-runsystem(which pygmentize && touch dia.aex)...executed.
+runsystem(which pygmentize && touch mire.aex)...executed.
 
-runsystem(rm dia.aex)...executed.
+runsystem(rm mire.aex)...executed.
 
 
 
@@ -1433,42 +1433,42 @@ Package biblatex Warning: 'babel/polyglossia' detected but 'csquotes' missing.
 \@quotelevel=\count578
 \@quotereset=\count579
 LaTeX Font Info:    Trying to load font information for T1+stix on input line 2
-14.
+15.
 (/usr/share/texlive/texmf-dist/tex/latex/stix/t1stix.fd
 File: t1stix.fd 2015/04/17 v1.1.2-latex STIX T1 font definitions
-) (./dia.aux)
-\openout1 = `dia.aux'.
+) (./mire.aux)
+\openout1 = `mire.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 214.
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 214.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 215.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for LS1/stix/m/n on input line 215.
 LaTeX Font Info:    Trying to load font information for LS1+stix on input line 
-214.
+215.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stix.fd
 File: ls1stix.fd 2015/04/17 v1.1.2-latex STIX LS1 font definitions
 )
-LaTeX Font Info:    ... okay on input line 214.
-LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 214.
+LaTeX Font Info:    ... okay on input line 215.
+LaTeX Font Info:    Checking defaults for LS2/stix/m/n on input line 215.
 LaTeX Font Info:    Trying to load font information for LS2+stix on input line 
-214.
+215.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stix.fd
 File: ls2stix.fd 2015/04/17 v1.1.2-latex STIX LS2 font definitions
 )
-LaTeX Font Info:    ... okay on input line 214.
+LaTeX Font Info:    ... okay on input line 215.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1557,476 +1557,96 @@ File: german.lbx 2022/02/02 v3.17 biblatex localization (PK/MW)
 Package biblatex Info: Input encoding 'utf8' detected.
 Package biblatex Info: Automatic encoding selection.
 (biblatex)             Assuming data encoding 'utf8'.
-\openout6 = `dia.bcf'.
+\openout6 = `mire.bcf'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'dia.bbl' found.
- (./dia.bbl)
-Package biblatex Info: Reference section=0 on input line 214.
-Package biblatex Info: Reference segment=0 on input line 214.
-\g__tikzsymbols_savebox_F_0 g 0 G_17.28_BasicTree_1.5_brown!70!black_green!90!b
-lack_green!80!black_leaf_box=\box147
-LaTeX Font Info:    Trying to load font information for LS1+stixscr on input li
-ne 222.
+Package biblatex Info: ... file 'mire.bbl' not found.
 
+No file mire.bbl.
+Package biblatex Info: Reference section=0 on input line 215.
+Package biblatex Info: Reference segment=0 on input line 215.
+\g__tikzsymbols_savebox_F_0 g 0 G_17.28_BasicTree_1.5_black!80!white_black!50_b
+lack!25__box=\box147
+LaTeX Font Info:    Trying to load font information for LS1+stixscr on input li
+ne 223.
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixscr.fd
 File: ls1stixscr.fd 2015/04/17 v1.1.2-latex STIX script LS1 font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixex on input lin
-e 222.
+e 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixex.fd
 File: ls2stixex.fd 2015/04/17 v1.1.2-latex STIX extentions LS2 font definitions
 
 )
 LaTeX Font Info:    Trying to load font information for U+wasy on input line 22
-2.
+3.
 
 (/usr/share/texlive/texmf-dist/tex/latex/wasysym/uwasy.fd
 File: uwasy.fd 2020/01/19 v2.4 Wasy-2 symbol font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixfrak on input l
-ine 222.
+ine 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixfrak.fd
 File: ls1stixfrak.fd 2015/04/17 v1.1.2-latex STIX fraktur LS1 font definitions
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixbb on input lin
-e 222.
+e 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixbb.fd
 File: ls1stixbb.fd 2015/04/17 v1.1.2-latex STIX blackboard LS1 font definitions
 
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixcal on input li
-ne 222.
+ne 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixcal.fd
 File: ls2stixcal.fd 2015/04/17 v1.1.2-latex STIX calligraphic LS2 font definiti
 ons
 )
 LaTeX Font Info:    Trying to load font information for LS1+stixsf on input lin
-e 222.
+e 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls1stixsf.fd
 File: ls1stixsf.fd 2015/04/17 v1.1.2-latex STIX sans-serif LS1 font definitions
 
 )
 LaTeX Font Info:    Trying to load font information for LS2+stixtt on input lin
-e 222.
+e 223.
 
 (/usr/share/texlive/texmf-dist/tex/latex/stix/ls2stixtt.fd
 File: ls2stixtt.fd 2015/04/17 v1.1.2-latex STIX typewriter LS2 font definitions
 
 )
 LaTeX Font Info:    Font shape `T1/stix/m/sl' in size <12> not available
-(Font)              Font shape `T1/stix/m/it' tried instead on input line 222.
+(Font)              Font shape `T1/stix/m/it' tried instead on input line 223.
 \tf@toc=\write7
-\openout7 = `dia.toc'.
+\openout7 = `mire.toc'.
 
  [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 2
-75.
-
-(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
-File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-)
-LaTeX Font Info:    Trying to load font information for TS1+stix on input line 
-300.
-
-(/usr/share/texlive/texmf-dist/tex/latex/stix/ts1stix.fd
-File: ts1stix.fd 2015/04/17 v1.1.2-latex STIX TS1 font definitions
-) [4]
-Overfull \vbox (42.13335pt too high) has occurred while \output is active []
-
-
-[5] [6] [7] [8] [9] [10]
-Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 1046.
- [11]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_-2_box=\box148
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_-1.5_box=\box149
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_-1_box=\box150
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_0_box=\box151
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_1_box=\box152
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_1.5_box=\box153
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_yellow_2_box=\box154
-LaTeX Font Info:    Font shape `T1/stix/m/sl' in size <10> not available
-(Font)              Font shape `T1/stix/m/it' tried instead on input line 1200.
-
- [12] [13]
-Package mdframed Info: Not enough space on this page on input line 1274.
- [14]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 1531.
- [15] [16]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_gold(web)(golden)_2_box=\box1
-55
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 1801.
- [17]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_red_0_box=\box156
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_2_box=\box157
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 1919.
- [18]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_red_1_box=\box158
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_1_box=\box159
- [19]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_red_2_box=\box160
-\tempbox=\box161
-
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2020/03/24 1.8d listings language file
-) [20] [21]
-[22]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_0_box=\box162
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 2484.
- [23]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_0_box=\box163
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 2623.
- [24]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_1_box=\box164
- [25] [26]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_-1_box=\box165
- [27]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_2_box=\box166
- [28]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 3205.
- [29] [30] [31] [32] [33]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 3860.
- [34]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 3860.
- [35]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 4032.
- [36]
-[37]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 4259.
- [38] [39] [40]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 4513.
- [41] [42]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_-1_box=\box167
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 4717.
- [43] [44]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 4967.
- [45] [46] [47] [48] [49] [50] [51]
-[52] [53] [54] [55] [56] [57]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 6441.
- [58] [59] [60]
-Package mdframed Info: Not enough space on this page on input line 6824.
- [61] [62] [63]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 7165.
- [64] [65] [66]
-[67] [68]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 7719.
- [69]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 7970.
- [70] [71] [72] [73]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 8350.
- [74] [75] [76]
-Package mdframed Info: Not enough space on this page on input line 8673.
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 8673.
- [77] [78] [79] [80] [81]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 9327.
-
-[82] [83]
-Package mdframed Info: Not enough space on this page on input line 9438.
- [84] [85]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 9691.
- [86] [87] [88] [89] [90] [91] [92] [93] [94]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 10689.
- [95] [96]
-[97] [98]
-Package mdframed Info: Not enough space on this page on input line 11216.
- [99]
-Package mdframed Info: Not enough space on this page on input line 11216.
- [100] [101] [102] [103] [104] [105] [106]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 11991.
- [107] [108]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 12136.
- [109]
-[110] [111] [112]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 12620.
- [113] [114] [115]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 12892.
- [116] [117]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 13097.
- [118] [119] [120] [121]
-[122] [123] [124] [125] [126] [127] [128]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 13978.
- [129]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 14059.
- [130] [131] [132] [133]
-[134]
-Package mdframed Info: Box was splittet wrong
- starting loop to iterate the splitting point
-(mdframed)              on input line 14623.
- [135]
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_orange_-2_box=\box168
-\g__tikzsymbols_savebox_F_0 g 0 G_10_dChangey_1.5_green_-2_box=\box169
- [136] [137] [138] [139]
-<lw220912.pdf, id=471, 614.295pt x 794.97pt>
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 14992.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf>
-Package pdftex.def Info: lw220912.pdf  used on input line 14992.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<lw220912.pdf, id=474, page=1, 614.295pt x 794.97pt>
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 14992.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 14992.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [140]
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 14992.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 14992.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: lw220912.pdf Graphic file (type pdf)
-<use lw220912.pdf, page 1>
-Package pdftex.def Info: lw220912.pdf , page1 used on input line 14992.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [141 <./lw220912.pdf>]
-<dosb.pdf, id=485, 597.51233pt x 845.0471pt>
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf>
-Package pdftex.def Info: dosb.pdf  used on input line 15003.
-(pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf>
-Package pdftex.def Info: dosb.pdf  used on input line 15003.
-(pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
-<dosb.pdf, id=488, page=1, 597.51233pt x 845.0471pt>
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 15003.
-(pdftex.def)             Requested size: 597.51086pt x 845.04504pt.
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 15003.
-(pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 15003.
-(pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 15003.
-(pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
-File: dosb.pdf Graphic file (type pdf)
-<use dosb.pdf, page 1>
-Package pdftex.def Info: dosb.pdf , page1 used on input line 15003.
-(pdftex.def)             Requested size: 537.75612pt x 760.53537pt.
- [142 <./dosb.pdf>]
-<menue/vThunfischR.png, id=508, 291.0875pt x 192.72pt>
-File: menue/vThunfischR.png Graphic file (type png)
-<use menue/vThunfischR.png>
-Package pdftex.def Info: menue/vThunfischR.png  used on input line 15079.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischR.png, id=509, 291.0875pt x 192.72pt>
-File: menue/eThunfischR.png Graphic file (type png)
-<use menue/eThunfischR.png>
-Package pdftex.def Info: menue/eThunfischR.png  used on input line 15086.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberBohnen.png, id=510, 291.0875pt x 192.72pt>
-File: menue/vLeberBohnen.png Graphic file (type png)
-<use menue/vLeberBohnen.png>
-Package pdftex.def Info: menue/vLeberBohnen.png  used on input line 15104.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberBohnen.png, id=511, 291.0875pt x 192.72pt>
-File: menue/eLeberBohnen.png Graphic file (type png)
-<use menue/eLeberBohnen.png>
-Package pdftex.def Info: menue/eLeberBohnen.png  used on input line 15111.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
- [143 <./menue/vThunfischR.png> <./menue/eThunfischR.png>]
-<menue/vTofuKartoffeln.png, id=516, 291.0875pt x 192.72pt>
-File: menue/vTofuKartoffeln.png Graphic file (type png)
-<use menue/vTofuKartoffeln.png>
-Package pdftex.def Info: menue/vTofuKartoffeln.png  used on input line 15129.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eTofuKartoffeln.png, id=517, 291.0875pt x 192.72pt>
-File: menue/eTofuKartoffeln.png Graphic file (type png)
-<use menue/eTofuKartoffeln.png>
-Package pdftex.def Info: menue/eTofuKartoffeln.png  used on input line 15136.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vLeberKohlrabi.png, id=518, 291.0875pt x 192.72pt>
-File: menue/vLeberKohlrabi.png Graphic file (type png)
-<use menue/vLeberKohlrabi.png>
-Package pdftex.def Info: menue/vLeberKohlrabi.png  used on input line 15154.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eLeberKohlrabi.png, id=519, 291.0875pt x 192.72pt>
-File: menue/eLeberKohlrabi.png Graphic file (type png)
-<use menue/eLeberKohlrabi.png>
-Package pdftex.def Info: menue/eLeberKohlrabi.png  used on input line 15161.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vWienerSk.png, id=520, 291.0875pt x 192.72pt>
-File: menue/vWienerSk.png Graphic file (type png)
-<use menue/vWienerSk.png>
-Package pdftex.def Info: menue/vWienerSk.png  used on input line 15179.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eWienerSk.png, id=521, 291.0875pt x 192.72pt>
-File: menue/eWienerSk.png Graphic file (type png)
-<use menue/eWienerSk.png>
-Package pdftex.def Info: menue/eWienerSk.png  used on input line 15186.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/vThunfischMr.png, id=522, 291.0875pt x 192.72pt>
-File: menue/vThunfischMr.png Graphic file (type png)
-<use menue/vThunfischMr.png>
-Package pdftex.def Info: menue/vThunfischMr.png  used on input line 15204.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
-<menue/eThunfischMr.png, id=523, 291.0875pt x 192.72pt>
-File: menue/eThunfischMr.png Graphic file (type png)
-<use menue/eThunfischMr.png>
-Package pdftex.def Info: menue/eThunfischMr.png  used on input line 15211.
-(pdftex.def)             Requested size: 113.80792pt x 75.3487pt.
- [144 <./menue/vLeberBohnen.png> <./menue/eLeberBohnen.png> <./menue/vTofuKarto
-ffeln.png> <./menue/eTofuKartoffeln.png> <./menue/vLeberKohlrabi.png> <./menue/
-eLeberKohlrabi.png> <./menue/vWienerSk.png> <./menue/eWienerSk.png> <./menue/vT
-hunfischMr.png> <./menue/eThunfischMr.png>]
-\openout4 = `dia.pyg'.
-
- (./_minted-dia/default.pygstyle)
-(./_minted-dia/1D2A21B95A736071B246FCBA2B18D8317E4DB96A0959E35F4FC20921D95563A8
-.pygtex
-LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 2.
-)
-\openout4 = `dia.pyg'.
-
-
-(./_minted-dia/153E1544025AC864CAD164BDA32A2C1EB209D16833555C9EFB9F9EA27F32D78D
-.pygtex) [145] [146] [147] [148] [149] [150] [151] [152] [153] [154] [155]
-[156] [157] [158] [159] [160]
-<GrstAktz.pdf, id=579, 614.295pt x 794.97pt>
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 16355.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf>
-Package pdftex.def Info: GrstAktz.pdf  used on input line 16355.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-<GrstAktz.pdf, id=582, page=1, 614.295pt x 794.97pt>
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 16355.
-(pdftex.def)             Requested size: 614.29349pt x 794.96806pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 16355.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [161]
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 16355.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 16355.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
-File: GrstAktz.pdf Graphic file (type pdf)
-<use GrstAktz.pdf, page 1>
-Package pdftex.def Info: GrstAktz.pdf , page1 used on input line 16355.
-(pdftex.def)             Requested size: 552.86038pt x 715.4664pt.
- [162 <./GrstAktz.pdf>] [163] (./dia.aux)
-runsystem(rm dia.pyg)...executed.
-
-Package logreq Info: Writing requests to 'dia.run.xml'.
-\openout1 = `dia.run.xml'.
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./mire.aux)
+Package logreq Info: Writing requests to 'mire.run.xml'.
+\openout1 = `mire.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 41303 strings out of 478287
- 839504 string characters out of 5849289
- 1756059 words of memory out of 5000000
- 58871 multiletter control sequences out of 15000+600000
- 577776 words of font info for 145 fonts, out of 8000000 for 9000
+ 38724 strings out of 478287
+ 788090 string characters out of 5849289
+ 1619231 words of memory out of 5000000
+ 56341 multiletter control sequences out of 15000+600000
+ 516746 words of font info for 77 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 115i,18n,118p,1128b,2792s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}{/usr/share/texliv
-e/texmf-dist/fonts/enc/dvips/stix/stix-ts1.enc}{/usr/share/texlive/texmf-dist/f
-onts/enc/dvips/stix/stix-t1.enc}</usr/share/texlive/texmf-dist/fonts/type1/publ
-ic/stix/STIXGeneral-Bold.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-stix/STIXGeneral-Italic.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/s
-tix/STIXGeneral-Regular.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfit1
-000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/stix/stix-mathbb.pfb></usr/share/texlive/
-texmf-dist/fonts/type1/public/stix/stix-mathex.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/stix/stix-mathit.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/stix/stix-mathrm.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/stix/stix-mathscr.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/w
-asy-type1/wasy10.pfb>
-Output written on dia.pdf (163 pages, 3232910 bytes).
+ 115i,18n,118p,1125b,2616s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/stix/stix-t1.enc}</usr/share/t
+exlive/texmf-dist/fonts/type1/public/stix/STIXGeneral-Bold.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/stix/STIXGeneral-Italic.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/stix/STIXGeneral-Regular.pfb>
+Output written on mire.pdf (2 pages, 102061 bytes).
 PDF statistics:
- 655 PDF objects out of 1000 (max. 8388607)
- 420 compressed objects within 5 object streams
+ 30 PDF objects out of 1000 (max. 8388607)
+ 19 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 169 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 13 words of extra memory for PDF output out of 10000 (max. 10000000)
 

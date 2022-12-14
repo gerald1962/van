@@ -1,0 +1,240 @@
+% cd /home/gerald/van_development/van/aa
+% cp /home/gerald/van_development/van/edu/latex/emoji.sty 
+% 
+% Build rules:
+% pdflatex -shell-escape dia.tex
+% biber dia
+% pdflatex -shell-escape dia.tex
+% okular dia.pdf&
+
+% This is the preamble of a LaTeX source code.
+\documentclass[10pt,a4paper]{article}
+
+% Import a package for a specific purpose: see https://www.ctan.org/
+\usepackage[textwidth=17cm,textheight=26cm]{geometry}  % Customize the page layout.
+\usepackage{tikzsymbols}    % Various emoticon, ...: \includegraphics.
+\usepackage{enumitem}       % Control layout of itemize, enumerate, description.
+\usepackage{wasysym}        % Provide symbols like \XBox.
+\usepackage{scrextend}      % KOMA-Script class: labeling .
+\usepackage{mdframed}       % Breakable framed and coloured boxes: mdframed.
+\usepackage{anyfontsize}    % Select any font size: see \square.
+\usepackage{stix}           % Complete set of mathematical glyphs: \boxtimes.
+\usepackage[ngerman]{babel} % German orthography.
+\usepackage{etoc}           % Table of contents control: \addcontentsline.
+\usepackage{pdfpages}       % Inclusion of external PDF document: \includepdf.
+\usepackage{colortbl}       % Allow rows and columns to be coloured: \rowcolor.
+\usepackage{tcolorbox}      % Coloured and framed text boxes: tcolorbox
+\tcbuselibrary{fitting,skins}
+\usepackage{listings}       % Typeset programming code: lstlisting.
+\usepackage{paracol}        % Multiple columns with texts in parallel: paracol.
+\usepackage{minted}         % Syntax highlighting: \begin{minted}{lua}.
+
+
+% xxx
+\usepackage{float}
+
+
+
+% All paragraphs are without indentation.
+\setlength{\parindent}{0pt}%
+
+
+% Print a citiation left aligned.
+\newcommand{\lmotto}[2]{%
+  \begin{minipage}{0.33\textwidth}
+    \small{} #1 \\
+    \hspace*{\fill} #2
+  \end{minipage}
+  \topvskip\topvskip
+}
+
+% Print a citiation right aligned.
+\newcommand{\rmotto}[2]{%
+  \hfill
+  \begin{minipage}{0.33\textwidth}
+    \small{} #1 \\
+    \hspace*{\fill} #2
+  \end{minipage}
+  \topvskip\topvskip
+}
+
+% Introduce a paragraph section with a number.
+\renewcommand{\theparagraph}{\arabic{paragraph}.}
+
+% Force the numbering of a paragraph text.
+\setcounter{secnumdepth}{4}
+
+% Settings for a sub paragraph segment.
+% Increment the sub paragraph counter.
+% Print the sub paragraph title.
+% Extend the contents.
+\newcommand\p[1] {%
+  \stepcounter{paragraph}
+  {\large\bf\theparagraph \hskip 2pt \large\bf #1 \ \hskip -8pt}
+  \addcontentsline{toc}{section} {\theparagraph\hskip 3pt #1}
+}
+
+% Subparagraph counters.
+\newcounter{subc}
+\renewcommand{\thesubc}{\arabic{subc}.}
+
+\newcounter{subsubc}
+\renewcommand{\thesubsubc}{\arabic{subsubc}.}
+
+% Settings for a sub paragraph segment.
+% Increment the sub paragraph counter.
+% Print the sub paragraph title.
+% Extend the contents.
+\newcommand\subp[1] {%
+  \stepcounter{subc}
+  {\bf\theparagraph\thesubc}\hskip 3pt\rm #1\hskip 4pt
+  \addcontentsline{toc}{subsection}{\theparagraph\thesubc\hskip 3pt #1}
+}
+
+% Settings for a sub sub paragraph segment.
+% Increment the sub sub paragraph counter.
+% Print the sub sub paragraph title.
+% Extend the contents.
+\newcommand\subsubp[1] {%
+  \stepcounter{subsubc}
+  {\bf\theparagraph\thesubc\thesubsubc}\hskip 3pt\rm #1\hskip 4pt
+  \addcontentsline{toc}{subsubsection}{\theparagraph\thesubc\thesubsubc\hskip 3pt #1}
+}
+
+% Note counter.
+\newcounter{notec}
+\newcommand\notep[1]{%
+  \stepcounter{notec}
+  \vskip #1pt
+  {\bf\arabic{notec}.}
+}
+
+% Elements of a title page.
+\newcommand\svthema{Medical Rehabilitation - {\it mire}}
+\newcommand\svperson{Gerald Schüller}
+\newcommand\svdatum{\today}
+
+
+% Color list: http://latexcolor.com/
+\definecolor{alizarin}{rgb}{0.82, 0.1, 0.26}
+\definecolor{amber(sae/ece)}{rgb}{1.0, 0.49, 0.0}
+\definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
+\definecolor{aqua}{rgb}{0.0, 1.0, 1.0}
+\definecolor{aquamarine}{rgb}{0.5, 1.0, 0.83}
+\definecolor{battleshipgrey}{rgb}{0.52, 0.52, 0.51}  
+\definecolor{burntorange}{rgb}{0.8, 0.33, 0.0}
+% \definecolor{cornellred}{rgb}{0.7, 0.11, 0.11}  
+\definecolor{darkbrown}{rgb}{0.4, 0.26, 0.13}
+\definecolor{eggshell}{rgb}{0.94, 0.92, 0.84}
+\definecolor{english}{rgb}{0.0, 0.5, 0.0}
+\definecolor{indigo(web)}{rgb}{0.29, 0.0, 0.51}
+\definecolor{lime(web)(x11green)}{rgb}{0.0, 1.0, 0.0}
+\definecolor{midnightblue}{rgb}{0.1, 0.1, 0.44}
+
+
+% Document and protocol track
+\newcommand\expt[1] {{\color {darkbrown} {\bf #1}}}            % Experiment
+\newcommand\info[1] {{\color {midnightblue} {\bf #1}}}         % Informatoin
+
+\newcommand\prop[1] {{\color {alizarin} {\bf #1}}}             % Proposal
+\newcommand\draf[1] {{\color {amber(sae/ece)} {\bf #1}}}       % Draft
+\newcommand\rele[1] {{\color {english} \bf {#1}}}              % Release
+\newcommand\rewo[1] {{\color {aqua} {\bf #1}}}                 % Rework
+\newcommand\down[1] {{\color {lime(web)(x11green)} {\bf #1}}}  % Countdown
+
+\newcommand\emps[1] {{\color {indigo(web)} {\bf #1}}}          % Emphasis
+
+\newcommand\opti[1] {{\color {amethyst} {\bf #1}}}             % Optional
+\newcommand\mand[1] {{\color {burntorange} {\bf #1}}}          % Mandatory
+
+
+% Frame list style of a single day.
+\mdfdefinestyle{daystyle}{%
+  skipabove=4pt,
+  skipbelow=0pt,
+  %  leftmargin=-16pt,
+  leftmargin=-10pt,
+  topline=false,
+  bottomline=false,
+  leftline=false,
+  rightline=false
+}
+
+% Preceeding vertical skip of a paragramph.
+\newcommand\topvskip {\vskip 8pt}
+
+% Preceeding horizontal skip of a minipage.
+\newcommand\tophskip {\hskip -14pt}
+
+% Horizontal dividing line between two days.
+\newcommand\ddivide {\vskip -9pt \hrule \vskip 6pt}
+
+% First and last horizontal dividing line of a week.
+\newcommand\fdivide {\vskip  6pt \hrule \vskip 6pt}
+\newcommand\ldivide {\vskip -7pt \hrule \hrule \hrule \vskip 8pt}
+
+
+% Top vertical space of a day list.
+\newcommand\topspace{\vskip -15pt \hskip 20pt}
+
+% Bottom vertical space of a day list.
+\newcommand\bottomspace{\vskip 4pt}
+
+% Set of natural numbers.
+\newcommand{\N}{\mathbb{N}}
+
+% Numbering of the day entries.
+\newcommand\n[1] { {\sl #1.} \hskip 5pt }
+
+
+% xxx
+\usepackage{tabularx,ragged2e,booktabs}
+
+
+
+% xxx
+\usepackage[backend=biber,style=alphabetic,]{biblatex}
+
+% biber dia
+% pdflatex dia
+% pdflatex dia
+%
+\addbibresource{books.bib}
+
+\defbibheading{bibliography}[\bibname]{%
+  \subsection{Bibliothek}%
+  \markboth{#1}{#1}}
+
+\defbibheading{subbibliography}[\bibname]{%
+  \subsubsection{#1}%
+  \markboth{#1}{#1}}
+
+
+
+% Start of a LaTeX text, that is to be printed.
+\begin{document}
+
+% Front page
+\title{ \textbf{\color{blue}\svthema} \Wintertree [1.5] }
+\author{ \textsl{\color{red}\svperson} --- \svdatum }
+\date{}
+
+% You tell LaTeX the information used to produce the title page.
+\maketitle
+
+% Generate the table of contents.
+\tableofcontents
+
+% Generate the apendix table.
+\appendix
+
+\newpage
+\p{{\info {Termine}}}
+
+% Initialize the subparagraph counters.
+\setcounter{subc}{0}
+
+xxx
+
+% End of a LaTeX text, that is to be printed.
+\end{document}
