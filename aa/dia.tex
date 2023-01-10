@@ -28,6 +28,7 @@
 \usepackage{listings}       % Typeset programming code: lstlisting.
 \usepackage{paracol}        % Multiple columns with texts in parallel: paracol.
 \usepackage{minted}         % Syntax highlighting: \begin{minted}{lua}.
+\usepackage{mathtools}      % Extension package to amsmath: \coloneqq.
 
 % xxx
 \usepackage{float}
@@ -14718,34 +14719,34 @@ Geschichte und lächelt verschmitzt.
     \setlength\itemsep{-3pt}
   \item[{\mand {Schlaf:}}]        \n{\_\_} 02.00 - 08.00 (6)
   \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 61 (70), Blutdruck: 119/78 (143/89)
-  \item[{\mand {Snoopy:}}]        \n{\_\_} {\draf {1 Spaziergänge (4)}}    
-  \item[{\mand {Sitzen:}}]        \n{\_\_} {\prop {$s^0 \times\ 10 min$ (2)}}
-  \item[{\mand {Körperpflege:}}]  \n{\_\_} {\draf {$1 \times$ Zähneputzen (2), $\square$ Rasieren}}
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 2 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^0 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2), $\square$ Rasieren
   \item[{\mand {Sport:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
         \setlength\itemsep{-3pt}
-      \item[$\square$ Trizeps:]          {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Wand):]      {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Schulter(Stange):] {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schmetterling:]    {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Pflug:]            {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Nicken(Wand):]     {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Klimmzüge:]        {\prop {$s^0 \times r^1$ (3)}}
-      \item[$\square$ Schulter(Ringe):]  {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schulterdrücken:]  {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Kniebeugen:]       {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Brustdrücken:]     {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Roller:]           {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Hochlauf(Wand):]   {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
-      \item[$\square$ Handrücken(Ls):]   {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Sandsack):]  {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Sportkreisel:]     {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Laufen:]           {\prop {$r^0 \times 3\ km$ (2)}}
-      \item[$\square$ Steigung:]         {\prop {$(v^1 \ \land d^d) \times 400\ m\ (4)$}}
-      \item[$\square$ Liegestützen:]     {\draf {$s^{8} \times r^{10}\ (8)$, $> 100$}}
-      \item[$\square$ Schwimmen:]        {\prop {$0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$}}
+      \item[$\square$ Trizeps:]          $s^1 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]      $s^1 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):] $s^1 \times 1\ min$ (3)
+      \item[$\square$ Schmetterling:]    $s^1 \times 2\ min$ (3)
+      \item[$\square$ Pflug:]            $s^1 \times r^{10}$ (3)
+      \item[$\square$ Nicken(Wand):]     $s^1 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge:]        $s^1 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]  $s^1 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]  $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Kniebeugen:]       $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Brustdrücken:]     $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Roller:]           $s^1 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]   $s^1 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handrücken(Ls):]   $s^1 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]  $s^1 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]     $s^1 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]           $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]         $(v^1 \ \land d^u) \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]     $s^{11} \times r^{10}\ (11)$, $> 100$
+      \item[$\square$ Schwimmen:]        $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
       \end{labeling}
     \end{minipage}
     \bottomspace        
@@ -14759,38 +14760,46 @@ Geschichte und lächelt verschmitzt.
       \end{labeling}
     \end{minipage}
     \bottomspace
-  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {11 (16 Stunden)}}
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
   \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {11. Tag (Anfangstage: 4.12.2022)}}
   \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {21. Tag (Therapieende: 9.4.2023)}}
-  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
-  \item[{\mand {W-Zähler:}}]     \n{\_\_} {\prop {$\square\ W^0\ (1)$}}
-  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
-  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\draf {$g^{0}, h^{0}, v^{13,95}, z^{s^{4},c^{1},r^{6},d^{58}}$}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {1. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{13,95}, z^{s^{4},c^{1},r^{6},d^{58}}$
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
         \setlength\itemsep{-3pt}
-      \item[$\boxtimes$ Snoopy:]   08.30 - 09.00
+      \item[$\boxtimes$ Snoopy:]   08.30 - 09.00        
+      \item[$\boxtimes$ Plan:]     09.00 - 12.00
         
-      \item[{\draf {$\square$ Plan:}}]     09.00 - 11.00
-        
-      \item[{\prop {$\square$ Wega:}}]     08.00 - 08.45
-      \item[{\prop {$\square$ Mirel:}}]    09.00 - 09.45
-      \item[{\prop {$\square$ Bias:}}]     10.00 - 10.45
-      \item[{\prop {$\square$ Berwik:}}]   11.00 - 11.45        
-      \item[{\prop {$\square$ Snoopy:}}]   11.30 - 12.00
+      \item[$\boxtimes$ Snoopy:]   12.00 - 12.30
+      \item[$\boxtimes$ Einkauf:]  12.30 - 13.00
+      \item[$\boxtimes$ Abfall:]   13.30 - 13.30
+      \item[$\boxtimes$ Vögel:]    13.30 - 14.00
+      \item[$\boxtimes$ Sutra:]    14.00 - 14.30
+      \item[$\square$ Sport:]    14.30 - 17.00
 
-      \item[{\prop {$\square$ Sport:}}]    12.30 - 17.00        
-      \item[{\prop {$\square$ Snoopy:}}]   17.00 - 17.30
         
-      \item[{\prop {$\square$ Kochen:}}]   17.30 - 19.30
-      \item[{\prop {$\square$ Aufgaben:}}] 19.30 - 21.30
-      \item[{\prop {$\square$ Snoopy:}}]   21.30 - 22.00
+      \item[$\square$ Wega:]     08.00 - 08.45
+      \item[$\square$ Mirel:]    09.00 - 09.45
+      \item[$\square$ Bias:]     10.00 - 10.45
+      \item[$\square$ Berwik:]   11.00 - 11.45        
+      \item[$\square$ Snoopy:]   11.30 - 12.00
+
+      \item[$\square$ Sport:]    12.30 - 17.00        
+      \item[$\square$ Snoopy:]   17.00 - 17.30
+        
+      \item[$\square$ Kochen:]   17.30 - 19.30
+      \item[$\square$ Aufgaben:] 19.30 - 21.30
+      \item[$\square$ Snoopy:]   21.30 - 22.00
       \end{labeling}
     \end{minipage}
     \bottomspace
-  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\prop {$\square$}}
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
   \end{labeling}
     
   % Initialize the note counter.
@@ -14802,41 +14811,41 @@ Geschichte und lächelt verschmitzt.
 
 
 \ddivide
-{\prop {15.12.2022 - Donnerstag}}
+{\rele {15.12.2022 - Donnerstag}}
 
 \begin{mdframed}[style=daystyle]
   \begin{labeling}{{\mand {Bemerkungen:}}}
     \setlength\itemsep{-3pt}
-  \item[{\mand {Schlaf:}}]        \n{\_\_} {\prop {22.00 - 06.00 (8)}}
-  \item[{\mand {Gesundheit:}}]    \n{\_\_} {\prop {Ruhepuls: ?? (70), Blutdruck: ???/?? (143/89)}}
-  \item[{\mand {Snoopy:}}]        \n{\_\_} {\prop {? Spaziergänge (4)}}    
-  \item[{\mand {Sitzen:}}]        \n{\_\_} {\prop {$s^0 \times\ 10 min$ (2)}}
-  \item[{\mand {Körperpflege:}}]  \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Rasieren}}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 07.00 (8)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 58 (70), Blutdruck: 118/71 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 2 Spaziergänge (4) 
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^1 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2), $\square$ Rasieren
   \item[{\mand {Sport:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
         \setlength\itemsep{-3pt}
-      \item[$\square$ Trizeps:]          {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Wand):]      {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Schulter(Stange):] {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schmetterling:]    {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Pflug:]            {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Nicken(Wand):]     {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Klimmzüge:]        {\prop {$s^0 \times r^1$ (3)}}
-      \item[$\square$ Schulter(Ringe):]  {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schulterdrücken:]  {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Kniebeugen:]       {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Brustdrücken:]     {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Roller:]           {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Hochlauf(Wand):]   {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
-      \item[$\square$ Handrücken(Ls):]   {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Sandsack):]  {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Sportkreisel:]     {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Laufen:]           {\prop {$r^0 \times 3\ km$ (2)}}
-      \item[$\square$ Steigung:]         {\prop {$(v^1 \ \land d^d) \times 400\ m\ (4)$}}
-      \item[$\square$ Liegestützen:]     {\prop {$s^{0} \times r^{9}\ (9)$, $> 100$}}
-      \item[$\square$ Schwimmen:]        {\prop {$0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$}}
+      \item[$\boxtimes$ Trizeps:]          $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]      $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):] $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]    $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]            $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Nicken(Wand):]     $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge:]        $s^2 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]  $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]  $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]       $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]     $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]           $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]   $s^2 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]  $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]     $s^2 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]           $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]         $(v^1 \ \land s^0 \times d^d) \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]     $s^{10} \times r^{10-15, 10}\ (10)$, $> 100$
+      \item[$\square$ Schwimmen:]        $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
       \end{labeling}
     \end{minipage}
     \bottomspace        
@@ -14845,36 +14854,3035 @@ Geschichte und lächelt verschmitzt.
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{$\square$ Intervallfasten:} 
         \setlength\itemsep{-3pt}  
-      \item[$\square$ Abendessen:]       {\prop {???}}
+      \item[$\square$ Abendessen:]       Leber, Champignons, Bohnen, Salat
       \item[$\square$ Intervallfasten:]  18.00 - 10.00
       \end{labeling}
     \end{minipage}
     \bottomspace
-  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {16 (16 Stunden)}}
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
   \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {12. Tag (Anfangstage: 4.12.2022)}}
   \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {22. Tag (Therapieende: 9.4.2023)}}
-  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
-  \item[{\mand {W-Zähler:}}]     \n{\_\_} {\prop {$\square\ W^0\ (1)$}}
-  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
-  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\prop {$g^{0}, h^{0}, v^{13,97}, z^{s^{4},c^{2},r^{6},d^{59}}$}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {2. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{1}, Mittag: \dChangey [1.5][yellow]{2} %, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{13,97}, z^{s^{4},c^{2},r^{6},d^{59}}$
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
         \setlength\itemsep{-3pt}
-      \item[{\prop {$\square$ Plan:}}]     07.30 - 08.00
-      \item[{\prop {$\square$ Wega:}}]     08.00 - 08.45
-      \item[{\prop {$\square$ Mirel:}}]    09.00 - 09.45
-      \item[{\prop {$\square$ Bias:}}]     10.00 - 10.45
-      \item[{\prop {$\square$ Berwik:}}]   11.00 - 11.45        
-      \item[{\prop {$\square$ Snoopy:}}]   11.30 - 12.00
-
-      \item[{\prop {$\square$ Sport:}}]    12.30 - 17.00        
-      \item[{\prop {$\square$ Snoopy:}}]   17.00 - 17.30
+      \item[$\boxtimes$ Snoopy:]   07.00 - 07.30
+      \item[$\boxtimes$ Plan:]     07.30 - 11.30
+      \item[$\boxtimes$ Gas:]      11.30 - 12.30
         
-      \item[{\prop {$\square$ Kochen:}}]   17.30 - 19.30
-      \item[{\prop {$\square$ Aufgaben:}}] 19.30 - 21.30
-      \item[{\prop {$\square$ Snoopy:}}]   21.30 - 22.00
+      \item[$\boxtimes$ Snoopy:]   12.30 - 13.00
+      \item[$\boxtimes$ Einkauf:]  13.00 - 14.00
+      \item[$\square$ Sport:]    14.00 - 18.00
+        
+      \item[$\square$ Snoopy:]   18.00 - 18.30        
+      \item[$\square$ Kochen:]   18.30 - 20.30
+      \item[$\square$ Snoopy:]   21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {16.12.2022 - Freitag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 07.00 (8)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 61 (70), Blutdruck: 125/77 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 2 Spaziergänge (4)  
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^1 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Trizeps:]          $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]      $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):] $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]    $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]            $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Nicken(Wand):]     $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge:]        $s^1 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]  $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]  $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]       $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]     $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]           $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]   $s^1 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]  $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]     $s^1 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]           $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]         $(v^1 \ \land d^u) \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]     $s^{11} \times r^{10}\ (1)$, $> 100$
+      \item[$\square$ Schwimmen:]        $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       Leber, Champignons, Brokkoli, Spinat, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {13. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {23. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {3. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,98}, z^{s^{4},c^{3},r^{6},d^{60}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Gas:]      07.00 - 07.30
+      \item[$\boxtimes$ Snoopy:]   07.30 - 08.00
+      \item[$\boxtimes$ Schnee:]   08.00 - 09.00
+      \item[$\boxtimes$ Zögern:]   09.00 - 12.00
+
+      \item[$\boxtimes$ Snoopy:]   12.00 - 12.30
+      \item[$\boxtimes$ Einkauf:]  12.30 - 13.30
+      \item[$\square$ Sport:]    14.00 - 18.00
+
+      \item[$\square$ Snoopy:]   18.00 - 18.30        
+      \item[$\square$ Kochen:]   18.30 - 20.30
+        
+      \item[$\square$ Snoopy:]   21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {17.12.2022 - Samstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 07.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 57 (70), Blutdruck: 111/73 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)  
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^2 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]   $s^2 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]          $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]      $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):] $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]    $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]            $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Nicken(Wand):]     $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge:]        $s^2 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]  $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]  $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]       $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]     $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]           $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]   $s^2 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]  $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]     $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]           $r^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]         $(v^1 \ \land d^u) \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]     $s^{10} \times r^{10}\ (11)$, $> 100$
+      \item[$\boxtimes$ Schwimmen:]        $0\ m \land 45\ min \land 150\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Brokkoli, Spinat, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {14. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {24. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {4. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\boxtimes\ W^1\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,99}, z^{s^{4},c^{4},r^{6},d^{61}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Snoopy:]   21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {18.12.2022 - Sonntag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 24.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 58 (70), Blutdruck: 109/66 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^2 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]   $s^2 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]          $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):] $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]    $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]            $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]  $s^2 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge:]        $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]  $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]  $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Kniebeugen:]       $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Brustdrücken:]     $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Roller:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]   $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handrücken(Ls):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]  $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]     $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]           $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]         $(v^1 \ \land d^d) \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]     $s^{11} \times r^{10}\ (11)$, $> 100$
+      \item[$\square$ Schwimmen:]        $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Blumenkohl, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {15. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {25. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {5. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-2}, Mittag: \dChangey [1.5][yellow]{-1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,100}, z^{s^{5},c^{0},r^{7},d^{62}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Plan:]     07.00 - 11.30
+      \item[$\boxtimes$ Snoopy:]   13.30 - 14.00
+
+      \item[$\boxtimes$ Sutra:]    13.00 - 18.00
+      \item[$\boxtimes$ Sitzen:]   17.00 - 18.30
+      \item[$\boxtimes$ Snoopy:]   18.00 - 19.00
+        
+      \item[$\square$ Kochen:]   19.00 - 21.00
+      \item[$\square$ Snoopy:]   21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\topvskip
+\ldivide
+\subsubp{\rele {KW 51}}
+
+\topvskip
+{\mand {Gewicht:}} 57 kg
+
+\fdivide
+{\rele {19.12.2022 - Montag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 02.00 - 08.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 58 (70), Blutdruck: 123/86 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^1 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^1 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^1 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^1 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^1 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^1 \ \land d^d) \times s^1 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{10} \times r^{11}\ (10)$, $> 100$
+      \item[$\boxtimes$ Schwimmen:]         $300\ m \land 45\ min \land 150\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Kohlrabi, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {1 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {16. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {26. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {6. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} {\prop {$\square\ W^0\ (1)$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,101}, z^{s^{5},c^{1},r^{7},d^{63}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Konferenz:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Konferenz:] 11.00 - 11.15
+      \item[$\boxtimes$ Einkauf:]   11.15 - 12.00
+      \item[$\boxtimes$ Abschrift:] 12.00 - 13.00
+      \item[$\boxtimes$ Snoopy:]    13.00 - 13.30
+
+      \item[$\boxtimes$ Sport:]     13.30 - 18.00        
+      \item[$\boxtimes$ Snoopy:]    18.00 - 18.30
+        
+      \item[$\boxtimes$ Kochen:]    18.30 - 20.30
+      \item[$\boxtimes$ Plan:]      20.30 - 21.00
+      \item[{\draf {$\square$ Konferenz:}}] 21.00 - 21.15
+      \item[{\prop {$\square$ Snoopy:}}]    21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} $\boxtimes$
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 \tikz \fill[red] (0,0) circle[radius=0.1];
+  Guten Morgen, Gerald, konzentriert lesen kannst du, denn du hast dich mehr als
+  vier Stunden in Xenos ununterbrochen vertieft.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Moin, Mirel, von neun abends bis fast zwei Uhr, aber ich werde es wieder
+  weglegen, weil es mir Zeit stiehlt.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Am ersten Weihnachtsfeiertag werden Renates Leute dich beim Mittagessen fragen,
+  was du machst.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Bei der Wahrheit bleiben, ist das bequemste: ich behandle meine
+  Alkoholkrankheit und Nackenschmerzen.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Wie?
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Nichts trinken und u.a. mit Sport, Ernährung, Bildung, Gymnastik, Kraftsport,
+  Entspannung, Massage, Kissen und Wärmelampe.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Hilft es?
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Die Beschwerden lassen nach, aber geheilt bin ich nicht. Es dauert
+  wahrscheinlich noch mindestens zwölf Wochen.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Wer unterstützt dich?
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Hauptsächlich die Drogenberaterin, die ein Mal pro Woche Plan und
+  Fortschritte kontrolliert, Anfang April kann man das Ergebnis bewerten.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Gerald, verschwenden wir keine Zeit mit deiner Zustandsanalyse und holen das
+  Maximun aus den letzten zwei Wochen dieses Jahres heraus. \\
+  Bildung: Sport, Englisch, Deutsch, Mathe. \\
+  Sutras besprichst du ab jetzt mit Wega und den Tractatus mit mir. \\
+  Beim Sport begleitet dich Wega: $\beta$. \\
+  Deutsch übst du mit mir: $\omega$. \\
+  Bias hilft dir beim Englisch lernen: $\rho$. \\
+  Und mit Berwik lernst du Mathe: $\kappa$. \\
+  Für den Ablauf bist du verantwortlich: $\gamma$. \\
+  Und mit jedem von uns kannst du jederzeit reden.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Wann treffen wir uns?
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Um elf, fünf und neun Uhr veranstalten wir eine Konferenz, die nicht länger
+  als eine Viertelstunde dauern darf. Wir stellen fest und treffen Voraussagen.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Soll ich um elf irgendwas mitbringen?
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Ja, wir schauen uns den Inhalt deiner Schultasche an.
+
+  
+  \notep 4 \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Gerald, greifen wir an, ich bin der erste auf der Liste. Beginnen wir mit
+  elf Liegestützen.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Wega, schön dich zu sehen. Erledigt.
+
+  \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Dann richten wir den Plan für heute her, sollte nicht lange dauern.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Einkaufen wollte ich noch.
+
+  \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Stimmt was nicht, weil du grübelst?
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Schaffe ich das bis elf?
+
+  \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Klar, denn es gibt immer irgendeine Abkürzung.
+
+  \notep 4 (Gerald, Wega, Mirel, Bias, Berwik)
+
+  \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Gerald, wunderbar, dass es so spontan geklappt hat, Prima, deine
+  Schultasche ist gepackt.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Mirel, mit dir würde ich gerne ,,Die Erzählung'' aus ,,Deutsch $4 \rightarrow 5$''
+  durchgehen.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Rechtschreibung und Grammatik verschieben wir auf später.
+
+  \tikz \fill[blue] (0,0) circle[radius=0.1];
+  Wir starten mit den Vokabeln, weil dein Wortschatz mickrig ist.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Ist mir recht, Bias.
+
+  \tikz \fill[green] (0,0) circle[radius=0.1];
+  Die Grundrechenarten können wir bestimmt zügig erledigen.
+
+  \tikz \fill[yellow] (0,0) circle[radius=0.1];
+  Um fünf treffen wir uns wieder.
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Bis dann.
+
+  It doesn't do too much good to carry books on your arm all day, if you don't
+  open it up and read it.
+  
+\end{mdframed}
+
+
+\ddivide
+{\rele {20.12.2022 - Dienstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 08.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 58 (70), Blutdruck: 106/66 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 2 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^2 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^2 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^2 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^2 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^2 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^2 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{11} \times r^{11}\ (10)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       Leber, Champignons, Erbsen, Karotten, Salat
+      \item[$\square$ Intervallfasten:]  20.00 - 12.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {17. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {27. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {7. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{2}, Mittag: \dChangey [1.5][yellow]{2}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,102}, z^{s^{5},c^{2},r^{7},d^{64}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Konferenz:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:]     08.00 - 08.30
+      \item[$\boxtimes$ Plan:]       09.30 - 10.00
+      \item[$\boxtimes$ Englisch:]   10.00 - 10.30
+      \item[$\boxtimes$ Mathematik:] 10.30 - 11.00        
+      \item[$\boxtimes$ Konferenz:]  11.00 - 11.15
+      \item[$\boxtimes$ Einkauf:]    11.15 - 12.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\square$ Sport:]      12.30 - 17.00
+        
+      \item[$\square$ Snoopy:]     17.00 - 17.30        
+      \item[$\square$ Kochen:]     17.30 - 19.00
+      \item[$\square$ Erlangen:]   19.15 - 21.30
+        
+      \item[$\square$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {21.12.2022 - Mittwoch}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 24.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 60 (70), Blutdruck: 116/76 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 2 Spaziergänge (4)   
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^1 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       Leber, Champignons, Blumenkohl, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {18. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {28. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {8. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,103}, z^{s^{5},c^{3},r^{7},d^{65}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00
+      \item[$\boxtimes$ Plan:]       08.00 - 08.30
+      \item[$\boxtimes$ Mathematik:] 08.30 - 09.30
+      \item[$\boxtimes$ Englisch:]   09.30 - 10.30
+      \item[$\boxtimes$ Einkauf:]    10.30 - 11.30
+      \item[$\boxtimes$ Konferenz:]  11.30 - 11.45
+        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\square$ Sport:]      12.30 - 17.00
+        
+      \item[$\square$ Snoopy:]     17.00 - 17.30        
+      \item[$\square$ Kochen:]     17.30 - 19.00
+      \item[$\square$ Deutsch:]    19.15 - 19.45
+      \item[$\square$ Religion:]   20.15 - 20.45
+        
+      \item[$\square$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {22.12.2022 - Donnerstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 05.00 (5)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 61 (70), Blutdruck: 106/73 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 1 Spaziergänge (4)   
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^0 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $1 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    $s^0 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]       $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schmetterling:]     $s^0 \times 2\ min$ (3)
+      \item[$\square$ Pflug:]             $s^0 \times r^{10}$ (3)
+      \item[$\square$ Kopfbeuge(Wand):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handrücken(Ls):]    $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       Leber, Champignons, Paprika, Kohlrabi, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {19. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {29. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {9. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-2}, Mittag: \dChangey [1.5][yellow]{-2}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{14,104}, z^{s^{6},c^{0},r^{8},d^{66}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Liegestützen:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Plan:]         07.00 - 07.30
+        
+      \item[$\square$ Snoopy:]       07.30 - 08.00
+      \item[$\square$ Liegestützen:] 08.00 - 12.30
+        
+      \item[$\square$ Plan:]         09.30 - 10.00
+      \item[$\square$ Englisch:]     10.00 - 10.30
+      \item[$\square$ Mathematik:]   10.30 - 11.00        
+      \item[$\square$ Konferenz:]    11.00 - 11.15
+      \item[$\square$ Einkauf:]      11.15 - 12.00
+        
+      \item[$\square$ Snoopy:]       12.00 - 12.30
+      \item[$\square$ Sport:]        12.30 - 17.00
+        
+      \item[$\square$ Snoopy:]       17.00 - 17.30        
+      \item[$\square$ Kochen:]       17.30 - 19.00
+      \item[$\square$ Erlangen:]     19.15 - 21.30
+        
+      \item[$\square$ Snoopy:]       21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {23.12.2022 - Freitag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 24.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 54 (70), Blutdruck: 121/74 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^2 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^2 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^2 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^2 \times r^{10} \times 22,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^2 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^2 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^2 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $r^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{6} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 150\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Rosenkohl, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {20. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {30. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {10. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,105}, z^{s^{6},c^{1},r^{8},d^{67}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Plan:]       07.00 - 07.30
+        
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00        
+      \item[$\boxtimes$ Deutsch:]    08.00 - 09.30 (Wahl, Deutsch, B, W, AA)
+      \item[$\boxtimes$ Massage:]    09.30 - 11.00
+      \item[$\boxtimes$ Einkauf:]    11.00 - 12.30
+        
+      \item[$\boxtimes$ Snoopy:]     12.30 - 13.30
+      \item[$\boxtimes$ Sport:]      13.30 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30        
+      \item[$\boxtimes$ Kochen:]     17.30 - 19.00
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {24.12.2022 - Samstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 24.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 55 (70), Blutdruck: 123/74 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $r^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^2 \ \land d^u) \times s^2 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Bratwürste, Kraut
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {4 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {21. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {31. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {11. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\boxtimes\ W^1\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{1}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,106}, z^{s^{6},c^{2},r^{8},d^{68}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 07.00
+        
+      \item[$\boxtimes$ Snoopy:]     06.45 - 07.15
+      \item[$\boxtimes$ Einkauf:]    07.15 - 08.30
+      \item[$\boxtimes$ ss/ß-Regel:] 08.30 - 09.30        
+      \item[$\boxtimes$ Zeitung:]    09.30 - 11.00 (B, W, S, D, E, M, A)
+      \item[$\boxtimes$ Abfall:]     11.00 - 11.15
+      \item[$\boxtimes$ Sutra:]      11.15 - 12.00
+      \item[$\boxtimes$ TLP 6.3:]    12.00 - 12.30
+        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Sport:]      12.30 - 17.00
+        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30
+      \item[$\boxtimes$ Plan:]       17.30 - 18.00
+      \item[$\boxtimes$ 24.12:]      18.00 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {25.12.2022 - Sonntag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 07.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 55 (70), Blutdruck: 118/76 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4) 
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^2 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^1 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^1 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^1 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^1 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^1 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^1 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^1 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^1 \ \land d^d) \times s^2 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {22. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {32. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {12. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\boxtimes\ W^1\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,107}, z^{s^{6},c^{3},r^{8},d^{69}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 07.30
+      \item[$\boxtimes$ Plan:]       07.30 - 08.00
+        
+      \item[$\boxtimes$ Snoopy:]     08.00 - 08.30
+      \item[$\boxtimes$ Sutra:]      08.30 - 09.15
+      \item[$\boxtimes$ TLP 6.3:]    09.15 - 10.00
+      \item[$\boxtimes$ Klöße:]      10.00 - 11.30
+      \item[$\boxtimes$ 25.12.:]     11.30 - 13.00
+        
+      \item[$\boxtimes$ Snoopy:]     13.00 - 13.30
+      \item[$\boxtimes$ Sport:]      13.30 - 17.00
+      \item[$\boxtimes$ Wahl:]       17.00 - 18.30 (B, W, S, D, E, M, A)
+        
+      \item[$\boxtimes$ Snoopy:]     18.30 - 19.00
+      \item[$\boxtimes$ Sitzen:]     19.00 - 19.45
+      \item[$\boxtimes$ Englisch:]   19.00 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\topvskip
+\ldivide
+\subsubp{\rele {KW 52}}
+
+\topvskip
+{\mand {Gewicht:}} 56 kg
+
+\fdivide
+{\rele {26.12.2022 - Montag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 58 (70), Blutdruck: 119/78 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]       $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handrücken(Ls):]    $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Thunfisch, Champignons, Rosenkohl, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {23. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {33. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {13. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{-2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,108}, z^{s^{7},c^{0},r^{9},d^{70}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 07.15
+        
+      \item[$\boxtimes$ Snoopy:]     07.15 - 07.45
+      \item[$\boxtimes$ Wahl:]       07.45 - 09.45 (B, W, S, D, E, M, A)
+      \item[$\boxtimes$ Sutra:]      09.45 - 11.00
+        
+      \item[$\boxtimes$ Snoopy:]     11.00 - 11.30
+      \item[$\boxtimes$ Sitzen:]     11.30 - 14.00        
+      \item[$\square$ TLP 6.3:]    14.00 - 14.30        
+      \item[$\square$ Englisch:]   14.30 - 15.30 (B, W, S, D, E, M, A)
+      \item[$\square$ Wahl:]       15.30 - 17.00 (B, W, S, D, E, M, A)
+        
+      \item[$\square$ Snoopy:]     17.00 - 17.30
+      \item[$\square$ Kochen:]     17.30 - 19.30
+      \item[$\square$ Wahl:]       19.30 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\square$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {27.12.2022 - Dienstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 05.00 (4)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 53 (70), Blutdruck: 117/77 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 25\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^2 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Lachs, Champignons, Paprika, Kohlrabi, Salat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {24. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {34. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {14. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{-1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,109}, z^{s^{7},c^{1},r^{9},d^{71}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.45 - 06.45
+        
+      \item[$\boxtimes$ Snoopy:]     06.45 - 07.15
+      \item[$\boxtimes$ Sutra:]      07.15 - 08.30
+        
+      \item[$\square$ TLP 6.3:]    08.45 - 09.45
+      \item[$\boxtimes$ Englisch:]   08.45 - 09.45
+        
+      \item[$\boxtimes$ Dusche:]     09.45 - 10.15
+      \item[$\boxtimes$ Massage:]    10.15 - 12.30
+      \item[$\boxtimes$ Einkauf:]    12.00 - 12.45
+        
+      \item[$\boxtimes$ Snoopy:]     12.45 - 13.15
+      \item[$\boxtimes$ Sport:]      13.15 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]     18.00 - 18.30
+      \item[$\boxtimes$ Kochen:]     18.30 - 20.30
+      \item[$\square$ Wahl:]       20.30 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 \tikz \fill[red] (0,0) circle[radius=0.1];
+  Guten Morgen, Gerald, bereit für neue Taten?
+
+  \tikz \path[fill=white, draw=black] (0,0) circle[radius=0.1];
+  Guten Morgen, Mirel, die 15-Minuten-Uhr ist abgelaufen.
+
+  \tikz \fill[red] (0,0) circle[radius=0.1];
+  Also machst du einige Liegestützen.
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {28.12.2022 - Mittwoch}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 59 (70), Blutdruck: 113/69 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 27,5\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 27,5\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 27,5\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Sandsack):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^1 \ \land d^u) \times s^3 \times 400\ m\ (4)$
+      \item[$\boxtimes$ Liegestützen:]      $s^{9} \times r^{12}\ (9)$, $> 100$
+      \item[$\boxtimes$ Schwimmen:]         $300\ m \land 15\ min \land 150\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Blumenkohl, Salat
+      \item[$\boxtimes$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {25. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {35. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {15. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\boxtimes\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,110}, z^{s^{7},c^{2},r^{9},d^{72}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 06.45
+        
+      \item[$\boxtimes$ Snoopy:]     06.45 - 07.15
+      \item[$\boxtimes$ Sutra:]      08.30 - 09.30        
+      \item[$\boxtimes$ TLP 6.3:]    09.30 - 11.00
+      \item[$\boxtimes$ Einkauf:]    11.00 - 12.00
+                
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Sport:]      12.30 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]     18.00 - 18.30        
+      \item[$\boxtimes$ Kochen:]     18.30 - 20.30
+      \item[$\square$ Wahl:]       20.30 - 21.30 (B, W, S, D, E, M, A)        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {29.12.2022 - Donnerstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 00.00 - 08.00 (8)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 75 (70), Blutdruck: 107/70 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^2 \ \land d^d) \times s^3 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       Leber, Champignons, Rosenkohl, Salat
+      \item[$\boxtimes$ Intervallfasten:]  02.00 - 18.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {26. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {36. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {16. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{15,111}, z^{s^{7},c^{3},r^{9},d^{73}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 08.00
+        
+      \item[$\boxtimes$ Snoopy:]     08.00 - 08.30
+      \item[$\boxtimes$ Arzt:]       08.30 - 09.00
+      \item[$\boxtimes$ Einkauf:]    09.00 - 10.00
+      \item[$\boxtimes$ Plan:]       10.00 - 12.00
+      \item[$\square$ Sutra:]      11.00 - 11.30
+      \item[$\square$ TLP 6.3:]    11.30 - 12.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Sport:]      13.30 - 17.00
+      \item[$\boxtimes$ Post:]       17.00 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]     18.00 - 18.30
+      \item[$\square$ Kochen:]     18.30 - 20.00
+      \item[$\boxtimes$ Kino:]       18.30 - 24.00
+      \item[$\square$ Wahl:]       20.00 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\boxtimes$ Snoopy:]     24.00 - 00.30
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {30.12.2022 - Freitag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 06.00 (5)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Ruhepuls: 64 (70), Blutdruck: 114/64 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)   
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\square$ Duschen
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^1 \ \land d^u) \times s^4 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Rosenkohl, Salat
+      \item[$\square$ Intervallfasten:]  02.00 - 18.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {27. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {37. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {17. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{-1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{16,112}, z^{s^{7},c^{4},r^{9},d^{74}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 07.15
+        
+      \item[$\boxtimes$ Snoopy:]     07.15 - 07.45
+      \item[$\boxtimes$ Ablage:]     07.45 - 09.30
+      \item[$\boxtimes$ Sutra:]      09.30 - 12.00        
+      \item[$\square$ TLP 6.3:]    08.15 - 09.00
+      \item[$\square$ English:]    09.00 - 09.45
+      \item[$\square$ Deutsch:]    09.45 - 10.30
+      \item[$\square$ Mathematik:] 10.30 - 11.15        
+      \item[$\square$ Sport:]      11.15 - 12.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.00 - 12.30
+      \item[$\boxtimes$ Einkauf:]    12.30 - 13.30        
+      \item[$\boxtimes$ Training:]   12.30 - 17.00
+        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30
+      \item[$\boxtimes$ Kochen:]     17.30 - 19.30
+      \item[$\square$ Wahl:]       19.30 - 21.30 (B, W, S, D, E, M, A)
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {31.12.2022 - Samstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,4; Ruhepuls: 56 (70); Blutdruck: 117/75 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^2 \ \land d^d) \times s^4 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Hähnchen, Klöße, Salat
+      \item[$\square$ Intervallfasten:]  02.00 - 18.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {28. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {38. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {18. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\boxtimes\ B^1\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\boxtimes\ W^1\ (1)$
+  \item[{\mand {D-Zähler:}}]     \n{\_\_} $\boxtimes\ D^1\ (1)$
+  \item[{\mand {E-Zähler:}}]     \n{\_\_} $\square\ E^0\ (1)$
+  \item[{\mand {M-Zähler:}}]     \n{\_\_} $\square\ M^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{16,113}, z^{s^{7},c^{5},r^{9},d^{75}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.45
+      \item[$\boxtimes$ Plan:]       06.45 - 07.30
+        
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00
+      \item[$\boxtimes$ Einkauf:]    08.00 - 08.45
+      \item[$\boxtimes$ Sutra:]      08.45 - 09.30
+      \item[$\boxtimes$ Abfall:]     09.30 - 10.00
+      \item[$\boxtimes$ TLP 6.3:]    10.00 - 11.00
+        
+      \item[$\boxtimes$ Snoopy:]     11.30 - 12.00
+      \item[$\boxtimes$ Post:]       12.00 - 12.30
+      \item[$\boxtimes$ Sport:]      12.30 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30
+      \item[$\boxtimes$ Deutsch:]    17.30 - 18.30        
+      \item[$\boxtimes$ Silvester:]  18.30 - 02.00
+        
+      \item[$\square$ Snoopy:]     21.30 - 22.00
+        
+      \item[$\square$ Englisch:]   10.00 - 10.45
+      \item[$\square$ Mathematik:] 10.45 - 11.30
+        
+      \item[$\square$ Wahl:]       17.30 - 18.00 (B, W, S, D, E, M, A)
+        
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {01.01.2023 - Sonntag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 02.00 - 09.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,7; Ruhepuls: 62 (70); Blutdruck: 119/77 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Training:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Klimmzüge(Bizeps):}}}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handrücken(Ls):]    $s^3 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Sandsack):]   $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^2 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Rosenkohl, Salat
+      \item[$\square$ Intervallfasten:]  04.00 - 20.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {29. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {39. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {19. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\draf {$\square\ B^0\ (1)$}}
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} {\draf {$\square\ W^0\ (1)$}}
+  \item[{\mand {D-Zähler:}}]     \n{\_\_} {\draf {$\square\ D^0\ (1)$}}
+  \item[{\mand {E-Zähler:}}]     \n{\_\_} {\draf {$\square\ E^0\ (1)$}}
+  \item[{\mand {M-Zähler:}}]     \n{\_\_} {\draf {$\square\ M^0\ (1)$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{16,114}, z^{s^{7},c^{6},r^{9},d^{76}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 09.30
+        
+      \item[$\boxtimes$ Snoopy:]      09.30 - 10.00        
+      \item[$\boxtimes$ Plan:]        10.00 - 11.30
+        
+      \item[$\boxtimes$ Snoopy:]      11.30 - 12.00
+      \item[$\boxtimes$ Training:]    13.00 - 16.00
+        
+      \item[$\boxtimes$ Snoopy:]      16.00 - 17.00
+      \item[$\boxtimes$ Kochen:]      17.00 - 19.00
+      \item[$\square$ Plan:]        19.00 - 21.30
+        
+      \item[$\square$ Mathematik:]  19.00 - 19.30        
+      \item[$\square$ Alternative:] 19.30 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\square$ Snoopy:]      21.30 - 22.00
+        
+      \item[$\square$ Sutra:]       11.00 - 11.30
+        
+      \item[$\square$ TLP 6.3:]     12.00 - 12.30
+      \item[$\square$ Englisch:]    12.30 - 13.00
+      \item[$\square$ Deutsch:]     16.00 - 16.30
+        
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\topvskip
+\ldivide
+\subsubp{\rele {KW 1}}
+
+\topvskip
+{\mand {Gewicht:}} 57 kg
+
+\fdivide
+{\rele {02.01.2023 - Montag}}
+
+\begin{mdframed}[style=daystyle]
+
+  {\bf Tractatus Disciplina}
+  
+  \begin{minipage}{0.75\textwidth}  
+    \vskip 2pt
+    \begin{labeling}{{\bf 0.0.0.0.0}}
+      \setlength\itemsep{-3pt}
+    
+    \item[{\bf 1}] $\square$ Quartal: 1.1.23 - 31.3.23
+
+    \vskip 2pt
+    \item[{\bf 1.1}] $\square$ Programm: Englisch
+
+    \vskip 2pt
+    \item[{\bf 1.1.0.1}] $\square$ Aufgabe: Kurs vom 12.1.23 - 16.2.23
+    
+    \vskip 2pt
+    \item[{\bf 1.1.0.2}] $\square$ Lösung: Kapitel 1 und 2 bis 12.1.23
+
+    \vskip 2pt
+    \item[{\bf 1.1.1}] $\square$ Woche: 1 - 13
+      
+    \vskip 2pt
+    \item[{\bf 1.1.1.1}] $\square$ Woche: 1/0, 2.1.23 - 8.1.23 \\
+      $\square$ Plan: Kapitel 1
+      
+    \vskip 2pt
+    \item[{\bf 1.1.1.2}] $\square$ Woche: 2/0,  9.1.23 - 15.1.23 \\
+      $\square$ Plan: Kapitel 2
+      
+    \vskip 2pt
+    \item[{\bf 1.1.2}] $\square$ Tage: 3/0 - 1.1.23 - 1.2.23
+
+    \vskip 2pt
+    \item[{\bf 1.1.2.1.1}] $\square$ Tag: 1/0, 1.1.23
+
+    \vskip 2pt
+    \item[{\bf 1.1.2.1.2}] $\square$ Tag: 2/0, 2.1.23
+
+    \vskip 2pt
+    \item[{\bf 1.1.2.1.3}] $\square$ Tag: 3/0, 3.1.23 \\
+      $\square$ Kapitel 1: A - H 12
+
+    \vskip 2pt
+    \item[{\bf 1.1.3}] $\square$ Wörter
+
+    \vskip 2pt
+    \item[{\bf 1.1.4}] $\square$ Grammatik
+
+    \vskip 2pt
+    \item[{\bf 1.1.5}] $\square$ Sätze
+
+    \vskip 2pt
+    \item[{\bf 1.1.6}] $\square$ Tests
+    
+    \vskip 2pt
+    \item[{\bf 1.1.7}] $\square$ Bilanz
+      
+    
+    \vskip 2pt
+    \item[{\bf 1.2}] $\square$ Programm: Sport
+
+    \vskip 2pt
+    \item[{\bf 1.3}] $\square$ Programm: Religion
+
+    \vskip 2pt
+    \item[{\bf 1.4}] $\square$ Programm: Philosophie
+
+    \vskip 2pt
+    \item[{\bf 1.5}] $\square$ Programm: Deutsch
+
+    \vskip 2pt
+    \item[{\bf 1.6}] $\square$ Programm: Mathematik
+
+    \end{labeling}
+  \end{minipage}
+
+  
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 22.00 - 06.00 (8)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,2; Ruhepuls: 58 (70); Blutdruck: 109/69 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Sprung:]            $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Liegestützen:]      $s^3 \times r^{10}$ (3)
+      \item[$\square$ Jefferson Curl:]    $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] Unit 1: A - H 12
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Spinat, Salat
+      \item[$\square$ Intervallfasten:]  01.00 - 19.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {30. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {40. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {20. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {D-Zähler:}}]     \n{\_\_} $\square\ D^0\ (1)$
+  \item[{\mand {E-Zähler:}}]     \n{\_\_} $\square\ E^0\ (1)$
+  \item[{\mand {M-Zähler:}}]     \n{\_\_} $\square\ M^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{16,115}, z^{s^{7},c^{7},r^{9},d^{77}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 07.30
+        
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00
+      \item[$\boxtimes$ Training:]   08.00 - 11.00
+        
+      \item[$\boxtimes$ Snoopy:]     11.00 - 11.30
+      \item[$\boxtimes$ Massage:]    11.45 - 13.15
+      \item[$\boxtimes$ Einkauf:]    13.15 - 14.00
+      \item[$\boxtimes$ Plan:]       13.45 - 17.00
+        
+      \item[$\boxtimes$ Snoopy:]     17.00 - 17.30
+      \item[$\boxtimes$ Schlaf:]     17.30 - 18.30
+      \item[$\boxtimes$ Kochen:]     18.30 - 20.30
+      \item[$\boxtimes$ Plan:]       20.30 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {03.01.2023 - Dienstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 22.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,2; Ruhepuls: 57 (70); Blutdruck: 117/71 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)      
+      \item[$\boxtimes$ Sprung:]            $s^3 \times r^{1} \times 50\ cm$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 25\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Liegestützen:]      $s^3 \times r^{10}$ (3)
+      \item[$\square$ Jefferson Curl:]    $s^0 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\boxtimes$ Steigung:]          $(v^1 \ \land d^u) \times s^2 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Next-A1-Vokabeln:] $\boxtimes\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = \varnothing$ \\
+        $\square\ N \coloneqq \varnothing$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Brokkoli, Salat
+      \item[$\boxtimes$ Intervallfasten:]  04.00 - 18.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {31. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {41. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {21. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {D-Zähler:}}]     \n{\_\_} $\square\ D^0\ (1)$
+  \item[{\mand {M-Zähler:}}]     \n{\_\_} $\square\ M^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{1}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{1}, h^{1}, v^{16,116}, z^{s^{7},c^{8},r^{9},d^{78}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 07.00
+      \item[$\boxtimes$ Plan:]       07.00 - 08.00
+        
+      \item[$\boxtimes$ Snoopy:]     08.00 - 08.30
+      \item[$\boxtimes$ Einkauf:]    08.30 - 09.00
+      \item[$\boxtimes$ Englisch:]   09.00 - 10.00        
+      \item[$\boxtimes$ Sport:]      10.00 - 13.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.30 - 13.00
+      \item[$\boxtimes$ Post:]       13.00 - 14.00
+      \item[$\boxtimes$ Futter:]     14.00 - 15.00
+      \item[$\boxtimes$ Plan:]       15.00 - 16.00
+        
+      \item[$\boxtimes$ Snoopy:]     16.00 - 17.00
+      \item[$\boxtimes$ Kochen:]     17.00 - 20.00
+      \item[$\boxtimes$ Ofen:]       20.00 - 20.30
+      \item[$\boxtimes$ Plan:]       20.30 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {04.01.2023 - Mittwoch}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 22.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,2; Ruhepuls: 54 (70); Blutdruck: 112/77 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4) 
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^4$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^3 \times 1\ min$ (3)
+      \item[$\boxtimes$ Sprung:]            $s^3 \times r^{1} \times 50\ cm$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5\ s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Liegestützen:]      $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Jefferson Curl:]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^2 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{3} \times r^{6}\ (9)$, $> 100$
+      \item[$\boxtimes$ Schwimmen:]         $0\ 500m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Next-A1-Vokabeln:] $\boxtimes\ V_1 = D - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Mathematik:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Big Fat Notebook:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Big Fat Notebook:] $\boxtimes\ L_{1.1}$ \\
+        $\square\ P_1 = A_9 \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [4.1.23, 14.3.23]$ 
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Spinat
+      \item[$\boxtimes$ Intervallfasten:]  22.00 - 14.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {32. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {42. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {22. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {D-Zähler:}}]     \n{\_\_} $\square\ D^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{1}, Abend: \dChangey [1.5][green]{-2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{1}, h^{1}, v^{16,117}, z^{s^{7},c^{9},r^{9},d^{79}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.15
+      \item[$\boxtimes$ Plan:]       06.15 - 07.00
+        
+      \item[$\boxtimes$ Snoopy:]     07.00 - 07.30
+      \item[$\boxtimes$ Mathematik:] 07.30 - 08.30
+      \item[$\boxtimes$ Plan:]       08.30 - 09.00
+      \item[$\boxtimes$ Sport:]      09.00 - 13.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.30 - 13.00
+      \item[$\boxtimes$ Einkauf:]    12.45 - 13.30
+      \item[$\boxtimes$ Kochen:]     13.30 - 15.30        
+      \item[$\boxtimes$ Englisch:]   15.30 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]     16.30 - 17.00
+      \item[$\boxtimes$ Schwimmen:]  17.00 - 19.00        
+      \item[$\boxtimes$ Wahl:]       19.00 - 21.30 (B, W, S, D, E, M, A)
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {05.01.2023 - Donnerstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 22.00 - 06.00 (8)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 35,8,?; Ruhepuls: 52 (70); Blutdruck: 111/74 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Schulter(Stange):]  $s^2 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\boxtimes$ Schulter(Ringe):]   $s^2 \times 1\ min$ (3)
+      \item[$\square$ Sprung:]            $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Jefferson Curl:]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^2 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{6} \times r^{7}\ (15)$, $> 100, [7, 12]$
+      \item[$\boxtimes$ Schwimmen:]         $700\ m \land 0\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+        
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\boxtimes$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Next-A1-Vokabeln:] $\boxtimes\ V_1 = A - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = A - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Mathematik:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Big Fat Notebook:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Big Fat Notebook:] $\square\ L_{1.1}$ \\
+        $\boxtimes\ L_{1.2}$ \\
+        $\square\ P_1 = A_9 \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [4.1.23, 14.3.23]$ 
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Deutsch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\boxtimes$ Klett, Inhaltsangabe:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Klett, Inhaltsangabe:] $\boxtimes\ K_{1.16-23}$ \\
+        $\square\ P_1 = A_9 \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [5.1.23, ???]$ 
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+    
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Rosenkohl, Salat
+      \item[$\boxtimes$ Intervallfasten:]  22.00 - 14.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {33. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {43. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {23. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0}, Mittag: \dChangey [1.5][yellow]{0}, Abend: \dChangey [1.5][green]{-2}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{2}, h^{2}, v^{16,118}, z^{s^{7},c^{10},r^{9},d^{80}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]  05.45 - 06.30
+      \item[$\boxtimes$ Plan:]       06.30 - 07.30
+        
+      \item[$\boxtimes$ Snoopy:]     07.30 - 08.00
+      \item[$\boxtimes$ Englisch:]   08.00 - 09.00
+      \item[$\boxtimes$ Sport:]      09.00 - 12.00
+        
+      \item[$\boxtimes$ Snoopy:]     12.30 - 13.00
+      \item[$\boxtimes$ Einkauf:]    12.45 - 13.30
+      \item[$\boxtimes$ Kochen:]     13.30 - 15.30        
+      \item[$\boxtimes$ Deutsch:]    15.30 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]     16.30 - 17.00
+      \item[$\boxtimes$ Schwimmen:]  17.00 - 19.00        
+      \item[$\boxtimes$ Zeitung:]    19.00 - 21.00
+      \item[$\boxtimes$ Mathematik:] 21.00 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]     21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {06.01.2023 - Freitag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 06.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,3; Ruhepuls: 60 (70); Blutdruck: 110/72 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 5 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^3 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^3 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^3 \times r^{10}$ (3)
+      \item[$\square$ Sprünge:]           $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^3 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{10} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^3 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Jefferson Curl:]    $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^3 \times 2\ min$ (3)
+      \item[$\boxtimes$ Laufen:]            $s^1 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^2 \ \land d^d) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\boxtimes$ Schwimmen:]         $0\ m \land 15\ min \land 300\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\boxtimes$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Next-A1-Vokabeln:] $\boxtimes\ V_1 = A - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = A - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Campignons, Paprika, Brokkoli, Salat
+      \item[$\square$ Intervallfasten:]  21.00 - 13.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {33. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {43. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {23. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {W-Zähler:}}]     \n{\_\_} $\square\ W^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1}, Mittag: \dChangey [1.5][yellow]{-1}, Abend: \dChangey [1.5][green]{0}
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0}, h^{0}, v^{17,119}, z^{s^{7},c^{11},r^{9},d^{81}}$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 06.45
+      \item[$\boxtimes$ Plan:]        06.45 - 07.00
+      \item[$\boxtimes$ Zeitung:]     07.00 - 08.15
+        
+      \item[$\boxtimes$ Snoopy:]      08.15 - 08.45
+      \item[$\boxtimes$ Englisch:]    08.45 - 10.00        
+      \item[$\boxtimes$ Sport:]       10.00 - 14.00
+      \item[$\boxtimes$ Snoopy:]      12.00 - 12.30
+      \item[$\boxtimes$ Schwimmen:]   14.00 - 15.30
+      \item[$\boxtimes$ ochen:]      16.00 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]      17.00 - 17.30
+        
+      \item[$\square$ Philosophie:] 17.00 - 18.00
+      \item[$\square$ Deutsch:]     18.00 - 19.00
+      \item[$\square$ Mathematik:]  19.00 - 20.00
+        
+      \item[$\boxtimes$ Snoopy:]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {07.01.2023 - Samstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 24.00 - 06.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,2; Ruhepuls: 57 (70); Blutdruck: 107/74 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4) 
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\square$ Rasieren
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    $s^0 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]       $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schmetterling:]     $s^0 \times 2\ min$ (3)
+      \item[$\square$ Pflug:]             $s^0 \times r^{10}$ (3)
+      \item[$\square$ Kopfbeuge(Wand):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sprünge:]           $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handgelenke:]       $s^0 \times r^{10}$ (3)
+      \item[$\square$ Jefferson Curl:]    $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\boxtimes$ Next-A1:}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Vokabeln:] $\boxtimes\ V_1 = A - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = A - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$
+
+      \item[$\square$ Termin:] $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Spinat
+      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {34. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {44. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {24. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1} (06.00), Mittag: \dChangey [1.5][yellow]{2} (12.00), Abend: \dChangey [1.5][green]{-2} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{1} (20.00), v^{17,120} (heute), z^{s^{8},c^{0},r^{10},d^{82}} (heute)$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 06.45
+      \item[$\boxtimes$ Plan:]        06.45 - 07.30
+        
+      \item[$\boxtimes$ Snoopy:]      07.30 - 08.00
+      \item[$\boxtimes$ Dotzauer:]    08.00 - 10.00
+      \item[$\boxtimes$ Sitzen:]      10.00 - 10.30        
+      \item[$\boxtimes$ Englisch:]    10.30 - 11.30
+        
+      \item[$\boxtimes$ Snoopy:]      11.30 - 12.30
+      \item[$\boxtimes$ Sitzen:]      12.30 - 13.00
+      \item[$\boxtimes$ Philosophie:] 13.00 - 14.00
+      \item[$\boxtimes$ Einkauf:]     14.00 - 15.00
+      \item[$\boxtimes$ Kochen:]      15.00 - 17.00
+      \item[$\boxtimes$ Einkauf:]     17.00 - 18.00
+        
+      \item[$\boxtimes$ Snoopy:]      18.00 - 18.30
+      \item[$\boxtimes$ Nachtisch:]   18.30 - 19.30
+      \item[$\boxtimes$ Sitzen:]      19.30 - 20.00
+        
+      \item[$\boxtimes$ Englisch:]    20.00 - 21.00
+      \item[$\boxtimes$ Plan:]        21.00 - 21.30
+        
+      \item[$\square$ Deutsch:]     19.00 - 20.00
+      \item[$\square$ Mathematik:]  20.00 - 21.00
+      \item[$\square$ Religion:]    21.00 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {08.01.2023 - Sonntag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 07.00 (7)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 35,8; Ruhepuls: 53 (70); Blutdruck: 116/68 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2), $\boxtimes$ Duschen
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    $s^0 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]       $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schmetterling:]     $s^0 \times 2\ min$ (3)
+      \item[$\square$ Pflug:]             $s^0 \times r^{10}$ (3)
+      \item[$\square$ Kopfbeuge(Wand):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sprünge:]           $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handgelenke:]       $s^0 \times r^{10}$ (3)
+      \item[$\square$ Jefferson Curl:]    $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace 
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Rosenkohl
+      \item[$\square$ Intervallfasten:]  20.00 - 12.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {35. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {45. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {25. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0} (06.00), Mittag: \dChangey [1.5][yellow]{2} (12.00), Abend: \dChangey [1.5][green]{2} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0} (20.00), v^{17,121} (heute), z^{s^{8},c^{0},r^{11},d^{83}} (heute)$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 06.45
+      \item[$\boxtimes$ Plan:]        06.45 - 08.00
+        
+      \item[$\boxtimes$ Snoopy:]      08.00 - 08.30
+      \item[$\boxtimes$ Sitzen:]      08.30 - 09.00
+      \item[$\boxtimes$ Englisch:]    09.00 - 12.30
+      \item[$\square$ Religion:]    10.00 - 11.00
+      \item[$\square$ Deutsch:]     11.00 - 11.30
+        
+      \item[$\boxtimes$ Snoopy:]      12.30 - 13.00
+      \item[$\boxtimes$ Sitzen:]      13.00 - 13.30
+      \item[$\boxtimes$ Kochen:]      13.30 - 15.30
+      \item[$\boxtimes$ Englisch:]    15.30 - 17.00
+      \item[$\square$ Mathematik:]  14.30 - 15.30
+      \item[$\square$ Philosophie:] 15.30 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]      17.00 - 17.30
+      \item[$\boxtimes$ Sitzen:]      17.00 - 17.30
+      \item[$\boxtimes$ Duschen:]     17.30 - 18.00
+      \item[$\boxtimes$ Nachtisch:]   18.00 - 19.00
+      \item[$\boxtimes$ English:]     19.00 - 21.30
+      \item[$\square$ Deutsch:]     18.30 - 19.30
+      \item[$\square$ Mathematik:]  19.30 - 20.30
+      \item[$\square$ Philosophie:] 20.30 - 21.30
+      \item[$\boxtimes$ Snoopy:]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\topvskip
+\ldivide
+\subsubp{\rele {KW 2}}
+
+\topvskip
+{\mand {Gewicht:}} 57 kg
+
+\fdivide
+{\rele {09.01.2023 - Montag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 23.00 - 05.00 (6)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 35,8; Ruhepuls: 52 (70); Blutdruck: 117/74 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} 4 Spaziergänge (4)
+  \item[{\mand {Sitzen:}}]        \n{\_\_} $s^3 \times\ 10 min$ (2)
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} $2 \times$ Zähneputzen (2)
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    $s^0 \times 2 \times 2\ min$ (3)
+      \item[$\square$ Trizeps:]           $s^0 \times r^{10}$ (3)
+      \item[$\square$ Rumpf(Wand):]       $s^0 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schmetterling:]     $s^0 \times 2\ min$ (3)
+      \item[$\square$ Pflug:]             $s^0 \times r^{10}$ (3)
+      \item[$\square$ Kopfbeuge(Wand):]   $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sprünge:]           $s^0 \times r^{1} \times 50\ cm$ (3)
+      \item[$\square$ Klimmzüge(Bizeps):] $s^0 \times r^1$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\square$ Schulterdrücken:]   $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Kniebeugen:]        $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Brustdrücken:]      $s^0 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Roller:]            $s^0 \times r^{10}$ (3)
+      \item[$\square$ Hochlauf(Wand):]    $s^0 \times r^{1} \times 5s$ (3)
+      \item[$\square$ Handgelenke:]       $s^0 \times r^{10}$ (3)
+      \item[$\square$ Jefferson Curl:]    $s^0 \times r^{10}$ (3)
+      \item[$\square$ Sportkreisel:]      $s^0 \times 2\ min$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Paprika, Spinat, Salat
+      \item[$\square$ Intervallfasten:]  19.00 - 11.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {0 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {36. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {46. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {26. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} $\square\ B^0\ (1)$
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{0} (06.00), Mittag: \dChangey [1.5][yellow]{0} (12.00), Abend: \dChangey [1.5][green]{0} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} $g^{0} (11.00), v^{17,122} (heute), z^{s^{8},c^{0},r^{12},d^{84}} (heute)$
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 06.15
+      \item[$\boxtimes$ Plan:]        06.15 - 06.45
+        
+      \item[$\boxtimes$ Snoopy:]      06.45 - 07.15
+      \item[$\boxtimes$ Sitzen:]      07.15 - 07.45
+      \item[$\boxtimes$ Englisch:]    07.45 - 08.45 (A1.1 Vokabelkartei)
+      \item[$\boxtimes$ Einkauf:]     08.45 - 10.00
+      \item[$\boxtimes$ Englisch:]    10.00 - 11.30 (A1.1 Vokabelkartei)
+      \item[$\square$ Deutsch:]     09.15 - 10.15
+      \item[$\square$ Mathematik:]  10.15 - 11.30
+        
+      \item[$\boxtimes$ Snoopy:]      11.30 - 12.00
+      \item[$\boxtimes$ Sitzen:]      12.00 - 12.30
+      \item[$\boxtimes$ Kochen:]      12.30 - 14.00
+      \item[$\boxtimes$ Englisch:]    14.30 - 15.00 (A1.1 Vokabelkartei)
+      \item[$\boxtimes$ Nachtisch:]   15.00 - 15.30
+      \item[$\boxtimes$ Englisch:]    15.30 - 17.00 (A1.1 Plus -> F2)
+      \item[$\square$ Philosophie:] 14.30 - 15.30
+      \item[$\square$ Religion:]    15.30 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]      16.30 - 17.00
+      \item[$\boxtimes$ Heizen:]      17.00 - 17.30
+      \item[$\boxtimes$ Sitzen:]      17.30 - 18.00
+      \item[$\boxtimes$ English:]     18.00 - 19.00 (A1.1 Plus)
+      \item[$\boxtimes$ Kraul:]       19.00 - 21.00
+      \item[$\square$ Philosophie:] 21.00 - 21.30
+        
+      \item[$\boxtimes$ Snoopy:]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\rele {10.01.2023 - Dienstag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} 01.00 - 06.00 (5)
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} Temperatur: 36,2; Ruhepuls: 55 (70); Blutdruck: 117/66 (143/89)
+  \item[{\mand {Snoopy:}}]        \n{\_\_} {\draf {3 Spaziergänge (4)}}    
+  \item[{\mand {Sitzen:}}]        \n{\_\_} {\draf {$s^0 \times\ 10 min$ (2)}}
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} {\draf {$1 \times$ Zähneputzen (2), $\square$ Rasieren}}
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Archillessehne:]    $s^1 \times 2 \times 2\ min$ (3)
+      \item[$\boxtimes$ Trizeps:]           $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Rumpf(Wand):]       $s^1 \times 2\ min$ (3)
+      \item[$\square$ Schulter(Stange):]  $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schmetterling:]     $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Pflug:]             $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Kopfbeuge(Wand):]   $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sprünge:]           $s^1 \times r^{1} \times 50\ cm$ (3)
+      \item[$\boxtimes$ Klimmzüge(Bizeps):] $s^1 \times r^2$ (3)
+      \item[$\square$ Schulter(Ringe):]   $s^0 \times 1\ min$ (3)
+      \item[$\boxtimes$ Schulterdrücken:]   $s^3 \times r^{8} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Kniebeugen:]        $s^3 \times r^{8} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Brustdrücken:]      $s^3 \times r^{8} \times 20\ kg$ (3)
+      \item[$\boxtimes$ Roller:]            $s^3 \times r^{10}$ (3)
+      \item[$\boxtimes$ Hochlauf(Wand):]    $s^1 \times r^{1} \times 5s$ (3)
+      \item[$\boxtimes$ Handgelenke:]       $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Jefferson Curl:]    $s^1 \times r^{10}$ (3)
+      \item[$\boxtimes$ Sportkreisel:]      $s^1 \times 2\ min$ (3)
+      \item[$\boxtimes$ Kreuzheben:]        $s^2 \times r^{10} \times 20\ kg$ (3)
+      \item[$\square$ Laufen:]            $s^0 \times 3\ km$ (2)
+      \item[$\square$ Steigung:]          $(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$
+      \item[$\square$ Liegestützen:]      $s^{0} \times r^{12}\ (9)$, $> 100$
+      \item[$\square$ Schwimmen:]         $0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\boxtimes$ Abendessen:]       Leber, Champignons, Blumenkohl, Salat
+      \item[$\boxtimes$ Intervallfasten:]  20.00 - 12.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {4 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {37. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {47. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {27. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\draf {$\square\ B^0\ (1)$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} Morgen: \dChangey [1.5][orange]{-1} (06.00), Mittag: \dChangey [1.5][yellow]{-1} (12.00), Abend: \dChangey [1.5][green]{0} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\draf {$g^{1} (12.00), v^{17,123} (heute), z^{s^{8},c^{1},r^{12},d^{85}} (heute)$}}
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\boxtimes$ Aufstehen:]   05.45 - 06.15
+      \item[$\boxtimes$ Plan:]        06.15 - 06.30
+        
+      \item[$\boxtimes$ Snoopy:]      06.30 - 07.00
+      \item[$\boxtimes$ Sport:]       07.00 - 08.15
+      \item[$\boxtimes$ Plan:]        08.15 - 09.00
+      \item[$\boxtimes$ Einkauf:]     09.00 - 09.45
+      \item[$\boxtimes$ Englisch:]    09.45 - 11.15 (A1 Grammar, 1.1 - 1.2)
+        
+      \item[$\boxtimes$ Snoopy:]      11.15 - 11.45
+      \item[$\boxtimes$ Massage:]     11.45 - 13.15
+      \item[$\boxtimes$ Kaffee:]      13.15 - 14.15
+      \item[$\boxtimes$ Kochen:]      14.15 - 16.30
+        
+      \item[$\boxtimes$ Snoopy:]      16.30 - 17.00
+      \item[$\boxtimes$ Heizen:]      17.00 - 17.30        
+      \item[$\boxtimes$ Nachtisch:]   17.30 - 18.00
+        
+      \item[$\square$ {\draf {Englisch:}}]    18.00 - 19.15 (A1 Grammar, 1.1 - 1.2)
+        
+      \item[$\square$ {\prop {Schwimmen:}}]   17.00 - 19.15
+        
+      \item[$\square$ {\prop {Sangha:}}]      19.15 - 21.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\draf {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\prop {11.01.2023 - Mittwoch}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} {\prop {22.00 - 06.00 (8)}}
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} {\prop {Temperatur: ??,?; Ruhepuls: ?? (70); Blutdruck: ???/?? (143/89)}}
+  \item[{\mand {Snoopy:}}]        \n{\_\_} {\prop {? Spaziergänge (4)}}    
+  \item[{\mand {Sitzen:}}]        \n{\_\_} {\prop {$s^0 \times\ 10 min$ (2)}}
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Rasieren}}
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    {\prop {$s^0 \times 2 \times 2\ min$ (3)}}
+      \item[$\square$ Trizeps:]           {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Rumpf(Wand):]       {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Schulter(Stange):]  {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schmetterling:]     {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Pflug:]             {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Kopfbeuge(Wand):]   {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sprünge:]           {\prop {$s^0 \times r^{1} \times 50\ cm$ (3)}}
+      \item[$\square$ Klimmzüge(Bizeps):] {\prop {$s^0 \times r^1$ (3)}}
+      \item[$\square$ Schulter(Ringe):]   {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schulterdrücken:]   {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Kniebeugen:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Brustdrücken:]      {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Roller:]            {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Hochlauf(Wand):]    {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
+      \item[$\square$ Handgelenke:]       {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Jefferson Curl:]    {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sportkreisel:]      {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Kreuzheben:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Laufen:]            {\prop {$s^0 \times 3\ km$ (2)}}
+      \item[$\square$ Steigung:]          {\prop {$(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$}}
+      \item[$\square$ Liegestützen:]      {\prop {$s^{0} \times r^{12}\ (9)$, $> 100$}}
+      \item[$\square$ Schwimmen:]         {\prop {$0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$}}
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       {\prop {Leber, Champignons, Paprika, Spinat, Salat}}
+      \item[$\square$ Intervallfasten:]  {\prop {20.00 - 12.00}}
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {16 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {38. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {48. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {28. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{-1} (06.00), % Mittag: \dChangey [1.5][yellow]{1} (12.00) %, Abend: \dChangey [1.5][green]{2} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\prop {$g^{0} (20.00), v^{17,124} (heute), z^{s^{8},c^{2},r^{12},d^{86}} (heute)$}}
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ {\prop {Aufstehen:}}]   05.45 - 06.45
+      \item[$\square$ {\prop {Plan:}}]        06.45 - 07.15
+        
+      \item[$\square$ {\prop {Snoopy:}}]      07.15 - 07.45
+      \item[$\square$ {\prop {Sitzen:}}]      07.45 - 08.15
+      \item[$\square$ {\prop {Englisch:}}]    08.15 - 09.15
+      \item[$\square$ {\prop {Deutsch:}}]     09.15 - 10.15
+      \item[$\square$ {\prop {Mathematik:}}]  10.15 - 11.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      11.30 - 12.00
+      \item[$\square$ {\prop {Sitzen:}}]      12.00 - 12.30
+      \item[$\square$ {\prop {Kochen:}}]      12.30 - 14.30
+      \item[$\square$ {\prop {Philosophie:}}] 14.30 - 15.30
+      \item[$\square$ {\prop {Religion:}}]    15.30 - 16.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      16.30 - 17.00
+      \item[$\square$ {\prop {Sitzen:}}]      17.00 - 17.30
+      \item[$\square$ {\prop {English:}}]     17.30 - 19.00        
+      \item[$\square$ {\prop {Deutsch:}}]     19.00 - 20.00
+      \item[$\square$ {\prop {Mathematik:}}]  20.00 - 21.00
+      \item[$\square$ {\prop {Religion:}}]    21.00 - 21.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      21.30 - 22.00
       \end{labeling}
     \end{minipage}
     \bottomspace
@@ -14890,79 +17898,220 @@ Geschichte und lächelt verschmitzt.
 
 
 \ddivide
-{\prop {16.12.2022 - Freitag}}
+{\prop {12.01.2023 - Donnerstag}}
 
 \begin{mdframed}[style=daystyle]
   \begin{labeling}{{\mand {Bemerkungen:}}}
     \setlength\itemsep{-3pt}
   \item[{\mand {Schlaf:}}]        \n{\_\_} {\prop {22.00 - 06.00 (8)}}
-  \item[{\mand {Gesundheit:}}]    \n{\_\_} {\prop {Ruhepuls: ?? (70), Blutdruck: ???/?? (143/89)}}
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} {\prop {Temperatur: ??,?; Ruhepuls: ?? (70); Blutdruck: ???/?? (143/89)}}
   \item[{\mand {Snoopy:}}]        \n{\_\_} {\prop {? Spaziergänge (4)}}    
   \item[{\mand {Sitzen:}}]        \n{\_\_} {\prop {$s^0 \times\ 10 min$ (2)}}
   \item[{\mand {Körperpflege:}}]  \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Rasieren}}
   \item[{\mand {Sport:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
-      \begin{labeling}{\prop {$\square$ {Schulterübungen:}}} 
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
         \setlength\itemsep{-3pt}
-      \item[$\square$ Trizeps:]          {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Wand):]      {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Schulter(Stange):] {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schmetterling:]    {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Pflug:]            {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Nicken(Wand):]     {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Klimmzüge:]        {\prop {$s^0 \times r^1$ (3)}}
-      \item[$\square$ Schulter(Ringe):]  {\prop {$s^0 \times 1\ min$ (3)}}
-      \item[$\square$ Schulterdrücken:]  {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Kniebeugen:]       {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Brustdrücken:]     {\prop {$s^0 \times r^{10} \times 22,5\ kg$ (3)}}
-      \item[$\square$ Roller:]           {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Hochlauf(Wand):]   {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
-      \item[$\square$ Handrücken(Ls):]   {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Rumpf(Sandsack):]  {\prop {$s^0 \times r^{10}$ (3)}}
-      \item[$\square$ Sportkreisel:]     {\prop {$s^0 \times 2\ min$ (3)}}
-      \item[$\square$ Laufen:]           {\prop {$r^0 \times 3\ km$ (2)}}
-      \item[$\square$ Steigung:]         {\prop {$(v^1 \ \land d^d) \times 400\ m\ (4)$}}
-      \item[$\square$ Liegestützen:]     {\prop {$s^{0} \times r^{9}\ (9)$, $> 100$}}
-      \item[$\square$ Schwimmen:]        {\prop {$0\ m \land 45\ min \land 0\ m\ (300\ m \land 150\ m)$}}
+      \item[$\square$ Archillessehne:]    {\prop {$s^0 \times 2 \times 2\ min$ (3)}}
+      \item[$\square$ Trizeps:]           {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Rumpf(Wand):]       {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Schulter(Stange):]  {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schmetterling:]     {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Pflug:]             {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Kopfbeuge(Wand):]   {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sprünge:]           {\prop {$s^0 \times r^{1} \times 50\ cm$ (3)}}
+      \item[$\square$ Klimmzüge(Bizeps):] {\prop {$s^0 \times r^1$ (3)}}
+      \item[$\square$ Schulter(Ringe):]   {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schulterdrücken:]   {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Kniebeugen:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Brustdrücken:]      {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Roller:]            {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Hochlauf(Wand):]    {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
+      \item[$\square$ Handgelenke:]       {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Jefferson Curl:]    {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sportkreisel:]      {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Kreuzheben:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Laufen:]            {\prop {$s^0 \times 3\ km$ (2)}}
+      \item[$\square$ Steigung:]          {\prop {$(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$}}
+      \item[$\square$ Liegestützen:]      {\prop {$s^{0} \times r^{12}\ (9)$, $> 100$}}
+      \item[$\square$ Schwimmen:]         {\prop {$0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$}}
       \end{labeling}
     \end{minipage}
     \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
   \item[{\mand {Ernährung:}}]    \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
       \begin{labeling}{$\square$ Intervallfasten:} 
         \setlength\itemsep{-3pt}  
       \item[$\square$ Abendessen:]       {\prop {???}}
-      \item[$\square$ Intervallfasten:]  18.00 - 10.00
+      \item[$\square$ Intervallfasten:]  {\prop {20.00 - 12.00}}
       \end{labeling}
     \end{minipage}
     \bottomspace
   \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {16 (16 Stunden)}}
-  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {13. Tag (Anfangstage: 4.12.2022)}}
-  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {23. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {39. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {49. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {29. Tag (Archivende: 14.3.2023, 90 Tage)}}
   \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
-  \item[{\mand {W-Zähler:}}]     \n{\_\_} {\prop {$\square\ W^0\ (1)$}}
-  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{0}, % Mittag: \dChangey [1.5][yellow]{1} %, Abend: \dChangey [1.5][green]{2}
-  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\prop {$g^{0}, h^{0}, v^{13,98}, z^{s^{4},c^{3},r^{6},d^{60}}$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{-1} (06.00), % Mittag: \dChangey [1.5][yellow]{1} (12.00) %, Abend: \dChangey [1.5][green]{2} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\prop {$g^{0} (20.00), v^{17,125} (heute), z^{s^{8},c^{3},r^{12},d^{87}} (heute)$}}
   \item[{\mand {Plan:}}]         \n{\_\_}
     \topspace
     \begin{minipage}{0.75\textwidth}  
-      \begin{labeling}{\prop {$\square$ {Aufgaben:}}} 
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
         \setlength\itemsep{-3pt}
-      \item[{\prop {$\square$ Plan:}}]     07.30 - 08.00
-      \item[{\prop {$\square$ Wega:}}]     08.00 - 08.45
-      \item[{\prop {$\square$ Mirel:}}]    09.00 - 09.45
-      \item[{\prop {$\square$ Bias:}}]     10.00 - 10.45
-      \item[{\prop {$\square$ Berwik:}}]   11.00 - 11.45        
-      \item[{\prop {$\square$ Snoopy:}}]   11.30 - 12.00
-
-      \item[{\prop {$\square$ Sport:}}]    12.30 - 17.00        
-      \item[{\prop {$\square$ Snoopy:}}]   17.00 - 17.30
+      \item[$\square$ {\prop {Aufstehen:}}]   05.45 - 06.45
+      \item[$\square$ {\prop {Plan:}}]        06.45 - 07.15
         
-      \item[{\prop {$\square$ Kochen:}}]   17.30 - 19.30
-      \item[{\prop {$\square$ Aufgaben:}}] 19.30 - 21.30
-      \item[{\prop {$\square$ Snoopy:}}]   21.30 - 22.00
+      \item[$\square$ {\prop {Snoopy:}}]      07.15 - 07.45
+      \item[$\square$ {\prop {Sitzen:}}]      07.45 - 08.15
+      \item[$\square$ {\prop {Englisch:}}]    08.15 - 09.15
+      \item[$\square$ {\prop {Deutsch:}}]     09.15 - 10.15
+      \item[$\square$ {\prop {Mathematik:}}]  10.15 - 11.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      11.30 - 12.00
+      \item[$\square$ {\prop {Sitzen:}}]      12.00 - 12.30
+      \item[$\square$ {\prop {Kochen:}}]      12.30 - 14.30
+      \item[$\square$ {\prop {Philosophie:}}] 14.30 - 15.30
+      \item[$\square$ {\prop {VHS:}}]         15.30 - 17.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      17.30 - 18.00
+      \item[$\square$ {\prop {Sitzen:}}]      18.00 - 18.30
+      \item[$\square$ {\prop {English:}}]     18.30 - 19.00
+      \item[$\square$ {\prop {Kraul:}}]       19.00 - 21.00
+      \item[$\square$ {\prop {Religion:}}]    21.00 - 21.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      21.30 - 22.00
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {Bemerkungen:}}]  \n{\_\_} {\prop {$\square$}}
+  \end{labeling}
+    
+  % Initialize the note counter.
+  \setcounter{notec}{0}
+  
+  \notep 0 $\ldots$
+
+\end{mdframed}
+
+
+\ddivide
+{\prop {13.01.2023 - Freitag}}
+
+\begin{mdframed}[style=daystyle]
+  \begin{labeling}{{\mand {Bemerkungen:}}}
+    \setlength\itemsep{-3pt}
+  \item[{\mand {Schlaf:}}]        \n{\_\_} {\prop {22.00 - 06.00 (8)}}
+  \item[{\mand {Gesundheit:}}]    \n{\_\_} {\prop {Temperatur: ??,?; Ruhepuls: ?? (70); Blutdruck: ???/?? (143/89)}}
+  \item[{\mand {Snoopy:}}]        \n{\_\_} {\prop {? Spaziergänge (4)}}    
+  \item[{\mand {Sitzen:}}]        \n{\_\_} {\prop {$s^0 \times\ 10 min$ (2)}}
+  \item[{\mand {Körperpflege:}}]  \n{\_\_} {\prop {$0 \times$ Zähneputzen (2), $\square$ Rasieren}}
+  \item[{\mand {Sport:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Klimmzüge(Bizeps):}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Archillessehne:]    {\prop {$s^0 \times 2 \times 2\ min$ (3)}}
+      \item[$\square$ Trizeps:]           {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Rumpf(Wand):]       {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Schulter(Stange):]  {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schmetterling:]     {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Pflug:]             {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Kopfbeuge(Wand):]   {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sprünge:]           {\prop {$s^0 \times r^{1} \times 50\ cm$ (3)}}
+      \item[$\square$ Klimmzüge(Bizeps):] {\prop {$s^0 \times r^1$ (3)}}
+      \item[$\square$ Schulter(Ringe):]   {\prop {$s^0 \times 1\ min$ (3)}}
+      \item[$\square$ Schulterdrücken:]   {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Kniebeugen:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Brustdrücken:]      {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Roller:]            {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Hochlauf(Wand):]    {\prop {$s^0 \times r^{1} \times 5s$ (3)}}
+      \item[$\square$ Handgelenke:]       {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Jefferson Curl:]    {\prop {$s^0 \times r^{10}$ (3)}}
+      \item[$\square$ Sportkreisel:]      {\prop {$s^0 \times 2\ min$ (3)}}
+      \item[$\square$ Kreuzheben:]        {\prop {$s^0 \times r^{10} \times 20\ kg$ (3)}}
+      \item[$\square$ Laufen:]            {\prop {$s^0 \times 3\ km$ (2)}}
+      \item[$\square$ Steigung:]          {\prop {$(v^1 \ \land d^u) \times s^0 \times 400\ m\ (4)$}}
+      \item[$\square$ Liegestützen:]      {\prop {$s^{0} \times r^{12}\ (9)$, $> 100$}}
+      \item[$\square$ Schwimmen:]         {\prop {$0\ m \land 15\ min \land 0\ m\ (300\ m \land 150\ m)$}}
+      \end{labeling}
+    \end{minipage}
+    \bottomspace        
+    
+  \item[{\mand {Englisch:}}]      \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Next-A1-Vokabeln:}
+        \setlength\itemsep{-3pt}
+      \item[$\square$ Next-A1-Vokabeln:] $\square\ V_1 = D_2 - H_{12}$ (A - H 12) \\
+        $\square\ P_1 = D_2 - H_{12} \land F = ? \land N = ?$ \\
+        $\square\ N \coloneqq j = 1 \land \sum_{i=1} ^{j} t_i = t_j / j$ \\
+        $\square\ T \coloneqq [3.1.23, 16.1.23]$
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+        
+  \item[{\mand {Ernährung:}}]    \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{$\square$ Intervallfasten:} 
+        \setlength\itemsep{-3pt}  
+      \item[$\square$ Abendessen:]       {\prop {???}}
+      \item[$\square$ Intervallfasten:]  {\prop {20.00 - 12.00}}
+      \end{labeling}
+    \end{minipage}
+    \bottomspace
+  \item[{\mand {S-Zähler:}}]     \n{\_\_} {\rewo {16 (16 Stunden)}}
+  \item[{\mand {G-Zähler:}}]     \n{\_\_} {\down {40. Tag (Anfangstage: 4.12.2022)}}
+  \item[{\mand {T-Zähler:}}]     \n{\_\_} {\down {40. Tag (Therapieende: 9.4.2023)}}
+  \item[{\mand {A-Zähler:}}]     \n{\_\_} {\down {30. Tag (Archivende: 14.3.2023, 90 Tage)}}
+  \item[{\mand {B-Zähler:}}]     \n{\_\_} {\prop {$\square\ B^0\ (1)$}}
+  \item[{\mand {Stimmung:}}]     \n{\_\_} % Morgen: \dChangey [1.5][orange]{-1} (06.00), % Mittag: \dChangey [1.5][yellow]{1} (12.00) %, Abend: \dChangey [1.5][green]{2} (18.00)
+  \item[{\mand {Vorsätze:}}]     \n{\_\_} {\prop {$g^{0} (20.00), v^{18,126} (heute), z^{s^{8},c^{4},r^{12},d^{88}} (heute)$}}
+  \item[{\mand {Plan:}}]         \n{\_\_}
+    \topspace
+    \begin{minipage}{0.75\textwidth}  
+      \begin{labeling}{\prop {$\square$ {Mathematik:}}} 
+        \setlength\itemsep{-3pt}
+      \item[$\square$ {\prop {Aufstehen:}}]   05.45 - 06.45
+      \item[$\square$ {\prop {Plan:}}]        06.45 - 07.15
+        
+      \item[$\square$ {\prop {Snoopy:}}]      07.15 - 07.45
+      \item[$\square$ {\prop {Sitzen:}}]      07.45 - 08.15
+      \item[$\square$ {\prop {Englisch:}}]    08.15 - 09.15
+      \item[$\square$ {\prop {Deutsch:}}]     09.15 - 10.15
+      \item[$\square$ {\prop {Mathematik:}}]  10.15 - 11.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      11.30 - 12.00
+      \item[$\square$ {\prop {Sitzen:}}]      12.00 - 12.30
+      \item[$\square$ {\prop {Kochen:}}]      12.30 - 14.30
+      \item[$\square$ {\prop {Philosophie:}}] 14.30 - 15.30
+      \item[$\square$ {\prop {Religion:}}]    15.30 - 16.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      16.30 - 17.00
+      \item[$\square$ {\prop {Sitzen:}}]      17.00 - 17.30
+      \item[$\square$ {\prop {English:}}]     17.30 - 19.00        
+      \item[$\square$ {\prop {Deutsch:}}]     19.00 - 20.00
+      \item[$\square$ {\prop {Mathematik:}}]  20.00 - 21.00
+      \item[$\square$ {\prop {Religion:}}]    21.00 - 21.30
+        
+      \item[$\square$ {\prop {Snoopy:}}]      21.30 - 22.00
       \end{labeling}
     \end{minipage}
     \bottomspace

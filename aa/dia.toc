@@ -64,66 +64,70 @@
 \contentsline {subsubsection}{9.8.14.\hskip 3pt {\color {english} \bf {KW 48}}}{120}{}%
 \contentsline {subsubsection}{9.8.15.\hskip 3pt {\color {english} \bf {KW 49}}}{127}{}%
 \contentsline {subsubsection}{9.8.16.\hskip 3pt {\color {english} \bf {KW 50}}}{135}{}%
-\contentsline {subsection}{9.9.\hskip 3pt {{\color {amber(sae/ece)} {\bf Auswertung}}}}{140}{}%
-\contentsline {section}{\numberline {A}Appendix}{141}{}%
-\contentsline {subsection}{\numberline {A.1}Laborwerte - 12.09.2022}{141}{}%
-\contentsline {subsection}{\numberline {A.2}Deutsches Sportabzeichen}{142}{}%
-\contentsline {subsection}{\numberline {A.3}Saaletalklinik}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.1}Therapiekonzept}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.2}Körper}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.3}Kleidung}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.4}Sport}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.5}Bücher}{143}{}%
-\contentsline {subsubsection}{\numberline {A.3.6}Informatik}{143}{}%
-\contentsline {subsection}{\numberline {A.4}Menübilder}{143}{}%
-\contentsline {subsubsection}{\numberline {A.4.1}Thunfisch mit Spinat-Ravioli}{143}{}%
-\contentsline {subsubsection}{\numberline {A.4.2}Leber mit Bohnen}{144}{}%
-\contentsline {subsubsection}{\numberline {A.4.3}Tofu mit Kartoffeln}{144}{}%
-\contentsline {subsubsection}{\numberline {A.4.4}Leber mit Kohlrabi}{144}{}%
-\contentsline {subsubsection}{\numberline {A.4.5}Wiener mit Sauerkraut}{144}{}%
-\contentsline {subsubsection}{\numberline {A.4.6}Thunfisch mit Mohrrüben}{144}{}%
-\contentsline {subsection}{\numberline {A.5}iPhone 1}{145}{}%
-\contentsline {subsection}{\numberline {A.6}Lua}{145}{}%
-\contentsline {subsubsection}{\numberline {A.6.1}Lua 5.3 Reference Manual}{145}{}%
-\contentsline {subsubsection}{\numberline {A.6.2}Emacs Lua Mode}{145}{}%
-\contentsline {subsubsection}{\numberline {A.6.3}Tutorial}{145}{}%
-\contentsline {subsubsection}{\numberline {A.6.4}Syntax Highlighting}{145}{}%
-\contentsline {subsection}{\numberline {A.7}Charaktereigenschaften}{146}{}%
-\contentsline {subsection}{\numberline {A.8}Bibliothek}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.1}Philosophie}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.2}Buddhismus}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.3}Anonyme Alkoholiker}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.4}Computer}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.5}Erzählungen}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.6}Romane}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.7}Theatestücke}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.8}Musik}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.9}Bilderbücher}{148}{}%
-\contentsline {subsubsection}{\numberline {A.8.10}Kindergeschichten}{149}{}%
-\contentsline {subsubsection}{\numberline {A.8.11}Vorschule}{149}{}%
-\contentsline {subsubsection}{\numberline {A.8.12}Schulbücher}{149}{}%
-\contentsline {subsubsection}{\numberline {A.8.13}Evolution}{149}{}%
-\contentsline {subsection}{\numberline {A.9}Recherche}{150}{}%
-\contentsline {subsubsection}{\numberline {A.9.1}Tractatus}{150}{}%
-\contentsline {subsubsection}{\numberline {A.9.2}Basis Bibel}{150}{}%
-\contentsline {subsubsection}{\numberline {A.9.3}Buddhas Lehrreden}{150}{}%
-\contentsline {subsection}{\numberline {A.10}Fukanzazengi}{151}{}%
-\contentsline {subsection}{\numberline {A.11}Hannya Shingyo}{153}{}%
-\contentsline {subsection}{\numberline {A.12}Tractatus}{154}{}%
-\contentsline {subsection}{\numberline {A.13}Märchen und Sagen}{155}{}%
-\contentsline {subsubsection}{\numberline {A.13.1}Das Hirtenbüblein}{155}{}%
-\contentsline {subsubsection}{\numberline {A.13.2}Frau Holle}{155}{}%
-\contentsline {subsubsection}{\numberline {A.13.3}Der Arme und der Reiche}{156}{}%
-\contentsline {subsubsection}{\numberline {A.13.4}Rumpelstilzchen}{157}{}%
-\contentsline {subsubsection}{\numberline {A.13.5}Sisyphos}{158}{}%
-\contentsline {subsection}{\numberline {A.14}Zensus}{160}{}%
-\contentsline {subsubsection}{\numberline {A.14.1}Bibliographie}{160}{}%
-\contentsline {subsubsection}{\numberline {A.14.2}Definitionen}{160}{}%
-\contentsline {subsubsection}{\numberline {A.14.3}Anmeldung}{160}{}%
-\contentsline {subsection}{\numberline {A.15}Grundsteuer}{160}{}%
-\contentsline {subsubsection}{\numberline {A.15.1}Bibliographie}{160}{}%
-\contentsline {subsubsection}{\numberline {A.15.2}Definitionen}{160}{}%
-\contentsline {subsubsection}{\numberline {A.15.3}Grundsteuererklärung}{160}{}%
-\contentsline {subsubsection}{\numberline {A.15.4}Aktenzeichen}{162}{}%
-\contentsline {subsection}{\numberline {A.16}Ausblick}{163}{}%
-\contentsline {subsubsection}{\numberline {A.16.1}Muskelaufbau}{163}{}%
+\contentsline {subsubsection}{9.8.17.\hskip 3pt {\color {english} \bf {KW 51}}}{141}{}%
+\contentsline {subsubsection}{9.8.18.\hskip 3pt {\color {english} \bf {KW 52}}}{149}{}%
+\contentsline {subsubsection}{9.8.19.\hskip 3pt {\color {english} \bf {KW 1}}}{156}{}%
+\contentsline {subsubsection}{9.8.20.\hskip 3pt {\color {english} \bf {KW 2}}}{166}{}%
+\contentsline {subsection}{9.9.\hskip 3pt {{\color {amber(sae/ece)} {\bf Auswertung}}}}{173}{}%
+\contentsline {section}{\numberline {A}Appendix}{174}{}%
+\contentsline {subsection}{\numberline {A.1}Laborwerte - 12.09.2022}{174}{}%
+\contentsline {subsection}{\numberline {A.2}Deutsches Sportabzeichen}{175}{}%
+\contentsline {subsection}{\numberline {A.3}Saaletalklinik}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.1}Therapiekonzept}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.2}Körper}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.3}Kleidung}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.4}Sport}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.5}Bücher}{176}{}%
+\contentsline {subsubsection}{\numberline {A.3.6}Informatik}{176}{}%
+\contentsline {subsection}{\numberline {A.4}Menübilder}{176}{}%
+\contentsline {subsubsection}{\numberline {A.4.1}Thunfisch mit Spinat-Ravioli}{176}{}%
+\contentsline {subsubsection}{\numberline {A.4.2}Leber mit Bohnen}{177}{}%
+\contentsline {subsubsection}{\numberline {A.4.3}Tofu mit Kartoffeln}{177}{}%
+\contentsline {subsubsection}{\numberline {A.4.4}Leber mit Kohlrabi}{177}{}%
+\contentsline {subsubsection}{\numberline {A.4.5}Wiener mit Sauerkraut}{177}{}%
+\contentsline {subsubsection}{\numberline {A.4.6}Thunfisch mit Mohrrüben}{177}{}%
+\contentsline {subsection}{\numberline {A.5}iPhone 1}{178}{}%
+\contentsline {subsection}{\numberline {A.6}Lua}{178}{}%
+\contentsline {subsubsection}{\numberline {A.6.1}Lua 5.3 Reference Manual}{178}{}%
+\contentsline {subsubsection}{\numberline {A.6.2}Emacs Lua Mode}{178}{}%
+\contentsline {subsubsection}{\numberline {A.6.3}Tutorial}{178}{}%
+\contentsline {subsubsection}{\numberline {A.6.4}Syntax Highlighting}{178}{}%
+\contentsline {subsection}{\numberline {A.7}Charaktereigenschaften}{179}{}%
+\contentsline {subsection}{\numberline {A.8}Bibliothek}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.1}Philosophie}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.2}Buddhismus}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.3}Anonyme Alkoholiker}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.4}Computer}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.5}Erzählungen}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.6}Romane}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.7}Theatestücke}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.8}Musik}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.9}Bilderbücher}{181}{}%
+\contentsline {subsubsection}{\numberline {A.8.10}Kindergeschichten}{182}{}%
+\contentsline {subsubsection}{\numberline {A.8.11}Vorschule}{182}{}%
+\contentsline {subsubsection}{\numberline {A.8.12}Schulbücher}{182}{}%
+\contentsline {subsubsection}{\numberline {A.8.13}Evolution}{182}{}%
+\contentsline {subsection}{\numberline {A.9}Recherche}{183}{}%
+\contentsline {subsubsection}{\numberline {A.9.1}Tractatus}{183}{}%
+\contentsline {subsubsection}{\numberline {A.9.2}Basis Bibel}{183}{}%
+\contentsline {subsubsection}{\numberline {A.9.3}Buddhas Lehrreden}{183}{}%
+\contentsline {subsection}{\numberline {A.10}Fukanzazengi}{184}{}%
+\contentsline {subsection}{\numberline {A.11}Hannya Shingyo}{186}{}%
+\contentsline {subsection}{\numberline {A.12}Tractatus}{187}{}%
+\contentsline {subsection}{\numberline {A.13}Märchen und Sagen}{188}{}%
+\contentsline {subsubsection}{\numberline {A.13.1}Das Hirtenbüblein}{188}{}%
+\contentsline {subsubsection}{\numberline {A.13.2}Frau Holle}{188}{}%
+\contentsline {subsubsection}{\numberline {A.13.3}Der Arme und der Reiche}{189}{}%
+\contentsline {subsubsection}{\numberline {A.13.4}Rumpelstilzchen}{190}{}%
+\contentsline {subsubsection}{\numberline {A.13.5}Sisyphos}{191}{}%
+\contentsline {subsection}{\numberline {A.14}Zensus}{193}{}%
+\contentsline {subsubsection}{\numberline {A.14.1}Bibliographie}{193}{}%
+\contentsline {subsubsection}{\numberline {A.14.2}Definitionen}{193}{}%
+\contentsline {subsubsection}{\numberline {A.14.3}Anmeldung}{193}{}%
+\contentsline {subsection}{\numberline {A.15}Grundsteuer}{193}{}%
+\contentsline {subsubsection}{\numberline {A.15.1}Bibliographie}{193}{}%
+\contentsline {subsubsection}{\numberline {A.15.2}Definitionen}{193}{}%
+\contentsline {subsubsection}{\numberline {A.15.3}Grundsteuererklärung}{193}{}%
+\contentsline {subsubsection}{\numberline {A.15.4}Aktenzeichen}{195}{}%
+\contentsline {subsection}{\numberline {A.16}Ausblick}{196}{}%
+\contentsline {subsubsection}{\numberline {A.16.1}Muskelaufbau}{196}{}%
